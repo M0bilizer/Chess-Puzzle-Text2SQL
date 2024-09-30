@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 import java.lang.Exception
@@ -23,7 +24,7 @@ class RestController(@Autowired private val puzzleService: PuzzleService) {
         return ResponseEntity.ok(puzzleService.getRandomPuzzles(5))
     }
 
-    @GetMapping("/api/query")
+    @PostMapping("/api/query")
     fun query(@RequestBody input: String): ResponseEntity<List<Puzzle>> {
         return try {
             ResponseEntity.ok(puzzleService.executeSqlCommand(input))
