@@ -1,7 +1,7 @@
 package com.chess.puzzle.text2sql.web.validator;
 
+import net.sf.jsqlparser.JSQLParserException
 import net.sf.jsqlparser.parser.CCJSqlParserUtil
-import net.sf.jsqlparser.parser.ParseException
 import org.springframework.stereotype.Component
 
 @Component
@@ -10,7 +10,7 @@ class SqlValidator {
         return try {
             CCJSqlParserUtil.parse(sql)
             true
-        } catch (e: ParseException) {
+        } catch (e: JSQLParserException) {
             false
         }
     }

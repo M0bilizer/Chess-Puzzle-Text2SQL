@@ -1,6 +1,7 @@
 package com.chess.puzzle.text2sql.web.controllers.rest
 
 import com.chess.puzzle.text2sql.web.entities.Puzzle
+import com.chess.puzzle.text2sql.web.entities.QueryRequest
 import com.chess.puzzle.text2sql.web.service.PuzzleService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -25,9 +26,10 @@ class RestController(@Autowired private val puzzleService: PuzzleService) {
     }
 
     @PostMapping("/api/query")
-    fun query(@RequestBody input: String): ResponseEntity<List<Puzzle>> {
+    fun query(@RequestBody input: QueryRequest): ResponseEntity<List<Puzzle>> {
+        val sqlCommand = input.query
         return try {
-            ResponseEntity.ok(puzzleService.executeSqlCommand(input))
+            ResponseEntity.ok(puzzleService.executeSqlCommand(sqlCommand))
         } catch (ex: IllegalArgumentException) {
             ResponseEntity.badRequest().body(emptyList())
         } catch (ex: Exception) {
