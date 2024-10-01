@@ -1,6 +1,6 @@
 {
 	"vcs": { "enabled": true, "clientKind": "git", "useIgnoreFile": true },
-	"formatter": { "indentStyle": "space", "lineWidth": 100 },
+	"formatter": { "indentStyle": "space", "lineWidth": 100, "formatWithErrors": true },
 	"linter": {
 		"rules": {
 			"recommended": false,
@@ -15,7 +15,8 @@
 				"noExtraNonNullAssertion": "error",
 				"noMisleadingInstantiator": "error",
 				"noUnsafeDeclarationMerging": "error",
-				"useNamespaceKeyword": "error"
+				"useNamespaceKeyword": "error",
+				"noConsoleLog": "info"
 			}
 		}
 	},
