@@ -54,7 +54,7 @@ export default function Home() {
   };
 
   return (
-    <div className="w-1/3 h-full ml-auto mr-auto pl-4 rounded-lg flex flex-col items-center justify-center gap-4">
+    <div className="w-1/3 h-full ml-auto mr-auto pl-4 rounded-lg flex flex-col items-center pt-40 gap-4">
       <h1>Chess Puzzle</h1>
       <form onSubmit={handleSubmit} className="flex flex-col gap-5">
         <input type="text" value={inputValue} className="border" onChange={(e) => setInputValue(e.target.value)} />
