@@ -1,8 +1,8 @@
 package com.chess.puzzle.text2sql.web.controllers.rest
 
 import com.chess.puzzle.text2sql.web.entities.Puzzle
-import com.chess.puzzle.text2sql.web.entities.QueryRequest
 import com.chess.puzzle.text2sql.web.service.PuzzleService
+import com.chess.puzzle.text2sql.web.support.QueryRequest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
-import java.lang.Exception
 
 @RestController
 class RestController(@Autowired private val puzzleService: PuzzleService) {
