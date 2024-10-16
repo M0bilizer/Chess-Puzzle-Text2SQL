@@ -1,8 +1,8 @@
 package com.chess.puzzle.text2sql.web.controllers.rest
 
 import com.chess.puzzle.text2sql.web.entities.Puzzle
+import com.chess.puzzle.text2sql.web.service.LargeLanguageApiService
 import com.chess.puzzle.text2sql.web.service.PuzzleService
-import com.chess.puzzle.text2sql.web.service.SageMakerEndpointService
 import com.chess.puzzle.text2sql.web.support.QueryRequest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class RestController(
     @Autowired private val puzzleService: PuzzleService,
-    @Autowired private val sageMakerEndpointService: SageMakerEndpointService
+    @Autowired private val largeLanguageApiService: LargeLanguageApiService
 ) {
 
     @GetMapping("/api/hello")
@@ -40,9 +40,10 @@ class RestController(
         }
     }
 
-    @GetMapping("/api/endpoint")
-    fun endpoint(): String {
-        sageMakerEndpointService.getInference("test")
-        return "ok";
+    @PostMapping("/api/llm")
+    suspend fun llm(): ResponseEntity<String> {
+        largeLanguageApiService.callDeepSeek()
+        return ResponseEntity.ok("working")
     }
+
 }

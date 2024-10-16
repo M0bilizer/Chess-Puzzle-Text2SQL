@@ -28,7 +28,7 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("com.squareup.okhttp3:okhttp:4.9.3")
 	implementation("com.google.code.gson:gson:2.10.1")
-	implementation("software.amazon.awssdk:sagemakerruntime:2.28.16")
+	implementation ("com.aallam.openai:openai-client:3.8.2")
 	implementation("com.github.jsqlparser:jsqlparser:5.0")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	runtimeOnly("com.mysql:mysql-connector-j")
