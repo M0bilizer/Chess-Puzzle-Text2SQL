@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import axios, { AxiosError } from 'axios';
 
 type puzzleType = {
   id: number;
@@ -27,62 +28,44 @@ export default function Home() {
     event.preventDefault();
 
     try {
-      const res = await fetch('http://localhost:8080/api/query', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: SQLValue }),
-      });
-
-      if (!res.ok) {
-        setSQLValue('');
-        setError('Network response was not ok');
-        throw new Error('Network response was not ok');
-      }
-
+      const res = await axios.post('http://localhost:8080/api/query', { query: SQLValue });
       setError('');
-      const data = await res.json();
-      setPuzzles(data);
-    } catch (error: unknown) {
-      if (error instanceof TypeError) {
-        console.error('Network Error:', error);
-        setError('Could not receive response');
+      setPuzzles(res.data);
+    } catch (error) {
+      setPuzzles([]);
+      if (axios.isAxiosError(error)) {
+        console.log(error)
+        setError(error.response?.data);
+      } else if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError('Error:' + error);
       }
-
-      console.error('Error:', error);
+    } finally {
+      setSQLValue('');
     }
-
-    setSQLValue('');
   };
 
   const handleLLMSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     try {
-      const res = await fetch('http://localhost:8080/api/llm', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: LLMValue }),
-      });
-
-      if (!res.ok) {
-        setLLMValue('');
-        setError('Network response was not ok');
-        throw new Error('Network response was not ok');
-      }
-
+      const res = await axios.post('http://localhost:8080/api/llm', { query: LLMValue });
+      setSQLValue('');
       setError('');
-      const data = await res.json();
-      setLLMResponse(data);
-    } catch (error: unknown) {
-      if (error instanceof TypeError) {
-        console.error('Network Error:', error);
-        setError('Could not receive response');
+      setLLMResponse(res.data);
+    } catch (error) {
+      setLLMResponse('');
+      if (axios.isAxiosError(error)) {
+        setError(error.response?.data);
+      } else if (error instanceof Error) {
+        setError('Error: ' + error.message);
+      } else {
+        setError('Error: ' + error);
       }
-
-      console.error('Error:', error);
+    } finally {
+      setLLMResponse('');
     }
-
-    setLLMValue('');
   };
 
   return (
