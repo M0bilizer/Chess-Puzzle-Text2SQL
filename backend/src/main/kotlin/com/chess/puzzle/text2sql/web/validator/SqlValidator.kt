@@ -15,7 +15,7 @@ class SqlValidator {
         }
     }
 
-    fun isAllowedCommand(sql: String): Boolean {
+    fun isAllowed(sql: String): Boolean {
         return sql.trim().startsWith("SELECT", ignoreCase = true)
     }
 }
