@@ -7,18 +7,19 @@ import com.aallam.openai.api.chat.ChatRole
 import com.aallam.openai.api.model.ModelId
 import com.aallam.openai.client.OpenAI
 import com.aallam.openai.client.OpenAIHost
-import org.springframework.beans.factory.annotation.Value
+import com.chess.puzzle.text2sql.web.helper.PropertyHelper
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
-class LargeLanguageApiService {
-    @Value("#{environment.api_key}")
-    private lateinit var apiKey: String
+class LargeLanguageApiService (
+    @Autowired private val propertyHelper: PropertyHelper
+) {
+    private val apiKey = propertyHelper.apiKey
+    private val baseUrl = propertyHelper.baseUrl
+    private val client: OpenAI = OpenAI(token = apiKey, host = OpenAIHost(baseUrl))
 
-    @Value("#{environment.base_url}")
-    private lateinit var baseUrl: String
     suspend fun callDeepSeek() {
-        val client = OpenAI(token = apiKey, host = OpenAIHost(baseUrl))
         val chatCompletionRequest = ChatCompletionRequest(
             model = ModelId("deepseek-chat"),
             messages = listOf(

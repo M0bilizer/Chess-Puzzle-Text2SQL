@@ -27,7 +27,8 @@ dependencies {
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("io.github.oshai:kotlin-logging-jvm:7.0.0")
-	implementation("com.squareup.okhttp3:okhttp:4.9.3")
+	implementation("io.ktor:ktor-client-core:2.3.12")  // Replace with the latest version
+	implementation("io.ktor:ktor-client-okhttp:2.3.12")
 	implementation("com.google.code.gson:gson:2.10.1")
 	runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
 	runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.9.0")
@@ -37,6 +38,7 @@ dependencies {
 	runtimeOnly("com.mysql:mysql-connector-j")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+	implementation("com.lemonappdev:konsist:0.16.1")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
