@@ -1,6 +1,7 @@
 package com.chess.puzzle.text2sql.web.service
 
 import com.chess.puzzle.text2sql.web.entities.Puzzle
+import com.chess.puzzle.text2sql.web.helper.ResultWrapper
 import com.chess.puzzle.text2sql.web.repositories.PuzzleRepository
 import com.chess.puzzle.text2sql.web.validator.SqlValidator
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -42,10 +43,4 @@ class PuzzleService(
 
     }
 
-}
-
-sealed class ResultWrapper {
-    data class Success(val data: List<Puzzle>): ResultWrapper()
-    data class ValidationError(val isValid: Boolean, val isAllowed: Boolean) : ResultWrapper()
-    data class HibernateError(val message: String?) : ResultWrapper()
 }

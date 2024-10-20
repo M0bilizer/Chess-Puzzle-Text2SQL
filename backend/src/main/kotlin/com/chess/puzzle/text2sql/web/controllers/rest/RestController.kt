@@ -1,9 +1,9 @@
 package com.chess.puzzle.text2sql.web.controllers.rest
 
 import com.chess.puzzle.text2sql.web.entities.Puzzle
+import com.chess.puzzle.text2sql.web.helper.ResultWrapper
 import com.chess.puzzle.text2sql.web.service.LargeLanguageApiService
 import com.chess.puzzle.text2sql.web.service.PuzzleService
-import com.chess.puzzle.text2sql.web.service.ResultWrapper
 import com.chess.puzzle.text2sql.web.support.QueryRequest
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
@@ -38,15 +38,20 @@ class RestController(
         logger.info { "Received POST on /api/query { input = $input }"}
         return when (val result = puzzleService.processQuery(sqlCommand)) {
             is ResultWrapper.Success -> ResponseEntity.ok(result.data)
-            is ResultWrapper.ValidationError -> ResponseEntity.badRequest().body("ok")
-            is ResultWrapper.HibernateError -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("ok")
+            is ResultWrapper.ValidationError -> ResponseEntity.badRequest().body("Validation Error")
+            is ResultWrapper.HibernateError -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Hibernate Error")
+            else -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error")
         }
     }
 
     @PostMapping("/api/llm")
-    suspend fun llm(): ResponseEntity<String> {
-        largeLanguageApiService.callDeepSeek()
-        return ResponseEntity.ok("working")
+    suspend fun llm(@RequestBody input: QueryRequest): ResponseEntity<String> {
+        val userInput = input.query
+        return when (val response = largeLanguageApiService.callDeepSeek(userInput)) {
+            is ResultWrapper.Sucesss -> ResponseEntity.ok(response.message)
+            is ResultWrapper.ResponseError -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("No SQL Generated")
+            else -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error")
+        }
     }
 
 }
