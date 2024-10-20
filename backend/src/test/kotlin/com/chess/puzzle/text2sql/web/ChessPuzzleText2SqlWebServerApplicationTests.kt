@@ -6,6 +6,9 @@ import org.springframework.boot.test.context.SpringBootTest
 @SpringBootTest
 class ChessPuzzleText2SqlWebServerApplicationTests {
 
+	//Detekt
+	//Konsist
+
 	@Test
 	fun contextLoads() {
 	}

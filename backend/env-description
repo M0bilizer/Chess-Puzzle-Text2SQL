@@ -1,4 +1,0 @@
-My PC
-DB_URL=jdbc:mysql://localhost:3306/webapp
-DB_USER=root
-DB_PASSWORD=admin
