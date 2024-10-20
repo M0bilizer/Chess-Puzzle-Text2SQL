@@ -34,7 +34,6 @@ export default function Home() {
     } catch (error) {
       setPuzzles([]);
       if (axios.isAxiosError(error)) {
-        console.log(error)
         setError(error.response?.data);
       } else if (error instanceof Error) {
         setError(error.message);
@@ -51,11 +50,9 @@ export default function Home() {
 
     try {
       const res = await axios.post('http://localhost:8080/api/llm', { query: LLMValue });
-      setSQLValue('');
       setError('');
       setLLMResponse(res.data);
     } catch (error) {
-      setLLMResponse('');
       if (axios.isAxiosError(error)) {
         setError(error.response?.data);
       } else if (error instanceof Error) {
@@ -64,7 +61,7 @@ export default function Home() {
         setError('Error: ' + error);
       }
     } finally {
-      setLLMResponse('');
+      setLLMValue('');
     }
   };
 
