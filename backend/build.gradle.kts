@@ -1,13 +1,27 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
 	kotlin("jvm") version "1.9.25"
 	kotlin("plugin.spring") version "1.9.25"
+	kotlin("plugin.jpa") version "1.9.25"
+	id("io.ktor.plugin") version "2.2.3"
+	id("com.github.johnrengelman.shadow") version "8.1.1"
 	id("org.springframework.boot") version "3.3.4"
 	id("io.spring.dependency-management") version "1.1.6"
-	kotlin("plugin.jpa") version "1.9.25"
 }
 
 group = "com.chess.puzzle.text2sql"
-version = "0.0.1-SNAPSHOT"
+version = "MVP"
+
+application {
+	mainClass.set("com.chess.puzzle.text2sql.web.KotlinSpringKt")
+}
+
+ktor {
+	fatJar {
+		archiveFileName.set("fat.jar")
+	}
+}
 
 java {
 	toolchain {
@@ -27,7 +41,7 @@ dependencies {
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("io.github.oshai:kotlin-logging-jvm:7.0.0")
-	implementation("io.ktor:ktor-client-core:2.3.12")  // Replace with the latest version
+	implementation("io.ktor:ktor-client-core:2.3.12")
 	implementation("io.ktor:ktor-client-okhttp:2.3.12")
 	implementation("com.google.code.gson:gson:2.10.1")
 	runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
@@ -48,6 +62,11 @@ kotlin {
 	}
 }
 
-tasks.withType<Test> {
-	useJUnitPlatform()
+tasks {
+	withType<Test> {
+		useJUnitPlatform()
+	}
+	withType<ShadowJar> {
+		isZip64 = true
+	}
 }
