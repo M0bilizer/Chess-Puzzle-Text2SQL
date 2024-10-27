@@ -1,0 +1,28 @@
+services:
+  frontend:
+    image: typescript-nextjs:latest
+    container_name: web_frontend
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+
+  backend:
+    image: kotlin-spring:latest
+    container_name: web_backend
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+
+  nginx:
+    image: web_nginx:latest
+    container_name: web_ngnix
+    ports:
+      - "80:80"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
