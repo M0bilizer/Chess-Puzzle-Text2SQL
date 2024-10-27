@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import axios, { AxiosError } from 'axios';
+import { KOTLIN_SPRING_URL } from './constants';
+import { ErrorBox } from '@/lib/ErrorBox';
 
 type puzzleType = {
   id: number;
@@ -19,26 +21,28 @@ type puzzleType = {
 
 export default function Home() {
   const [SQLValue, setSQLValue] = useState('');
+  const [SQLResponse, setSQLResponse] = useState([]);
+  const [SQLError, setSQLError] = useState('');
+
   const [LLMValue, setLLMValue] = useState('');
-  const [puzzles, setPuzzles] = useState([]);
   const [LLMResponse, setLLMResponse] = useState('');
-  const [error, setError] = useState('');
+  const [LLMError, setLLMError] = useState('');
 
   const handleSQLSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     try {
-      const res = await axios.post('http://localhost:8080/api/query', { query: SQLValue });
-      setError('');
-      setPuzzles(res.data);
+      const res = await axios.post(`${KOTLIN_SPRING_URL}/query`, { query: SQLValue });
+      setSQLError('');
+      setSQLResponse(res.data);
     } catch (error) {
-      setPuzzles([]);
+      setSQLResponse([]);
       if (axios.isAxiosError(error)) {
-        setError(error.response?.data);
+        setSQLError(error.response?.data);
       } else if (error instanceof Error) {
-        setError(error.message);
+        setSQLError(error.message);
       } else {
-        setError('Error:' + error);
+        setSQLError('Error:' + error);
       }
     } finally {
       setSQLValue('');
@@ -49,16 +53,16 @@ export default function Home() {
     event.preventDefault();
 
     try {
-      const res = await axios.post('http://localhost:8080/api/llm', { query: LLMValue });
-      setError('');
+      const res = await axios.post(`${KOTLIN_SPRING_URL}/llm`, { query: LLMValue });
+      setLLMError('');
       setLLMResponse(res.data);
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        setError(error.response?.data);
+        setLLMError(error.response?.data);
       } else if (error instanceof Error) {
-        setError('Error: ' + error.message);
+        setLLMError('Error: ' + error.message);
       } else {
-        setError('Error: ' + error);
+        setLLMError('Error: ' + error);
       }
     } finally {
       setLLMValue('');
@@ -84,7 +88,8 @@ export default function Home() {
         </form>
         <div className="border border-gray-200 p-2 flex flex-col">
           Result
-          {puzzles && puzzles.map((puzzle: puzzleType) => <li key={puzzle.id}>{puzzle.puzzleId}</li>)}
+          {SQLResponse && SQLResponse.map((puzzle: puzzleType) => <li key={puzzle.id}>{puzzle.puzzleId}</li>)}
+          {SQLError && <ErrorBox error={SQLError} />}
         </div>
       </div>
 
@@ -105,10 +110,9 @@ export default function Home() {
         <p className="border border-gray-200 p-2 flex flex-col">
           Result
           {LLMResponse}
+          {LLMError && <ErrorBox error={LLMError} />}
         </p>
       </div>
-
-      {error.length > 0 && <div className="bg-red-400 rounded py-4 px-12">{error}</div>}
     </div>
   );
 }

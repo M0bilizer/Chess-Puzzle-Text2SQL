@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && docker build -t typescript-nextjs .",
     "start": "next start",
     "lint": "biome lint --error-on-warnings && biome format --write"
   },
@@ -19,6 +19,7 @@
     ]
   },
   "dependencies": {
+    "autoprefixer": "^10.4.20",
     "axios": "^1.7.7",
     "husky": "^9.1.6",
     "next": "14.2.13",
@@ -30,7 +31,7 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
-    "postcss": "^8",
+    "postcss": "^8.4.47",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
   }
