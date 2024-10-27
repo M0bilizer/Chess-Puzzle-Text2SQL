@@ -5,6 +5,7 @@ import jakarta.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
+import org.springframework.core.SpringVersion
 
 private val logger = KotlinLogging.logger {}
 

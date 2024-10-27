@@ -9,6 +9,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -38,8 +39,8 @@ class RestController(
         logger.info { "Received POST on /api/query { input = $input }"}
         return when (val result = puzzleService.processQuery(sqlCommand)) {
             is ResultWrapper.Success -> ResponseEntity.ok(result.data)
-            is ResultWrapper.ValidationError -> ResponseEntity.badRequest().body("Validation Error")
-            is ResultWrapper.HibernateError -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Hibernate Error")
+            is ResultWrapper.ValidationError -> ResponseEntity.ok("Validation Error")
+            is ResultWrapper.HibernateError -> ResponseEntity.ok("Hibernate Error")
             else -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error")
         }
     }
