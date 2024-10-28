@@ -5,7 +5,7 @@ import axios, { AxiosError } from 'axios';
 import { KOTLIN_SPRING_URL } from './constants';
 import { ErrorBox } from '@/lib/ErrorBox';
 
-type puzzleType = {
+type PuzzleType = {
   id: number;
   puzzleId: string;
   fen: string;
@@ -21,7 +21,7 @@ type puzzleType = {
 
 export default function Home() {
   const [SQLValue, setSQLValue] = useState('');
-  const [SQLResponse, setSQLResponse] = useState([]);
+  const [SQLResponse, setSQLResponse] = useState<PuzzleType[]>([]);
   const [SQLError, setSQLError] = useState('');
 
   const [LLMValue, setLLMValue] = useState('');
@@ -88,7 +88,7 @@ export default function Home() {
         </form>
         <div className="border border-gray-200 p-2 flex flex-col">
           Result
-          {SQLResponse && SQLResponse.map((puzzle: puzzleType) => <li key={puzzle.id}>{puzzle.puzzleId}</li>)}
+          {Array.isArray(SQLResponse) && SQLResponse.map((puzzle: PuzzleType) => <li key={puzzle.id}>{puzzle.puzzleId}</li>)}
           {SQLError && <ErrorBox error={SQLError} />}
         </div>
       </div>

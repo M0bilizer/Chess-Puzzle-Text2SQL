@@ -16,7 +16,7 @@ class KotlinSpring {
 
 	@PostConstruct
 	fun init() {
-		logger.info { "dataSourceURL : $dataSourceURL" }
+		logger.info { "dataSourceURL: $dataSourceURL " }
 	}
 }
 

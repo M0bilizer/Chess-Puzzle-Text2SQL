@@ -1,1 +1,1 @@
-docker build -t web_nginx .
+docker build -t web-nginx .
