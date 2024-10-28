@@ -6,7 +6,7 @@ import jakarta.persistence.Id
 import jakarta.persistence.Table
 
 @Entity
-@Table(name = "T_PUZZLE")
+@Table(name = "t_puzzle")
 data class Puzzle(
     @Id
     @Column(name = "id")
