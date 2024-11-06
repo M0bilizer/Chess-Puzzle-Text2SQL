@@ -13,9 +13,8 @@ private val logger = KotlinLogging.logger {}
 @Service
 class PuzzleService(
     @Autowired private val puzzleRepository: PuzzleRepository,
-    @Autowired private val sqlValidator: SqlValidator
+    @Autowired private val sqlValidator: SqlValidator,
 ) {
-
     fun getAllPuzzles(): List<Puzzle> {
         return puzzleRepository.findAll()
     }
@@ -28,19 +27,17 @@ class PuzzleService(
         val isValid = sqlValidator.isValidSql(sqlCommand)
         val isAllowed = sqlValidator.isAllowed(sqlCommand)
         if (!isValid || !isAllowed) {
-            logger.warn { "Processing Query { sqlCommand = $sqlCommand } -> ValidationError(isValid = $isValid, isAllowed = $isAllowed)"}
+            logger.warn { "Processing Query { sqlCommand = $sqlCommand } -> ValidationError(isValid = $isValid, isAllowed = $isAllowed)" }
             return ResultWrapper.ValidationError(isValid, isAllowed)
         }
 
         return try {
             val result = puzzleRepository.executeSqlQuery(sqlCommand)
-            logger.info {"Processing Query { sqlCommand = $sqlCommand } -> OK"}
+            logger.info { "Processing Query { sqlCommand = $sqlCommand } -> OK" }
             ResultWrapper.Success(result)
         } catch (e: Exception) {
-            logger.warn {"Processing Query { sqlCommand = $sqlCommand } -> HibernateError(message = $e.message)"}
+            logger.warn { "Processing Query { sqlCommand = $sqlCommand } -> HibernateError(message = $e.message)" }
             ResultWrapper.HibernateError(e.message)
         }
-
     }
-
 }

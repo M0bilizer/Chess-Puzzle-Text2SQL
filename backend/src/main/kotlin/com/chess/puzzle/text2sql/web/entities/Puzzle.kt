@@ -30,5 +30,5 @@ data class Puzzle(
     @Column(name = "game_url")
     val gameUrl: String,
     @Column(name = "opening_tags")
-    val openingTags: String
+    val openingTags: String,
 )

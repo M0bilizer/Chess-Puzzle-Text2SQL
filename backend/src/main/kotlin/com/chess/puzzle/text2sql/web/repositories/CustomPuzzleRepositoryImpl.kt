@@ -7,7 +7,7 @@ import jakarta.transaction.Transactional
 import org.springframework.stereotype.Repository
 
 @Repository
-class CustomPuzzleRepositoryImpl: CustomPuzzleRepository {
+class CustomPuzzleRepositoryImpl : CustomPuzzleRepository {
     @PersistenceContext
     private lateinit var entityManager: EntityManager
 
