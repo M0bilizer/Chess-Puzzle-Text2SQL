@@ -43,8 +43,8 @@
       "sql": "SELECT * FROM t_puzzle WHERE themes LIKE '%middlegame%' AND opening_tags LIKE '%Slav_Defense%'"
     },
     {
-      "text": "pin and skewer",
-      "sql": "SELECT * FROM t_puzzle WHERE themes LIKE '%pin%' AND themes LIKE '%skewer%'"
+      "text": "En passant and promotion",
+      "sql": "SELECT * FROM t_puzzle WHERE themes LIKE '%enPassant%' AND themes LIKE '%promotion%'"
     },
     {
       "text": "challenging",
@@ -63,8 +63,8 @@
       "sql": "SELECT * FROM t_puzzle WHERE opening_tags LIKE '%Kings_Indian_Defense%'"
     },
     {
-      "text": "I want to improve my tactical skills.",
-      "sql": "SELECT * FROM t_puzzle WHERE themes LIKE '%crushing%'"
+      "text": "I need to improve my endgame technique.",
+      "sql": "SELECT * FROM t_puzzle WHERE themes LIKE '%endGame%'"
     },
     {
       "text": "I prefer open positions",
@@ -119,8 +119,8 @@
       "sql": "SELECT * FROM t_puzzle WHERE themes LIKE '%middlegame%' AND opening_tags LIKE '%Ruy_Lopez%'"
     },
     {
-      "text": "discovered attack and pin",
-      "sql": "SELECT * FROM t_puzzle WHERE themes LIKE '%discoveredAttack%' AND themes LIKE '%pin%'"
+      "text": "Rook lift and zugzwang",
+      "sql": "SELECT * FROM t_puzzle WHERE themes LIKE '%rookEndgame%' AND themes LIKE '%zugzwang%'"
     },
     {
       "text": "piece development and opening",
@@ -131,16 +131,16 @@
       "sql": "SELECT * FROM t_puzzle WHERE rating > 800 AND rating < 1900"
     },
     {
-      "text": "Give me a puzzle that requires a clever knight sacrifice.",
-      "sql": "SELECT * FROM t_puzzle WHERE themes LIKE '%sacrifice%' AND themes LIKE '%knightEndgame%'"
+      "text": "Select a puzzle with a mate in 3 checkmates.",
+      "sql": "SELECT * FROM t_puzzle WHERE themes LIKE '%mateIn3'"
     },
     {
-      "text": "I need a puzzle about a variation of the Ruy Lopez opening.",
-      "sql": "SELECT * FROM t_puzzle WHERE opening_tags LIKE '%Ruy_Lopez%'"
+      "text": "Find a puzzle that features a complex endgame with opposite-colored bishops.",
+      "sql": "SELECT * FROM t_puzzle WHERE (rating > 1900 OR themes LIKE '%master%') AND themes LIKE '%bishopEndgame%'"
     },
     {
-      "text": "I want to improve my skills in defending against attacks.",
-      "sql": "SELECT * FROM t_puzzle WHERE themes LIKE '%defensive_move%'"
+      "text": "I aim to increase my knowledge of basic tactics.",
+      "sql": "SELECT * FROM t_puzzle WHERE rating < 800"
     },
     {
       "text": "I get bored with slow and positional games.",
