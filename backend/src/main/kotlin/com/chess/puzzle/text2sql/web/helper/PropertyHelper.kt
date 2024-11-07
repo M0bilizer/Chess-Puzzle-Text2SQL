@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component
 class PropertyHelper {
     @Value("\${api_key}")
     lateinit var apiKey: String
+
     @Value("\${base_url}")
     lateinit var baseUrl: String
 }

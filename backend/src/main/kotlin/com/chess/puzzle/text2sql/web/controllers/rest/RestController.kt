@@ -9,7 +9,6 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -20,9 +19,8 @@ private val logger = KotlinLogging.logger {}
 @RestController
 class RestController(
     @Autowired private val puzzleService: PuzzleService,
-    @Autowired private val largeLanguageApiService: LargeLanguageApiService
+    @Autowired private val largeLanguageApiService: LargeLanguageApiService,
 ) {
-
     @GetMapping("/api/hello")
     fun hello(): String {
         return "Hello from Spring Boot!"
@@ -34,9 +32,11 @@ class RestController(
     }
 
     @PostMapping("/api/query")
-    fun query(@RequestBody input: QueryRequest): ResponseEntity<Any> {
+    fun query(
+        @RequestBody input: QueryRequest,
+    ): ResponseEntity<Any> {
         val sqlCommand = input.query
-        logger.info { "Received POST on /api/query { input = $input }"}
+        logger.info { "Received POST on /api/query { input = $input }" }
         return when (val result = puzzleService.processQuery(sqlCommand)) {
             is ResultWrapper.Success -> ResponseEntity.ok(result.data)
             is ResultWrapper.ValidationError -> ResponseEntity.ok("Validation Error")
@@ -46,7 +46,9 @@ class RestController(
     }
 
     @PostMapping("/api/llm")
-    suspend fun llm(@RequestBody input: QueryRequest): ResponseEntity<String> {
+    suspend fun llm(
+        @RequestBody input: QueryRequest,
+    ): ResponseEntity<String> {
         val userInput = input.query
         return when (val response = largeLanguageApiService.callDeepSeek(userInput)) {
             is ResultWrapper.Sucesss -> ResponseEntity.ok(response.message)
@@ -54,5 +56,4 @@ class RestController(
             else -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error")
         }
     }
-
 }
