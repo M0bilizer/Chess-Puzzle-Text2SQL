@@ -39,7 +39,7 @@ class LargeLanguageApiService(
         val response = chatCompletion.choices.firstOrNull()?.message?.messageContent
         logger.info { "Calling DeepSeek { input = $input } -> { response = $response }" }
         return when (val textContent: Content? = chatCompletion.choices.firstOrNull()?.message?.messageContent) {
-            is TextContent -> ResultWrapper.Sucesss(textContent.content)
+            is TextContent -> ResultWrapper.Success(textContent.content)
             else -> {
                 logger.warn { "Calling DeepSeek { input = $input } -> { Received image and texts }" }
                 ResultWrapper.ResponseError

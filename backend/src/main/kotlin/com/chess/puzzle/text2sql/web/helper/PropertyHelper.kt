@@ -10,4 +10,7 @@ class PropertyHelper {
 
     @Value("\${base_url}")
     lateinit var baseUrl: String
+
+    @Value("\${sentence_transformer_url}")
+    lateinit var sentenceTransformerUrl: String
 }

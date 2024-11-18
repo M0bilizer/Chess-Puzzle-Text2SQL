@@ -34,7 +34,7 @@ class PuzzleService(
         return try {
             val result = puzzleRepository.executeSqlQuery(sqlCommand)
             logger.info { "Processing Query { sqlCommand = $sqlCommand } -> OK" }
-            ResultWrapper.Success(result)
+            ResultWrapper.PuzzleDataSuccess(result)
         } catch (e: Exception) {
             logger.warn { "Processing Query { sqlCommand = $sqlCommand } -> HibernateError(message = $e.message)" }
             ResultWrapper.HibernateError(e.message)
