@@ -4,6 +4,7 @@ import com.chess.puzzle.text2sql.web.entities.Puzzle
 
 sealed class ResultWrapper {
     data class PuzzleDataSuccess(val data: List<Puzzle>) : ResultWrapper()
+
     data class DemonstrationDataSuccess(val data: List<Demonstration>) : ResultWrapper()
 
     data class Success(val message: String) : ResultWrapper()
