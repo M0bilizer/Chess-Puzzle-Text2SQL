@@ -33,16 +33,6 @@ class RestController(
         return ResponseEntity.ok(puzzleService.getRandomPuzzles(5))
     }
 
-    @PostMapping("/api/css")
-    fun css(
-        @RequestBody input: QueryRequest,
-    ): ResponseEntity<String> {
-        return when (val result = workflowService.processPrompt(input.query)) {
-            is ResultWrapper.Success -> ResponseEntity.ok(result.message)
-            else -> ResponseEntity.badRequest().body("idk")
-        }
-    }
-
     @PostMapping("/api/query")
     fun query(
         @RequestBody input: QueryRequest,
@@ -50,9 +40,9 @@ class RestController(
         val sqlCommand = input.query
         logger.info { "Received POST on /api/query { input = $input }" }
         return when (val result = puzzleService.processQuery(sqlCommand)) {
-            is ResultWrapper.PuzzleDataSuccess -> ResponseEntity.ok(result.data)
-            is ResultWrapper.ValidationError -> ResponseEntity.ok("Validation Error")
-            is ResultWrapper.HibernateError -> ResponseEntity.ok("Hibernate Error")
+            is ResultWrapper.Success -> ResponseEntity.ok(result.data)
+            is ResultWrapper.Error.ValidationError -> ResponseEntity.ok("Validation Error")
+            is ResultWrapper.Error.HibernateError -> ResponseEntity.ok("Hibernate Error")
             else -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error")
         }
     }
@@ -63,8 +53,8 @@ class RestController(
     ): ResponseEntity<String> {
         val userInput = input.query
         return when (val response = largeLanguageApiService.callDeepSeek(userInput)) {
-            is ResultWrapper.Success -> ResponseEntity.ok(response.message)
-            is ResultWrapper.ResponseError -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("No SQL Generated")
+            is ResultWrapper.Success -> ResponseEntity.ok(response.data)
+            is ResultWrapper.Error.ResponseError -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("No SQL Generated")
             else -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error")
         }
     }

@@ -24,7 +24,7 @@ class LargeLanguageApiService(
     private val baseUrl = propertyHelper.baseUrl
     private val client: OpenAI = OpenAI(token = apiKey, host = OpenAIHost(baseUrl))
 
-    suspend fun callDeepSeek(input: String): ResultWrapper {
+    suspend fun callDeepSeek(input: String): ResultWrapper<out String> {
         val chatCompletionRequest =
             ChatCompletionRequest(
                 model = ModelId("deepseek-chat"),
@@ -42,7 +42,7 @@ class LargeLanguageApiService(
             is TextContent -> ResultWrapper.Success(textContent.content)
             else -> {
                 logger.warn { "Calling DeepSeek { input = $input } -> { Received image and texts }" }
-                ResultWrapper.ResponseError
+                ResultWrapper.Error.ResponseError
             }
         }
     }

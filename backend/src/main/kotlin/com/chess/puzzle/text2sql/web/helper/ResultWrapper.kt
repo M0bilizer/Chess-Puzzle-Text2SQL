@@ -1,17 +1,13 @@
 package com.chess.puzzle.text2sql.web.helper
 
-import com.chess.puzzle.text2sql.web.entities.Puzzle
+sealed class ResultWrapper<T> {
+    data class Success<T>(val data: T) : ResultWrapper<T>()
 
-sealed class ResultWrapper {
-    data class PuzzleDataSuccess(val data: List<Puzzle>) : ResultWrapper()
+    sealed class Error : ResultWrapper<Nothing>() {
+        data class ValidationError(val isValid: Boolean, val isAllowed: Boolean) : Error()
 
-    data class DemonstrationDataSuccess(val data: List<Demonstration>) : ResultWrapper()
+        data class HibernateError(val message: String?) : Error()
 
-    data class Success(val message: String) : ResultWrapper()
-
-    data class ValidationError(val isValid: Boolean, val isAllowed: Boolean) : ResultWrapper()
-
-    data class HibernateError(val message: String?) : ResultWrapper()
-
-    data object ResponseError : ResultWrapper()
+        data object ResponseError : Error()
+    }
 }

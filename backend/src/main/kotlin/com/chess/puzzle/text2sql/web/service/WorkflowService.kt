@@ -19,7 +19,7 @@ class WorkflowService {
     private val jsonFilePath = "src/main/resources/data/demonstrations.json"
     private val layoutPath = "src/main/resources/prompt/inferencePromptTemplate.md"
 
-    fun processPrompt(userPrompt: String): ResultWrapper {
+    fun processPrompt(userPrompt: String): ResultWrapper<out String> {
         return try {
             val processedLayout = userPrompt.loadLayout()
             val similarDemonstration = findMostSimilarDemonstrations(userPrompt, this.getDemonstration())
@@ -27,7 +27,7 @@ class WorkflowService {
             ResultWrapper.Success(processedPrompt)
         } catch (e: Exception) {
             logger.error { "Processing Prompt {userPrompt = $userPrompt} -> ${e.message}" }
-            ResultWrapper.ResponseError
+            ResultWrapper.Error.ResponseError
         }
     }
 

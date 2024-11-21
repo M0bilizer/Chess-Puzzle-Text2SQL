@@ -35,7 +35,7 @@ class SentenceTransformerService(
             }
         }
 
-    suspend fun getSimilarDemonstration(input: String): ResultWrapper {
+    suspend fun getSimilarDemonstration(input: String): ResultWrapper<out List<Demonstration>> {
         val jsonString = Gson().toJson(QueryRequest(input))
         val response: HttpResponse =
             client.post(url) {
@@ -45,10 +45,10 @@ class SentenceTransformerService(
         return if (response.status == HttpStatusCode.OK) {
             val data = response.body<List<Demonstration>>()
             logger.info { "gettingSimilarDemonstration { input = $input } -> [${data[0]}, ${data[1]}, ${data[2]}" }
-            ResultWrapper.DemonstrationDataSuccess(data)
+            ResultWrapper.Success(data)
         } else {
             logger.warn { "gettingSimilarDemonstration { input = $input } -> ERROR" }
-            ResultWrapper.ResponseError
+            ResultWrapper.Error.ResponseError
         }
     }
 }
