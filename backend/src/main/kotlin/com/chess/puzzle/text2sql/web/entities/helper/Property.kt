@@ -1,10 +1,10 @@
-package com.chess.puzzle.text2sql.web.helper
+package com.chess.puzzle.text2sql.web.entities.helper
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 
 @Component
-class PropertyHelper {
+class Property {
     @Value("\${api_key}")
     lateinit var apiKey: String
 

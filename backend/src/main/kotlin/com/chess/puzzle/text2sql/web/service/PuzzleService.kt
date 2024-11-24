@@ -1,7 +1,7 @@
 package com.chess.puzzle.text2sql.web.service
 
 import com.chess.puzzle.text2sql.web.entities.Puzzle
-import com.chess.puzzle.text2sql.web.helper.ResultWrapper
+import com.chess.puzzle.text2sql.web.entities.helper.ResultWrapper
 import com.chess.puzzle.text2sql.web.repositories.PuzzleRepository
 import com.chess.puzzle.text2sql.web.validator.SqlValidator
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -15,10 +15,6 @@ class PuzzleService(
     @Autowired private val puzzleRepository: PuzzleRepository,
     @Autowired private val sqlValidator: SqlValidator,
 ) {
-    fun getAllPuzzles(): List<Puzzle> {
-        return puzzleRepository.findAll()
-    }
-
     fun getRandomPuzzles(n: Int): List<Puzzle> {
         return puzzleRepository.findRandomPuzzles(n)
     }

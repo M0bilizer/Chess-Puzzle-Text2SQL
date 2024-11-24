@@ -1,4 +1,4 @@
-package com.chess.puzzle.text2sql.web.service
+package com.chess.puzzle.text2sql.web.service.helper
 
 import com.aallam.openai.api.chat.ChatCompletionRequest
 import com.aallam.openai.api.chat.ChatMessage
@@ -8,8 +8,8 @@ import com.aallam.openai.api.chat.TextContent
 import com.aallam.openai.api.model.ModelId
 import com.aallam.openai.client.OpenAI
 import com.aallam.openai.client.OpenAIHost
-import com.chess.puzzle.text2sql.web.helper.PropertyHelper
-import com.chess.puzzle.text2sql.web.helper.ResultWrapper
+import com.chess.puzzle.text2sql.web.entities.helper.Property
+import com.chess.puzzle.text2sql.web.entities.helper.ResultWrapper
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -17,8 +17,8 @@ import org.springframework.stereotype.Service
 private val logger = KotlinLogging.logger {}
 
 @Service
-class LargeLanguageApiService(
-    @Autowired private val propertyHelper: PropertyHelper,
+class LargeLanguageApiHelper(
+    @Autowired private val propertyHelper: Property,
 ) {
     private val apiKey = propertyHelper.apiKey
     private val baseUrl = propertyHelper.baseUrl

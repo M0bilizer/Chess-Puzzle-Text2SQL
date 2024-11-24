@@ -1,39 +1,32 @@
-package com.chess.puzzle.text2sql.web.service
+package com.chess.puzzle.text2sql.web.service.helper
 
-import com.chess.puzzle.text2sql.web.helper.Demonstration
-import com.chess.puzzle.text2sql.web.helper.PropertyHelper
-import com.chess.puzzle.text2sql.web.helper.QueryRequest
-import com.chess.puzzle.text2sql.web.helper.ResultWrapper
+import com.chess.puzzle.text2sql.web.entities.helper.Demonstration
+import com.chess.puzzle.text2sql.web.entities.helper.Property
+import com.chess.puzzle.text2sql.web.entities.helper.QueryRequest
+import com.chess.puzzle.text2sql.web.entities.helper.ResultWrapper
 import com.google.gson.Gson
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.okhttp.OkHttp
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
-import io.ktor.serialization.kotlinx.json.json
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 private val logger = KotlinLogging.logger {}
 
 @Service
-class SentenceTransformerService(
+class SentenceTransformerHelper(
     @Autowired
-    private val propertyHelper: PropertyHelper,
+    private val propertyHelper: Property,
 ) {
     private val url = propertyHelper.sentenceTransformerUrl
-    private val client =
-        HttpClient(OkHttp) {
-            install(ContentNegotiation) {
-                json()
-            }
-        }
+    private val client = HttpClient(OkHttp)
 
     suspend fun getSimilarDemonstration(input: String): ResultWrapper<out List<Demonstration>> {
         val jsonString = Gson().toJson(QueryRequest(input))

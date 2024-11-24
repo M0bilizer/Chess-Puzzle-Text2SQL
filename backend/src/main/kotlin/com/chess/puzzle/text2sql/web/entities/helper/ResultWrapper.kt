@@ -1,4 +1,4 @@
-package com.chess.puzzle.text2sql.web.helper
+package com.chess.puzzle.text2sql.web.entities.helper
 
 sealed class ResultWrapper<T> {
     data class Success<T>(val data: T) : ResultWrapper<T>()
