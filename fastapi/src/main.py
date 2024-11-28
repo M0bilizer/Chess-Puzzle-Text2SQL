@@ -1,5 +1,3 @@
-from collections import defaultdict
-
 from fastapi import FastAPI
 from pydantic import BaseModel
 from sentence_transformers import SentenceTransformer, util
@@ -7,7 +5,6 @@ import json
 import commentjson
 from typing import List
 import torch
-from itertools import combinations
 
 app = FastAPI()
 
@@ -87,11 +84,12 @@ class Request(BaseModel):
     query: str
 
 
-class Response(BaseModel):
-    similar_demonstrations: List[dict]
+class ResponseDto(BaseModel):
+    status: str
+    data: List[dict]
 
 
-@app.post("/api/similarity/", response_model=Response)
+@app.post("/api/similarity/", response_model=ResponseDto)
 async def mask_and_find_similar(request: Request):
     input_text = request.query
     masked_text = mask_keywords(input_text)
@@ -108,6 +106,6 @@ async def mask_and_find_similar(request: Request):
     top_k_indices = torch.tensor(jaccard_similarities).topk(3).indices.tolist()
     similar_demonstrations = [demonstrations[i] for i in top_k_indices]
 
-    return Response(similar_demonstrations=similar_demonstrations)
+    return ResponseDto(status="success", data=similar_demonstrations)
 
-# Run your FastAPI app using uvicorn src.main:app --reload
+# Run your FastAPI src using uvicorn src.main:src --reload
