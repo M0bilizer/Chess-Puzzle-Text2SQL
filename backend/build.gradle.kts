@@ -78,6 +78,7 @@ dependencies {
     implementation("io.ktor:ktor-client-core:2.3.12") // MUST BE 2.3.12
     implementation("io.ktor:ktor-client-okhttp:2.3.12") // MUST BE 2.3.12
     implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.12")
+    implementation("io.ktor:ktor-client-content-negotiation:2.3.12")
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.apache.commons:commons-math3:3.6.1")
