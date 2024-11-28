@@ -1,0 +1,584 @@
+{
+  "list": [
+    /**
+    * ░█░░░█░░░█▀█░█▄█░█▀█
+    * ░█░░░█░░░█▀█░█░█░█▀█
+    * ░▀▀▀░▀▀▀░▀░▀░▀░▀░▀░▀
+    */
+    /* Llama Keyword */
+    {
+      "text": "Italian Game Endplay",
+      "sql": "b"
+    },
+    {
+      "text": "Sicilian Defense Tactic",
+      "sql": "b"
+    },
+    {
+      "text": "King's Indian Defense Strategy",
+      "sql": "b"
+    },
+    {
+      "text": "Back rank mate and cornering",
+      "sql": "b"
+    },
+    {
+      "text": "Discovered check and trap",
+      "sql": "b"
+    },
+    {
+      "text": "Skewer and Discovery",
+      "sql": "b"
+    },
+    {
+      "text": "Difficult",
+      "sql": "b"
+    },
+    {
+      "text": "Challenging",
+      "sql": "b"
+    },
+    {
+      "text": "Tough",
+      "sql": "b"
+    },
+    /* Llama Instruction */
+    {
+      "text": "Can you provide a short tactic",
+      "sql": "b"
+    },
+    {
+      "text": "Can you offer a simple tactic to solve",
+      "sql": "b"
+    },
+    {
+      "text": "Can you show me a rapid chess exercise",
+      "sql": "b"
+    },
+    {
+      "text": "Provide a difficult tactic that involves a bishop pin",
+      "sql": "b"
+    },
+    {
+      "text": "Show me a complex puzzle with a discovery check",
+      "sql": "b"
+    },
+    {
+      "text": "Create a tough problem that features a queen fork",
+      "sql": "b"
+    },
+    {
+      "text": "Prepare a problem about the Ruy Lopez Opening in the early stages of the game",
+      "sql": "b"
+    },
+    {
+      "text": "Create a problem about the Sicilian Defense in the initial moves of the game",
+      "sql": "b"
+    },
+    {
+      "text": "Provide a problem about the King's Gambit Accepted in the opening phase of the game",
+      "sql": "b"
+    },
+    /* Llama Intention */
+    {
+      "text": "I'm trying to sharpen my skills in counter-attacking",
+      "sql": "b"
+    },
+    {
+      "text": "I intend to enhance my tactical abilities",
+      "sql": "b"
+    },
+    {
+      "text": "I aim to improve my defensive skills",
+      "sql": "b"
+    },
+    {
+      "text": "I prefer to play dynamic games with tactical opportunities",
+      "sql": "b"
+    },
+    {
+      "text": "I'd rather play open games with complex middlegames",
+      "sql": "b"
+    },
+    {
+      "text": "I prefer to avoid drawish positions",
+      "sql": "b"
+    },
+    {
+      "text": "I'd like to find a way to counter my opponent's favorite Ruy Lopez opening",
+      "sql": "b"
+    },
+    {
+      "text": "I need to come up with a strategy to outmaneuver my rival who always plays the King's Gambit",
+      "sql": "b"
+    },
+    {
+      "text": "I'd like to prepare a plan to outplay my opponent who consistently chooses the Sicilian Defense",
+      "sql": "b"
+    }
+    /**
+    * ░▄▀▄░█░█░█▀▀░█▀█
+    * ░█\█░█▄█░█▀▀░█░█
+    * ░░▀\░▀░▀░▀▀▀░▀░▀
+    */
+    /* Qwen Keyword */
+    {
+      "text":"queen's pawn midgame",
+      "sql": ""
+    },
+    {
+      "text":"english defense midgame",
+      "sql": ""
+    },
+    {
+      "text":"semi-open queen's Indian",
+      "sql": ""
+    },
+    {
+      "text":"sacrifice and pin",
+      "sql": ""
+    },
+    {
+      "text":"sacrifice and skewer",
+      "sql": ""
+    },
+    {
+      "text":"sacrifice and smothered checkmate",
+      "sql": ""
+    },
+    {
+      "text":"difficult",
+      "sql": ""
+    },
+    {
+      "text":"challenging",
+      "sql": ""
+    },
+    {
+      "text":"easy",
+      "sql": ""
+    },
+    /* Qwen Instruction */
+    {
+      "text":"Can you provide a long and intricate puzzle?",
+      "sql": ""
+    },
+    {
+      "text":"Can you find me a puzzle with a unique tactical theme?",
+      "sql": ""
+    },
+    {
+      "text":"Can you provide a short puzzle?",
+      "sql": ""
+    },
+    {
+      "text":"Give me an easy puzzle with a simple checkmate in one move",
+      "sql": ""
+    },
+    {
+      "text":"Give me a puzzle that requires a queen sacrifice for a win",
+      "sql": ""
+    },
+    {
+      "text":"Give me a puzzle with a bishops' mate at the beginning of the game",
+      "sql": ""
+    },
+    {
+      "text":"I need a puzzle that focuses on a rook and pawn endgame.",
+      "sql": ""
+    },
+    {
+      "text":"I need a puzzle that involves a complex middlegame tactic with a bishop and knight combination.",
+      "sql": ""
+    },
+    {
+      "text":"I need a puzzle that features a smothered mate in the endgame.",
+      "sql": ""
+    },
+    /* Qwen Intention */
+    {
+      "text":"I want to improve my defensive skills.",
+      "sql": ""
+    },
+    {
+      "text":"I want to enhance my endgame technique.",
+      "sql": ""
+    },
+    {
+      "text":"I want to improve my opening repertoire.",
+      "sql": ""
+    },
+    {
+      "text":"I prefer closed positions.",
+      "sql": ""
+    },
+    {
+      "text":"I enjoy complex tactical play.",
+      "sql": ""
+    },
+    {
+      "text":"I prefer positions with a focus on strategic maneuvering.",
+      "sql": ""
+    },
+    {
+      "text":"I want to explore ways to improve my Sicilian Defense.",
+      "sql": ""
+    },
+    {
+      "text":"I want to develop a strong understanding of the King's Indian Defense.",
+      "sql": ""
+    },
+    {
+      "text":"I want to improve my skills in the French Defense.",
+      "sql": ""
+    }
+    /**
+    * ░█▄█░▀█▀░█▀▀░▀█▀░█▀▄░█▀█░█░░
+    * ░█░█░░█░░▀▀█░░█░░█▀▄░█▀█░█░░
+    * ░▀░▀░▀▀▀░▀▀▀░░▀░░▀░▀░▀░▀░▀▀▀
+    */
+    /* Mistral Keywords */
+    {
+      "text": "endgame tactics",
+      "sql": ""
+    },
+    {
+      "text": "chess opening blunder",
+      "sql": ""
+    },
+    {
+      "text": "rook sacrifice checkmate",
+      "sql": ""
+    },
+    {
+      "text": "en passant promotion",
+      "sql": ""
+    },
+    {
+      "text": "stalemate and zugzwang",
+      "sql": ""
+    },
+    {
+      "text": "pin and skewer",
+      "sql": ""
+    },
+    {
+      "text": "easy",
+      "sql": ""
+    },
+    {
+      "text": "beginner intermediate",
+      "sql": ""
+    },
+    {
+      "text": "mate in 2",
+      "sql": ""
+    },
+    /* Mistral Instruction */
+    {
+      "text": "Provide a puzzle where white wins in 3 moves.",
+      "sql": ""
+    },
+    {
+      "text": "Set up a position on the board for me to solve",
+      "sql": ""
+    },
+    {
+      "text": "Find the best move for black.",
+      "sql": ""
+    },
+    {
+      "text": "Show me a puzzle that involves a queen sacrifice to deliver checkmate.",
+      "sql": ""
+    },
+    {
+      "text": "Find me a difficult puzzle that involves a knight tactic.",
+      "sql": ""
+    },
+    {
+      "text": "I want a hard puzzle featuring a knight fork.",
+      "sql": ""
+    },
+    {
+      "text": "Generate a random chess puzzle for me to solve.",
+      "sql": ""
+    },
+    {
+      "text": "Show me a puzzle that involves a pawn promotion.",
+      "sql": ""
+    },
+    {
+      "text": "Provide a puzzle where black can deliver checkmate in the next move.",
+      "sql": ""
+    },
+    /* Mistral Intention */
+    {
+      "text": "I want to practice solving studies.",
+      "sql": ""
+    },
+    {
+      "text": "I want to learn how to defend properly.",
+      "sql": ""
+    },
+    {
+      "text": "I want to improve my endgame strategy.",
+      "sql": ""
+    },
+    {
+      "text": "I love solving tactical puzzles.",
+      "sql": ""
+    },
+    {
+      "text": "I enjoy analyzing grandmaster games.",
+      "sql": ""
+    },
+    {
+      "text": "I want to practice playing blitz.",
+      "sql": ""
+    },
+    {
+      "text": "I want to learn how to play the endgame better.",
+      "sql": ""
+    },
+    {
+      "text": "I want to improve my calculation skills.",
+      "sql": ""
+    },
+    {
+      "text": "I want to practice solving chess compositions.",
+      "sql": ""
+    },
+    /**
+    * ░█▀▀░█▀▀░█▄█░▀█▀░█▀█░▀█▀
+    * ░█░█░█▀▀░█░█░░█░░█░█░░█░
+    * ░▀▀▀░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀
+    */
+    /* Gemini Keywords */
+    {
+      "text": "",
+      "sql": ""
+    },
+    {
+      "text": "",
+      "sql": ""
+    },
+    {
+      "text": "",
+      "sql": ""
+    },
+    {
+      "text": "",
+      "sql": ""
+    },
+    {
+      "text": "",
+      "sql": ""
+    },
+    {
+      "text": "",
+      "sql": ""
+    },
+    {
+      "text": "",
+      "sql": ""
+    },
+    {
+      "text": "",
+      "sql": ""
+    },
+    {
+      "text": "",
+      "sql": ""
+    },
+    /* Gemini Instruction */
+    {
+      "text": "",
+      "sql": ""
+    },
+    {
+      "text": "",
+      "sql": ""
+    },
+    {
+      "text": "",
+      "sql": ""
+    },
+    {
+      "text": "",
+      "sql": ""
+    },
+    {
+      "text": "",
+      "sql": ""
+    },
+    {
+      "text": "",
+      "sql": ""
+    },
+    {
+      "text": "",
+      "sql": ""
+    },
+    {
+      "text": "",
+      "sql": ""
+    },
+    {
+      "text": "",
+      "sql": ""
+    },
+    /* Gemini Intention */
+    {
+      "text": "",
+      "sql": ""
+    },
+    {
+      "text": "",
+      "sql": ""
+    },
+    {
+      "text": "",
+      "sql": ""
+    },
+    {
+      "text": "",
+      "sql": ""
+    },
+    {
+      "text": "",
+      "sql": ""
+    },
+    {
+      "text": "",
+      "sql": ""
+    },
+    {
+      "text": "",
+      "sql": ""
+    },
+    {
+      "text": "",
+      "sql": ""
+    },
+    {
+      "text": "",
+      "sql": ""
+    },
+    /**
+    * ░█▀█░█▀█░█▀▀░█▀█░█▀█░▀█▀
+    * ░█░█░█▀▀░█▀▀░█░█░█▀█░░█░
+    * ░▀▀▀░▀░░░▀▀▀░▀░▀░▀░▀░▀▀▀
+    */
+    /* OpenAi Keywords */
+    {
+      "text": "",
+      "sql": ""
+    },
+    {
+      "text": "",
+      "sql": ""
+    },
+    {
+      "text": "",
+      "sql": ""
+    },
+    {
+      "text": "",
+      "sql": ""
+    },
+    {
+      "text": "",
+      "sql": ""
+    },
+    {
+      "text": "",
+      "sql": ""
+    },
+    {
+      "text": "",
+      "sql": ""
+    },
+    {
+      "text": "",
+      "sql": ""
+    },
+    {
+      "text": "",
+      "sql": ""
+    },
+    /* OpenAI Instruction */
+    {
+      "text": "",
+      "sql": ""
+    },
+    {
+      "text": "",
+      "sql": ""
+    },
+    {
+      "text": "",
+      "sql": ""
+    },
+    {
+      "text": "",
+      "sql": ""
+    },
+    {
+      "text": "",
+      "sql": ""
+    },
+    {
+      "text": "",
+      "sql": ""
+    },
+    {
+      "text": "",
+      "sql": ""
+    },
+    {
+      "text": "",
+      "sql": ""
+    },
+    {
+      "text": "",
+      "sql": ""
+    },
+    /* OpenAI Instruction */
+    {
+      "text": "",
+      "sql": ""
+    },
+    {
+      "text": "",
+      "sql": ""
+    },
+    {
+      "text": "",
+      "sql": ""
+    },
+    {
+      "text": "",
+      "sql": ""
+    },
+    {
+      "text": "",
+      "sql": ""
+    },
+    {
+      "text": "",
+      "sql": ""
+    },
+    {
+      "text": "",
+      "sql": ""
+    },
+    {
+      "text": "",
+      "sql": ""
+    },
+    {
+      "text": "",
+      "sql": ""
+    }
+  ]
+}
