@@ -355,113 +355,113 @@
     */
     /* Gemini Keywords */
     {
-      "text": "",
+      "text": "Sicilian Defense, Najdorf Variation, Yugoslav Attack",
       "sql": ""
     },
     {
-      "text": "",
+      "text": "Ruy Lopez, Berlin Defense",
       "sql": ""
     },
     {
-      "text": "",
+      "text": "King's Indian Defense, Fianchetto Variation",
       "sql": ""
     },
     {
-      "text": "",
+      "text": "endgame technique and pawn promotion",
       "sql": ""
     },
     {
-      "text": "",
+      "text": "zugzwang and underpromotion",
       "sql": ""
     },
     {
-      "text": "",
+      "text": "discovered attack and deflection",
       "sql": ""
     },
     {
-      "text": "",
+      "text": "straightforward",
       "sql": ""
     },
     {
-      "text": "",
+      "text": "simple",
       "sql": ""
     },
     {
-      "text": "",
+      "text": "trivial",
       "sql": ""
     },
     /* Gemini Instruction */
     {
-      "text": "",
+      "text": "Can you give me a long, complex puzzle to solve?",
       "sql": ""
     },
     {
-      "text": "",
+      "text": "Can you give me a complex puzzle to solve?",
       "sql": ""
     },
     {
-      "text": "",
+      "text": "Can you give me a difficult puzzle to solve?",
       "sql": ""
     },
     {
-      "text": "",
+      "text": "Give me a simple puzzle that involves a queen sacrifice.",
       "sql": ""
     },
     {
-      "text": "",
+      "text": "Give me a simple puzzle that involves a kingside attack.",
       "sql": ""
     },
     {
-      "text": "",
+      "text": "Give me a simple puzzle that involves a queenside attack.",
       "sql": ""
     },
     {
-      "text": "",
+      "text": "I need a puzzle about the Sicilian Defense in the endgame.",
       "sql": ""
     },
     {
-      "text": "",
+      "text": "I need a puzzle about the Ruy Lopez in the middlegame.",
       "sql": ""
     },
     {
-      "text": "",
+      "text": "I need a puzzle about the French Defense in the endgame.",
       "sql": ""
     },
     /* Gemini Intention */
     {
-      "text": "",
+      "text": "I want to get better at defending.",
       "sql": ""
     },
     {
-      "text": "",
+      "text": "I want to get better at endgames.",
       "sql": ""
     },
     {
-      "text": "",
+      "text": "I want to get better at positional play.",
       "sql": ""
     },
     {
-      "text": "",
+      "text": "I love closed games.",
       "sql": ""
     },
     {
-      "text": "",
+      "text": "I prefer open games.",
       "sql": ""
     },
     {
-      "text": "",
+      "text": "I like tactical puzzles.",
       "sql": ""
     },
     {
-      "text": "",
+      "text": "I want to improve my endgame skills.",
       "sql": ""
     },
     {
-      "text": "",
+      "text": "I want to learn new openings.",
       "sql": ""
     },
     {
-      "text": "",
+      "text": "I want to learn new tactical motifs.",
       "sql": ""
     },
     /**
@@ -471,113 +471,113 @@
     */
     /* OpenAi Keywords */
     {
-      "text": "",
+      "text": "knight sacrifice attack",
       "sql": ""
     },
     {
-      "text": "",
+      "text": "pawn promotion endgame",
       "sql": ""
     },
     {
-      "text": "",
+      "text": "queen sacrifice tactic",
       "sql": ""
     },
     {
-      "text": "",
+      "text": "back rank checkmate",
       "sql": ""
     },
     {
-      "text": "",
+      "text": "isolani pawn structure",
       "sql": ""
     },
     {
-      "text": "",
+      "text": "king safety checkmate",
       "sql": ""
     },
     {
-      "text": "",
+      "text": "easy checkmate",
       "sql": ""
     },
     {
-      "text": "",
+      "text": "simple tactics",
       "sql": ""
     },
     {
-      "text": "",
-      "sql": ""
-    },
-    /* OpenAI Instruction */
-    {
-      "text": "",
-      "sql": ""
-    },
-    {
-      "text": "",
-      "sql": ""
-    },
-    {
-      "text": "",
-      "sql": ""
-    },
-    {
-      "text": "",
-      "sql": ""
-    },
-    {
-      "text": "",
-      "sql": ""
-    },
-    {
-      "text": "",
-      "sql": ""
-    },
-    {
-      "text": "",
-      "sql": ""
-    },
-    {
-      "text": "",
-      "sql": ""
-    },
-    {
-      "text": "",
+      "text": "quick stalemate",
       "sql": ""
     },
     /* OpenAI Instruction */
     {
-      "text": "",
+      "text": "Please set up a complex endgame scenario.",
       "sql": ""
     },
     {
-      "text": "",
+      "text": "Try solving a queen and pawn versus king endgame.",
       "sql": ""
     },
     {
-      "text": "",
+      "text": "Set up a position with a forced checkmate in three moves.",
       "sql": ""
     },
     {
-      "text": "",
+      "text": "Show me a puzzle with a back rank checkmate.",
       "sql": ""
     },
     {
-      "text": "",
+      "text": "Provide a puzzle with a queen sacrifice for checkmate.",
       "sql": ""
     },
     {
-      "text": "",
+      "text": "Give me a puzzle where I can promote a pawn.",
       "sql": ""
     },
     {
-      "text": "",
+      "text": "Provide a puzzle with a king and pawn endgame.",
       "sql": ""
     },
     {
-      "text": "",
+      "text": "Give me a puzzle that ends with a smothered mate.",
       "sql": ""
     },
     {
-      "text": "",
+      "text": "Give me a puzzle that involves a forced rook checkmate.",
+      "sql": ""
+    },
+    /* OpenAI Instruction */
+    {
+      "text": "I want to improve my endgame technique.",
+      "sql": ""
+    },
+    {
+      "text": "I want to focus on defensive strategies.",
+      "sql": ""
+    },
+    {
+      "text": "I want to improve my pawn structure.",
+      "sql": ""
+    },
+    {
+      "text": "I love studying endgame positions.",
+      "sql": ""
+    },
+    {
+      "text": "I enjoy exploring tactical sacrifices.",
+      "sql": ""
+    },
+    {
+      "text": "I prefer analyzing king safety and checkmates.",
+      "sql": ""
+    },
+    {
+      "text": "I want to master endgames with just a king and pawn.",
+      "sql": ""
+    },
+    {
+      "text": "I want to improve my calculation skills for complex tactics.",
+      "sql": ""
+    },
+    {
+      "text": "I want to practice handling endgames with minimal material.",
       "sql": ""
     }
   ]
