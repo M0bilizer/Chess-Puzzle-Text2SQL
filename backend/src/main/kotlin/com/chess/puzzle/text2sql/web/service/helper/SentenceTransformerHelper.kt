@@ -52,19 +52,4 @@ class SentenceTransformerHelper(
             ResultWrapper.Error.ResponseError
         }
     }
-    fun flippingMatrix(matrix: Array<Array<Int>>): Int {
-        var total = 0
-        var size = matrix.size / 2
-        for (row in 0 until size) {
-            for (col in 0 until size) {
-                var max: Int = Integer.MIN_VALUE
-                max = if (max < matrix[row][col]) matrix[row][col] else max
-                max = if (max < matrix[row][2*size - col - 1]) matrix[row][2*size - col - 1] else max
-                max = if (max < matrix[2 * size - row - 1][col]) matrix[2 * size - row - 1][col] else max
-                max = if (max < matrix[2 * size - row - 1][2 * size - col - 1])matrix[2 * size - row - 1][2 * size - col - 1] else max
-                total += max
-            }
-        }
-        return total
-    }
 }
