@@ -10,4 +10,4 @@ RUN apt-get update && apt-get -y install curl
 RUN chmod +x /app/start.sh
 
 EXPOSE 8000
-CMD ["/app/start.sh"]
+CMD ["bash","/app/start.sh"]

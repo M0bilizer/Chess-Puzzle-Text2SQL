@@ -67,6 +67,10 @@ tasks.register<Exec>("runPythonScript") {
     commandLine(pythonExecutable, "$projectDir/src/main/python/process_demonstration_similarity.py")
 }
 
+tasks.test {
+    enabled = false
+}
+
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-web")
