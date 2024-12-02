@@ -115,7 +115,7 @@
     {
       "text": "I'd like to prepare a plan to outplay my opponent who consistently chooses the Sicilian Defense",
       "sql": "b"
-    }
+    },
     /**
     * ░▄▀▄░█░█░█▀▀░█▀█
     * ░█\█░█▄█░█▀▀░█░█
@@ -231,7 +231,7 @@
     {
       "text":"I want to improve my skills in the French Defense.",
       "sql": ""
-    }
+    },
     /**
     * ░█▄█░▀█▀░█▀▀░▀█▀░█▀▄░█▀█░█░░
     * ░█░█░░█░░▀▀█░░█░░█▀▄░█▀█░█░░

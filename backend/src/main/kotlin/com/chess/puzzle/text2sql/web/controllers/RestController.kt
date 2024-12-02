@@ -2,6 +2,7 @@ package com.chess.puzzle.text2sql.web.controllers
 
 import com.chess.puzzle.text2sql.web.entities.helper.QueryRequest
 import com.chess.puzzle.text2sql.web.entities.helper.ResultWrapper
+import com.chess.puzzle.text2sql.web.service.BenchmarkService
 import com.chess.puzzle.text2sql.web.service.PuzzleService
 import com.chess.puzzle.text2sql.web.service.Text2SQLService
 import com.chess.puzzle.text2sql.web.service.helper.LargeLanguageApiHelper
@@ -22,6 +23,8 @@ private val logger = KotlinLogging.logger {}
 class RestController(
     @Autowired private val puzzleService: PuzzleService,
     @Autowired private val text2SQLService: Text2SQLService,
+    // testing purpose
+    @Autowired private val benchmarkService: BenchmarkService,
     // debugging purpose
     @Autowired private val sentenceTransformerHelper: SentenceTransformerHelper,
     @Autowired private val languageApiHelper: LargeLanguageApiHelper,
@@ -88,5 +91,12 @@ class RestController(
             is ResultWrapper.Success -> success(result.data)
             is ResultWrapper.Error -> error("error")
         }
+    }
+
+    @GetMapping("/api/test")
+    suspend fun test(): String {
+        val benchmark = benchmarkService.getBenchmark()
+        print(benchmark)
+        return "ok"
     }
 }
