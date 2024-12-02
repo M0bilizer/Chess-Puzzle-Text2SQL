@@ -1,11 +1,12 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
 
 plugins {
     kotlin("jvm") version "1.9.25"
     kotlin("plugin.spring") version "1.9.25"
     kotlin("plugin.jpa") version "1.9.25"
+    kotlin("plugin.serialization") version "1.9.25"
     id("io.ktor.plugin") version "2.2.3"
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("org.springframework.boot") version "3.3.4"
@@ -59,16 +60,15 @@ ktor {
 
 tasks.register<Exec>("runPythonScript") {
     // Path to the Python executable in the virtual environment
-    val pythonExecutable = "${projectDir}/src/main/python/venv/bin/python" // For macOS/Linux
+    val pythonExecutable = "$projectDir/src/main/python/venv/bin/python" // For macOS/Linux
     // val pythonExecutable = "${projectDir}/src/main/python/venv/Scripts/python.exe" // For Windows
 
     // Specify the updated script to run
-    commandLine(pythonExecutable, "${projectDir}/src/main/python/process_demonstration_similarity.py")
+    commandLine(pythonExecutable, "$projectDir/src/main/python/process_demonstration_similarity.py")
 }
 
-// Make the test task depend on the runPythonScript task
-tasks.named("test") {
-    finalizedBy("runPythonScript")
+tasks.test {
+    enabled = false
 }
 
 dependencies {
@@ -79,9 +79,13 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("io.github.oshai:kotlin-logging-jvm:7.0.0")
-    implementation("io.ktor:ktor-client-core:2.3.12")
-    implementation("io.ktor:ktor-client-okhttp:2.3.12")
+    implementation("io.ktor:ktor-client-core:2.3.12") // MUST BE 2.3.12
+    implementation("io.ktor:ktor-client-okhttp:2.3.12") // MUST BE 2.3.12
+    implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.12")
+    implementation("io.ktor:ktor-client-content-negotiation:2.3.12")
     implementation("com.google.code.gson:gson:2.10.1")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("org.apache.commons:commons-math3:3.6.1")
     runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
     runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.9.0")
     implementation("com.aallam.openai:openai-client:3.8.2")

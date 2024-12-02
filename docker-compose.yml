@@ -24,6 +24,13 @@ services:
     networks:
       - app-network
     
+  fastapi:
+    image: python-fastapi:latest
+    container_name: web_fastapi
+    ports:
+      - "8000:8000"
+    networks:
+      - app-network
 networks:
   app-network:
     driver: bridge
