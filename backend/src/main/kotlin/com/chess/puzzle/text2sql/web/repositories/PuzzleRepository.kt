@@ -10,7 +10,8 @@ interface PuzzleRepository : JpaRepository<Puzzle, String>, CustomPuzzleReposito
     // @Query(value = "SELECT * FROM Puzzle ORDER BY RAND() LIMIT :n", nativeQuery=true)
     // http://jan.kneschke.de/projects/mysql/order-by-rand/
     @Query(
-        value = """
+        value =
+            """
         SELECT *
         FROM t_puzzle AS r1
         JOIN (SELECT CEIL(RAND() * (SELECT MAX(id) FROM t_puzzle)) AS random_id) AS r2

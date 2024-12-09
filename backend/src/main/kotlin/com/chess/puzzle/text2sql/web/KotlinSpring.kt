@@ -10,8 +10,7 @@ private val logger = KotlinLogging.logger {}
 
 @SpringBootApplication
 class KotlinSpring {
-    @Value("\${spring.datasource.url}")
-    lateinit var dataSourceURL: String
+    @Value("\${spring.datasource.url}") lateinit var dataSourceURL: String
 
     @PostConstruct
     fun init() {

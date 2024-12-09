@@ -16,7 +16,10 @@ class CustomTimeoutInterpreter : HandlerInterceptor {
             val method = handler.method
             val customTimeout = method.getAnnotation(CustomTimeout::class.java)
             if (customTimeout != null) {
-                request.setAttribute("org.springframework.web.context.request.async.WebAsyncManager.TIMEOUT_MANAGER", customTimeout.value)
+                request.setAttribute(
+                    "org.springframework.web.context.request.async.WebAsyncManager.TIMEOUT_MANAGER",
+                    customTimeout.value,
+                )
             }
         }
         return true

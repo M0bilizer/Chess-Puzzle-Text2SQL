@@ -24,18 +24,10 @@ import org.springframework.stereotype.Service
 private val logger = KotlinLogging.logger {}
 
 @Service
-class SentenceTransformerHelper(
-    @Autowired
-    private val property: Property,
-) {
+class SentenceTransformerHelper(@Autowired private val property: Property) {
     private val url = property.sentenceTransformerUrl
     private val partialUrl = property.sentenceTransformerPartialUrl
-    private val client =
-        HttpClient(OkHttp) {
-            install(ContentNegotiation) {
-                json()
-            }
-        }
+    private val client = HttpClient(OkHttp) { install(ContentNegotiation) { json() } }
 
     suspend fun getSimilarDemonstration(input: String): ResultWrapper<out SimilarDemonstration> {
         val jsonString = Gson().toJson(QueryRequest(input))
@@ -56,7 +48,8 @@ class SentenceTransformerHelper(
                             ${demos[1].logTruncate()},
                             ${demos[2].logTruncate()}]"
                     }
-                """.trimIndent()
+                """
+                    .trimIndent()
             }
             ResultWrapper.Success(demos)
         } else {
@@ -74,7 +67,9 @@ class SentenceTransformerHelper(
     }
 
     // Benchmarking purposes
-    suspend fun getPartialSimilarDemonstration(input: String): ResultWrapper<out SimilarDemonstration> {
+    suspend fun getPartialSimilarDemonstration(
+        input: String
+    ): ResultWrapper<out SimilarDemonstration> {
         val jsonString = Gson().toJson(QueryRequest(input))
         val response: HttpResponse =
             client.post(partialUrl) {

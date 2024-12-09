@@ -1,6 +1,5 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
 
 plugins {
     kotlin("jvm") version "1.9.25"
@@ -11,7 +10,7 @@ plugins {
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("org.springframework.boot") version "3.3.4"
     id("io.spring.dependency-management") version "1.1.6"
-    id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
+    id("com.ncorti.ktfmt.gradle") version "0.21.0"
 }
 
 group = "com.chess.puzzle.text2sql"
@@ -40,22 +39,15 @@ tasks.withType<ShadowJar> {
     isZip64 = true
 }
 
-ktlint {
-    verbose.set(true)
-    outputToConsole.set(true)
-    coloredOutput.set(true)
-    reporters {
-        reporter(ReporterType.HTML)
-    }
-    filter {
-        exclude("**/style-violations.kt")
-    }
-}
-
 ktor {
     fatJar {
         archiveFileName.set("fat.jar")
     }
+}
+
+ktfmt {
+    // KotlinLang style - 4 space indentation - From kotlinlang.org/docs/coding-conventions.html
+    kotlinLangStyle()
 }
 
 tasks.register<Exec>("runPythonScript") {

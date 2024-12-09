@@ -23,7 +23,9 @@ class PuzzleService(
         val isValid = sqlValidator.isValidSql(sqlCommand)
         val isAllowed = sqlValidator.isAllowed(sqlCommand)
         if (!isValid || !isAllowed) {
-            logger.warn { "Processing Query { sqlCommand = $sqlCommand } -> ValidationError(isValid = $isValid, isAllowed = $isAllowed)" }
+            logger.warn {
+                "Processing Query { sqlCommand = $sqlCommand } -> ValidationError(isValid = $isValid, isAllowed = $isAllowed)"
+            }
             return ResultWrapper.Error.ValidationError(isValid, isAllowed)
         }
 
@@ -32,7 +34,9 @@ class PuzzleService(
             logger.info { "Processing Query { sqlCommand = $sqlCommand } -> OK" }
             ResultWrapper.Success(result)
         } catch (e: Exception) {
-            logger.warn { "Processing Query { sqlCommand = $sqlCommand } -> HibernateError(message = $e.message)" }
+            logger.warn {
+                "Processing Query { sqlCommand = $sqlCommand } -> HibernateError(message = $e.message)"
+            }
             ResultWrapper.Error.HibernateError(e.message)
         }
     }

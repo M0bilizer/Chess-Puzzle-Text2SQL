@@ -8,13 +8,13 @@ import org.springframework.stereotype.Repository
 
 @Repository
 class CustomPuzzleRepositoryImpl : CustomPuzzleRepository {
-    @PersistenceContext
-    private lateinit var entityManager: EntityManager
+    @PersistenceContext private lateinit var entityManager: EntityManager
 
     @Transactional
     override fun executeSqlQuery(sqlCommand: String): List<Puzzle> {
         return try {
-            entityManager.createNativeQuery(sqlCommand, Puzzle::class.java).resultList as List<Puzzle>
+            entityManager.createNativeQuery(sqlCommand, Puzzle::class.java).resultList
+                as List<Puzzle>
         } catch (ex: Exception) {
             throw RuntimeException("Oops")
         }

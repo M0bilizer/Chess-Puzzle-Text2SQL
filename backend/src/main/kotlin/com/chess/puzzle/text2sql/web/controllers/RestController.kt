@@ -32,9 +32,7 @@ class RestController(
     @Autowired private val largeLanguageApiHelper: LargeLanguageApiHelper,
 ) {
     @PostMapping("/api/queryPuzzle")
-    suspend fun queryPuzzle(
-        @RequestBody input: QueryRequest,
-    ): ResponseEntity<String> {
+    suspend fun queryPuzzle(@RequestBody input: QueryRequest): ResponseEntity<String> {
         logger.info { "Received POST on /api/queryPuzzle { input = $input }" }
         return when (val sql = text2SQLService.convertToSQL((input.query))) {
             is ResultWrapper.Error -> error(null)
@@ -58,9 +56,7 @@ class RestController(
     }
 
     @PostMapping("/api/debug/sql")
-    fun sql(
-        @RequestBody input: QueryRequest,
-    ): ResponseEntity<String> {
+    fun sql(@RequestBody input: QueryRequest): ResponseEntity<String> {
         val sqlCommand = input.query
         logger.info { "Received POST on /api/debug/sql { input = $input }" }
         return when (val result = puzzleService.processQuery(sqlCommand)) {
@@ -72,9 +68,7 @@ class RestController(
     }
 
     @PostMapping("/api/debug/sentenceTransformer")
-    suspend fun sentenceTransformer(
-        @RequestBody input: QueryRequest,
-    ): ResponseEntity<String> {
+    suspend fun sentenceTransformer(@RequestBody input: QueryRequest): ResponseEntity<String> {
         val request = input.query
         logger.info { "Received POST on /api/debug/sentenceTransformer { input = $input }" }
         return when (val result = sentenceTransformerHelper.getSimilarDemonstration(request)) {
@@ -87,9 +81,7 @@ class RestController(
     }
 
     @PostMapping("/api/debug/text2sql")
-    suspend fun text2sql(
-        @RequestBody input: QueryRequest,
-    ): ResponseEntity<String> {
+    suspend fun text2sql(@RequestBody input: QueryRequest): ResponseEntity<String> {
         val query = input.query
         logger.info { "Received POST on /api/debug/text2sql { input = $input }" }
         return when (val result = text2SQLService.convertToSQL(query)) {
@@ -99,9 +91,7 @@ class RestController(
     }
 
     @PostMapping("/api/debug/llm")
-    suspend fun llm(
-        @RequestBody input: QueryRequest,
-    ): ResponseEntity<String> {
+    suspend fun llm(@RequestBody input: QueryRequest): ResponseEntity<String> {
         val prompt = input.query
         logger.info { "Received POST on /api/debug/llm { input = $input }" }
         return when (val result = largeLanguageApiHelper.callDeepSeek(prompt)) {

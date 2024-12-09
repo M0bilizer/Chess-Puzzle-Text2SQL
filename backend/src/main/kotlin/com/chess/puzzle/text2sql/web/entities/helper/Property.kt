@@ -5,14 +5,11 @@ import org.springframework.stereotype.Component
 
 @Component
 class Property {
-    @Value("\${api_key}")
-    lateinit var apiKey: String
+    @Value("\${api_key}") lateinit var apiKey: String
 
-    @Value("\${base_url}")
-    lateinit var baseUrl: String
+    @Value("\${base_url}") lateinit var baseUrl: String
 
-    @Value("\${sentence_transformer_url}")
-    lateinit var sentenceTransformerUrl: String
+    @Value("\${sentence_transformer_url}") lateinit var sentenceTransformerUrl: String
 
     val sentenceTransformerPartialUrl: String
         get() = "$sentenceTransformerUrl/partial"

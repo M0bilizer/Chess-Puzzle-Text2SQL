@@ -5,7 +5,5 @@ import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
 class KotlinSpringTests {
-    @Test
-    fun contextLoads() {
-    }
+    @Test fun contextLoads() {}
 }

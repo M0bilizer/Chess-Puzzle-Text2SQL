@@ -11,21 +11,20 @@ import com.chess.puzzle.text2sql.web.service.ModelName.Full
 import com.chess.puzzle.text2sql.web.service.ModelName.Partial
 import com.chess.puzzle.text2sql.web.utility.withLogLevel
 import io.github.oshai.kotlinlogging.KotlinLogging
+import java.io.File
 import kotlinx.serialization.json.Json
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
-import java.io.File
 
 private val logger = KotlinLogging.logger {}
 
 @Service
-class BenchmarkService(
-    @Autowired private val text2SQLService: Text2SQLService,
-) {
+class BenchmarkService(@Autowired private val text2SQLService: Text2SQLService) {
     private val jsonPath = "src/main/resources/data/benchmark.json"
     private val cleanedJson = File(jsonPath).readText().replace(Regex("/\\*(.|\\R)*?\\*/"), "")
-    private val benchmarkEntryList: List<BenchmarkEntry> = Json.decodeFromString<List<BenchmarkEntry>>(cleanedJson)
+    private val benchmarkEntryList: List<BenchmarkEntry> =
+        Json.decodeFromString<List<BenchmarkEntry>>(cleanedJson)
 
     @Async
     @CustomTimeout(360000)
@@ -40,17 +39,14 @@ class BenchmarkService(
                         full = getResult(text, Full),
                         partial = getResult(text, Partial),
                         baseline = getResult(text, Baseline),
-                    ),
+                    )
                 )
             }
         }
         return benchmarkResultList
     }
 
-    private suspend fun getResult(
-        text: String,
-        modelName: ModelName,
-    ): SqlResult {
+    private suspend fun getResult(text: String, modelName: ModelName): SqlResult {
         println("${modelName.name}: $text")
         return when (modelName) {
             Full -> {
@@ -81,4 +77,8 @@ class BenchmarkService(
     }
 }
 
-private enum class ModelName { Full, Partial, Baseline }
+private enum class ModelName {
+    Full,
+    Partial,
+    Baseline,
+}

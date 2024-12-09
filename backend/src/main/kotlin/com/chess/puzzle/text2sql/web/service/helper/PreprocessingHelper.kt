@@ -2,9 +2,9 @@ package com.chess.puzzle.text2sql.web.service.helper
 
 import com.chess.puzzle.text2sql.web.entities.helper.Demonstration
 import io.github.oshai.kotlinlogging.KotlinLogging
-import org.springframework.stereotype.Service
 import java.nio.file.Files
 import java.nio.file.Paths
+import org.springframework.stereotype.Service
 
 private val logger = KotlinLogging.logger {}
 
@@ -12,10 +12,7 @@ private val logger = KotlinLogging.logger {}
 class PreprocessingHelper {
     private val layoutPath = "src/main/resources/prompt/inferencePromptTemplate.md"
 
-    fun processPrompt(
-        userPrompt: String,
-        demonstrations: List<Demonstration>,
-    ): String {
+    fun processPrompt(userPrompt: String, demonstrations: List<Demonstration>): String {
         val processedLayout = userPrompt.loadLayout()
         return processedLayout.loadDemonstrations(demonstrations)
     }
