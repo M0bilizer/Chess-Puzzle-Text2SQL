@@ -6,4 +6,4 @@ pip install fastapi[standard]
 pip install pydantic
 pip install sentence-transformers
 pip install commentjson
-fastapi run src/main.py
+uvicorn src.main:app --reload

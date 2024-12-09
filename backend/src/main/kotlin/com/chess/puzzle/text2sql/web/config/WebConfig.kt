@@ -2,6 +2,7 @@ package com.chess.puzzle.text2sql.web.config
 
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.servlet.config.annotation.CorsRegistry
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
 @Configuration
@@ -12,5 +13,9 @@ class WebConfig : WebMvcConfigurer {
             .allowedMethods("GET", "POST")
             .allowedHeaders("*")
             .allowCredentials(true)
+    }
+
+    override fun addInterceptors(registry: InterceptorRegistry) {
+        registry.addInterceptor(CustomTimeoutInterpreter())
     }
 }

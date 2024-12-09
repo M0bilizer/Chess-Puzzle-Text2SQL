@@ -13,4 +13,7 @@ class Property {
 
     @Value("\${sentence_transformer_url}")
     lateinit var sentenceTransformerUrl: String
+
+    val sentenceTransformerPartialUrl: String
+        get() = "$sentenceTransformerUrl/partial"
 }

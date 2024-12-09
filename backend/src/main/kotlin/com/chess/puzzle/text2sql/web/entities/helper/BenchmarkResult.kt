@@ -1,0 +1,11 @@
+package com.chess.puzzle.text2sql.web.entities.helper
+
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class BenchmarkResult(
+    val text: String,
+    val full: SqlResult,
+    val partial: SqlResult,
+    val baseline: SqlResult,
+)

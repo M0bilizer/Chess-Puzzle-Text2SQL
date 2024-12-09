@@ -31,7 +31,6 @@ class PreprocessingHelper {
     }
 
     private fun String.loadDemonstrations(similarDemonstration: List<Demonstration>): String {
-        println(similarDemonstration)
         val textArray: Array<String> = similarDemonstration.map { it.text }.toTypedArray()
         val sqlArray: Array<String> = similarDemonstration.map { it.sql }.toTypedArray()
 
@@ -49,5 +48,10 @@ class PreprocessingHelper {
             }
         }
         return sb.toString()
+    }
+
+    // Benchmarking Purpose
+    fun processBaselinePrompt(userPrompt: String): String {
+        return userPrompt.loadLayout()
     }
 }

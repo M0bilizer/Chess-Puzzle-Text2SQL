@@ -13,22 +13,54 @@ private val logger = KotlinLogging.logger {}
 
 @Service
 class Text2SQLService(
-    @Autowired private val sentenceTransformerService: SentenceTransformerHelper,
-    @Autowired private val preprocessingService: PreprocessingHelper,
-    @Autowired private val largeLanguageApiService: LargeLanguageApiHelper,
+    @Autowired private val sentenceTransformerHelper: SentenceTransformerHelper,
+    @Autowired private val preprocessingHelper: PreprocessingHelper,
+    @Autowired private val largeLanguageApiHelper: LargeLanguageApiHelper,
 ) {
     suspend fun convertToSQL(query: String): ResultWrapper<out String> {
         val demonstrations: List<Demonstration>
-        when (val result = sentenceTransformerService.getSimilarDemonstration(query)) {
+        when (val result = sentenceTransformerHelper.getSimilarDemonstration(query)) {
             is ResultWrapper.Success -> demonstrations = result.data
             else -> {
                 logger.error { "oops" }
                 return ResultWrapper.Error.ResponseError
             }
         }
-        val prompt = preprocessingService.processPrompt(query, demonstrations)
-        return when (val result = largeLanguageApiService.callDeepSeek(prompt)) {
-            is ResultWrapper.Success -> result
+        val promptTemplate = preprocessingHelper.processPrompt(query, demonstrations)
+        return when (val result = largeLanguageApiHelper.callDeepSeek(query, promptTemplate)) {
+            is ResultWrapper.Success -> ResultWrapper.Success(result.data)
+            else -> {
+                logger.error { "oops" }
+                return ResultWrapper.Error.ResponseError
+            }
+        }
+    }
+
+    // Benchmarking purposes
+
+    suspend fun partialConvertToSQL(query: String): ResultWrapper<out String> {
+        val demonstrations: List<Demonstration>
+        when (val result = sentenceTransformerHelper.getPartialSimilarDemonstration(query)) {
+            is ResultWrapper.Success -> demonstrations = result.data
+            else -> {
+                logger.error { "oops" }
+                return ResultWrapper.Error.ResponseError
+            }
+        }
+        val promptTemplate = preprocessingHelper.processPrompt(query, demonstrations)
+        return when (val result = largeLanguageApiHelper.callDeepSeek(query, promptTemplate)) {
+            is ResultWrapper.Success -> ResultWrapper.Success(result.data)
+            else -> {
+                logger.error { "oops" }
+                return ResultWrapper.Error.ResponseError
+            }
+        }
+    }
+
+    suspend fun baselineConvertToSQL(query: String): ResultWrapper<out String> {
+        val promptTemplate = preprocessingHelper.processBaselinePrompt(query)
+        return when (val result = largeLanguageApiHelper.callDeepSeek(query, promptTemplate)) {
+            is ResultWrapper.Success -> ResultWrapper.Success(result.data)
             else -> {
                 logger.error { "oops" }
                 return ResultWrapper.Error.ResponseError

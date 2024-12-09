@@ -10,6 +10,8 @@ import com.chess.puzzle.text2sql.web.service.helper.SentenceTransformerHelper
 import com.chess.puzzle.text2sql.web.utility.ResponseUtils.error
 import com.chess.puzzle.text2sql.web.utility.ResponseUtils.success
 import io.github.oshai.kotlinlogging.KotlinLogging
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -27,7 +29,7 @@ class RestController(
     @Autowired private val benchmarkService: BenchmarkService,
     // debugging purpose
     @Autowired private val sentenceTransformerHelper: SentenceTransformerHelper,
-    @Autowired private val languageApiHelper: LargeLanguageApiHelper,
+    @Autowired private val largeLanguageApiHelper: LargeLanguageApiHelper,
 ) {
     @PostMapping("/api/queryPuzzle")
     suspend fun queryPuzzle(
@@ -76,8 +78,23 @@ class RestController(
         val request = input.query
         logger.info { "Received POST on /api/debug/sentenceTransformer { input = $input }" }
         return when (val result = sentenceTransformerHelper.getSimilarDemonstration(request)) {
-            is ResultWrapper.Success -> success(result.data)
+            is ResultWrapper.Success -> {
+                val (_, demonstrations) = result.data
+                success(demonstrations)
+            }
             is ResultWrapper.Error -> error("nope")
+        }
+    }
+
+    @PostMapping("/api/debug/text2sql")
+    suspend fun text2sql(
+        @RequestBody input: QueryRequest,
+    ): ResponseEntity<String> {
+        val query = input.query
+        logger.info { "Received POST on /api/debug/text2sql { input = $input }" }
+        return when (val result = text2SQLService.convertToSQL(query)) {
+            is ResultWrapper.Success -> success(result.data)
+            is ResultWrapper.Error -> error("error")
         }
     }
 
@@ -87,16 +104,17 @@ class RestController(
     ): ResponseEntity<String> {
         val prompt = input.query
         logger.info { "Received POST on /api/debug/llm { input = $input }" }
-        return when (val result = languageApiHelper.callDeepSeek(prompt)) {
+        return when (val result = largeLanguageApiHelper.callDeepSeek(prompt)) {
             is ResultWrapper.Success -> success(result.data)
             is ResultWrapper.Error -> error("error")
         }
     }
 
-    @GetMapping("/api/test")
-    suspend fun test(): String {
+    // Benchmarking purposes
+    @GetMapping("/api/benchmark")
+    suspend fun benchmark(): String {
         val benchmark = benchmarkService.getBenchmark()
-        print(benchmark)
-        return "ok"
+        val jsonString = Json.encodeToString(benchmark)
+        return jsonString
     }
 }
