@@ -19,6 +19,14 @@ import org.springframework.stereotype.Service
 
 private val logger = KotlinLogging.logger {}
 
+/**
+ * A helper service for interacting with the DeepSeek large language model API.
+ *
+ * This class is responsible for:
+ * - Making HTTP requests to the DeepSeek API.
+ * - Converting user queries into SQL statements using the API.
+ * - Handling the API response and returning a [ResultWrapper] object.
+ */
 @Service
 class LargeLanguageApiHelper(@Autowired private val property: Property) {
     private val apiKey = property.apiKey
@@ -28,11 +36,27 @@ class LargeLanguageApiHelper(@Autowired private val property: Property) {
     private val client: OpenAI =
         OpenAI(token = apiKey, host = OpenAIHost(baseUrl), logging = loggingConfig)
 
+    /**
+     * Sends a query to the DeepSeek API and returns the result as a [ResultWrapper].
+     *
+     * This method is a shorthand for [callDeepSeek] with no prompt template.
+     *
+     * @param query The user's query to be converted into SQL.
+     * @return A [ResultWrapper] containing the SQL query or an error.
+     */
     suspend fun callDeepSeek(query: String): ResultWrapper<out String> {
         val loggingString = if (query.length > 20) query.substring(0, 20) else query
         return this.callDeepSeek(loggingString, query)
     }
 
+    /**
+     * Sends a query and a custom prompt template to the DeepSeek API and returns the result as a
+     * [ResultWrapper].
+     *
+     * @param query The user's query to be converted into SQL.
+     * @param promptTemplate A custom prompt template to be sent to the API.
+     * @return A [ResultWrapper] containing the SQL query or an error.
+     */
     suspend fun callDeepSeek(query: String, promptTemplate: String): ResultWrapper<out String> {
         val chatCompletionRequest =
             ChatCompletionRequest(
@@ -67,12 +91,25 @@ class LargeLanguageApiHelper(@Autowired private val property: Property) {
         }
     }
 
+    /**
+     * Strips unnecessary characters and formatting from the API response to extract the SQL query.
+     *
+     * DeepSeek might add unnecessary characters (e.g., Markdown formatting) to the response, which
+     * this method removes.
+     *
+     * @param string The raw response string from the API.
+     * @return The cleaned SQL query.
+     */
     private fun stripUnnecessary(string: String): String {
         return string
             .substringAfter("```")
             .substringBefore("```")
             .substringAfter("\n")
             .substringBefore("\n")
+            .substringAfter("sql: ")
             .substringBefore(";")
+            .substringBefore("\r")
+            .substringAfter("\"")
+            .substringBefore("\"")
     }
 }

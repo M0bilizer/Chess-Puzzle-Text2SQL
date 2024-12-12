@@ -3,14 +3,53 @@ package com.chess.puzzle.text2sql.web.utility
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.springframework.http.ResponseEntity
 
+/**
+ * Utility class for creating standardized JSON responses for HTTP response entities.
+ *
+ * This class provides methods to generate JSON responses with a consistent structure, ensuring that
+ * all responses contain a "status" field (indicating success or error) and a "data" field
+ * (containing the response payload). Note that the "status" field is different from the HTTP
+ * response status.
+ *
+ * This utility is designed to simplify the creation of HTTP responses and maintain consistency
+ * across the application.
+ */
 object ResponseUtils {
+
+    /**
+     * The [jacksonObjectMapper] instance used to serialize maps into JSON strings. This mapper is
+     * configured to work with Kotlin data classes and is used to generate the JSON response strings
+     * for HTTP responses.
+     */
     private val objectMapper = jacksonObjectMapper()
 
+    /**
+     * Creates a success HTTP response with a JSON payload.
+     *
+     * This method generates a JSON response with the "status" field set to "success" and the "data"
+     * field containing the provided data. The response is serialized into a JSON string using the
+     * [jacksonObjectMapper]. Note that the "status" field is different from the HTTP response
+     * status.
+     *
+     * @param data The data to include in the response. This can be of any type.
+     * @return A [ResponseEntity] containing the JSON response string.
+     */
     fun <T> success(data: T): ResponseEntity<String> {
         val response = mapOf("status" to "success", "data" to data)
         return ResponseEntity.ok(objectMapper.writeValueAsString(response))
     }
 
+    /**
+     * Creates an error HTTP response with a JSON payload.
+     *
+     * This method generates a JSON response with the "status" field set to "error" and the "data"
+     * field containing the provided data. The response is serialized into a JSON string using the
+     * [jacksonObjectMapper]. Note that the "status" field is different from the HTTP response
+     * status.
+     *
+     * @param data The data to include in the response. This can be of any type.
+     * @return A [ResponseEntity] containing the JSON response string.
+     */
     fun <T> error(data: T): ResponseEntity<String> {
         val response = mapOf("status" to "error", "data" to data)
         return ResponseEntity.ok(objectMapper.writeValueAsString(response))

@@ -43,9 +43,7 @@ async def find_similar(request: Request):
 
     text_embedding = model.encode(input_text)
 
-    cosine_similarities = [
-        cosine(text_embedding, demo) for demo in demo_embedding
-    ]
+    cosine_similarities = [cosine(text_embedding, demo) for demo in demo_embedding]
 
     top_k_indices = torch.tensor(cosine_similarities).topk(3).indices.tolist()
     similar_demonstrations = [demonstrations[i] for i in top_k_indices]

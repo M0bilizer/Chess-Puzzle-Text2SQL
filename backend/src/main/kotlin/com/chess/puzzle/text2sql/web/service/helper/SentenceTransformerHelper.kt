@@ -23,12 +23,30 @@ import org.springframework.stereotype.Service
 
 private val logger = KotlinLogging.logger {}
 
+/**
+ * A helper service for interacting with the sentence transformer microservice.
+ *
+ * This class is responsible for:
+ * - Making HTTP requests to the sentence transformer microservice.
+ * - Finding similar demonstrations based on user input.
+ * - Handling the API response and returning a [ResultWrapper] object.
+ */
 @Service
 class SentenceTransformerHelper(@Autowired private val property: Property) {
     private val url = property.sentenceTransformerUrl
     private val partialUrl = property.sentenceTransformerPartialUrl
     private val client = HttpClient(OkHttp) { install(ContentNegotiation) { json() } }
 
+    /**
+     * Finds similar demonstrations based on the user's input using schema masking.
+     *
+     * This method sends the input to the sentence transformer microservice and retrieves a list of
+     * similar demonstrations. The response includes a masked query and the top 3 similar
+     * demonstrations.
+     *
+     * @param input The user's input string to find similar demonstrations for.
+     * @return A [ResultWrapper] containing the list of similar demonstrations or an error.
+     */
     suspend fun getSimilarDemonstration(input: String): ResultWrapper<out SimilarDemonstration> {
         val jsonString = Gson().toJson(QueryRequest(input))
         val response: HttpResponse =
@@ -58,6 +76,14 @@ class SentenceTransformerHelper(@Autowired private val property: Property) {
         }
     }
 
+    /**
+     * Truncates the demonstration text for logging purposes.
+     *
+     * This helper function ensures that the demonstration text does not clutter the logs. If the
+     * text is longer than 10 characters, it is truncated and appended with "...".
+     *
+     * @return The truncated demonstration text.
+     */
     private fun Demonstration.logTruncate(): String {
         return if (this.text.length < 10) {
             this.text
@@ -66,7 +92,15 @@ class SentenceTransformerHelper(@Autowired private val property: Property) {
         }
     }
 
-    // Benchmarking purposes
+    /**
+     * Finds similar demonstrations based on the user's input without schema masking.
+     *
+     * This method is used for benchmarking purposes and sends the input to the sentence transformer
+     * microservice without schema masking.
+     *
+     * @param input The user's input string to find similar demonstrations for.
+     * @return A [ResultWrapper] containing the list of similar demonstrations or an error.
+     */
     suspend fun getPartialSimilarDemonstration(
         input: String
     ): ResultWrapper<out SimilarDemonstration> {
@@ -97,4 +131,9 @@ class SentenceTransformerHelper(@Autowired private val property: Property) {
     }
 }
 
+/**
+ * A type alias for a list of [Demonstration] objects.
+ *
+ * This is used to simplify the return type of methods that return similar demonstrations.
+ */
 typealias SimilarDemonstration = List<Demonstration>
