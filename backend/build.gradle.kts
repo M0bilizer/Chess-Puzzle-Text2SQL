@@ -1,4 +1,5 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -11,10 +12,11 @@ plugins {
     id("org.springframework.boot") version "3.3.4"
     id("io.spring.dependency-management") version "1.1.6"
     id("com.ncorti.ktfmt.gradle") version "0.21.0"
+    id("org.jetbrains.dokka") version "1.9.20"
 }
 
 group = "com.chess.puzzle.text2sql"
-version = "MVP"
+version = "1.1"
 
 repositories {
     mavenCentral()
@@ -48,6 +50,22 @@ ktor {
 ktfmt {
     // KotlinLang style - 4 space indentation - From kotlinlang.org/docs/coding-conventions.html
     kotlinLangStyle()
+}
+
+tasks.withType<DokkaTask>().configureEach {
+    dokkaSourceSets {
+        named("main") {
+            moduleName.set("Kotlin Spring")
+        }
+    }
+}
+
+configurations.matching { it.name.startsWith("dokka") }.configureEach {
+    resolutionStrategy.eachDependency {
+        if (requested.group.startsWith("com.fasterxml.jackson")) {
+            useVersion("2.15.3")
+        }
+    }
 }
 
 tasks.register<Exec>("runPythonScript") {

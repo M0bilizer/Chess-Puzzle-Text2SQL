@@ -1,10 +1,10 @@
 package com.chess.puzzle.text2sql.web.service.helper
 
-import com.chess.puzzle.text2sql.web.entities.helper.Demonstration
-import com.chess.puzzle.text2sql.web.entities.helper.FastApiResponse
-import com.chess.puzzle.text2sql.web.entities.helper.Property
-import com.chess.puzzle.text2sql.web.entities.helper.QueryRequest
-import com.chess.puzzle.text2sql.web.entities.helper.ResultWrapper
+import com.chess.puzzle.text2sql.web.entities.Demonstration
+import com.chess.puzzle.text2sql.web.entities.FastApiResponse
+import com.chess.puzzle.text2sql.web.entities.Property
+import com.chess.puzzle.text2sql.web.entities.QueryRequest
+import com.chess.puzzle.text2sql.web.entities.ResultWrapper
 import com.google.gson.Gson
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.client.HttpClient

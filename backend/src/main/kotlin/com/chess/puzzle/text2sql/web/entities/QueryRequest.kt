@@ -1,4 +1,4 @@
-package com.chess.puzzle.text2sql.web.entities.helper
+package com.chess.puzzle.text2sql.web.entities
 
 /**
  * Represents the user's query submitted on the frontend for the Text2SQL process.

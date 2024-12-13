@@ -1,5 +1,6 @@
-package com.chess.puzzle.text2sql.web.entities.helper
+package com.chess.puzzle.text2sql.web.entities
 
+import com.chess.puzzle.text2sql.web.entities.helper.SqlResult
 import kotlinx.serialization.Serializable
 
 /**

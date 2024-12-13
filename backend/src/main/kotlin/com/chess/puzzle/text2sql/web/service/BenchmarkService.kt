@@ -1,9 +1,9 @@
 package com.chess.puzzle.text2sql.web.service
 
 import ch.qos.logback.classic.Level
-import com.chess.puzzle.text2sql.web.entities.helper.BenchmarkEntry
-import com.chess.puzzle.text2sql.web.entities.helper.BenchmarkResult
-import com.chess.puzzle.text2sql.web.entities.helper.ResultWrapper
+import com.chess.puzzle.text2sql.web.entities.BenchmarkEntry
+import com.chess.puzzle.text2sql.web.entities.BenchmarkResult
+import com.chess.puzzle.text2sql.web.entities.ResultWrapper
 import com.chess.puzzle.text2sql.web.entities.helper.SqlResult
 import com.chess.puzzle.text2sql.web.service.ModelName.Baseline
 import com.chess.puzzle.text2sql.web.service.ModelName.Full

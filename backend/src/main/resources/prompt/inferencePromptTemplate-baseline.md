@@ -1,4 +1,4 @@
-# You are a text-to-SQL model. Based on the following database schema,         ‎
+# You are a text-to-SQL model. Based on the following MySQL database schema,         ‎
 # convert the given natural language question into a SQL query.
 #
 # t_puzzle (puzzleId, rating, popularity, themes, opening_tags)

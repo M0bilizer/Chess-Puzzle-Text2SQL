@@ -1,6 +1,6 @@
 package com.chess.puzzle.text2sql.web.service.helper
 
-import com.chess.puzzle.text2sql.web.entities.helper.Demonstration
+import com.chess.puzzle.text2sql.web.entities.Demonstration
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.nio.file.Files
 import java.nio.file.Paths

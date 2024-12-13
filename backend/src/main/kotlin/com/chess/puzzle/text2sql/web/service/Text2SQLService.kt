@@ -1,7 +1,7 @@
 package com.chess.puzzle.text2sql.web.service
 
-import com.chess.puzzle.text2sql.web.entities.helper.Demonstration
-import com.chess.puzzle.text2sql.web.entities.helper.ResultWrapper
+import com.chess.puzzle.text2sql.web.entities.Demonstration
+import com.chess.puzzle.text2sql.web.entities.ResultWrapper
 import com.chess.puzzle.text2sql.web.service.helper.LargeLanguageApiHelper
 import com.chess.puzzle.text2sql.web.service.helper.PreprocessingHelper
 import com.chess.puzzle.text2sql.web.service.helper.SentenceTransformerHelper

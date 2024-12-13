@@ -1,7 +1,7 @@
 package com.chess.puzzle.text2sql.web.controllers
 
-import com.chess.puzzle.text2sql.web.entities.helper.QueryRequest
-import com.chess.puzzle.text2sql.web.entities.helper.ResultWrapper
+import com.chess.puzzle.text2sql.web.entities.QueryRequest
+import com.chess.puzzle.text2sql.web.entities.ResultWrapper
 import com.chess.puzzle.text2sql.web.service.BenchmarkService
 import com.chess.puzzle.text2sql.web.service.JsonWriterService
 import com.chess.puzzle.text2sql.web.service.PuzzleService

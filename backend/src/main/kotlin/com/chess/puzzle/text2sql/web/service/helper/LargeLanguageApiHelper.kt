@@ -11,8 +11,8 @@ import com.aallam.openai.api.model.ModelId
 import com.aallam.openai.client.LoggingConfig
 import com.aallam.openai.client.OpenAI
 import com.aallam.openai.client.OpenAIHost
-import com.chess.puzzle.text2sql.web.entities.helper.Property
-import com.chess.puzzle.text2sql.web.entities.helper.ResultWrapper
+import com.chess.puzzle.text2sql.web.entities.Property
+import com.chess.puzzle.text2sql.web.entities.ResultWrapper
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -109,7 +109,6 @@ class LargeLanguageApiHelper(@Autowired private val property: Property) {
             .substringAfter("sql: ")
             .substringBefore(";")
             .substringBefore("\r")
-            .substringAfter("\"")
-            .substringBefore("\"")
+            .replace("\"", "")
     }
 }
