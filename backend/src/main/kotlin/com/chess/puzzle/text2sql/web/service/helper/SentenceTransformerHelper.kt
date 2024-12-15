@@ -5,6 +5,9 @@ import com.chess.puzzle.text2sql.web.entities.FastApiResponse
 import com.chess.puzzle.text2sql.web.entities.Property
 import com.chess.puzzle.text2sql.web.entities.QueryRequest
 import com.chess.puzzle.text2sql.web.entities.ResultWrapper
+import com.chess.puzzle.text2sql.web.entities.helper.GetSimilarDemonstrationError
+import com.chess.puzzle.text2sql.web.entities.helper.GetSimilarDemonstrationError.InternalError
+import com.chess.puzzle.text2sql.web.entities.helper.GetSimilarDemonstrationError.NetworkError
 import com.google.gson.Gson
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.client.HttpClient
@@ -47,33 +50,40 @@ class SentenceTransformerHelper(@Autowired private val property: Property) {
      * @param input The user's input string to find similar demonstrations for.
      * @return A [ResultWrapper] containing the list of similar demonstrations or an error.
      */
-    suspend fun getSimilarDemonstration(input: String): ResultWrapper<out SimilarDemonstration> {
+    suspend fun getSimilarDemonstration(
+        input: String
+    ): ResultWrapper<SimilarDemonstration, GetSimilarDemonstrationError> {
         val jsonString = Gson().toJson(QueryRequest(input))
         val response: HttpResponse =
             client.post(url) {
                 contentType(ContentType.Application.Json)
                 setBody(jsonString)
             }
-        return if (response.status == HttpStatusCode.OK) {
-            val (_, maskedQuery, demos) = response.body<FastApiResponse>()
-            logger.info {
-                """
-                gettingSimilarDemonstration { input = $input } -> 
-                    { 
-                        maskedQuery = $maskedQuery, 
-                        demo = [
-                            ${demos[0].logTruncate()},
-                            ${demos[1].logTruncate()},
-                            ${demos[2].logTruncate()}]"
-                    }
-                """
-                    .trimIndent()
-            }
-            ResultWrapper.Success(demos)
-        } else {
-            logger.warn { "gettingSimilarDemonstration { input = $input } -> ERROR" }
-            ResultWrapper.Error.ResponseError
+
+        if (response.status != HttpStatusCode.OK) {
+            logger.warn { "gettingSimilarDemonstration { input = $input } -> Network Error" }
+            return ResultWrapper.Failure(NetworkError)
         }
+
+        val (status, maskedQuery, demos) = response.body<FastApiResponse>()
+        if (status == "failure") {
+            logger.warn { "gettingSimilarDemonstration { input = $input } -> Internal Error" }
+            return ResultWrapper.Failure(InternalError)
+        }
+        logger.info {
+            """
+            gettingSimilarDemonstration { input = $input } -> 
+                { 
+                    maskedQuery = $maskedQuery, 
+                    demo = [
+                        ${demos[0].logTruncate()},
+                        ${demos[1].logTruncate()},
+                        ${demos[2].logTruncate()}]"
+                }
+            """
+                .trimIndent()
+        }
+        return ResultWrapper.Success(demos)
     }
 
     /**
@@ -103,7 +113,7 @@ class SentenceTransformerHelper(@Autowired private val property: Property) {
      */
     suspend fun getPartialSimilarDemonstration(
         input: String
-    ): ResultWrapper<out SimilarDemonstration> {
+    ): ResultWrapper<SimilarDemonstration, GetSimilarDemonstrationError> {
         val jsonString = Gson().toJson(QueryRequest(input))
         val response: HttpResponse =
             client.post(partialUrl) {
@@ -126,7 +136,7 @@ class SentenceTransformerHelper(@Autowired private val property: Property) {
             ResultWrapper.Success(demos)
         } else {
             logger.warn { "gettingSimilarDemonstration { input = $input } -> ERROR" }
-            ResultWrapper.Error.ResponseError
+            ResultWrapper.Failure(NetworkError)
         }
     }
 }

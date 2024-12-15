@@ -6,7 +6,7 @@ package com.chess.puzzle.text2sql.web.entities
  * HTTP requests to the web application should follow this data format. This data format is also
  * used for endpoints used for debugging or benchmarking.
  *
- * @see [com.chess.puzzle.text2sql.web.controllers.RestController]
+ * @see [com.chess.puzzle.text2sql.web.controllers.Text2SqlController]
  */
 data class QueryRequest(
     /**

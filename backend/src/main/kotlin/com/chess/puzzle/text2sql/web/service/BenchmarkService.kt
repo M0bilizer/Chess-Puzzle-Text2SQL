@@ -4,7 +4,7 @@ import ch.qos.logback.classic.Level
 import com.chess.puzzle.text2sql.web.entities.BenchmarkEntry
 import com.chess.puzzle.text2sql.web.entities.BenchmarkResult
 import com.chess.puzzle.text2sql.web.entities.ResultWrapper
-import com.chess.puzzle.text2sql.web.entities.helper.SqlResult
+import com.chess.puzzle.text2sql.web.entities.helper.*
 import com.chess.puzzle.text2sql.web.service.ModelName.Baseline
 import com.chess.puzzle.text2sql.web.service.ModelName.Full
 import com.chess.puzzle.text2sql.web.service.ModelName.Partial
@@ -112,7 +112,7 @@ class BenchmarkService(@Autowired private val text2SQLService: Text2SQLService) 
      * @return An [SqlResult] object containing the SQL result or an 'ERROR' SQL.
      */
     private suspend fun convertTextToSQL(text: String, modelName: ModelName): SqlResult {
-        val result =
+        val result: ResultWrapper<String, CustomError> =
             withLogLevel(Level.OFF) {
                 return@withLogLevel when (modelName) {
                     Full -> text2SQLService.convertToSQL(text)
@@ -125,8 +125,8 @@ class BenchmarkService(@Autowired private val text2SQLService: Text2SQLService) 
                 logger.info { "  $modelName - ok!" }
                 SqlResult(sql = result.data, status = "")
             }
-            is ResultWrapper.Error -> {
-                logger.info { "  $modelName - ERROR: " }
+            is ResultWrapper.Failure -> {
+                logger.info { "  $modelName - Error: ${result.error.message}" }
                 SqlResult(sql = "ERROR", status = "0")
             }
         }

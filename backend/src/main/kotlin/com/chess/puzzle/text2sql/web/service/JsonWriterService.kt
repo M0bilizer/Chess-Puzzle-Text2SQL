@@ -1,10 +1,13 @@
 package com.chess.puzzle.text2sql.web.service
 
+import com.chess.puzzle.text2sql.web.entities.ResultWrapper
+import com.chess.puzzle.text2sql.web.entities.helper.WriteToFileError
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.io.File
 import java.io.IOException
+import java.lang.Exception
 import org.springframework.stereotype.Service
 
 private val logger = KotlinLogging.logger {}
@@ -19,12 +22,12 @@ private val logger = KotlinLogging.logger {}
  * For more information on file I/O in Java, refer to the official Java documentation.
  */
 @Service
-class JsonWriterService {
+class JsonWriterService() {
     /**
      * The [ObjectMapper] instance used to parse and format JSON strings. This mapper is configured
      * to enable indentation for better readability of the output.
      */
-    private val objectMapper = ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT)
+    val objectMapper: ObjectMapper = ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT)
 
     /**
      * Writes a JSON string to a specified file path.
@@ -45,14 +48,14 @@ class JsonWriterService {
      * val hasWorked = jsonWriterService.writeToFile(filePath, jsonString)
      * ```
      */
-    fun writeToFile(filePath: String, jsonString: String): Boolean {
+    fun writeToFile(filePath: String, jsonString: String): ResultWrapper<Unit, WriteToFileError> {
         val jsonNode = objectMapper.readTree(jsonString)
         val file = File(filePath)
         try {
             objectMapper.writeValue(file, jsonNode)
         } catch (e: IOException) {
-            return false
+            return ResultWrapper.Failure(WriteToFileError.Exception(e))
         }
-        return true
+        return ResultWrapper.Success(Unit)
     }
 }

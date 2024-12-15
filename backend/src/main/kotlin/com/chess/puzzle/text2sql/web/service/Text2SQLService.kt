@@ -2,6 +2,7 @@ package com.chess.puzzle.text2sql.web.service
 
 import com.chess.puzzle.text2sql.web.entities.Demonstration
 import com.chess.puzzle.text2sql.web.entities.ResultWrapper
+import com.chess.puzzle.text2sql.web.entities.helper.CustomError
 import com.chess.puzzle.text2sql.web.service.helper.LargeLanguageApiHelper
 import com.chess.puzzle.text2sql.web.service.helper.PreprocessingHelper
 import com.chess.puzzle.text2sql.web.service.helper.SentenceTransformerHelper
@@ -45,23 +46,23 @@ class Text2SQLService(
      * @return A [ResultWrapper] containing the generated SQL query if successful, or an error if
      *   the process fails.
      */
-    suspend fun convertToSQL(query: String): ResultWrapper<out String> {
+    suspend fun convertToSQL(query: String): ResultWrapper<String, CustomError> {
         val demonstrations: List<Demonstration>
+        val promptTemplate: String
+        val sql: String
         when (val result = sentenceTransformerHelper.getSimilarDemonstration(query)) {
             is ResultWrapper.Success -> demonstrations = result.data
-            else -> {
-                logger.error { "oops" }
-                return ResultWrapper.Error.ResponseError
-            }
+            is ResultWrapper.Failure -> return ResultWrapper.Failure(result.error)
         }
-        val promptTemplate = preprocessingHelper.processPrompt(query, demonstrations)
-        return when (val result = largeLanguageApiHelper.callDeepSeek(query, promptTemplate)) {
-            is ResultWrapper.Success -> ResultWrapper.Success(result.data)
-            else -> {
-                logger.error { "oops" }
-                return ResultWrapper.Error.ResponseError
-            }
+        when (val result = preprocessingHelper.processPrompt(query, demonstrations)) {
+            is ResultWrapper.Success -> promptTemplate = result.data
+            is ResultWrapper.Failure -> return ResultWrapper.Failure(result.error)
         }
+        when (val result = largeLanguageApiHelper.callDeepSeek(query, promptTemplate)) {
+            is ResultWrapper.Success -> sql = result.data
+            is ResultWrapper.Failure -> return ResultWrapper.Failure(result.error)
+        }
+        return ResultWrapper.Success(sql)
     }
 
     /**
@@ -77,23 +78,23 @@ class Text2SQLService(
      * @return A [ResultWrapper] containing the generated SQL query if successful, or an error if
      *   the process fails.
      */
-    suspend fun partialConvertToSQL(query: String): ResultWrapper<out String> {
+    suspend fun partialConvertToSQL(query: String): ResultWrapper<String, CustomError> {
         val demonstrations: List<Demonstration>
+        val promptTemplate: String
+        val sql: String
         when (val result = sentenceTransformerHelper.getPartialSimilarDemonstration(query)) {
             is ResultWrapper.Success -> demonstrations = result.data
-            else -> {
-                logger.error { "oops" }
-                return ResultWrapper.Error.ResponseError
-            }
+            is ResultWrapper.Failure -> return ResultWrapper.Failure(result.error)
         }
-        val promptTemplate = preprocessingHelper.processPrompt(query, demonstrations)
-        return when (val result = largeLanguageApiHelper.callDeepSeek(query, promptTemplate)) {
-            is ResultWrapper.Success -> ResultWrapper.Success(result.data)
-            else -> {
-                logger.error { "oops" }
-                return ResultWrapper.Error.ResponseError
-            }
+        when (val result = preprocessingHelper.processPrompt(query, demonstrations)) {
+            is ResultWrapper.Success -> promptTemplate = result.data
+            is ResultWrapper.Failure -> return ResultWrapper.Failure(result.error)
         }
+        when (val result = largeLanguageApiHelper.callDeepSeek(query, promptTemplate)) {
+            is ResultWrapper.Success -> sql = result.data
+            is ResultWrapper.Failure -> return ResultWrapper.Failure(result.error)
+        }
+        return ResultWrapper.Success(sql)
     }
 
     /**
@@ -109,14 +110,17 @@ class Text2SQLService(
      * @return A [ResultWrapper] containing the generated SQL query if successful, or an error if
      *   the process fails.
      */
-    suspend fun baselineConvertToSQL(query: String): ResultWrapper<out String> {
-        val promptTemplate = preprocessingHelper.processBaselinePrompt(query)
-        return when (val result = largeLanguageApiHelper.callDeepSeek(query, promptTemplate)) {
-            is ResultWrapper.Success -> ResultWrapper.Success(result.data)
-            else -> {
-                logger.error { "oops" }
-                return ResultWrapper.Error.ResponseError
-            }
+    suspend fun baselineConvertToSQL(query: String): ResultWrapper<String, CustomError> {
+        val promptTemplate: String
+        val sql: String
+        when (val result = preprocessingHelper.processBaselinePrompt(query)) {
+            is ResultWrapper.Success -> promptTemplate = result.data
+            is ResultWrapper.Failure -> return ResultWrapper.Failure(result.error)
         }
+        when (val result = largeLanguageApiHelper.callDeepSeek(query, promptTemplate)) {
+            is ResultWrapper.Success -> sql = result.data
+            is ResultWrapper.Failure -> return ResultWrapper.Failure(result.error)
+        }
+        return ResultWrapper.Success(sql)
     }
 }

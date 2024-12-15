@@ -12,7 +12,7 @@ package com.chess.puzzle.text2sql.web.entities
  *
  * @see [com.chess.puzzle.text2sql.web.service]
  */
-sealed class ResultWrapper<T> {
+sealed class ResultWrapper<out T, out E> {
     /**
      * Represents a successful result of a function, encapsulating the relevant data.
      *
@@ -20,39 +20,12 @@ sealed class ResultWrapper<T> {
      *
      * @sample Success(data = "SELECT * FROM t_puzzle WHERE opening_tags LIKE '%Italian_Defense%'")
      */
-    data class Success<T>(val data: T) : ResultWrapper<T>()
+    data class Success<out T>(val data: T) : ResultWrapper<T, Nothing>()
 
     /**
-     * Represents an error that occurs during an operation.
+     * Represents a failure that occurs during an operation.
      *
-     * This class is used to inform callers about errors that occur during operations.
+     * This class is used to inform callers about failure that occur during operations.
      */
-    sealed class Error : ResultWrapper<Nothing>() {
-        /**
-         * Represents a sql validation error that occurs before a query on the database is
-         * performed.
-         *
-         * This class is used to inform callers about validation issues, on whether the SQL
-         * statement is valid or if it is allowed.
-         *
-         * @see [com.chess.puzzle.text2sql.web.validator.SqlValidator]
-         */
-        data class ValidationError(val isValid: Boolean, val isAllowed: Boolean) : Error()
-
-        /**
-         * Represents a Hibernate error that occurs during an operation.
-         *
-         * This class is used to inform callers about Hibernate-related errors, such as database
-         * access issues.
-         */
-        data class HibernateError(val message: String?) : Error()
-
-        /**
-         * Represents a response error that occurs during an operation.
-         *
-         * This class is used to inform callers about response-related errors, such as HTTP response
-         * issues.
-         */
-        data object ResponseError : Error()
-    }
+    data class Failure<out E>(val error: E) : ResultWrapper<Nothing, E>()
 }

@@ -2,6 +2,9 @@ package com.chess.puzzle.text2sql.web.service
 
 import com.chess.puzzle.text2sql.web.entities.Puzzle
 import com.chess.puzzle.text2sql.web.entities.ResultWrapper
+import com.chess.puzzle.text2sql.web.entities.helper.ProcessQueryError
+import com.chess.puzzle.text2sql.web.entities.helper.ProcessQueryError.HibernateError
+import com.chess.puzzle.text2sql.web.entities.helper.ProcessQueryError.ValidationError
 import com.chess.puzzle.text2sql.web.repositories.PuzzleRepository
 import com.chess.puzzle.text2sql.web.validator.SqlValidator
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -64,14 +67,14 @@ class PuzzleService(
      */
     // IMPORTANT: This method allows executing raw SQL queries. Ensure that the input
     // is sanitized to prevent SQL injection attacks.
-    fun processQuery(sqlCommand: String): ResultWrapper<out List<Puzzle>> {
+    fun processQuery(sqlCommand: String): ResultWrapper<List<Puzzle>, ProcessQueryError> {
         val isValid = sqlValidator.isValidSql(sqlCommand)
         val isAllowed = sqlValidator.isAllowed(sqlCommand)
         if (!isValid || !isAllowed) {
             logger.warn {
                 "Processing Query { sqlCommand = $sqlCommand } -> ValidationError(isValid = $isValid, isAllowed = $isAllowed)"
             }
-            return ResultWrapper.Error.ValidationError(isValid, isAllowed)
+            return ResultWrapper.Failure(ValidationError(isValid, isAllowed))
         }
 
         return try {
@@ -82,7 +85,7 @@ class PuzzleService(
             logger.warn {
                 "Processing Query { sqlCommand = $sqlCommand } -> HibernateError(message = ${e.message})"
             }
-            ResultWrapper.Error.HibernateError(e.message)
+            ResultWrapper.Failure(HibernateError)
         }
     }
 }

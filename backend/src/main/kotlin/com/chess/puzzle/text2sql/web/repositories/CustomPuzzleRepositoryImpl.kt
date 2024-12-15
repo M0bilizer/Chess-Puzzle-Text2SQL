@@ -15,14 +15,13 @@ import org.springframework.stereotype.Repository
  * documentation.
  */
 @Repository
-class CustomPuzzleRepositoryImpl : CustomPuzzleRepository {
-
+class CustomPuzzleRepositoryImpl(
     /**
      * The [EntityManager] instance used to interact with the persistence context. This is injected
      * by Spring and is used to execute native SQL queries.
      */
-    @PersistenceContext private lateinit var entityManager: EntityManager
-
+    @PersistenceContext private val entityManager: EntityManager
+) : CustomPuzzleRepository {
     /**
      * Executes a raw SQL query on the [Puzzle] table and returns the results as a list of [Puzzle]
      * entities.

@@ -1,5 +1,6 @@
 package com.chess.puzzle.text2sql.web.utility
 
+import com.chess.puzzle.text2sql.web.entities.helper.CustomError
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.springframework.http.ResponseEntity
 
@@ -47,11 +48,11 @@ object ResponseUtils {
      * [jacksonObjectMapper]. Note that the "status" field is different from the HTTP response
      * status.
      *
-     * @param data The data to include in the response. This can be of any type.
+     * @param message The data to include in the response. This can be of any type.
      * @return A [ResponseEntity] containing the JSON response string.
      */
-    fun <T> error(data: T): ResponseEntity<String> {
-        val response = mapOf("status" to "error", "data" to data)
+    fun failure(customError: CustomError): ResponseEntity<String> {
+        val response = mapOf("status" to "failure", "data" to customError.message)
         return ResponseEntity.ok(objectMapper.writeValueAsString(response))
     }
 }

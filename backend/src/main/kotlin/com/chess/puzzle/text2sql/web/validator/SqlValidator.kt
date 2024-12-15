@@ -27,6 +27,7 @@ class SqlValidator {
      * @return `true` if the string is a valid SQL statement, `false` otherwise.
      */
     fun isValidSql(sql: String): Boolean {
+        if (sql.isEmpty()) return false
         return try {
             CCJSqlParserUtil.parse(sql)
             true

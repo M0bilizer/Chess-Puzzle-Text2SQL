@@ -1,7 +1,11 @@
 package com.chess.puzzle.text2sql.web.service.helper
 
 import com.chess.puzzle.text2sql.web.entities.Demonstration
+import com.chess.puzzle.text2sql.web.entities.ResultWrapper
+import com.chess.puzzle.text2sql.web.entities.helper.ProcessPromptError
+import com.chess.puzzle.text2sql.web.entities.helper.ProcessPromptError.CannotFindLayout
 import io.github.oshai.kotlinlogging.KotlinLogging
+import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Paths
 import org.springframework.stereotype.Service
@@ -34,9 +38,16 @@ class PreprocessingHelper {
      * @param demonstrations A list of similar demonstrations to be injected into the template.
      * @return The processed prompt template with the user query and demonstrations.
      */
-    fun processPrompt(userPrompt: String, demonstrations: List<Demonstration>): String {
-        val processedLayout = userPrompt.loadLayout()
-        return processedLayout.loadDemonstrations(demonstrations)
+    fun processPrompt(
+        userPrompt: String,
+        demonstrations: List<Demonstration>,
+    ): ResultWrapper<String, ProcessPromptError> {
+        return try {
+            val processedLayout = userPrompt.loadLayout().loadDemonstrations(demonstrations)
+            ResultWrapper.Success(processedLayout)
+        } catch (e: IOException) {
+            ResultWrapper.Failure(CannotFindLayout)
+        }
     }
 
     /**
@@ -51,7 +62,7 @@ class PreprocessingHelper {
         return try {
             val layoutContent = Files.readString(Paths.get(layoutPath))
             layoutContent.replace("{{prompt}}", this)
-        } catch (e: Exception) {
+        } catch (e: IOException) {
             logger.error { "Loading Layout {} -> Cannot find inferencePromptTemplate.md" }
             throw e
         }
@@ -96,8 +107,13 @@ class PreprocessingHelper {
      * @param userPrompt The user's input query.
      * @return The processed baseline prompt template with the user query.
      */
-    fun processBaselinePrompt(userPrompt: String): String {
-        return userPrompt.loadBaselineLayout()
+    fun processBaselinePrompt(userPrompt: String): ResultWrapper<String, ProcessPromptError> {
+        return try {
+            val processedLayout = userPrompt.loadBaselineLayout()
+            ResultWrapper.Success(processedLayout)
+        } catch (e: IOException) {
+            ResultWrapper.Failure(CannotFindLayout)
+        }
     }
 
     /**
@@ -112,7 +128,7 @@ class PreprocessingHelper {
         return try {
             val baselineLayoutContent = Files.readString(Paths.get(baselineLayoutPath))
             baselineLayoutContent.replace("{{prompt}}", this)
-        } catch (e: Exception) {
+        } catch (e: IOException) {
             logger.error {
                 "Loading Baseline Layout {} -> Cannot find inferencePromptTemplate-baseline.md"
             }

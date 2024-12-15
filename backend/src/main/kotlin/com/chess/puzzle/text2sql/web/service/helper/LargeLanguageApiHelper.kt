@@ -1,10 +1,7 @@
 package com.chess.puzzle.text2sql.web.service.helper
 
-import com.aallam.openai.api.chat.ChatCompletionRequest
-import com.aallam.openai.api.chat.ChatMessage
-import com.aallam.openai.api.chat.ChatRole
-import com.aallam.openai.api.chat.Content
-import com.aallam.openai.api.chat.TextContent
+import com.aallam.openai.api.chat.*
+import com.aallam.openai.api.exception.*
 import com.aallam.openai.api.logging.LogLevel
 import com.aallam.openai.api.logging.Logger
 import com.aallam.openai.api.model.ModelId
@@ -13,6 +10,8 @@ import com.aallam.openai.client.OpenAI
 import com.aallam.openai.client.OpenAIHost
 import com.chess.puzzle.text2sql.web.entities.Property
 import com.chess.puzzle.text2sql.web.entities.ResultWrapper
+import com.chess.puzzle.text2sql.web.entities.helper.CallDeepSeekError
+import com.chess.puzzle.text2sql.web.entities.helper.CallDeepSeekError.*
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -44,7 +43,7 @@ class LargeLanguageApiHelper(@Autowired private val property: Property) {
      * @param query The user's query to be converted into SQL.
      * @return A [ResultWrapper] containing the SQL query or an error.
      */
-    suspend fun callDeepSeek(query: String): ResultWrapper<out String> {
+    suspend fun callDeepSeek(query: String): ResultWrapper<String, CallDeepSeekError> {
         val loggingString = if (query.length > 20) query.substring(0, 20) else query
         return this.callDeepSeek(loggingString, query)
     }
@@ -57,7 +56,10 @@ class LargeLanguageApiHelper(@Autowired private val property: Property) {
      * @param promptTemplate A custom prompt template to be sent to the API.
      * @return A [ResultWrapper] containing the SQL query or an error.
      */
-    suspend fun callDeepSeek(query: String, promptTemplate: String): ResultWrapper<out String> {
+    suspend fun callDeepSeek(
+        query: String,
+        promptTemplate: String,
+    ): ResultWrapper<String, CallDeepSeekError> {
         val chatCompletionRequest =
             ChatCompletionRequest(
                 model = ModelId("deepseek-chat"),
@@ -71,24 +73,46 @@ class LargeLanguageApiHelper(@Autowired private val property: Property) {
                     ),
                 temperature = 0.0,
             )
-        val chatCompletion = client.chatCompletion(chatCompletionRequest)
-        return when (
-            val response: Content? = chatCompletion.choices.firstOrNull()?.message?.messageContent
-        ) {
+        var chatCompletion: ChatCompletion? = null
+        try {
+            chatCompletion = client.chatCompletion(chatCompletionRequest)
+        } catch (e: OpenAIException) {
+            when (e) {
+                is OpenAIAPIException ->
+                    when (e) {
+                        is RateLimitException -> ResultWrapper.Failure(RateLimitError)
+                        is InvalidRequestException -> ResultWrapper.Failure(InvalidRequestError)
+                        is AuthenticationException -> ResultWrapper.Failure(AuthenticationError)
+                        is PermissionException -> ResultWrapper.Failure(PermissionError)
+                        is UnknownAPIException ->
+                            when (e.statusCode) {
+                                402 -> ResultWrapper.Failure(InsufficientBalanceError)
+                                503 -> ResultWrapper.Failure(ServerOverload)
+                                else ->
+                                    ResultWrapper.Failure(
+                                        UnknownError(e.statusCode, e.message ?: "no message")
+                                    )
+                            }
+                    }
+
+                is OpenAIHttpException -> ResultWrapper.Failure(HttpError)
+                is OpenAIServerException -> ResultWrapper.Failure(ServerError)
+                is OpenAIIOException -> ResultWrapper.Failure(IOException)
+            }
+        }
+
+        val response: Content? = chatCompletion!!.choices.firstOrNull()?.message?.messageContent
+        val sql: String
+        when (response) {
             is TextContent -> {
                 logger.info {
                     "Calling DeepSeek { query = $query } -> { response = ${response.content} }"
                 }
-                val sql = stripUnnecessary(response.content)
-                ResultWrapper.Success(sql)
+                sql = stripUnnecessary(response.content)
             }
-            else -> {
-                logger.warn {
-                    "Calling DeepSeek { query = $query } -> { Received image and texts }"
-                }
-                ResultWrapper.Error.ResponseError
-            }
+            else -> return ResultWrapper.Failure(UnexpectedResult)
         }
+        return ResultWrapper.Success(sql)
     }
 
     /**
