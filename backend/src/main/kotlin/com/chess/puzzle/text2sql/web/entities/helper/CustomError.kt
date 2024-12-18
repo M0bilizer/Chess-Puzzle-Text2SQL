@@ -1,7 +1,5 @@
 package com.chess.puzzle.text2sql.web.entities.helper
 
-import java.io.IOException
-
 interface CustomError {
     val message: String
 }
@@ -75,8 +73,8 @@ sealed class GetRandomPuzzlesError : CustomError {
 }
 
 sealed class ProcessPromptError : CustomError {
-    data object CannotFindLayout : ProcessPromptError() {
-        override val message: String = "Cannot find layout for the prompt"
+    data class IOException(val e: java.io.IOException) : ProcessPromptError() {
+        override val message: String = "IOException while processing prompt"
     }
 
     data class UnexpectedError(val e: Exception) : ProcessPromptError() {

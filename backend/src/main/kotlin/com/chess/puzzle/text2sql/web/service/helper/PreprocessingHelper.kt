@@ -3,10 +3,8 @@ package com.chess.puzzle.text2sql.web.service.helper
 import com.chess.puzzle.text2sql.web.entities.Demonstration
 import com.chess.puzzle.text2sql.web.entities.ResultWrapper
 import com.chess.puzzle.text2sql.web.entities.helper.ProcessPromptError
-import com.chess.puzzle.text2sql.web.entities.helper.ProcessPromptError.CannotFindLayout
 import com.chess.puzzle.text2sql.web.entities.helper.ProcessPromptError.UnexpectedError
 import io.github.oshai.kotlinlogging.KotlinLogging
-import java.io.IOException
 import org.springframework.stereotype.Service
 
 private val logger = KotlinLogging.logger {}
@@ -40,9 +38,9 @@ class PreprocessingHelper {
                     promptTemplateWithUserPrompt
                 }
             ResultWrapper.Success(processedPromptTemplate)
-        } catch (e: IOException) {
+        } catch (e: java.io.IOException) {
             logger.error { "Failed to load prompt template: ${e.message}" }
-            ResultWrapper.Failure(CannotFindLayout)
+            ResultWrapper.Failure(ProcessPromptError.IOException(e))
         } catch (e: Exception) {
             logger.error { "Unexpected error while processing prompt: ${e.message}" }
             ResultWrapper.Failure(UnexpectedError(e))
