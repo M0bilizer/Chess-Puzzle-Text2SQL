@@ -1,7 +1,11 @@
 package com.chess.puzzle.text2sql.web.controllers
 
+import com.chess.puzzle.text2sql.web.entities.BenchmarkEntry
+import com.chess.puzzle.text2sql.web.entities.BenchmarkResult
+import com.chess.puzzle.text2sql.web.entities.Property
 import com.chess.puzzle.text2sql.web.entities.ResultWrapper
 import com.chess.puzzle.text2sql.web.service.BenchmarkService
+import com.chess.puzzle.text2sql.web.service.FileLoaderService
 import com.chess.puzzle.text2sql.web.service.JsonWriterService
 import com.chess.puzzle.text2sql.web.utility.ResponseUtils.failure
 import com.chess.puzzle.text2sql.web.utility.ResponseUtils.success
@@ -31,6 +35,8 @@ private val logger = KotlinLogging.logger {}
 class BenchmarkingController(
     @Autowired private val benchmarkService: BenchmarkService,
     @Autowired private val jsonWriterService: JsonWriterService,
+    @Autowired private val fileLoaderService: FileLoaderService,
+    @Autowired private val property: Property,
 ) {
 
     /**
@@ -46,7 +52,23 @@ class BenchmarkingController(
         val deferredResult = DeferredResult<ResponseEntity<String>>(1350000)
 
         runBlocking {
-            val benchmark = benchmarkService.getBenchmark()
+            val benchmark: List<BenchmarkResult>
+            val benchmarkEntries: List<BenchmarkEntry>
+            val benchmarkEntriesFilePath = property.jsonPath
+            when (val result = fileLoaderService.getBenchmarkEntries(benchmarkEntriesFilePath)) {
+                is ResultWrapper.Success -> benchmarkEntries = result.data
+                is ResultWrapper.Failure -> {
+                    deferredResult.setResult(failure(result.error))
+                    return@runBlocking
+                }
+            }
+            when (val result = benchmarkService.getBenchmark(benchmarkEntries)) {
+                is ResultWrapper.Success -> benchmark = result.data
+                is ResultWrapper.Failure -> {
+                    deferredResult.setResult(failure(result.error))
+                    return@runBlocking
+                }
+            }
             val jsonString = Json.encodeToString(benchmark)
             val filePath = "src/main/resources/data/benchmarkResult.json"
             when (val result = jsonWriterService.writeToFile(filePath, jsonString)) {

@@ -2,6 +2,8 @@ package com.chess.puzzle.text2sql.web.service
 
 import com.chess.puzzle.text2sql.web.entities.Puzzle
 import com.chess.puzzle.text2sql.web.entities.ResultWrapper
+import com.chess.puzzle.text2sql.web.entities.helper.GetRandomPuzzlesError
+import com.chess.puzzle.text2sql.web.entities.helper.GetRandomPuzzlesError.Throwable
 import com.chess.puzzle.text2sql.web.entities.helper.ProcessQueryError
 import com.chess.puzzle.text2sql.web.entities.helper.ProcessQueryError.HibernateError
 import com.chess.puzzle.text2sql.web.entities.helper.ProcessQueryError.ValidationError
@@ -45,8 +47,12 @@ class PuzzleService(
      * @param n The number of random puzzles to retrieve.
      * @return A list of [Puzzle] entities, or an empty list if no puzzles are found.
      */
-    fun getRandomPuzzles(n: Int): List<Puzzle> {
-        return puzzleRepository.findRandomPuzzles(n)
+    fun getRandomPuzzles(n: Int): ResultWrapper<List<Puzzle>, GetRandomPuzzlesError> {
+        return try {
+            ResultWrapper.Success(puzzleRepository.findRandomPuzzles(n))
+        } catch (e: kotlin.Throwable) {
+            ResultWrapper.Failure(Throwable(e))
+        }
     }
 
     /**
@@ -81,7 +87,7 @@ class PuzzleService(
             val result = puzzleRepository.executeSqlQuery(sqlCommand)
             logger.info { "Processing Query { sqlCommand = $sqlCommand } -> OK" }
             ResultWrapper.Success(result)
-        } catch (e: Exception) {
+        } catch (e: kotlin.Throwable) {
             logger.warn {
                 "Processing Query { sqlCommand = $sqlCommand } -> HibernateError(message = ${e.message})"
             }

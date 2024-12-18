@@ -77,9 +77,9 @@ tasks.register<Exec>("runPythonScript") {
     commandLine(pythonExecutable, "$projectDir/src/main/python/process_demonstration_similarity.py")
 }
 
-tasks.test {
-    enabled = false
-}
+//tasks.test {
+//    enabled = false
+//}
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -95,14 +95,18 @@ dependencies {
     implementation("io.ktor:ktor-client-content-negotiation:2.3.12")
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("org.apache.commons:commons-math3:3.6.1")
-    runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
-    runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.9.0")
     implementation("com.aallam.openai:openai-client:3.8.2")
     implementation("com.github.jsqlparser:jsqlparser:5.0")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
+    runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
+    runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.9.0")
     runtimeOnly("com.mysql:mysql-connector-j")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
-    implementation("com.lemonappdev:konsist:0.16.1")
+    testImplementation("io.strikt:strikt-core:0.34.1")
+    testImplementation("io.strikt:strikt-spring:0.34.1")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testImplementation("io.mockk:mockk:1.13.13")
+    testImplementation("com.h2database:h2:2.3.232")
 }

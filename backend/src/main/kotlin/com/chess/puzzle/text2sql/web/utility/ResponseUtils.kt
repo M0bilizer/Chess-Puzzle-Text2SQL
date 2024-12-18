@@ -2,6 +2,7 @@ package com.chess.puzzle.text2sql.web.utility
 
 import com.chess.puzzle.text2sql.web.entities.helper.CustomError
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 
 /**
@@ -37,7 +38,9 @@ object ResponseUtils {
      */
     fun <T> success(data: T): ResponseEntity<String> {
         val response = mapOf("status" to "success", "data" to data)
-        return ResponseEntity.ok(objectMapper.writeValueAsString(response))
+        return ResponseEntity.ok()
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(objectMapper.writeValueAsString(response))
     }
 
     /**
@@ -53,6 +56,8 @@ object ResponseUtils {
      */
     fun failure(customError: CustomError): ResponseEntity<String> {
         val response = mapOf("status" to "failure", "data" to customError.message)
-        return ResponseEntity.ok(objectMapper.writeValueAsString(response))
+        return ResponseEntity.ok()
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(objectMapper.writeValueAsString(response))
     }
 }

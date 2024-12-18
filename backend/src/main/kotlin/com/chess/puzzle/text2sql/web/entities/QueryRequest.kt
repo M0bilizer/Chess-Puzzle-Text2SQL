@@ -1,5 +1,7 @@
 package com.chess.puzzle.text2sql.web.entities
 
+import kotlinx.serialization.Serializable
+
 /**
  * Represents the user's query submitted on the frontend for the Text2SQL process.
  *
@@ -8,6 +10,7 @@ package com.chess.puzzle.text2sql.web.entities
  *
  * @see [com.chess.puzzle.text2sql.web.controllers.Text2SqlController]
  */
+@Serializable
 data class QueryRequest(
     /**
      * The user's query for Text2SQL.

@@ -1,5 +1,6 @@
 package com.chess.puzzle.text2sql.web.controllers
 
+import com.chess.puzzle.text2sql.web.entities.ModelName.Full
 import com.chess.puzzle.text2sql.web.entities.QueryRequest
 import com.chess.puzzle.text2sql.web.entities.ResultWrapper
 import com.chess.puzzle.text2sql.web.service.PuzzleService
@@ -59,7 +60,10 @@ class DebuggingController(
     @GetMapping("/api/debug/db")
     fun db(): ResponseEntity<String> {
         logger.info { "Received GET on /api/debug/db" }
-        return success(puzzleService.getRandomPuzzles(5))
+        return when (val result = puzzleService.getRandomPuzzles(5)) {
+            is ResultWrapper.Success -> success(result.data)
+            is ResultWrapper.Failure -> failure(result.error)
+        }
     }
 
     /**
@@ -114,7 +118,7 @@ class DebuggingController(
     suspend fun text2sql(@RequestBody input: QueryRequest): ResponseEntity<String> {
         val query = input.query
         logger.info { "Received POST on /api/debug/text2sql { input = $input }" }
-        return when (val result = text2SQLService.convertToSQL(query)) {
+        return when (val result = text2SQLService.convertToSQL(query, Full)) {
             is ResultWrapper.Success -> success(result.data)
             is ResultWrapper.Failure -> failure(result.error)
         }

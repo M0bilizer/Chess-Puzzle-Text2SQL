@@ -1,7 +1,15 @@
 package com.chess.puzzle.text2sql.web.entities.helper
 
+import java.io.IOException
+
 interface CustomError {
     val message: String
+}
+
+sealed class GenericError : CustomError {
+    data object Error : GenericError() {
+        override val message: String = "Generic Error"
+    }
 }
 
 sealed class CallDeepSeekError : CustomError {
@@ -60,9 +68,19 @@ sealed class GetSimilarDemonstrationError : CustomError {
     }
 }
 
+sealed class GetRandomPuzzlesError : CustomError {
+    data class Throwable(val e: kotlin.Throwable) : GetRandomPuzzlesError() {
+        override val message: String = "Error getting random puzzles: ${e.message}"
+    }
+}
+
 sealed class ProcessPromptError : CustomError {
     data object CannotFindLayout : ProcessPromptError() {
         override val message: String = "Cannot find layout for the prompt"
+    }
+
+    data class UnexpectedError(val e: Exception) : ProcessPromptError() {
+        override val message: String = "Unexpected Error while processing prompt"
     }
 }
 
@@ -80,5 +98,25 @@ sealed class ProcessQueryError : CustomError {
 sealed class WriteToFileError : CustomError {
     data class Exception(val e: java.lang.Exception) : WriteToFileError() {
         override val message: String = "Error writing to file: ${e.message}"
+    }
+}
+
+sealed class GetBenchmarkEntriesError : CustomError {
+    data class IOException(val e: java.io.IOException) : GetBenchmarkEntriesError() {
+        override val message: String = "IOException while getting benchmark entries"
+    }
+
+    data class UnexpectedError(val e: Exception) : GetBenchmarkEntriesError() {
+        override val message: String = "Unexpected Error while loading benchmark"
+    }
+}
+
+sealed class GetTextFileError : CustomError {
+    data class IOException(val e: java.io.IOException) : GetTextFileError() {
+        override val message: String = "IOException while loading text file"
+    }
+
+    data class UnexpectedError(val e: Exception) : GetTextFileError() {
+        override val message: String = "Unexpected Error while loading text file"
     }
 }

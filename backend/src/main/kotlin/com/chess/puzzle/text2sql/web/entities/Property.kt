@@ -48,4 +48,18 @@ class Property {
      */
     val sentenceTransformerPartialUrl: String
         get() = "$sentenceTransformerUrl/partial"
+
+    @Value("\${benchmark.json.path}") lateinit var jsonPath: String
+
+    @Value("\${promptTemplate.md.path}") lateinit var promptTemplateMdPath: String
+
+    @Value("\${baselinePromptTemplate.md.path}") lateinit var baselinePromptTemplateMdPath: String
+
+    fun getPromptTemplate(modelName: ModelName): String {
+        return when (modelName) {
+            ModelName.Full -> promptTemplateMdPath
+            ModelName.Partial -> promptTemplateMdPath
+            ModelName.Baseline -> baselinePromptTemplateMdPath
+        }
+    }
 }
