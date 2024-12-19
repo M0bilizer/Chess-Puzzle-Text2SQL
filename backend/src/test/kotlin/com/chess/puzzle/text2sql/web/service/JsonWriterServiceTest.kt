@@ -52,8 +52,8 @@ class JsonWriterServiceTest {
 
         val result = jsonWriterService.writeToFile(filePath, jsonString)
 
-        expectThat(result).isA<ResultWrapper.Failure<WriteToFileError.Exception>>()
-        val except = result as ResultWrapper.Failure
-        expectThat(except.error).isA<WriteToFileError.Exception>()
+        expectThat(result).isA<ResultWrapper.Failure<WriteToFileError.Exception>>().and {
+            get { error }.isA<WriteToFileError.Exception>()
+        }
     }
 }

@@ -75,8 +75,8 @@ class PreprocessingHelperTest {
             mockPreprocessingHelper.processPrompt(userPrompt, promptTemplate, demonstrations)
 
         // Assert
-        expectThat(result).isA<ResultWrapper.Failure<ProcessPromptError>>()
-        val expect = result as ResultWrapper.Failure
-        expectThat(expect.error).isA<ProcessPromptError.IOException>()
+        expectThat(result).isA<ResultWrapper.Failure<ProcessPromptError>>().and {
+            get { error }.isA<ProcessPromptError.IOException>()
+        }
     }
 }

@@ -14,6 +14,7 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
+import org.springframework.http.HttpStatus
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 
@@ -69,6 +70,7 @@ class DebuggingControllerTest {
         val expectedResponse =
             objectMapper.writeValueAsString(mapOf("status" to "failure", "data" to error.message))
 
+        expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
         expectThat(response.body).isEqualTo(expectedResponse)
     }
 
@@ -101,6 +103,7 @@ class DebuggingControllerTest {
         val expectedResponse =
             objectMapper.writeValueAsString(mapOf("status" to "success", "data" to puzzles))
 
+        expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
         expectThat(response.body).isEqualTo(expectedResponse)
     }
 
@@ -117,6 +120,7 @@ class DebuggingControllerTest {
         val expectedResponse =
             objectMapper.writeValueAsString(mapOf("status" to "failure", "data" to error.message))
 
+        expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
         expectThat(response.body).isEqualTo(expectedResponse)
     }
 
@@ -145,6 +149,7 @@ class DebuggingControllerTest {
                 mapOf("status" to "success", "data" to similarDemonstrations)
             )
 
+        expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
         expectThat(response.body).isEqualTo(expectedResponse)
     }
 
@@ -163,6 +168,7 @@ class DebuggingControllerTest {
         val expectedResponse =
             objectMapper.writeValueAsString(mapOf("status" to "failure", "data" to error.message))
 
+        expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
         expectThat(response.body).isEqualTo(expectedResponse)
     }
 
@@ -181,6 +187,7 @@ class DebuggingControllerTest {
         val expectedResponse =
             objectMapper.writeValueAsString(mapOf("status" to "success", "data" to sqlQuery))
 
+        expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
         expectThat(response.body).isEqualTo(expectedResponse)
     }
 
@@ -198,6 +205,7 @@ class DebuggingControllerTest {
         val expectedResponse =
             objectMapper.writeValueAsString(mapOf("status" to "failure", "data" to error.message))
 
+        expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
         expectThat(response.body).isEqualTo(expectedResponse)
     }
 
@@ -215,6 +223,7 @@ class DebuggingControllerTest {
         val expectedResponse =
             objectMapper.writeValueAsString(mapOf("status" to "success", "data" to llmResponse))
 
+        expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
         expectThat(response.body).isEqualTo(expectedResponse)
     }
 
@@ -231,6 +240,7 @@ class DebuggingControllerTest {
         val expectedResponse =
             objectMapper.writeValueAsString(mapOf("status" to "failure", "data" to error.message))
 
+        expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
         expectThat(response.body).isEqualTo(expectedResponse)
     }
 }

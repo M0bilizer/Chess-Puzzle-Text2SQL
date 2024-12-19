@@ -68,9 +68,9 @@ class FileLoaderServiceTest {
         val result = fileLoaderService.getBenchmarkEntries(filePath)
 
         // Assert
-        expectThat(result).isA<ResultWrapper.Failure<GetBenchmarkEntriesError>>()
-        val except = result as ResultWrapper.Failure
-        expectThat(except.error).isA<GetBenchmarkEntriesError.IOException>()
+        expectThat(result).isA<ResultWrapper.Failure<GetBenchmarkEntriesError>>().and {
+            get { error }.isA<GetBenchmarkEntriesError.IOException>()
+        }
     }
 
     @Test

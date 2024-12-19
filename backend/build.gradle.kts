@@ -109,4 +109,5 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testImplementation("io.mockk:mockk:1.13.13")
     testImplementation("com.h2database:h2:2.3.232")
+    testImplementation("io.ktor:ktor-client-mock:2.3.12") // MUST BE 2.3.12
 }
