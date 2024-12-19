@@ -2,13 +2,8 @@ package com.chess.puzzle.text2sql.web.service.helper
 
 import com.aallam.openai.api.chat.*
 import com.aallam.openai.api.exception.*
-import com.aallam.openai.api.logging.LogLevel
-import com.aallam.openai.api.logging.Logger
 import com.aallam.openai.api.model.ModelId
-import com.aallam.openai.client.LoggingConfig
 import com.aallam.openai.client.OpenAI
-import com.aallam.openai.client.OpenAIHost
-import com.chess.puzzle.text2sql.web.entities.Property
 import com.chess.puzzle.text2sql.web.entities.ResultWrapper
 import com.chess.puzzle.text2sql.web.entities.helper.CallDeepSeekError
 import com.chess.puzzle.text2sql.web.entities.helper.CallDeepSeekError.*
@@ -27,14 +22,7 @@ private val logger = KotlinLogging.logger {}
  * - Handling the API response and returning a [ResultWrapper] object.
  */
 @Service
-class LargeLanguageApiHelper(@Autowired private val property: Property) {
-    private val apiKey = property.apiKey
-    private val baseUrl = property.baseUrl
-    private val loggingConfig =
-        LoggingConfig(logLevel = LogLevel.None, logger = Logger.Simple, sanitize = true)
-    private val client: OpenAI =
-        OpenAI(token = apiKey, host = OpenAIHost(baseUrl), logging = loggingConfig)
-
+class LargeLanguageApiHelper(@Autowired private val client: OpenAI) {
     /**
      * Sends a query to the DeepSeek API and returns the result as a [ResultWrapper].
      *

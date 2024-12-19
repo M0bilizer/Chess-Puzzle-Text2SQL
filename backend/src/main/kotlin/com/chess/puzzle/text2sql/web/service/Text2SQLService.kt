@@ -1,11 +1,9 @@
 package com.chess.puzzle.text2sql.web.service
 
+import com.chess.puzzle.text2sql.web.config.FilePaths
 import com.chess.puzzle.text2sql.web.entities.Demonstration
 import com.chess.puzzle.text2sql.web.entities.ModelName
-import com.chess.puzzle.text2sql.web.entities.ModelName.Baseline
-import com.chess.puzzle.text2sql.web.entities.ModelName.Full
-import com.chess.puzzle.text2sql.web.entities.ModelName.Partial
-import com.chess.puzzle.text2sql.web.entities.Property
+import com.chess.puzzle.text2sql.web.entities.ModelName.*
 import com.chess.puzzle.text2sql.web.entities.ResultWrapper
 import com.chess.puzzle.text2sql.web.entities.helper.CustomError
 import com.chess.puzzle.text2sql.web.service.helper.LargeLanguageApiHelper
@@ -19,7 +17,7 @@ private val logger = KotlinLogging.logger {}
 
 @Service
 class Text2SQLService(
-    @Autowired private val property: Property,
+    @Autowired private val filePaths: FilePaths,
     @Autowired private val fileLoaderService: FileLoaderService,
     @Autowired private val sentenceTransformerHelper: SentenceTransformerHelper,
     @Autowired private val preprocessingHelper: PreprocessingHelper,
@@ -41,7 +39,7 @@ class Text2SQLService(
         val demonstrations: List<Demonstration>
         val processedPrompt: String
         val sql: String
-        when (val result = fileLoaderService.getTextFile(property.getPromptTemplate(Full))) {
+        when (val result = fileLoaderService.getTextFile(filePaths.getPromptTemplate(Full))) {
             is ResultWrapper.Success -> promptTemplate = result.data
             is ResultWrapper.Failure -> return ResultWrapper.Failure(result.error)
         }
@@ -67,7 +65,7 @@ class Text2SQLService(
         val demonstrations: List<Demonstration>
         val processedPrompt: String
         val sql: String
-        when (val result = fileLoaderService.getTextFile(property.getPromptTemplate(Partial))) {
+        when (val result = fileLoaderService.getTextFile(filePaths.getPromptTemplate(Partial))) {
             is ResultWrapper.Success -> promptTemplate = result.data
             is ResultWrapper.Failure -> return ResultWrapper.Failure(result.error)
         }
@@ -92,7 +90,7 @@ class Text2SQLService(
         val promptTemplate: String
         val processedPrompt: String
         val sql: String
-        when (val result = fileLoaderService.getTextFile(property.getPromptTemplate(Full))) {
+        when (val result = fileLoaderService.getTextFile(filePaths.getPromptTemplate(Full))) {
             is ResultWrapper.Success -> promptTemplate = result.data
             is ResultWrapper.Failure -> return ResultWrapper.Failure(result.error)
         }

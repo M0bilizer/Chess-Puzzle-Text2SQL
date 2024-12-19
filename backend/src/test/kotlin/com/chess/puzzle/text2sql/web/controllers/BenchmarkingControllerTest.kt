@@ -1,8 +1,8 @@
 package com.chess.puzzle.text2sql.web.controllers
 
+import com.chess.puzzle.text2sql.web.config.FilePaths
 import com.chess.puzzle.text2sql.web.entities.BenchmarkEntry
 import com.chess.puzzle.text2sql.web.entities.BenchmarkResult
-import com.chess.puzzle.text2sql.web.entities.Property
 import com.chess.puzzle.text2sql.web.entities.ResultWrapper
 import com.chess.puzzle.text2sql.web.entities.helper.GenericError
 import com.chess.puzzle.text2sql.web.entities.helper.GetBenchmarkEntriesError
@@ -32,10 +32,10 @@ class BenchmarkingControllerTest {
     private val benchmarkService: BenchmarkService = mockk()
     private val jsonWriterService: JsonWriterService = mockk()
     private val fileLoaderService: FileLoaderService = mockk()
-    private val property: Property = mockk()
+    private val filePaths: FilePaths = mockk()
 
     private val benchmarkingController =
-        BenchmarkingController(benchmarkService, jsonWriterService, fileLoaderService, property)
+        BenchmarkingController(benchmarkService, jsonWriterService, fileLoaderService, filePaths)
 
     private val jsonPath = "validPath.json"
 
@@ -65,7 +65,7 @@ class BenchmarkingControllerTest {
     fun `test benchmark success`(): Unit = runBlocking {
         val jsonString = Json.encodeToString(benchmarkResults)
 
-        coEvery { property.jsonPath } returns jsonPath
+        coEvery { filePaths.jsonPath } returns jsonPath
         coEvery { fileLoaderService.getBenchmarkEntries(jsonPath) } returns
             ResultWrapper.Success(benchmarkEntries)
         coEvery { benchmarkService.getBenchmark(benchmarkEntries) } returns
@@ -88,7 +88,7 @@ class BenchmarkingControllerTest {
     fun `test benchmark failure in fileLoaderService`(): Unit = runBlocking {
         val error = GetBenchmarkEntriesError.IOException(IOException())
 
-        coEvery { property.jsonPath } returns jsonPath
+        coEvery { filePaths.jsonPath } returns jsonPath
         coEvery { fileLoaderService.getBenchmarkEntries(jsonPath) } returns
             ResultWrapper.Failure(error)
 
@@ -105,7 +105,7 @@ class BenchmarkingControllerTest {
     fun `test benchmark failure in benchmarkService`(): Unit = runBlocking {
         val error = GenericError.Error
 
-        coEvery { property.jsonPath } returns jsonPath
+        coEvery { filePaths.jsonPath } returns jsonPath
         coEvery { fileLoaderService.getBenchmarkEntries(jsonPath) } returns
             ResultWrapper.Success(benchmarkEntries)
         coEvery { benchmarkService.getBenchmark(benchmarkEntries) } returns
@@ -125,7 +125,7 @@ class BenchmarkingControllerTest {
         val jsonString = Json.encodeToString(benchmarkResults)
         val error = WriteToFileError.Exception(IOException())
 
-        coEvery { property.jsonPath } returns jsonPath
+        coEvery { filePaths.jsonPath } returns jsonPath
         coEvery { fileLoaderService.getBenchmarkEntries(jsonPath) } returns
             ResultWrapper.Success(benchmarkEntries)
         coEvery { benchmarkService.getBenchmark(benchmarkEntries) } returns

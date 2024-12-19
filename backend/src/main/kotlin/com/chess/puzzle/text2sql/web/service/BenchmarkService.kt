@@ -57,9 +57,9 @@ class BenchmarkService(@Autowired private val text2SQLService: Text2SQLService) 
      */
     suspend fun evaluateModels(text: String): Triple<SqlResult, SqlResult, SqlResult> {
         return Triple(
-            convertTextToSQL(text, Full),
-            convertTextToSQL(text, Partial),
-            convertTextToSQL(text, Baseline),
+            getSqlResult(text, Full),
+            getSqlResult(text, Partial),
+            getSqlResult(text, Baseline),
         )
     }
 
@@ -75,7 +75,7 @@ class BenchmarkService(@Autowired private val text2SQLService: Text2SQLService) 
      * @param modelName The model to use for the conversion ([Full], [Partial], [Baseline]).
      * @return An [SqlResult] object containing the SQL result or an 'ERROR' SQL.
      */
-    private suspend fun convertTextToSQL(text: String, modelName: ModelName): SqlResult {
+    private suspend fun getSqlResult(text: String, modelName: ModelName): SqlResult {
         val result: ResultWrapper<String, CustomError> =
             withLogLevel(Level.OFF) {
                 return@withLogLevel text2SQLService.convertToSQL(text, modelName)
