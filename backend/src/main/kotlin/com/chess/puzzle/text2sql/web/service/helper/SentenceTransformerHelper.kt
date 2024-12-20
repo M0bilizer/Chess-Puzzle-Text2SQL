@@ -52,14 +52,15 @@ class SentenceTransformerHelper(
                 setBody(jsonString)
             }
 
+        if (response.status != HttpStatusCode.OK) return ResultWrapper.Failure(NetworkError)
+
         val fastApiResponse: FastApiResponse
-        when (response.status) {
-            HttpStatusCode.OK -> fastApiResponse = response.body()
-            else -> {
-                logger.warn { "$logPrefix { input = $input } -> Network Error" }
-                return ResultWrapper.Failure(NetworkError)
-            }
+        try {
+            fastApiResponse = response.body()
+        } catch (e: Exception) {
+            return ResultWrapper.Failure(InternalError)
         }
+
         return when (fastApiResponse.status) {
             "success" -> {
                 val maskedQuery = fastApiResponse.maskedQuery
