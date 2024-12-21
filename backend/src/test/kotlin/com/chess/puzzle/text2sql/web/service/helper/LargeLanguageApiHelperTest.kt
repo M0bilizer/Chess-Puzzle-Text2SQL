@@ -126,7 +126,7 @@ class LargeLanguageApiHelperTest {
     }
 
     @Test
-    fun `test callDeepSeek with UnknownAPIException`(): Unit = runBlocking {
+    fun `test callDeepSeek with UnknownAPIException 402`(): Unit = runBlocking {
         // Arrange
         val input = "My query string"
         val promptTemplate = "Convert this query to SQL: $input"
@@ -139,6 +139,40 @@ class LargeLanguageApiHelperTest {
         // Assert
         expectThat(result).isA<ResultWrapper.Failure<CallDeepSeekError>>().and {
             get { error }.isEqualTo(InsufficientBalanceError)
+        }
+    }
+
+    @Test
+    fun `test callDeepSeek with UnknownAPIException 503`(): Unit = runBlocking {
+        // Arrange
+        val input = "My query string"
+        val promptTemplate = "Convert this query to SQL: $input"
+
+        coEvery { mockOpenAI.chatCompletion(any()) } throws UnknownAPIException(503, OpenAIError())
+
+        // Act
+        val result = helper.callDeepSeek(promptTemplate)
+
+        // Assert
+        expectThat(result).isA<ResultWrapper.Failure<CallDeepSeekError>>().and {
+            get { error }.isEqualTo(ServerOverload)
+        }
+    }
+
+    @Test
+    fun `test callDeepSeek with UnknownAPIException unknown`(): Unit = runBlocking {
+        // Arrange
+        val input = "My query string"
+        val promptTemplate = "Convert this query to SQL: $input"
+
+        coEvery { mockOpenAI.chatCompletion(any()) } throws UnknownAPIException(1, OpenAIError())
+
+        // Act
+        val result = helper.callDeepSeek(promptTemplate)
+
+        // Assert
+        expectThat(result).isA<ResultWrapper.Failure<CallDeepSeekError>>().and {
+            get { error }.isEqualTo(UnknownError(1, "no message"))
         }
     }
 

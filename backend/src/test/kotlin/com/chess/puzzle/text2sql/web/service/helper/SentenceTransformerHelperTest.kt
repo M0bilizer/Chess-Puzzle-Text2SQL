@@ -93,6 +93,67 @@ class SentenceTransformerHelperTest {
     }
 
     @Test
+    fun `test getPartialSimilarDemonstration with successful response`(): Unit = runBlocking {
+        // Arrange
+        val input = "example query"
+        val expectedUrl = "http://example.com/sentence-transformer/partial"
+        val expectedResponse =
+            FastApiResponse(
+                status = "success",
+                maskedQuery = "masked query",
+                data =
+                    listOf(
+                        Demonstration("text0", "sql0"),
+                        Demonstration("text1", "sql1"),
+                        Demonstration("text2", "sql2"),
+                    ),
+            )
+
+        val mockEndpoints =
+            mockk<SentenceTransformerEndpoints> {
+                every { partialSentenceTransformerUrl } returns expectedUrl
+            }
+
+        val mockEngine = MockEngine { request ->
+            if (request.url.toString() == expectedUrl && request.method == HttpMethod.Post) {
+                respond(
+                    content = Json.encodeToString(expectedResponse),
+                    status = HttpStatusCode.OK,
+                    headers =
+                        headersOf("Content-Type" to listOf(ContentType.Application.Json.toString())),
+                )
+            } else {
+                respondError(HttpStatusCode.NotFound)
+            }
+        }
+        val client = HttpClient(mockEngine) { install(ContentNegotiation) { json() } }
+
+        // Create the helper with mocked dependencies
+        val helper = SentenceTransformerHelper(mockEndpoints, client)
+
+        // Act
+        val result = helper.getPartialSimilarDemonstration(input)
+
+        // Assert
+        expectThat(result).isA<ResultWrapper.Success<List<Demonstration>>>().and {
+            get { data }.isEqualTo(expectedResponse.data)
+        }
+
+        val expectedRequestBody = Gson().toJson(QueryRequest(input))
+        val request =
+            mockEngine.requestHistory.firstOrNull {
+                it.url.toString() == expectedUrl && it.method == HttpMethod.Post
+            }
+        expectThat(request).isNotNull().and {
+            get { body.contentType }.isEqualTo(ContentType.Application.Json)
+            runBlocking {
+                val bodyText = request!!.body.toByteReadPacket().readText()
+                get { bodyText }.isEqualTo(expectedRequestBody)
+            }
+        }
+    }
+
+    @Test
     fun `test getSimilarDemonstration with connection error`(): Unit = runBlocking {
         // Arrange
         val input = "example query"
@@ -189,7 +250,63 @@ class SentenceTransformerHelperTest {
                     content =
                         Json.encodeToString(
                             FastApiResponse(
-                                status = "failure", // Simulate a failure status
+                                status = "failure",
+                                maskedQuery = "masked query",
+                                data = emptyList(),
+                            )
+                        ),
+                    status = HttpStatusCode.OK,
+                    headers =
+                        headersOf("Content-Type" to listOf(ContentType.Application.Json.toString())),
+                )
+            } else {
+                respondError(HttpStatusCode.NotFound)
+            }
+        }
+
+        val client = HttpClient(mockEngine) { install(ContentNegotiation) { json() } }
+
+        val helper = SentenceTransformerHelper(mockEndpoints, client)
+
+        // Act
+        val result = helper.getSimilarDemonstration(input)
+
+        // Assert
+        expectThat(result).isA<ResultWrapper.Failure<GetSimilarDemonstrationError>>().and {
+            get { error }.isEqualTo(InternalError)
+        }
+
+        val request =
+            mockEngine.requestHistory.firstOrNull {
+                it.url.toString() == expectedUrl && it.method == HttpMethod.Post
+            }
+        expectThat(request).isNotNull().and {
+            get { body.contentType }.isEqualTo(ContentType.Application.Json)
+            runBlocking {
+                val bodyText = request!!.body.toByteReadPacket().readText()
+                get { bodyText }.isEqualTo(Gson().toJson(QueryRequest(input)))
+            }
+        }
+    }
+
+    @Test
+    fun `test getSimilarDemonstration with internal error unknown status`(): Unit = runBlocking {
+        // Arrange
+        val input = "example query"
+        val expectedUrl = "http://example.com/sentence-transformer"
+
+        val mockEndpoints =
+            mockk<SentenceTransformerEndpoints> {
+                every { sentenceTransformerUrl } returns expectedUrl
+            }
+
+        val mockEngine = MockEngine { request ->
+            if (request.url.toString() == expectedUrl && request.method == HttpMethod.Post) {
+                respond(
+                    content =
+                        Json.encodeToString(
+                            FastApiResponse(
+                                status = "unknown",
                                 maskedQuery = "masked query",
                                 data = emptyList(),
                             )

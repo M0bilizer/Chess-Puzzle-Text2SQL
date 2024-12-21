@@ -73,12 +73,16 @@ sealed class GetRandomPuzzlesError : CustomError {
 }
 
 sealed class ProcessPromptError : CustomError {
-    data class IOException(val e: java.io.IOException) : ProcessPromptError() {
-        override val message: String = "IOException while processing prompt"
+    data object InsufficientDemonstrationsError : ProcessPromptError() {
+        override val message: String = "Not enough Demonstrations when processing prompt"
     }
 
-    data class UnexpectedError(val e: Exception) : ProcessPromptError() {
-        override val message: String = "Unexpected Error while processing prompt"
+    data object InvalidDemonstrationError : ProcessPromptError() {
+        override val message: String = "Demonstrations are not valid when processing prompt"
+    }
+
+    data object MissingPlaceholderError : ProcessPromptError() {
+        override val message: String = "Missing placeholder when processing prompt"
     }
 }
 
@@ -102,10 +106,6 @@ sealed class WriteToFileError : CustomError {
 sealed class GetBenchmarkEntriesError : CustomError {
     data class IOException(val e: java.io.IOException) : GetBenchmarkEntriesError() {
         override val message: String = "IOException while getting benchmark entries"
-    }
-
-    data class UnexpectedError(val e: Exception) : GetBenchmarkEntriesError() {
-        override val message: String = "Unexpected Error while loading benchmark"
     }
 }
 

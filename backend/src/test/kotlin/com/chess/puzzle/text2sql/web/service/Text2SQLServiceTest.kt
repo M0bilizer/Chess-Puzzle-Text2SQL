@@ -114,7 +114,7 @@ class Text2SQLServiceTest {
                     sql = "SELECT * FROM puzzles WHERE rating > 2000",
                 )
             )
-        val error = ProcessPromptError.IOException(IOException())
+        val error = ProcessPromptError.MissingPlaceholderError
 
         coEvery { filePaths.getPromptTemplate(ModelName.Full) } returns "full_prompt_template.txt"
         coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
@@ -247,7 +247,7 @@ class Text2SQLServiceTest {
                     sql = "SELECT * FROM puzzles WHERE rating > 2000",
                 )
             )
-        val error = ProcessPromptError.UnexpectedError(Exception())
+        val error = ProcessPromptError.InvalidDemonstrationError
 
         coEvery { filePaths.getPromptTemplate(ModelName.Partial) } returns
             "partial_prompt_template.txt"
@@ -343,7 +343,7 @@ class Text2SQLServiceTest {
         // Arrange
         val query = "Find puzzles with rating > 1500"
         val promptTemplate = "{{prompt}}"
-        val error = ProcessPromptError.IOException(IOException())
+        val error = ProcessPromptError.MissingPlaceholderError
 
         coEvery { filePaths.getPromptTemplate(ModelName.Full) } returns
             "baseline_prompt_template.txt"

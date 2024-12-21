@@ -22,8 +22,6 @@ class FileLoaderService {
             ResultWrapper.Success(benchmarkEntries)
         } catch (e: java.io.IOException) {
             ResultWrapper.Failure(GetBenchmarkEntriesError.IOException(e))
-        } catch (e: Exception) {
-            ResultWrapper.Failure(GetBenchmarkEntriesError.UnexpectedError(e))
         }
     }
 
@@ -33,8 +31,6 @@ class FileLoaderService {
             ResultWrapper.Success(string)
         } catch (e: java.io.IOException) {
             ResultWrapper.Failure(GetTextFileError.IOException(e))
-        } catch (e: Exception) {
-            ResultWrapper.Failure(GetTextFileError.UnexpectedError(e))
         }
     }
 }
