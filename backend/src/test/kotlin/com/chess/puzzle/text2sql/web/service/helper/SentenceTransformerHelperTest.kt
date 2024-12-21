@@ -18,6 +18,7 @@ import io.ktor.http.content.*
 import io.ktor.serialization.kotlinx.json.*
 import io.mockk.every
 import io.mockk.mockk
+import java.io.IOException
 import kotlin.text.get
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.encodeToString
@@ -92,6 +93,41 @@ class SentenceTransformerHelperTest {
     }
 
     @Test
+    fun `test getSimilarDemonstration with connection error`(): Unit = runBlocking {
+        // Arrange
+        val input = "example query"
+        val expectedUrl = "http://example.com/sentence-transformer"
+
+        // Mock SentenceTransformerEndpoints
+        val mockEndpoints =
+            mockk<SentenceTransformerEndpoints> {
+                every { sentenceTransformerUrl } returns expectedUrl
+            }
+
+        // Mock HttpClient with MockEngine to simulate a connection error
+        val mockEngine = MockEngine { request ->
+            if (request.url.toString() == expectedUrl && request.method == HttpMethod.Post) {
+                throw IOException("Connection error")
+            } else {
+                respondError(HttpStatusCode.NotFound)
+            }
+        }
+
+        val client = HttpClient(mockEngine) { install(ContentNegotiation) { json() } }
+
+        // Create the helper with mocked dependencies
+        val helper = SentenceTransformerHelper(mockEndpoints, client)
+
+        // Act
+        val result = helper.getSimilarDemonstration(input)
+
+        // Assert
+        expectThat(result).isA<ResultWrapper.Failure<GetSimilarDemonstrationError>>().and {
+            get { error }.isEqualTo(NetworkError)
+        }
+    }
+
+    @Test
     fun `test getSimilarDemonstration with network error`(): Unit = runBlocking {
         // Arrange
         val input = "example query"
@@ -104,7 +140,7 @@ class SentenceTransformerHelperTest {
 
         val mockEngine = MockEngine { request ->
             if (request.url.toString() == expectedUrl && request.method == HttpMethod.Post) {
-                respondError(HttpStatusCode.NotFound) // Simulate a network error
+                respondError(HttpStatusCode.NotFound)
             } else {
                 respondError(HttpStatusCode.NotFound)
             }
@@ -176,7 +212,7 @@ class SentenceTransformerHelperTest {
 
         // Assert
         expectThat(result).isA<ResultWrapper.Failure<GetSimilarDemonstrationError>>().and {
-            get { error }.isEqualTo(NetworkError)
+            get { error }.isEqualTo(InternalError)
         }
 
         val request =

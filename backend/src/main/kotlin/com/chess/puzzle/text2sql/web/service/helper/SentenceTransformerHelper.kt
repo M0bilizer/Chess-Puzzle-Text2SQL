@@ -46,13 +46,22 @@ class SentenceTransformerHelper(
         logPrefix: String,
     ): ResultWrapper<List<Demonstration>, GetSimilarDemonstrationError> {
         val jsonString = Gson().toJson(QueryRequest(input))
-        val response: HttpResponse =
-            client.post(url) {
-                contentType(ContentType.Application.Json)
-                setBody(jsonString)
-            }
+        val response: HttpResponse
+        try {
+            response =
+                client.post(url) {
+                    contentType(ContentType.Application.Json)
+                    setBody(jsonString)
+                }
+        } catch (e: Exception) {
+            logger.error { "$logPrefix { input = $input } -> Network Error: ${e.message}" }
+            return ResultWrapper.Failure(NetworkError)
+        }
 
-        if (response.status != HttpStatusCode.OK) return ResultWrapper.Failure(NetworkError)
+        if (response.status != HttpStatusCode.OK) {
+            logger.warn { "$logPrefix { input = $input } -> Network Error" }
+            return ResultWrapper.Failure(NetworkError)
+        }
 
         val fastApiResponse: FastApiResponse
         try {
@@ -70,7 +79,7 @@ class SentenceTransformerHelper(
             }
             "failure" -> {
                 logger.warn { "$logPrefix { input = $input } -> Network Error" }
-                ResultWrapper.Failure(NetworkError)
+                ResultWrapper.Failure(InternalError)
             }
             else -> {
                 logger.warn { "$logPrefix { input = $input} -> Internal Error" }

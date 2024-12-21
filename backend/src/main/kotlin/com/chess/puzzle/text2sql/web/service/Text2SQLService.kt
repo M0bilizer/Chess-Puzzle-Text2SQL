@@ -53,7 +53,7 @@ class Text2SQLService(
             is ResultWrapper.Success -> processedPrompt = result.data
             is ResultWrapper.Failure -> return ResultWrapper.Failure(result.error)
         }
-        when (val result = largeLanguageApiHelper.callDeepSeek(query, processedPrompt)) {
+        when (val result = largeLanguageApiHelper.callDeepSeek(processedPrompt)) {
             is ResultWrapper.Success -> sql = result.data
             is ResultWrapper.Failure -> return ResultWrapper.Failure(result.error)
         }
@@ -79,7 +79,7 @@ class Text2SQLService(
             is ResultWrapper.Success -> processedPrompt = result.data
             is ResultWrapper.Failure -> return ResultWrapper.Failure(result.error)
         }
-        when (val result = largeLanguageApiHelper.callDeepSeek(query, processedPrompt)) {
+        when (val result = largeLanguageApiHelper.callDeepSeek(processedPrompt)) {
             is ResultWrapper.Success -> sql = result.data
             is ResultWrapper.Failure -> return ResultWrapper.Failure(result.error)
         }
@@ -98,7 +98,7 @@ class Text2SQLService(
             is ResultWrapper.Success -> processedPrompt = result.data
             is ResultWrapper.Failure -> return ResultWrapper.Failure(result.error)
         }
-        when (val result = largeLanguageApiHelper.callDeepSeek(query, processedPrompt)) {
+        when (val result = largeLanguageApiHelper.callDeepSeek(processedPrompt)) {
             is ResultWrapper.Success -> sql = result.data
             is ResultWrapper.Failure -> return ResultWrapper.Failure(result.error)
         }

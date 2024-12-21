@@ -13,94 +13,95 @@ import org.springframework.stereotype.Service
 
 private val logger = KotlinLogging.logger {}
 
-/**
- * A helper service for interacting with the DeepSeek large language model API.
- *
- * This class is responsible for:
- * - Making HTTP requests to the DeepSeek API.
- * - Converting user queries into SQL statements using the API.
- * - Handling the API response and returning a [ResultWrapper] object.
- */
 @Service
 class LargeLanguageApiHelper(@Autowired private val client: OpenAI) {
     /**
      * Sends a query to the DeepSeek API and returns the result as a [ResultWrapper].
      *
-     * This method is a shorthand for [callDeepSeek] with no prompt template.
-     *
      * @param query The user's query to be converted into SQL.
      * @return A [ResultWrapper] containing the SQL query or an error.
      */
     suspend fun callDeepSeek(query: String): ResultWrapper<String, CallDeepSeekError> {
-        val loggingString = if (query.length > 20) query.substring(0, 20) else query
-        return this.callDeepSeek(loggingString, query)
+        val chatCompletionRequest = createChatCompletionRequest(query)
+        return try {
+            val chatCompletion = client.chatCompletion(chatCompletionRequest)
+            processChatCompletionResponse(query, chatCompletion)
+        } catch (e: OpenAIException) {
+            handleOpenAIException(e)
+        }
     }
 
     /**
-     * Sends a query and a custom prompt template to the DeepSeek API and returns the result as a
-     * [ResultWrapper].
+     * Creates a [ChatCompletionRequest] for the given prompt template.
      *
-     * @param query The user's query to be converted into SQL.
-     * @param promptTemplate A custom prompt template to be sent to the API.
+     * @param input The custom prompt template to be sent to the API.
+     * @return A [ChatCompletionRequest] object.
+     */
+    private fun createChatCompletionRequest(input: String): ChatCompletionRequest {
+        return ChatCompletionRequest(
+            model = ModelId("deepseek-chat"),
+            messages =
+                listOf(
+                    ChatMessage(role = ChatRole.System, content = "You are a helpful assistant"),
+                    ChatMessage(role = ChatRole.User, content = input),
+                ),
+            temperature = 0.0,
+        )
+    }
+
+    /**
+     * Processes the [ChatCompletion] response and extracts the SQL query.
+     *
+     * @param query The original query sent to the API.
+     * @param chatCompletion The [ChatCompletion] response from the API.
      * @return A [ResultWrapper] containing the SQL query or an error.
      */
-    suspend fun callDeepSeek(
+    private fun processChatCompletionResponse(
         query: String,
-        promptTemplate: String,
+        chatCompletion: ChatCompletion,
     ): ResultWrapper<String, CallDeepSeekError> {
-        val chatCompletionRequest =
-            ChatCompletionRequest(
-                model = ModelId("deepseek-chat"),
-                messages =
-                    listOf(
-                        ChatMessage(
-                            role = ChatRole.System,
-                            content = "You are a helpful assistant",
-                        ),
-                        ChatMessage(role = ChatRole.User, content = promptTemplate),
-                    ),
-                temperature = 0.0,
-            )
-        var chatCompletion: ChatCompletion? = null
-        try {
-            chatCompletion = client.chatCompletion(chatCompletionRequest)
-        } catch (e: OpenAIException) {
-            when (e) {
-                is OpenAIAPIException ->
-                    when (e) {
-                        is RateLimitException -> ResultWrapper.Failure(RateLimitError)
-                        is InvalidRequestException -> ResultWrapper.Failure(InvalidRequestError)
-                        is AuthenticationException -> ResultWrapper.Failure(AuthenticationError)
-                        is PermissionException -> ResultWrapper.Failure(PermissionError)
-                        is UnknownAPIException ->
-                            when (e.statusCode) {
-                                402 -> ResultWrapper.Failure(InsufficientBalanceError)
-                                503 -> ResultWrapper.Failure(ServerOverload)
-                                else ->
-                                    ResultWrapper.Failure(
-                                        UnknownError(e.statusCode, e.message ?: "no message")
-                                    )
-                            }
-                    }
-
-                is OpenAIHttpException -> ResultWrapper.Failure(HttpError)
-                is OpenAIServerException -> ResultWrapper.Failure(ServerError)
-                is OpenAIIOException -> ResultWrapper.Failure(IOException)
-            }
-        }
-
-        val response: Content? = chatCompletion!!.choices.firstOrNull()?.message?.messageContent
-        val sql: String
-        when (response) {
+        return when (val response = chatCompletion.choices.firstOrNull()?.message?.messageContent) {
             is TextContent -> {
+                val sql = stripUnnecessary(response.content)
                 logger.info {
-                    "Calling DeepSeek { query = $query } -> { response = ${response.content} }"
+                    "Calling DeepSeek { query = ${query.take(10)} } -> { response = $sql }"
                 }
-                sql = stripUnnecessary(response.content)
+                ResultWrapper.Success(sql)
             }
-            else -> return ResultWrapper.Failure(UnexpectedResult)
+            else -> ResultWrapper.Failure(UnexpectedResult)
         }
-        return ResultWrapper.Success(sql)
+    }
+
+    /**
+     * Handles exceptions thrown by the OpenAI API and returns the appropriate [CallDeepSeekError].
+     *
+     * @param e The [OpenAIException] to handle.
+     * @return A [ResultWrapper.Failure] containing the corresponding [CallDeepSeekError].
+     */
+    private fun handleOpenAIException(
+        e: OpenAIException
+    ): ResultWrapper.Failure<CallDeepSeekError> {
+        return when (e) {
+            is OpenAIAPIException ->
+                when (e) {
+                    is RateLimitException -> ResultWrapper.Failure(RateLimitError)
+                    is InvalidRequestException -> ResultWrapper.Failure(InvalidRequestError)
+                    is AuthenticationException -> ResultWrapper.Failure(AuthenticationError)
+                    is PermissionException -> ResultWrapper.Failure(PermissionError)
+                    is UnknownAPIException ->
+                        when (e.statusCode) {
+                            402 -> ResultWrapper.Failure(InsufficientBalanceError)
+                            503 -> ResultWrapper.Failure(ServerOverload)
+                            else ->
+                                ResultWrapper.Failure(
+                                    UnknownError(e.statusCode, e.message ?: "no message")
+                                )
+                        }
+                }
+            is OpenAIHttpException -> ResultWrapper.Failure(HttpError)
+            is OpenAIServerException -> ResultWrapper.Failure(ServerError)
+            is OpenAIIOException -> ResultWrapper.Failure(IOException)
+        }
     }
 
     /**

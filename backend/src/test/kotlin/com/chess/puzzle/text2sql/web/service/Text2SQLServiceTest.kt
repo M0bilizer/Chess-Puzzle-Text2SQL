@@ -57,7 +57,7 @@ class Text2SQLServiceTest {
             ResultWrapper.Success(demonstrations)
         coEvery { preprocessingHelper.processPrompt(query, promptTemplate, demonstrations) } returns
             ResultWrapper.Success(processedPrompt)
-        coEvery { largeLanguageApiHelper.callDeepSeek(query, processedPrompt) } returns
+        coEvery { largeLanguageApiHelper.callDeepSeek(processedPrompt) } returns
             ResultWrapper.Success(sql)
 
         val result = text2SQLService.convertToSQL(query, ModelName.Full)
@@ -154,7 +154,7 @@ class Text2SQLServiceTest {
             ResultWrapper.Success(demonstrations)
         coEvery { preprocessingHelper.processPrompt(query, promptTemplate, demonstrations) } returns
             ResultWrapper.Success(processedPrompt)
-        coEvery { largeLanguageApiHelper.callDeepSeek(query, processedPrompt) } returns
+        coEvery { largeLanguageApiHelper.callDeepSeek(processedPrompt) } returns
             ResultWrapper.Failure(error)
 
         // Act
@@ -187,7 +187,7 @@ class Text2SQLServiceTest {
             ResultWrapper.Success(demonstrations)
         coEvery { preprocessingHelper.processPrompt(query, promptTemplate, demonstrations) } returns
             ResultWrapper.Success(processedPrompt)
-        coEvery { largeLanguageApiHelper.callDeepSeek(query, processedPrompt) } returns
+        coEvery { largeLanguageApiHelper.callDeepSeek(processedPrompt) } returns
             ResultWrapper.Success(sql)
 
         val result = text2SQLService.convertToSQL(query, ModelName.Partial)
@@ -289,7 +289,7 @@ class Text2SQLServiceTest {
             ResultWrapper.Success(demonstrations)
         coEvery { preprocessingHelper.processPrompt(query, promptTemplate, demonstrations) } returns
             ResultWrapper.Success(processedPrompt)
-        coEvery { largeLanguageApiHelper.callDeepSeek(query, processedPrompt) } returns
+        coEvery { largeLanguageApiHelper.callDeepSeek(processedPrompt) } returns
             ResultWrapper.Failure(error)
 
         // Act
@@ -312,7 +312,7 @@ class Text2SQLServiceTest {
             ResultWrapper.Success(promptTemplate)
         coEvery { preprocessingHelper.processPrompt(query, promptTemplate, null) } returns
             ResultWrapper.Success(processedPrompt)
-        coEvery { largeLanguageApiHelper.callDeepSeek(query, processedPrompt) } returns
+        coEvery { largeLanguageApiHelper.callDeepSeek(processedPrompt) } returns
             ResultWrapper.Success(sql)
 
         val result = text2SQLService.convertToSQL(query, ModelName.Baseline)
@@ -373,7 +373,7 @@ class Text2SQLServiceTest {
             ResultWrapper.Success(promptTemplate)
         coEvery { preprocessingHelper.processPrompt(query, promptTemplate, null) } returns
             ResultWrapper.Success(processedPrompt)
-        coEvery { largeLanguageApiHelper.callDeepSeek(query, processedPrompt) } returns
+        coEvery { largeLanguageApiHelper.callDeepSeek(processedPrompt) } returns
             ResultWrapper.Failure(error)
 
         // Act
