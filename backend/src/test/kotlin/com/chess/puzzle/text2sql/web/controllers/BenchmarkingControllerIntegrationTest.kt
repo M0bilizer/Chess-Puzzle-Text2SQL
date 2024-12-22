@@ -34,8 +34,8 @@ class BenchmarkingControllerIntegrationTest {
     private val objectMapper = jacksonObjectMapper()
 
     private val text2SQLService: Text2SQLService = mockk()
-
     private val benchmarkService: BenchmarkService = BenchmarkService(text2SQLService)
+
     private val jsonWriterService: JsonWriterService = JsonWriterService()
     private val fileLoaderService: FileLoaderService = FileLoaderService()
     private val filePaths: FilePaths =
