@@ -67,10 +67,8 @@ class SentenceTransformerHelperTest {
         }
         val client = HttpClient(mockEngine) { install(ContentNegotiation) { json() } }
 
-        // Create the helper with mocked dependencies
         val helper = SentenceTransformerHelper(mockEndpoints, client)
 
-        // Act
         val result = helper.getSimilarDemonstration(input)
 
         // Assert
