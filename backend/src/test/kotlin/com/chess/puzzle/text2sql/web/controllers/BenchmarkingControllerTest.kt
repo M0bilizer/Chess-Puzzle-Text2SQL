@@ -61,6 +61,7 @@ class BenchmarkingControllerTest {
             ),
         )
 
+    @Suppress("UNCHECKED_CAST")
     @Test
     fun `test benchmark success`(): Unit = runBlocking {
         val jsonString = Json.encodeToString(benchmarkResults)
@@ -84,6 +85,7 @@ class BenchmarkingControllerTest {
         expectThat(result.body).isEqualTo(expected)
     }
 
+    @Suppress("UNCHECKED_CAST")
     @Test
     fun `test benchmark failure in fileLoaderService`(): Unit = runBlocking {
         val error = GetBenchmarkEntriesError.IOException(IOException())
@@ -101,6 +103,7 @@ class BenchmarkingControllerTest {
         expectThat(result.body).isEqualTo(expected)
     }
 
+    @Suppress("UNCHECKED_CAST")
     @Test
     fun `test benchmark failure in benchmarkService`(): Unit = runBlocking {
         val error = GenericError.Error
@@ -120,6 +123,7 @@ class BenchmarkingControllerTest {
         expectThat(result.body).isEqualTo(expected)
     }
 
+    @Suppress("UNCHECKED_CAST")
     @Test
     fun `test benchmark failure in jsonWriterService`(): Unit = runBlocking {
         val jsonString = Json.encodeToString(benchmarkResults)

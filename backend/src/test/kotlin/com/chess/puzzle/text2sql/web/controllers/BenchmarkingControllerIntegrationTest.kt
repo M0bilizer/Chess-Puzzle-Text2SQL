@@ -18,8 +18,6 @@ import io.mockk.mockk
 import java.io.File
 import java.io.IOException
 import kotlinx.coroutines.runBlocking
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -103,10 +101,9 @@ class BenchmarkingControllerIntegrationTest {
         tempFiles.forEach { it.delete() }
     }
 
+    @Suppress("UNCHECKED_CAST")
     @Test
     fun `test benchmark success`(): Unit = runBlocking {
-        val jsonString = Json.encodeToString(benchmarkFailureResults)
-
         for ((index, benchmarkEntry) in benchmarkEntries.withIndex()) {
             val text = benchmarkEntry.text
             val result = benchmarkSuccessResults[index]
@@ -129,11 +126,10 @@ class BenchmarkingControllerIntegrationTest {
         expectThat(result.body).isEqualTo(expected)
     }
 
+    @Suppress("UNCHECKED_CAST")
     @Test
     fun `test benchmark failure`(): Unit = runBlocking {
-        val jsonString = Json.encodeToString(benchmarkFailureResults)
-
-        for ((index, benchmarkEntry) in benchmarkEntries.withIndex()) {
+        for (benchmarkEntry in benchmarkEntries) {
             val text = benchmarkEntry.text
             coEvery { text2SQLService.convertToSQL(text, ModelName.Full) } returns
                 ResultWrapper.Failure(CallDeepSeekError.HttpError)
@@ -154,10 +150,10 @@ class BenchmarkingControllerIntegrationTest {
         expectThat(result.body).isEqualTo(expected)
     }
 
+    @Suppress("UNCHECKED_CAST")
     @Test
     fun `test benchmark error in getting benchmarkEntries`(): Unit = runBlocking {
         tempFiles.forEach { it.delete() }
-        val jsonString = Json.encodeToString(benchmarkFailureResults)
 
         val deferredResult = benchmarkingController.benchmark()
         val result = deferredResult.result as ResponseEntity<String>
