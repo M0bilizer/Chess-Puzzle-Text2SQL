@@ -30,6 +30,8 @@ private val logger = KotlinLogging.logger {}
  * The controller uses the following services:
  * - [BenchmarkService]: Runs the benchmark process.
  * - [JsonWriterService]: Writes the benchmark results to a JSON file.
+ * - [FileLoaderService]: Loads benchmark entries from a file.
+ * - [FilePaths]: Provides file paths for benchmark data and results.
  */
 @RestController
 class BenchmarkingController(
@@ -42,13 +44,17 @@ class BenchmarkingController(
     /**
      * Benchmarking endpoint to start the benchmark process.
      *
-     * Runs the benchmark process and saves the results to a JSON file.
+     * This endpoint:
+     * 1. Loads benchmark entries from a file using [FileLoaderService].
+     * 2. Runs the benchmark process using [BenchmarkService].
+     * 3. Saves the benchmark results to a JSON file using [JsonWriterService].
      *
      * @return A [DeferredResult] containing the benchmark results if successful, or an error
      *   message if the process fails.
      */
     @GetMapping("/api/benchmark")
     suspend fun benchmark(): DeferredResult<ResponseEntity<String>> {
+        logger.info { "Received GET on /api/benchmark" }
         val deferredResult = DeferredResult<ResponseEntity<String>>(1350000)
 
         runBlocking {

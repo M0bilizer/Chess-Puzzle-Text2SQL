@@ -20,12 +20,29 @@ import org.springframework.stereotype.Service
 
 private val logger = KotlinLogging.logger {}
 
+/**
+ * Service class for interacting with the Sentence Transformer microservice.
+ *
+ * This class handles:
+ * - Fetching similar demonstrations for a given input query.
+ * - Fetching partial similar demonstrations for a given input query.
+ * - Logging and error handling for the microservice interactions.
+ *
+ * @property sentenceTransformerEndpoints The configuration for Sentence Transformer endpoints.
+ * @property client The HTTP client used to make requests to the microservice.
+ */
 @Service
 class SentenceTransformerHelper(
     @Autowired private val sentenceTransformerEndpoints: SentenceTransformerEndpoints,
     @Autowired private val client: HttpClient,
 ) {
 
+    /**
+     * Fetches similar demonstrations for the given input query.
+     *
+     * @param input The input query for which to fetch similar demonstrations.
+     * @return A [ResultWrapper] containing the list of similar demonstrations or an error.
+     */
     suspend fun getSimilarDemonstration(
         input: String
     ): ResultWrapper<List<Demonstration>, GetSimilarDemonstrationError> {
@@ -33,6 +50,12 @@ class SentenceTransformerHelper(
         return fetchSimilarDemonstrations(input, url, "gettingSimilarDemonstration")
     }
 
+    /**
+     * Fetches partial similar demonstrations for the given input query.
+     *
+     * @param input The input query for which to fetch partial similar demonstrations.
+     * @return A [ResultWrapper] containing the list of partial similar demonstrations or an error.
+     */
     suspend fun getPartialSimilarDemonstration(
         input: String
     ): ResultWrapper<List<Demonstration>, GetSimilarDemonstrationError> {
@@ -40,6 +63,17 @@ class SentenceTransformerHelper(
         return fetchSimilarDemonstrations(input, partialUrl, "gettingPartialSimilarDemonstration")
     }
 
+    /**
+     * Fetches similar demonstrations from the Sentence Transformer microservice.
+     *
+     * This method sends a POST request to the specified URL with the input query and processes the
+     * response.
+     *
+     * @param input The input query for which to fetch similar demonstrations.
+     * @param url The URL of the Sentence Transformer microservice endpoint.
+     * @param logPrefix A prefix for logging messages.
+     * @return A [ResultWrapper] containing the list of similar demonstrations or an error.
+     */
     private suspend fun fetchSimilarDemonstrations(
         input: String,
         url: String,
@@ -88,6 +122,15 @@ class SentenceTransformerHelper(
         }
     }
 
+    /**
+     * Logs the successful retrieval of similar demonstrations.
+     *
+     * @param logPrefix A prefix for logging messages.
+     * @param input The input query for which similar demonstrations were fetched.
+     * @param maskedQuery The masked query returned by the microservice.
+     * @param demos The list of similar demonstrations.
+     * @param maxTruncateLength The maximum length to truncate demonstration text for logging.
+     */
     private fun logSuccess(
         logPrefix: String,
         input: String,

@@ -46,6 +46,7 @@ class DebuggingController(
      */
     @GetMapping("/api/debug/hello")
     fun hello(): String {
+        logger.info { "Received GET on /api/debug/hello" }
         return "Hello from Spring Boot!"
     }
 
@@ -77,8 +78,8 @@ class DebuggingController(
      */
     @PostMapping("/api/debug/sql")
     fun sql(@RequestBody input: QueryRequest): ResponseEntity<String> {
-        val sqlCommand = input.query
         logger.info { "Received POST on /api/debug/sql { input = $input }" }
+        val sqlCommand = input.query
         return when (val result = puzzleService.processQuery(sqlCommand)) {
             is ResultWrapper.Success -> success(result.data)
             is ResultWrapper.Failure -> failure(result.error)
@@ -97,8 +98,8 @@ class DebuggingController(
      */
     @PostMapping("/api/debug/sentenceTransformer")
     suspend fun sentenceTransformer(@RequestBody input: QueryRequest): ResponseEntity<String> {
-        val request = input.query
         logger.info { "Received POST on /api/debug/sentenceTransformer { input = $input }" }
+        val request = input.query
         return when (val result = sentenceTransformerHelper.getSimilarDemonstration(request)) {
             is ResultWrapper.Success -> success(result.data)
             is ResultWrapper.Failure -> failure(result.error)
@@ -116,8 +117,8 @@ class DebuggingController(
      */
     @PostMapping("/api/debug/text2sql")
     suspend fun text2sql(@RequestBody input: QueryRequest): ResponseEntity<String> {
-        val query = input.query
         logger.info { "Received POST on /api/debug/text2sql { input = $input }" }
+        val query = input.query
         return when (val result = text2SQLService.convertToSQL(query, Full)) {
             is ResultWrapper.Success -> success(result.data)
             is ResultWrapper.Failure -> failure(result.error)
@@ -135,8 +136,8 @@ class DebuggingController(
      */
     @PostMapping("/api/debug/llm")
     suspend fun llm(@RequestBody input: QueryRequest): ResponseEntity<String> {
-        val prompt = input.query
         logger.info { "Received POST on /api/debug/llm { input = $input }" }
+        val prompt = input.query
         return when (val result = largeLanguageApiHelper.callDeepSeek(prompt)) {
             is ResultWrapper.Success -> success(result.data)
             is ResultWrapper.Failure -> failure(result.error)

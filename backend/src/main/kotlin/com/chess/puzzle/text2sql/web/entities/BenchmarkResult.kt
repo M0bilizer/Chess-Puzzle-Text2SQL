@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
  *
  * This class is used for benchmarking purposes and for writing into a `benchmarkResult.json` file.
  * The text was used to challenge the Text2SQL model. See
- * [com.chess.puzzle.text2sql.web.entities.helper.BenchmarkEntry].
+ * [com.chess.puzzle.text2sql.web.entities.BenchmarkEntry].
  *
  * ### Text2SQL Models and Ablation Test
  * In this web application, the Text2SQL process is supported by two key functions:
@@ -39,7 +39,7 @@ data class BenchmarkResult(
      * @sample "Find puzzles with a knight sacrifice in the endgame."
      * @sample "Give me a puzzle where the player must defend against the Sicilian Defense."
      * @sample "Show me a puzzle with a high rating and a popular theme."
-     * @see [com.chess.puzzle.text2sql.web.entities.helper.BenchmarkEntry]
+     * @see [com.chess.puzzle.text2sql.web.entities.BenchmarkEntry]
      */
     val text: String,
 

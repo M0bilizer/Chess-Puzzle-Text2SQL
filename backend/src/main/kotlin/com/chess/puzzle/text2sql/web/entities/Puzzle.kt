@@ -97,7 +97,7 @@ data class Puzzle(
      *
      * The opening tag field is only set for puzzles starting before move 20. If the puzzle does not
      * have, the string is empty. It is a string which may contains multiple tags where each tags
-     * are seperated by a space. Each tags follows a Pascal_Snake_Case. Apostrophe are removed.
+     * are separated by a space. Each tags follows a Pascal_Snake_Case. Apostrophe are removed.
      *
      * @sample "Queens_Gambit Queens_Gambit_Declined"
      */

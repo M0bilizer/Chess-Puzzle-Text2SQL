@@ -11,6 +11,14 @@ import org.springframework.stereotype.Service
 
 private val logger = KotlinLogging.logger {}
 
+/**
+ * Service class for preprocessing user prompts and demonstrations into a formatted prompt template.
+ *
+ * This class handles:
+ * - Loading the user prompt into a template.
+ * - Injecting similar demonstrations into the template.
+ * - Validating the demonstrations and placeholders.
+ */
 @Service
 class PreprocessingHelper {
 
@@ -18,13 +26,15 @@ class PreprocessingHelper {
      * Processes the user prompt and similar demonstrations into a prompt template.
      *
      * This method:
-     * 1. Loads the prompt template from a file.
-     * 2. Replaces placeholders in the template with the user prompt.
-     * 3. Injects similar demonstrations into the template.
+     * 1. Loads the user prompt into the template by replacing the `{{prompt}}` placeholder.
+     * 2. Injects similar demonstrations into the template by replacing placeholders like
+     *    `{{text0}}` and `{{sql0}}`.
+     * 3. Validates the demonstrations and placeholders.
      *
      * @param userPrompt The user's input query.
+     * @param promptTemplate The template containing placeholders for the prompt and demonstrations.
      * @param demonstrations A list of similar demonstrations to be injected into the template.
-     * @return The processed prompt template with the user query and demonstrations.
+     * @return A [ResultWrapper] containing the processed prompt template or an error.
      */
     fun processPrompt(
         userPrompt: String,
@@ -49,6 +59,15 @@ class PreprocessingHelper {
         }
     }
 
+    /**
+     * Loads the user prompt into the template by replacing the `{{prompt}}` placeholder.
+     *
+     * @param prompt The user's input query.
+     * @param template The template containing the `{{prompt}}` placeholder.
+     * @return The template with the user prompt injected.
+     * @throws MissingPlaceholderException If the `{{prompt}}` placeholder is not found in the
+     *   template.
+     */
     private fun loadPrompt(prompt: String, template: String): String {
         val sb = StringBuilder(template)
         val promptPlaceholder = "{{prompt}}"
@@ -67,6 +86,9 @@ class PreprocessingHelper {
      * @param template The prompt template with placeholders.
      * @param similarDemonstration A list of similar demonstrations to be injected.
      * @return The prompt template with demonstrations injected.
+     * @throws InvalidDemonstrationException If any demonstration has empty text or SQL.
+     * @throws InsufficientDemonstrationsException If fewer than 3 demonstrations are provided.
+     * @throws MissingPlaceholderException If any required placeholder is missing in the template.
      */
     private fun loadDemonstrations(
         template: String,
@@ -105,9 +127,12 @@ class PreprocessingHelper {
         return sb.toString()
     }
 
+    /** Exception thrown when a demonstration is invalid (e.g., empty text or SQL). */
     private class InvalidDemonstrationException : Throwable()
 
+    /** Exception thrown when fewer than 3 demonstrations are provided. */
     private class InsufficientDemonstrationsException : Throwable()
 
+    /** Exception thrown when a required placeholder is missing in the template. */
     private class MissingPlaceholderException : Throwable()
 }

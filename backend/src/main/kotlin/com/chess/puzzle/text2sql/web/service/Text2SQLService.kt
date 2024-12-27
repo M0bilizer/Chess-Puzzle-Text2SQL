@@ -15,6 +15,23 @@ import org.springframework.stereotype.Service
 
 private val logger = KotlinLogging.logger {}
 
+/**
+ * Service class for converting natural language queries into SQL queries.
+ *
+ * This service handles the conversion process by:
+ * - Loading prompt templates.
+ * - Fetching similar demonstrations.
+ * - Preprocessing the prompt with the user query and demonstrations.
+ * - Calling the DeepSeek API to generate the SQL query.
+ *
+ * The service supports three models: Full, Partial, and Baseline.
+ *
+ * @property filePaths Configuration for file paths used in the service.
+ * @property fileLoaderService Service for loading files from the classpath.
+ * @property sentenceTransformerHelper Service for fetching similar demonstrations.
+ * @property preprocessingHelper Service for preprocessing the prompt.
+ * @property largeLanguageApiHelper Service for interacting with the DeepSeek API.
+ */
 @Service
 class Text2SQLService(
     @Autowired private val filePaths: FilePaths,
@@ -23,6 +40,14 @@ class Text2SQLService(
     @Autowired private val preprocessingHelper: PreprocessingHelper,
     @Autowired private val largeLanguageApiHelper: LargeLanguageApiHelper,
 ) {
+
+    /**
+     * Converts a natural language query into an SQL query based on the specified model.
+     *
+     * @param query The natural language query to convert.
+     * @param modelName The model to use for the conversion (Full, Partial, or Baseline).
+     * @return A [ResultWrapper] containing the SQL query or an error.
+     */
     suspend fun convertToSQL(
         query: String,
         modelName: ModelName,
@@ -34,6 +59,18 @@ class Text2SQLService(
         }
     }
 
+    /**
+     * Converts a natural language query into an SQL query using the Full model.
+     *
+     * The Full model:
+     * 1. Loads the prompt template.
+     * 2. Fetches similar demonstrations.
+     * 3. Preprocesses the prompt with the query and demonstrations.
+     * 4. Calls the DeepSeek API to generate the SQL query.
+     *
+     * @param query The natural language query to convert.
+     * @return A [ResultWrapper] containing the SQL query or an error.
+     */
     private suspend fun full(query: String): ResultWrapper<String, CustomError> {
         val promptTemplate: String
         val demonstrations: List<Demonstration>
@@ -60,6 +97,18 @@ class Text2SQLService(
         return ResultWrapper.Success(sql)
     }
 
+    /**
+     * Converts a natural language query into an SQL query using the Partial model.
+     *
+     * The Partial model:
+     * 1. Loads the prompt template.
+     * 2. Fetches partial similar demonstrations.
+     * 3. Preprocesses the prompt with the query and demonstrations.
+     * 4. Calls the DeepSeek API to generate the SQL query.
+     *
+     * @param query The natural language query to convert.
+     * @return A [ResultWrapper] containing the SQL query or an error.
+     */
     private suspend fun partial(query: String): ResultWrapper<String, CustomError> {
         val promptTemplate: String
         val demonstrations: List<Demonstration>
@@ -86,6 +135,17 @@ class Text2SQLService(
         return ResultWrapper.Success(sql)
     }
 
+    /**
+     * Converts a natural language query into an SQL query using the Baseline model.
+     *
+     * The Baseline model:
+     * 1. Loads the prompt template.
+     * 2. Preprocesses the prompt with the query (no demonstrations).
+     * 3. Calls the DeepSeek API to generate the SQL query.
+     *
+     * @param query The natural language query to convert.
+     * @return A [ResultWrapper] containing the SQL query or an error.
+     */
     private suspend fun baseline(query: String): ResultWrapper<String, CustomError> {
         val promptTemplate: String
         val processedPrompt: String

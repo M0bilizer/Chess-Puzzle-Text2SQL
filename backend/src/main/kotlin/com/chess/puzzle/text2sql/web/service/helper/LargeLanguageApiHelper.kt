@@ -13,8 +13,17 @@ import org.springframework.stereotype.Service
 
 private val logger = KotlinLogging.logger {}
 
+/**
+ * Service class for interacting with the DeepSeek API.
+ *
+ * This class handles sending queries to the DeepSeek API, processing the responses, and converting
+ * them into SQL queries. It also handles exceptions and errors returned by the API.
+ *
+ * @property client The [OpenAI] client used to interact with the DeepSeek API.
+ */
 @Service
 class LargeLanguageApiHelper(@Autowired private val client: OpenAI) {
+
     /**
      * Sends a query to the DeepSeek API and returns the result as a [ResultWrapper].
      *
@@ -63,12 +72,11 @@ class LargeLanguageApiHelper(@Autowired private val client: OpenAI) {
         return when (val response = chatCompletion.choices.firstOrNull()?.message?.messageContent) {
             is TextContent -> {
                 val sql = stripUnnecessary(response.content)
-                logger.info {
-                    "Calling DeepSeek { query = ${query.take(10)} } -> { response = $sql }"
-                }
                 ResultWrapper.Success(sql)
             }
-            else -> ResultWrapper.Failure(UnexpectedResult)
+            else -> {
+                ResultWrapper.Failure(UnexpectedResult)
+            }
         }
     }
 

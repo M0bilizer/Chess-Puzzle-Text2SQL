@@ -19,9 +19,10 @@ import org.springframework.http.ResponseEntity
 object ResponseUtils {
 
     /**
-     * The [jacksonObjectMapper] instance used to serialize maps into JSON strings. This mapper is
-     * configured to work with Kotlin data classes and is used to generate the JSON response strings
-     * for HTTP responses.
+     * The [jacksonObjectMapper] instance used to serialize maps into JSON strings.
+     *
+     * This mapper is configured to work with Kotlin data classes and is used to generate the JSON
+     * response strings for HTTP responses.
      */
     private val objectMapper = jacksonObjectMapper()
 
@@ -46,12 +47,12 @@ object ResponseUtils {
     /**
      * Creates an error HTTP response with a JSON payload.
      *
-     * This method generates a JSON response with the "status" field set to "error" and the "data"
-     * field containing the provided data. The response is serialized into a JSON string using the
+     * This method generates a JSON response with the "status" field set to "failure" and the "data"
+     * field containing the error message. The response is serialized into a JSON string using the
      * [jacksonObjectMapper]. Note that the "status" field is different from the HTTP response
      * status.
      *
-     * @param message The data to include in the response. This can be of any type.
+     * @param customError The custom error containing the error message to include in the response.
      * @return A [ResponseEntity] containing the JSON response string.
      */
     fun failure(customError: CustomError): ResponseEntity<String> {
