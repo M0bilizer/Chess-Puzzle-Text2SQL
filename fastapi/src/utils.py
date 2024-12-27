@@ -4,7 +4,7 @@ import commentjson
 import torch
 from sentence_transformers import util
 
-from src.config import model
+from .config import model
 
 
 def ngrams(input_text, n):

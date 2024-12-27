@@ -6,4 +6,4 @@ pip install fastapi[standard]
 pip install pydantic
 pip install sentence-transformers
 pip install commentjson
-uvicorn src.main:app --reload
+uvicorn src.main:app --host 0.0.0.0 --port 8000

@@ -2,9 +2,9 @@ import torch
 from fastapi import APIRouter
 from scipy.spatial.distance import cosine
 
-from src.models import Request, ResponseDto
-from src.config import model
-from src.utils import (
+from .models import Request, ResponseDto
+from .config import model
+from .utils import (
     mask_keywords,
     tokenize,
     jaccard_similarity,
@@ -14,6 +14,11 @@ from src.utils import (
 )
 
 api_router = APIRouter()
+
+
+@api_router.get("/api")
+async def hello():
+    return "Hello from fastapi!"
 
 
 @api_router.post("/api/similarity", response_model=ResponseDto)
