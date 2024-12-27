@@ -107,6 +107,10 @@ sealed class GetBenchmarkEntriesError : CustomError {
     data class IOException(val e: java.io.IOException) : GetBenchmarkEntriesError() {
         override val message: String = "IOException while getting benchmark entries"
     }
+
+    data object FileNotFoundError : GetBenchmarkEntriesError() {
+        override val message: String = "Cannot find file while loading json file"
+    }
 }
 
 sealed class GetTextFileError : CustomError {
@@ -114,7 +118,7 @@ sealed class GetTextFileError : CustomError {
         override val message: String = "IOException while loading text file"
     }
 
-    data class UnexpectedError(val e: Exception) : GetTextFileError() {
-        override val message: String = "Unexpected Error while loading text file"
+    data object FileNotFoundError : GetTextFileError() {
+        override val message: String = "Cannot find file while loading text file"
     }
 }

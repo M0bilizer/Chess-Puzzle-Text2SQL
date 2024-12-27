@@ -330,16 +330,13 @@ class Text2SqlControllerIntegrationTest {
 
         coEvery { filePaths.getPromptTemplate(ModelName.Full) } returns "full_prompt_template.txt"
         coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
-            ResultWrapper.Failure(GetTextFileError.UnexpectedError(Exception()))
+            ResultWrapper.Failure(GetTextFileError.FileNotFoundError)
 
         val response: ResponseEntity<String> = controller.queryPuzzle(queryRequest)
 
         val expectedResponse =
             objectMapper.writeValueAsString(
-                mapOf(
-                    "status" to "failure",
-                    "data" to GetTextFileError.UnexpectedError(Exception()).message,
-                )
+                mapOf("status" to "failure", "data" to GetTextFileError.FileNotFoundError.message)
             )
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
         expectThat(response.body).isEqualTo(expectedResponse)

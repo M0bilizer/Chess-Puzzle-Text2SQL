@@ -324,7 +324,7 @@ class Text2SQLServiceTest {
     fun `test convertToSQL failure in file loading for Baseline model`(): Unit = runBlocking {
         // Arrange
         val query = "Find puzzles with rating > 1500"
-        val error = GetTextFileError.UnexpectedError(Exception())
+        val error = GetTextFileError.FileNotFoundError
 
         coEvery { filePaths.getPromptTemplate(ModelName.Full) } returns
             "baseline_prompt_template.txt"

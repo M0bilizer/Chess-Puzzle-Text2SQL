@@ -4,43 +4,17 @@ import com.chess.puzzle.text2sql.web.entities.BenchmarkEntry
 import com.chess.puzzle.text2sql.web.entities.ResultWrapper
 import com.chess.puzzle.text2sql.web.entities.helper.GetBenchmarkEntriesError
 import com.chess.puzzle.text2sql.web.entities.helper.GetTextFileError
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import java.io.File
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
+import io.mockk.every
+import io.mockk.mockk
+import java.io.IOException
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
 import strikt.api.expectThat
 import strikt.assertions.isA
 import strikt.assertions.isEqualTo
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class FileLoaderServiceTest {
 
     private val fileLoaderService = FileLoaderService()
-    private val objectMapper = jacksonObjectMapper()
-
-    private lateinit var tempJsonFile: File
-    private lateinit var tempTextFile: File
-
-    @BeforeEach
-    fun setUp() {
-        val benchmarkEntriesMap =
-            listOf(
-                mapOf("text" to "Find puzzles with rating > 1500"),
-                mapOf("text" to "Find puzzles with rating > 2000"),
-            )
-        tempJsonFile = createTemporaryJsonFile(benchmarkEntriesMap)
-
-        val textContent = "This is a test file content."
-        tempTextFile = createTemporaryTextFile(textContent)
-    }
-
-    @AfterEach
-    fun tearDown() {
-        tempJsonFile.delete()
-        tempTextFile.delete()
-    }
 
     @Test
     fun `test getBenchmarkEntries success`() {
@@ -52,17 +26,34 @@ class FileLoaderServiceTest {
             )
 
         // Act
-        val result = fileLoaderService.getBenchmarkEntries(tempJsonFile.path)
+        val result = fileLoaderService.getBenchmarkEntries("benchmarkEntries.json")
 
         // Assert
         expectThat(result) { isEqualTo(ResultWrapper.Success(benchmarkEntries)) }
     }
 
     @Test
+    fun `test getBenchmarkEntries failure with FileNotFound`() {
+        // Arrange
+        val filePath = "nonExistentFile.json"
+
+        // Act
+        val result = fileLoaderService.getBenchmarkEntries(filePath)
+
+        // Assert
+        expectThat(result).isA<ResultWrapper.Failure<GetBenchmarkEntriesError>>().and {
+            get { error }.isA<GetBenchmarkEntriesError.FileNotFoundError>()
+        }
+    }
+
+    @Test
     fun `test getBenchmarkEntries failure with IOException`() {
         // Arrange
-        val filePath = tempJsonFile.path
-        tempJsonFile.delete()
+        val filePath = "corruptedFile.json"
+        val mockClassLoader = mockk<ClassLoader>()
+        every { mockClassLoader.getResourceAsStream(filePath) } throws
+            IOException("Simulated IOException")
+        val fileLoaderService = FileLoaderService(mockClassLoader)
 
         // Act
         val result = fileLoaderService.getBenchmarkEntries(filePath)
@@ -79,38 +70,41 @@ class FileLoaderServiceTest {
         val expectedContent = "This is a test file content."
 
         // Act
-        val result = fileLoaderService.getTextFile(tempTextFile.path)
+        val result = fileLoaderService.getTextFile("testTextFile.txt")
 
         // Assert
         expectThat(result) { isEqualTo(ResultWrapper.Success(expectedContent)) }
     }
 
     @Test
-    fun `test getTextFile failure with IOException`() {
+    fun `test getTextFile failure with FileNotFound`() {
         // Arrange
-        val filePath = tempTextFile.path
-        tempTextFile.delete()
+        val filePath = "nonExistentFile.txt"
 
         // Act
         val result = fileLoaderService.getTextFile(filePath)
 
         // Assert
-        expectThat(result).isA<ResultWrapper.Failure<GetTextFileError>>()
-        val except = result as ResultWrapper.Failure
-        expectThat(except.error).isA<GetTextFileError.IOException>()
+        expectThat(result).isA<ResultWrapper.Failure<GetTextFileError>>().and {
+            get { error }.isA<GetTextFileError.FileNotFoundError>()
+        }
     }
 
-    private fun createTemporaryJsonFile(content: List<Map<String, Any>>): File {
-        val tempFile = File.createTempFile("test", ".json")
-        tempFile.writeText(objectMapper.writeValueAsString(content))
-        tempFile.deleteOnExit()
-        return tempFile
-    }
+    @Test
+    fun `test getTextFile failure with IOException`() {
+        // Arrange
+        val filePath = "corruptedFile.txt"
+        val mockClassLoader = mockk<ClassLoader>()
+        every { mockClassLoader.getResourceAsStream(filePath) } throws
+            IOException("Simulated IOException")
+        val fileLoaderService = FileLoaderService(mockClassLoader)
 
-    private fun createTemporaryTextFile(content: String): File {
-        val tempFile = File.createTempFile("test", ".txt")
-        tempFile.writeText(content)
-        tempFile.deleteOnExit()
-        return tempFile
+        // Act
+        val result = fileLoaderService.getTextFile(filePath)
+
+        // Assert
+        expectThat(result).isA<ResultWrapper.Failure<GetTextFileError>>().and {
+            get { error }.isA<GetTextFileError.IOException>()
+        }
     }
 }

@@ -15,11 +15,8 @@ import com.chess.puzzle.text2sql.web.service.Text2SQLService
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.mockk.coEvery
 import io.mockk.mockk
-import java.io.File
 import java.io.IOException
 import kotlinx.coroutines.runBlocking
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.springframework.http.HttpStatus
@@ -38,9 +35,10 @@ class BenchmarkingControllerIntegrationTest {
     private val fileLoaderService: FileLoaderService = FileLoaderService()
     private val filePaths: FilePaths =
         FilePaths(
-            jsonPath = "test.json",
-            promptTemplateMdPath = "promptTemplate.md",
-            baselinePromptTemplateMdPath = "baselinePromptTemplate.md",
+            jsonPath = "benchmarkEntries.json", // Path to the file in src/test/resources
+            promptTemplateMdPath = "promptTemplate.md", // Path to the file in src/test/resources
+            baselinePromptTemplateMdPath =
+                "baselinePromptTemplate.md", // Path to the file in src/test/resources
         )
     private val benchmarkingController =
         BenchmarkingController(benchmarkService, jsonWriterService, fileLoaderService, filePaths)
@@ -82,24 +80,6 @@ class BenchmarkingControllerIntegrationTest {
                 baseline = SqlResult(sql = "ERROR", status = "0"),
             ),
         )
-
-    private val promptTemplate =
-        "{{text0}} {{sql0}} {{text1}} {{sql1}} {{text2}} {{sql2}} {{prompt}}"
-    private val baselinePromptTemplate = "{{prompt}}"
-
-    private val tempFiles = mutableListOf<File>()
-
-    @BeforeEach
-    fun createTempFile() {
-        tempFiles.add(createTemporaryJsonFile("test.json", benchmarkEntries))
-        tempFiles.add(createTemporaryTextFile("promptTemplate.md", promptTemplate))
-        tempFiles.add(createTemporaryTextFile("baselinePromptTemplate.md", baselinePromptTemplate))
-    }
-
-    @AfterEach
-    fun tearDown() {
-        tempFiles.forEach { it.delete() }
-    }
 
     @Suppress("UNCHECKED_CAST")
     @Test
@@ -153,35 +133,32 @@ class BenchmarkingControllerIntegrationTest {
     @Suppress("UNCHECKED_CAST")
     @Test
     fun `test benchmark error in getting benchmarkEntries`(): Unit = runBlocking {
-        tempFiles.forEach { it.delete() }
+        // Simulate an error by using a non-existent file path
+        val invalidFilePaths =
+            FilePaths(
+                jsonPath = "nonExistentFile.json",
+                promptTemplateMdPath = "promptTemplate.md",
+                baselinePromptTemplateMdPath = "baselinePromptTemplate.md",
+            )
+        val controllerWithInvalidPaths =
+            BenchmarkingController(
+                benchmarkService,
+                jsonWriterService,
+                fileLoaderService,
+                invalidFilePaths,
+            )
 
-        val deferredResult = benchmarkingController.benchmark()
+        val deferredResult = controllerWithInvalidPaths.benchmark()
         val result = deferredResult.result as ResponseEntity<String>
 
         val expected =
             objectMapper.writeValueAsString(
                 mapOf(
                     "status" to "failure",
-                    "data" to GetBenchmarkEntriesError.IOException(IOException()).message,
+                    "data" to GetBenchmarkEntriesError.FileNotFoundError.message,
                 )
             )
         expectThat(result.statusCode).isEqualTo(HttpStatus.OK)
         expectThat(result.body).isEqualTo(expected)
-    }
-
-    private fun createTemporaryTextFile(fileName: String, content: String): File {
-        val file = File(fileName)
-        file.createNewFile()
-        file.writeText(content)
-        file.deleteOnExit()
-        return file
-    }
-
-    private fun createTemporaryJsonFile(fileName: String, content: List<BenchmarkEntry>): File {
-        val file = File(fileName)
-        file.createNewFile()
-        file.writeText(objectMapper.writeValueAsString(content))
-        file.deleteOnExit()
-        return file
     }
 }
