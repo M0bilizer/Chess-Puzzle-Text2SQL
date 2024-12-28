@@ -1,9 +1,7 @@
 #!/bin/bash
 
-pip install torch==2.4.1
-pip install fastapi
-pip install fastapi[standard]
-pip install pydantic
-pip install sentence-transformers
-pip install commentjson
+pip install uv
+uv venv venv
+source venv/bin/activate
+uv pip install -r /app/requirements.txt
 uvicorn src.main:app --host 0.0.0.0 --port 8000
