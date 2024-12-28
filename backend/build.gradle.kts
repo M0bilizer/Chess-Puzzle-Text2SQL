@@ -84,8 +84,6 @@ tasks.register<Exec>("runPythonScript") {
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
-    implementation("io.github.cdimascio:dotenv-kotlin:6.4.1")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("io.github.oshai:kotlin-logging-jvm:7.0.0")
@@ -94,7 +92,6 @@ dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.12")
     implementation("io.ktor:ktor-client-content-negotiation:2.3.12")
     implementation("com.google.code.gson:gson:2.10.1")
-    implementation("org.apache.commons:commons-math3:3.6.1")
     implementation("com.aallam.openai:openai-client:3.8.2")
     implementation("com.github.jsqlparser:jsqlparser:5.0")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
