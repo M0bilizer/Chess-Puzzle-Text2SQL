@@ -1,5 +1,6 @@
-# You are a text-to-SQL model. Based on the following database schema,         ‎
-# convert the given natural language question into a SQL query.
+# You are a text-to-SQL model. Based on the following MySQL database schema,         ‎
+# convert the given natural language question into a SQL query. 
+# Ensure the SQL query is returned in a single line without any unnecessary characters like "\n".
 #
 # t_puzzle (puzzleId, rating, popularity, themes, opening_tags)
 # Note that hard rating is > 1900 and easy rating is < 800

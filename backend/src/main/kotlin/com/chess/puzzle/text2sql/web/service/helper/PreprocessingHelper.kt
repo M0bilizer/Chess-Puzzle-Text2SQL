@@ -1,44 +1,120 @@
 package com.chess.puzzle.text2sql.web.service.helper
 
-import com.chess.puzzle.text2sql.web.entities.helper.Demonstration
+import com.chess.puzzle.text2sql.web.entities.Demonstration
+import com.chess.puzzle.text2sql.web.entities.ResultWrapper
+import com.chess.puzzle.text2sql.web.entities.helper.ProcessPromptError
+import com.chess.puzzle.text2sql.web.entities.helper.ProcessPromptError.InsufficientDemonstrationsError
+import com.chess.puzzle.text2sql.web.entities.helper.ProcessPromptError.InvalidDemonstrationError
+import com.chess.puzzle.text2sql.web.entities.helper.ProcessPromptError.MissingPlaceholderError
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Service
-import java.nio.file.Files
-import java.nio.file.Paths
 
 private val logger = KotlinLogging.logger {}
 
+/**
+ * Service class for preprocessing user prompts and demonstrations into a formatted prompt template.
+ *
+ * This class handles:
+ * - Loading the user prompt into a template.
+ * - Injecting similar demonstrations into the template.
+ * - Validating the demonstrations and placeholders.
+ */
 @Service
 class PreprocessingHelper {
-    private val layoutPath = "src/main/resources/prompt/inferencePromptTemplate.md"
 
+    /**
+     * Processes the user prompt and similar demonstrations into a prompt template.
+     *
+     * This method:
+     * 1. Loads the user prompt into the template by replacing the `{{prompt}}` placeholder.
+     * 2. Injects similar demonstrations into the template by replacing placeholders like
+     *    `{{text0}}` and `{{sql0}}`.
+     * 3. Validates the demonstrations and placeholders.
+     *
+     * @param userPrompt The user's input query.
+     * @param promptTemplate The template containing placeholders for the prompt and demonstrations.
+     * @param demonstrations A list of similar demonstrations to be injected into the template.
+     * @return A [ResultWrapper] containing the processed prompt template or an error.
+     */
     fun processPrompt(
         userPrompt: String,
-        demonstrations: List<Demonstration>,
-    ): String {
-        val processedLayout = userPrompt.loadLayout()
-        return processedLayout.loadDemonstrations(demonstrations)
-    }
-
-    private fun String.loadLayout(): String {
+        promptTemplate: String,
+        demonstrations: List<Demonstration>?,
+    ): ResultWrapper<String, ProcessPromptError> {
         return try {
-            val layoutContent = Files.readString(Paths.get(layoutPath))
-            layoutContent.replace("{{prompt}}", this)
-        } catch (e: Exception) {
-            logger.error { "Loading Layout {} -> Cannot find inferencePromptTemplate.md" }
-            throw e
+            val promptTemplateWithUserPrompt = loadPrompt(userPrompt, promptTemplate)
+            val processedPromptTemplate =
+                if (demonstrations != null) {
+                    loadDemonstrations(promptTemplateWithUserPrompt, demonstrations)
+                } else {
+                    promptTemplateWithUserPrompt
+                }
+            ResultWrapper.Success(processedPromptTemplate)
+        } catch (e: InvalidDemonstrationException) {
+            ResultWrapper.Failure(InvalidDemonstrationError)
+        } catch (e: InsufficientDemonstrationsException) {
+            ResultWrapper.Failure(InsufficientDemonstrationsError)
+        } catch (e: MissingPlaceholderException) {
+            ResultWrapper.Failure(MissingPlaceholderError)
         }
     }
 
-    private fun String.loadDemonstrations(similarDemonstration: List<Demonstration>): String {
-        println(similarDemonstration)
+    /**
+     * Loads the user prompt into the template by replacing the `{{prompt}}` placeholder.
+     *
+     * @param prompt The user's input query.
+     * @param template The template containing the `{{prompt}}` placeholder.
+     * @return The template with the user prompt injected.
+     * @throws MissingPlaceholderException If the `{{prompt}}` placeholder is not found in the
+     *   template.
+     */
+    private fun loadPrompt(prompt: String, template: String): String {
+        val sb = StringBuilder(template)
+        val promptPlaceholder = "{{prompt}}"
+        if (!sb.contains(promptPlaceholder)) throw MissingPlaceholderException()
+        val index = sb.indexOf(promptPlaceholder)
+        sb.replace(index, index + promptPlaceholder.length, prompt)
+        return sb.toString()
+    }
+
+    /**
+     * Injects similar demonstrations into the prompt template.
+     *
+     * This method replaces placeholders in the template (e.g., `{{text0}}`, `{{sql0}}`) with the
+     * corresponding text and SQL from the similar demonstrations.
+     *
+     * @param template The prompt template with placeholders.
+     * @param similarDemonstration A list of similar demonstrations to be injected.
+     * @return The prompt template with demonstrations injected.
+     * @throws InvalidDemonstrationException If any demonstration has empty text or SQL.
+     * @throws InsufficientDemonstrationsException If fewer than 3 demonstrations are provided.
+     * @throws MissingPlaceholderException If any required placeholder is missing in the template.
+     */
+    private fun loadDemonstrations(
+        template: String,
+        similarDemonstration: List<Demonstration>,
+    ): String {
+        similarDemonstration.forEach {
+            if (it.text.isEmpty() || it.sql.isEmpty()) {
+                throw InvalidDemonstrationException()
+            }
+        }
+        if (similarDemonstration.size < 3) {
+            throw InsufficientDemonstrationsException()
+        }
+
         val textArray: Array<String> = similarDemonstration.map { it.text }.toTypedArray()
         val sqlArray: Array<String> = similarDemonstration.map { it.sql }.toTypedArray()
 
-        val sb = StringBuilder(this)
+        val sb = StringBuilder(template)
         for (i in 0 until 3) {
             val textPlaceholder = "{{text$i}}"
             val sqlPlaceholder = "{{sql$i}}"
+
+            if (!sb.contains(textPlaceholder) || !sb.contains(sqlPlaceholder)) {
+                throw MissingPlaceholderException()
+            }
+
             var index = sb.indexOf(textPlaceholder)
             if (index != -1) {
                 sb.replace(index, index + textPlaceholder.length, textArray[i])
@@ -50,4 +126,13 @@ class PreprocessingHelper {
         }
         return sb.toString()
     }
+
+    /** Exception thrown when a demonstration is invalid (e.g., empty text or SQL). */
+    private class InvalidDemonstrationException : Throwable()
+
+    /** Exception thrown when fewer than 3 demonstrations are provided. */
+    private class InsufficientDemonstrationsException : Throwable()
+
+    /** Exception thrown when a required placeholder is missing in the template. */
+    private class MissingPlaceholderException : Throwable()
 }

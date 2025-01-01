@@ -1,584 +1,447 @@
-{
-  "list": [
-    /**
-    * ░█░░░█░░░█▀█░█▄█░█▀█
-    * ░█░░░█░░░█▀█░█░█░█▀█
-    * ░▀▀▀░▀▀▀░▀░▀░▀░▀░▀░▀
-    */
-    /* Llama Keyword */
-    {
-      "text": "Italian Game Endplay",
-      "sql": "b"
-    },
-    {
-      "text": "Sicilian Defense Tactic",
-      "sql": "b"
-    },
-    {
-      "text": "King's Indian Defense Strategy",
-      "sql": "b"
-    },
-    {
-      "text": "Back rank mate and cornering",
-      "sql": "b"
-    },
-    {
-      "text": "Discovered check and trap",
-      "sql": "b"
-    },
-    {
-      "text": "Skewer and Discovery",
-      "sql": "b"
-    },
-    {
-      "text": "Difficult",
-      "sql": "b"
-    },
-    {
-      "text": "Challenging",
-      "sql": "b"
-    },
-    {
-      "text": "Tough",
-      "sql": "b"
-    },
-    /* Llama Instruction */
-    {
-      "text": "Can you provide a short tactic",
-      "sql": "b"
-    },
-    {
-      "text": "Can you offer a simple tactic to solve",
-      "sql": "b"
-    },
-    {
-      "text": "Can you show me a rapid chess exercise",
-      "sql": "b"
-    },
-    {
-      "text": "Provide a difficult tactic that involves a bishop pin",
-      "sql": "b"
-    },
-    {
-      "text": "Show me a complex puzzle with a discovery check",
-      "sql": "b"
-    },
-    {
-      "text": "Create a tough problem that features a queen fork",
-      "sql": "b"
-    },
-    {
-      "text": "Prepare a problem about the Ruy Lopez Opening in the early stages of the game",
-      "sql": "b"
-    },
-    {
-      "text": "Create a problem about the Sicilian Defense in the initial moves of the game",
-      "sql": "b"
-    },
-    {
-      "text": "Provide a problem about the King's Gambit Accepted in the opening phase of the game",
-      "sql": "b"
-    },
-    /* Llama Intention */
-    {
-      "text": "I'm trying to sharpen my skills in counter-attacking",
-      "sql": "b"
-    },
-    {
-      "text": "I intend to enhance my tactical abilities",
-      "sql": "b"
-    },
-    {
-      "text": "I aim to improve my defensive skills",
-      "sql": "b"
-    },
-    {
-      "text": "I prefer to play dynamic games with tactical opportunities",
-      "sql": "b"
-    },
-    {
-      "text": "I'd rather play open games with complex middlegames",
-      "sql": "b"
-    },
-    {
-      "text": "I prefer to avoid drawish positions",
-      "sql": "b"
-    },
-    {
-      "text": "I'd like to find a way to counter my opponent's favorite Ruy Lopez opening",
-      "sql": "b"
-    },
-    {
-      "text": "I need to come up with a strategy to outmaneuver my rival who always plays the King's Gambit",
-      "sql": "b"
-    },
-    {
-      "text": "I'd like to prepare a plan to outplay my opponent who consistently chooses the Sicilian Defense",
-      "sql": "b"
-    }
-    /**
-    * ░▄▀▄░█░█░█▀▀░█▀█
-    * ░█\█░█▄█░█▀▀░█░█
-    * ░░▀\░▀░▀░▀▀▀░▀░▀
-    */
-    /* Qwen Keyword */
-    {
-      "text":"queen's pawn midgame",
-      "sql": ""
-    },
-    {
-      "text":"english defense midgame",
-      "sql": ""
-    },
-    {
-      "text":"semi-open queen's Indian",
-      "sql": ""
-    },
-    {
-      "text":"sacrifice and pin",
-      "sql": ""
-    },
-    {
-      "text":"sacrifice and skewer",
-      "sql": ""
-    },
-    {
-      "text":"sacrifice and smothered checkmate",
-      "sql": ""
-    },
-    {
-      "text":"difficult",
-      "sql": ""
-    },
-    {
-      "text":"challenging",
-      "sql": ""
-    },
-    {
-      "text":"easy",
-      "sql": ""
-    },
-    /* Qwen Instruction */
-    {
-      "text":"Can you provide a long and intricate puzzle?",
-      "sql": ""
-    },
-    {
-      "text":"Can you find me a puzzle with a unique tactical theme?",
-      "sql": ""
-    },
-    {
-      "text":"Can you provide a short puzzle?",
-      "sql": ""
-    },
-    {
-      "text":"Give me an easy puzzle with a simple checkmate in one move",
-      "sql": ""
-    },
-    {
-      "text":"Give me a puzzle that requires a queen sacrifice for a win",
-      "sql": ""
-    },
-    {
-      "text":"Give me a puzzle with a bishops' mate at the beginning of the game",
-      "sql": ""
-    },
-    {
-      "text":"I need a puzzle that focuses on a rook and pawn endgame.",
-      "sql": ""
-    },
-    {
-      "text":"I need a puzzle that involves a complex middlegame tactic with a bishop and knight combination.",
-      "sql": ""
-    },
-    {
-      "text":"I need a puzzle that features a smothered mate in the endgame.",
-      "sql": ""
-    },
-    /* Qwen Intention */
-    {
-      "text":"I want to improve my defensive skills.",
-      "sql": ""
-    },
-    {
-      "text":"I want to enhance my endgame technique.",
-      "sql": ""
-    },
-    {
-      "text":"I want to improve my opening repertoire.",
-      "sql": ""
-    },
-    {
-      "text":"I prefer closed positions.",
-      "sql": ""
-    },
-    {
-      "text":"I enjoy complex tactical play.",
-      "sql": ""
-    },
-    {
-      "text":"I prefer positions with a focus on strategic maneuvering.",
-      "sql": ""
-    },
-    {
-      "text":"I want to explore ways to improve my Sicilian Defense.",
-      "sql": ""
-    },
-    {
-      "text":"I want to develop a strong understanding of the King's Indian Defense.",
-      "sql": ""
-    },
-    {
-      "text":"I want to improve my skills in the French Defense.",
-      "sql": ""
-    }
-    /**
-    * ░█▄█░▀█▀░█▀▀░▀█▀░█▀▄░█▀█░█░░
-    * ░█░█░░█░░▀▀█░░█░░█▀▄░█▀█░█░░
-    * ░▀░▀░▀▀▀░▀▀▀░░▀░░▀░▀░▀░▀░▀▀▀
-    */
-    /* Mistral Keywords */
-    {
-      "text": "endgame tactics",
-      "sql": ""
-    },
-    {
-      "text": "chess opening blunder",
-      "sql": ""
-    },
-    {
-      "text": "rook sacrifice checkmate",
-      "sql": ""
-    },
-    {
-      "text": "en passant promotion",
-      "sql": ""
-    },
-    {
-      "text": "stalemate and zugzwang",
-      "sql": ""
-    },
-    {
-      "text": "pin and skewer",
-      "sql": ""
-    },
-    {
-      "text": "easy",
-      "sql": ""
-    },
-    {
-      "text": "beginner intermediate",
-      "sql": ""
-    },
-    {
-      "text": "mate in 2",
-      "sql": ""
-    },
-    /* Mistral Instruction */
-    {
-      "text": "Provide a puzzle where white wins in 3 moves.",
-      "sql": ""
-    },
-    {
-      "text": "Set up a position on the board for me to solve",
-      "sql": ""
-    },
-    {
-      "text": "Find the best move for black.",
-      "sql": ""
-    },
-    {
-      "text": "Show me a puzzle that involves a queen sacrifice to deliver checkmate.",
-      "sql": ""
-    },
-    {
-      "text": "Find me a difficult puzzle that involves a knight tactic.",
-      "sql": ""
-    },
-    {
-      "text": "I want a hard puzzle featuring a knight fork.",
-      "sql": ""
-    },
-    {
-      "text": "Generate a random chess puzzle for me to solve.",
-      "sql": ""
-    },
-    {
-      "text": "Show me a puzzle that involves a pawn promotion.",
-      "sql": ""
-    },
-    {
-      "text": "Provide a puzzle where black can deliver checkmate in the next move.",
-      "sql": ""
-    },
-    /* Mistral Intention */
-    {
-      "text": "I want to practice solving studies.",
-      "sql": ""
-    },
-    {
-      "text": "I want to learn how to defend properly.",
-      "sql": ""
-    },
-    {
-      "text": "I want to improve my endgame strategy.",
-      "sql": ""
-    },
-    {
-      "text": "I love solving tactical puzzles.",
-      "sql": ""
-    },
-    {
-      "text": "I enjoy analyzing grandmaster games.",
-      "sql": ""
-    },
-    {
-      "text": "I want to practice playing blitz.",
-      "sql": ""
-    },
-    {
-      "text": "I want to learn how to play the endgame better.",
-      "sql": ""
-    },
-    {
-      "text": "I want to improve my calculation skills.",
-      "sql": ""
-    },
-    {
-      "text": "I want to practice solving chess compositions.",
-      "sql": ""
-    },
-    /**
-    * ░█▀▀░█▀▀░█▄█░▀█▀░█▀█░▀█▀
-    * ░█░█░█▀▀░█░█░░█░░█░█░░█░
-    * ░▀▀▀░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀
-    */
-    /* Gemini Keywords */
-    {
-      "text": "Sicilian Defense, Najdorf Variation, Yugoslav Attack",
-      "sql": ""
-    },
-    {
-      "text": "Ruy Lopez, Berlin Defense",
-      "sql": ""
-    },
-    {
-      "text": "King's Indian Defense, Fianchetto Variation",
-      "sql": ""
-    },
-    {
-      "text": "endgame technique and pawn promotion",
-      "sql": ""
-    },
-    {
-      "text": "zugzwang and underpromotion",
-      "sql": ""
-    },
-    {
-      "text": "discovered attack and deflection",
-      "sql": ""
-    },
-    {
-      "text": "straightforward",
-      "sql": ""
-    },
-    {
-      "text": "simple",
-      "sql": ""
-    },
-    {
-      "text": "trivial",
-      "sql": ""
-    },
-    /* Gemini Instruction */
-    {
-      "text": "Can you give me a long, complex puzzle to solve?",
-      "sql": ""
-    },
-    {
-      "text": "Can you give me a complex puzzle to solve?",
-      "sql": ""
-    },
-    {
-      "text": "Can you give me a difficult puzzle to solve?",
-      "sql": ""
-    },
-    {
-      "text": "Give me a simple puzzle that involves a queen sacrifice.",
-      "sql": ""
-    },
-    {
-      "text": "Give me a simple puzzle that involves a kingside attack.",
-      "sql": ""
-    },
-    {
-      "text": "Give me a simple puzzle that involves a queenside attack.",
-      "sql": ""
-    },
-    {
-      "text": "I need a puzzle about the Sicilian Defense in the endgame.",
-      "sql": ""
-    },
-    {
-      "text": "I need a puzzle about the Ruy Lopez in the middlegame.",
-      "sql": ""
-    },
-    {
-      "text": "I need a puzzle about the French Defense in the endgame.",
-      "sql": ""
-    },
-    /* Gemini Intention */
-    {
-      "text": "I want to get better at defending.",
-      "sql": ""
-    },
-    {
-      "text": "I want to get better at endgames.",
-      "sql": ""
-    },
-    {
-      "text": "I want to get better at positional play.",
-      "sql": ""
-    },
-    {
-      "text": "I love closed games.",
-      "sql": ""
-    },
-    {
-      "text": "I prefer open games.",
-      "sql": ""
-    },
-    {
-      "text": "I like tactical puzzles.",
-      "sql": ""
-    },
-    {
-      "text": "I want to improve my endgame skills.",
-      "sql": ""
-    },
-    {
-      "text": "I want to learn new openings.",
-      "sql": ""
-    },
-    {
-      "text": "I want to learn new tactical motifs.",
-      "sql": ""
-    },
-    /**
-    * ░█▀█░█▀█░█▀▀░█▀█░█▀█░▀█▀
-    * ░█░█░█▀▀░█▀▀░█░█░█▀█░░█░
-    * ░▀▀▀░▀░░░▀▀▀░▀░▀░▀░▀░▀▀▀
-    */
-    /* OpenAi Keywords */
-    {
-      "text": "knight sacrifice attack",
-      "sql": ""
-    },
-    {
-      "text": "pawn promotion endgame",
-      "sql": ""
-    },
-    {
-      "text": "queen sacrifice tactic",
-      "sql": ""
-    },
-    {
-      "text": "back rank checkmate",
-      "sql": ""
-    },
-    {
-      "text": "isolani pawn structure",
-      "sql": ""
-    },
-    {
-      "text": "king safety checkmate",
-      "sql": ""
-    },
-    {
-      "text": "easy checkmate",
-      "sql": ""
-    },
-    {
-      "text": "simple tactics",
-      "sql": ""
-    },
-    {
-      "text": "quick stalemate",
-      "sql": ""
-    },
-    /* OpenAI Instruction */
-    {
-      "text": "Please set up a complex endgame scenario.",
-      "sql": ""
-    },
-    {
-      "text": "Try solving a queen and pawn versus king endgame.",
-      "sql": ""
-    },
-    {
-      "text": "Set up a position with a forced checkmate in three moves.",
-      "sql": ""
-    },
-    {
-      "text": "Show me a puzzle with a back rank checkmate.",
-      "sql": ""
-    },
-    {
-      "text": "Provide a puzzle with a queen sacrifice for checkmate.",
-      "sql": ""
-    },
-    {
-      "text": "Give me a puzzle where I can promote a pawn.",
-      "sql": ""
-    },
-    {
-      "text": "Provide a puzzle with a king and pawn endgame.",
-      "sql": ""
-    },
-    {
-      "text": "Give me a puzzle that ends with a smothered mate.",
-      "sql": ""
-    },
-    {
-      "text": "Give me a puzzle that involves a forced rook checkmate.",
-      "sql": ""
-    },
-    /* OpenAI Instruction */
-    {
-      "text": "I want to improve my endgame technique.",
-      "sql": ""
-    },
-    {
-      "text": "I want to focus on defensive strategies.",
-      "sql": ""
-    },
-    {
-      "text": "I want to improve my pawn structure.",
-      "sql": ""
-    },
-    {
-      "text": "I love studying endgame positions.",
-      "sql": ""
-    },
-    {
-      "text": "I enjoy exploring tactical sacrifices.",
-      "sql": ""
-    },
-    {
-      "text": "I prefer analyzing king safety and checkmates.",
-      "sql": ""
-    },
-    {
-      "text": "I want to master endgames with just a king and pawn.",
-      "sql": ""
-    },
-    {
-      "text": "I want to improve my calculation skills for complex tactics.",
-      "sql": ""
-    },
-    {
-      "text": "I want to practice handling endgames with minimal material.",
-      "sql": ""
-    }
-  ]
-}
+[
+  /**
+  * ░█░░░█░░░█▀█░█▄█░█▀█
+  * ░█░░░█░░░█▀█░█░█░█▀█
+  * ░▀▀▀░▀▀▀░▀░▀░▀░▀░▀░▀
+  */
+  /* Llama Keyword */
+  {
+    "text": "Italian Game Endplay"
+  },
+  {
+    "text": "Sicilian Defense Tactic"
+  },
+  {
+    "text": "King's Indian Defense Strategy"
+  },
+  {
+    "text": "Back rank mate and cornering"
+  },
+  {
+    "text": "Discovered check and trap"
+  },
+  {
+    "text": "Skewer and Discovery"
+  },
+  {
+    "text": "Difficult"
+  },
+  {
+    "text": "Challenging"
+  },
+  {
+    "text": "Tough"
+  },
+  /* Llama Instruction */
+  {
+    "text": "Can you provide a short tactic"
+  },
+  {
+    "text": "Can you offer a simple tactic to solve"
+  },
+  {
+    "text": "Can you show me a rapid chess exercise"
+  },
+  {
+    "text": "Provide a difficult tactic that involves a bishop pin"
+  },
+  {
+    "text": "Show me a complex puzzle with a discovery check"
+  },
+  {
+    "text": "Create a tough problem that features a queen fork"
+  },
+  {
+    "text": "Prepare a problem about the Ruy Lopez Opening in the early stages of the game"
+  },
+  {
+    "text": "Create a problem about the Sicilian Defense in the initial moves of the game"
+  },
+  {
+    "text": "Provide a problem about the King's Gambit Accepted in the opening phase of the game"
+  },
+  /* Llama Intention */
+  {
+    "text": "I'm trying to sharpen my skills in counter-attacking"
+  },
+  {
+    "text": "I intend to enhance my tactical abilities"
+  },
+  {
+    "text": "I aim to improve my defensive skills"
+  },
+  {
+    "text": "I prefer to play dynamic games with tactical opportunities"
+  },
+  {
+    "text": "I'd rather play open games with complex middlegames"
+  },
+  {
+    "text": "I prefer to avoid drawish positions"
+  },
+  {
+    "text": "I'd like to find a way to counter my opponent's favorite Ruy Lopez opening"
+  },
+  {
+    "text": "I need to come up with a strategy to outmaneuver my rival who always plays the King's Gambit"
+  },
+  {
+    "text": "I'd like to prepare a plan to outplay my opponent who consistently chooses the Sicilian Defense"
+  },
+  /**
+  * ░▄▀▄░█░█░█▀▀░█▀█
+  * ░█\█░█▄█░█▀▀░█░█
+  * ░░▀\░▀░▀░▀▀▀░▀░▀
+  */
+  /* Qwen Keyword */
+  {
+    "text":"queen's pawn midgame"
+  },
+  {
+    "text":"english defense midgame"
+  },
+  {
+    "text":"semi-open queen's Indian"
+  },
+  {
+    "text":"sacrifice and pin"
+  },
+  {
+    "text":"sacrifice and skewer"
+  },
+  {
+    "text":"sacrifice and smothered checkmate"
+  },
+  {
+    "text":"difficult"
+  },
+  {
+    "text":"challenging"
+  },
+  {
+    "text":"easy"
+  },
+  /* Qwen Instruction */
+  {
+    "text":"Can you provide a long and intricate puzzle?"
+  },
+  {
+    "text":"Can you find me a puzzle with a unique tactical theme?"
+  },
+  {
+    "text":"Can you provide a short puzzle?"
+  },
+  {
+    "text":"Give me an easy puzzle with a simple checkmate in one move"
+  },
+  {
+    "text":"Give me a puzzle that requires a queen sacrifice for a win"
+  },
+  {
+    "text":"Give me a puzzle with a bishops' mate at the beginning of the game"
+  },
+  {
+    "text":"I need a puzzle that focuses on a rook and pawn endgame."
+  },
+  {
+    "text":"I need a puzzle that involves a complex middlegame tactic with a bishop and knight combination."
+  },
+  {
+    "text":"I need a puzzle that features a smothered mate in the endgame."
+  },
+  /* Qwen Intention */
+  {
+    "text":"I want to improve my defensive skills."
+  },
+  {
+    "text":"I want to enhance my endgame technique."
+  },
+  {
+    "text":"I want to improve my opening repertoire."
+  },
+  {
+    "text":"I prefer closed positions."
+  },
+  {
+    "text":"I enjoy complex tactical play."
+  },
+  {
+    "text":"I prefer positions with a focus on strategic maneuvering."
+  },
+  {
+    "text":"I want to explore ways to improve my Sicilian Defense."
+  },
+  {
+    "text":"I want to develop a strong understanding of the King's Indian Defense."
+  },
+  {
+    "text":"I want to improve my skills in the French Defense."
+  },
+  /**
+  * ░█▄█░▀█▀░█▀▀░▀█▀░█▀▄░█▀█░█░░
+  * ░█░█░░█░░▀▀█░░█░░█▀▄░█▀█░█░░
+  * ░▀░▀░▀▀▀░▀▀▀░░▀░░▀░▀░▀░▀░▀▀▀
+  */
+  /* Mistral Keywords */
+  {
+    "text": "endgame tactics"
+  },
+  {
+    "text": "chess opening blunder"
+  },
+  {
+    "text": "rook sacrifice checkmate"
+  },
+  {
+    "text": "en passant promotion"
+  },
+  {
+    "text": "stalemate and zugzwang"
+  },
+  {
+    "text": "pin and skewer"
+  },
+  {
+    "text": "easy"
+  },
+  {
+    "text": "beginner intermediate"
+  },
+  {
+    "text": "mate in 2"
+  },
+  /* Mistral Instruction */
+  {
+    "text": "Provide a puzzle where white wins in 3 moves."
+  },
+  {
+    "text": "Set up a position on the board for me to solve"
+  },
+  {
+    "text": "Find the best move for black."
+  },
+  {
+    "text": "Show me a puzzle that involves a queen sacrifice to deliver checkmate."
+  },
+  {
+    "text": "Find me a difficult puzzle that involves a knight tactic."
+  },
+  {
+    "text": "I want a hard puzzle featuring a knight fork."
+  },
+  {
+    "text": "Generate a random chess puzzle for me to solve."
+  },
+  {
+    "text": "Show me a puzzle that involves a pawn promotion."
+  },
+  {
+    "text": "Provide a puzzle where black can deliver checkmate in the next move."
+  },
+  /* Mistral Intention */
+  {
+    "text": "I want to practice solving studies."
+  },
+  {
+    "text": "I want to learn how to defend properly."
+  },
+  {
+    "text": "I want to improve my endgame strategy."
+  },
+  {
+    "text": "I love solving tactical puzzles."
+  },
+  {
+    "text": "I enjoy analyzing grandmaster games."
+  },
+  {
+    "text": "I want to practice playing blitz."
+  },
+  {
+    "text": "I want to learn how to play the endgame better."
+  },
+  {
+    "text": "I want to improve my calculation skills."
+  },
+  {
+    "text": "I want to practice solving chess compositions."
+  },
+  /**
+  * ░█▀▀░█▀▀░█▄█░▀█▀░█▀█░▀█▀
+  * ░█░█░█▀▀░█░█░░█░░█░█░░█░
+  * ░▀▀▀░▀▀▀░▀░▀░▀▀▀░▀░▀░▀▀▀
+  */
+  /* Gemini Keywords */
+  {
+    "text": "Sicilian Defense, Najdorf Variation, Yugoslav Attack"
+  },
+  {
+    "text": "Ruy Lopez, Berlin Defense"
+  },
+  {
+    "text": "King's Indian Defense, Fianchetto Variation"
+  },
+  {
+    "text": "endgame technique and pawn promotion"
+  },
+  {
+    "text": "zugzwang and underpromotion"
+  },
+  {
+    "text": "discovered attack and deflection"
+  },
+  {
+    "text": "straightforward"
+  },
+  {
+    "text": "simple"
+  },
+  {
+    "text": "trivial"
+  },
+  /* Gemini Instruction */
+  {
+    "text": "Can you give me a long, complex puzzle to solve?"
+  },
+  {
+    "text": "Can you give me a complex puzzle to solve?"
+  },
+  {
+    "text": "Can you give me a difficult puzzle to solve?"
+  },
+  {
+    "text": "Give me a simple puzzle that involves a queen sacrifice."
+  },
+  {
+    "text": "Give me a simple puzzle that involves a kingside attack."
+  },
+  {
+    "text": "Give me a simple puzzle that involves a queenside attack."
+  },
+  {
+    "text": "I need a puzzle about the Sicilian Defense in the endgame."
+  },
+  {
+    "text": "I need a puzzle about the Ruy Lopez in the middlegame."
+  },
+  {
+    "text": "I need a puzzle about the French Defense in the endgame."
+  },
+  /* Gemini Intention */
+  {
+    "text": "I want to get better at defending."
+  },
+  {
+    "text": "I want to get better at endgames."
+  },
+  {
+    "text": "I want to get better at positional play."
+  },
+  {
+    "text": "I love closed games."
+  },
+  {
+    "text": "I prefer open games."
+  },
+  {
+    "text": "I like tactical puzzles."
+  },
+  {
+    "text": "I want to improve my endgame skills."
+  },
+  {
+    "text": "I want to learn new openings."
+  },
+  {
+    "text": "I want to learn new tactical motifs."
+  },
+  /**
+  * ░█▀█░█▀█░█▀▀░█▀█░█▀█░▀█▀
+  * ░█░█░█▀▀░█▀▀░█░█░█▀█░░█░
+  * ░▀▀▀░▀░░░▀▀▀░▀░▀░▀░▀░▀▀▀
+  */
+  /* OpenAi Keywords */
+  {
+    "text": "knight sacrifice attack"
+  },
+  {
+    "text": "pawn promotion endgame"
+  },
+  {
+    "text": "queen sacrifice tactic"
+  },
+  {
+    "text": "back rank checkmate"
+  },
+  {
+    "text": "isolani pawn structure"
+  },
+  {
+    "text": "king safety checkmate"
+  },
+  {
+    "text": "easy checkmate"
+  },
+  {
+    "text": "simple tactics"
+  },
+  {
+    "text": "quick stalemate"
+  },
+  /* OpenAI Instruction */
+  {
+    "text": "Please set up a complex endgame scenario."
+  },
+  {
+    "text": "Try solving a queen and pawn versus king endgame."
+  },
+  {
+    "text": "Set up a position with a forced checkmate in three moves."
+  },
+  {
+    "text": "Show me a puzzle with a back rank checkmate."
+  },
+  {
+    "text": "Provide a puzzle with a queen sacrifice for checkmate."
+  },
+  {
+    "text": "Give me a puzzle where I can promote a pawn."
+  },
+  {
+    "text": "Provide a puzzle with a king and pawn endgame."
+  },
+  {
+    "text": "Give me a puzzle that ends with a smothered mate."
+  },
+  {
+    "text": "Give me a puzzle that involves a forced rook checkmate."
+  },
+  /* OpenAI Instruction */
+  {
+    "text": "I want to improve my endgame technique."
+  },
+  {
+    "text": "I want to focus on defensive strategies."
+  },
+  {
+    "text": "I want to improve my pawn structure."
+  },
+  {
+    "text": "I love studying endgame positions."
+  },
+  {
+    "text": "I enjoy exploring tactical sacrifices."
+  },
+  {
+    "text": "I prefer analyzing king safety and checkmates."
+  },
+  {
+    "text": "I want to master endgames with just a king and pawn."
+  },
+  {
+    "text": "I want to improve my calculation skills for complex tactics."
+  },
+  {
+    "text": "I want to practice handling endgames with minimal material."
+  }
+]
