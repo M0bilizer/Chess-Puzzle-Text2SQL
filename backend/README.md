@@ -56,6 +56,18 @@ The application will start and be available at http://localhost:8080.
 
 ---
 
+## Configuration
+
+- **Application Properties**
+  Configuration can be found at `src/main/resources/application.properties`
+
+spring.datasource.url -> Database's URL
+spring.datasource.username -> Username for Database
+spring.datasource.password -> Password for Database
+api_key -> API Key for LLM
+base_url -> URL for LLM (DeepSeek is the only one supported, see their docs for their url)
+sentence_transformer_url -> Address of the Sentence Transformer Microservice
+
 ## Project Structure
 
 ```html
@@ -71,14 +83,17 @@ build.gradle.kts                           # Gradle build file (or pom.xml for M
 
 ---
 
-## Configuration
+## Libraries used
 
-- **Application Properties**
-Configuration can be found at `src/main/resources/application.properties`
+| Gradle Dependency                                        | Description / Purpose             |
+|----------------------------------------------------------|-----------------------------------|
+| io.ktor:ktor-client-core (Must be 2.3.12)                | Http Client                       |
+| io.ktor:ktor-serialization-kotlinx-json (Must be 2.3.12) | Preferred JSON Parsing            |
+| com.google.code.gson:gson                                | Alternative JSON Parsing          |
+| com.aallam.openai:openai-client                          | Communicating with DeepSeek       |
+| com.github.jsqlparser:jsqlparser                         | Checking SQL Statement            |
+| io.github.oshai:kotlin-logging-jvm                       | Logging                           |
+| io.strikt:strikt-core                                    | Assertion                         |
+| io.mockk:mockk                                           | Mocking                           |
+| com.h2database:h2                                        | In-memory database for test cases |
 
-spring.datasource.url -> Database's URL
-spring.datasource.username -> Username for Database
-spring.datasource.password -> Password for Database
-api_key -> API Key for LLM 
-base_url -> URL for LLM (DeepSeek is the only one supported, see their docs for their url)
-sentence_transformer_url -> Address of the Sentence Transformer Microservice

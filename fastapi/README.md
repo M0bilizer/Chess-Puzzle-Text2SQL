@@ -93,3 +93,13 @@ ruff format
 ```commandline
 bash build.sh
 ```
+
+---
+## Libraries Used
+
+| library               | Description / Purpose                              |
+|-----------------------|----------------------------------------------------|
+| Sentence Transformer  | Find similar demonstration, perform schema masking |
+| torch (MUST BE 2.4.1) | Dependencies for Sentence Transformer              |
+| fastapi               | Backend                                            |
+| comment-json          | Remove comments from JSON files                    |
