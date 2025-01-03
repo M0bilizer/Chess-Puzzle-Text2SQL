@@ -1,5 +1,4 @@
 <script lang="ts">
-
 </script>
 
 <header class="border-surface-500/20 bg-surface-50-950 w-full border-b-[1px] p-4 py-3 xl:px-10">
@@ -8,10 +7,9 @@
 			hi hi
 		</div>
 		<div class="middle">
-			asdasd
+			middle
 		</div>
 		<div class="right">
-			right
 		</div>
 	</div>
 </header>
