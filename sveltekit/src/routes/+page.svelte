@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { fetchSQLData, fetchLLMData } from '$lib/api';
-	import ErrorBox from '$lib/ErrorBox.svelte';
-	import type { PuzzleType } from '$lib/types';
+	import { fetchSQLData, fetchLLMData } from '$lib/utils/api';
+	import ErrorBox from '$lib/components/ErrorBox.svelte';
+	import type { PuzzleType } from '$lib/types/puzzle';
 
 	let SQLValue = $state('');
 	let SQLResponse = $state<PuzzleType[]>([]);
@@ -50,20 +50,15 @@
 	};
 </script>
 
-<div class="w-1/3 h-full ml-auto mr-auto pl-4 rounded-lg flex flex-col items-center pt-40 gap-4">
+<div class="ml-auto mr-auto flex h-full w-1/3 flex-col items-center gap-4 rounded-lg pl-4 pt-40">
 	<h1>Chess Puzzle</h1>
-	<div class="flex border-gray-200 border p-4 gap-4">
+	<div class="flex gap-4 border border-gray-200 p-4">
 		<form onsubmit={handleSQLSubmit} class="flex flex-col gap-5">
 			<label for="sql">SQL</label>
-			<input
-				id="sql"
-				type="text"
-				bind:value={SQLValue}
-				class="border"
-			/>
-			<button class="border rounded" type="submit">Submit</button>
+			<input id="sql" type="text" bind:value={SQLValue} class="border" />
+			<button class="rounded border" type="submit">Submit</button>
 		</form>
-		<div class="border border-gray-200 p-2 flex flex-col">
+		<div class="flex flex-col border border-gray-200 p-2">
 			Result
 			{#each SQLResponse as puzzle (puzzle.id)}
 				<li>{puzzle.puzzleId}</li>
@@ -74,18 +69,13 @@
 		</div>
 	</div>
 
-	<div class="flex border-gray-200 border p-4 gap-4">
+	<div class="flex gap-4 border border-gray-200 p-4">
 		<form onsubmit={handleLLMSubmit} class="flex flex-col gap-5">
 			<label for="LLM">LLM</label>
-			<input
-				id="llm"
-				type="text"
-				bind:value={LLMValue}
-				class="border"
-			/>
-			<button class="border rounded" type="submit">Submit</button>
+			<input id="llm" type="text" bind:value={LLMValue} class="border" />
+			<button class="rounded border" type="submit">Submit</button>
 		</form>
-		<p class="border border-gray-200 p-2 flex flex-col">
+		<p class="flex flex-col border border-gray-200 p-2">
 			Result
 			{LLMResponse}
 			{#if LLMError}

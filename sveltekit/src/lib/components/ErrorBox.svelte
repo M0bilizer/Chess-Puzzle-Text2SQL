@@ -2,6 +2,6 @@
 	export let error: string;
 </script>
 
-<div class="bg-red-400 rounded py-4 px-12">
+<div class="rounded bg-red-400 px-12 py-4">
 	{error}
 </div>

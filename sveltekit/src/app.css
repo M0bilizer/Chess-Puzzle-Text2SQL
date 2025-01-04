@@ -2,10 +2,11 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
-[data-theme="catppuccin"] {
-    background-image:
-            radial-gradient(at 20% 10%, rgba(234, 118, 203, 0.075) 0px, transparent 40%),
-            radial-gradient(at 75% 10%, rgba(114, 135, 253, 0.075) 0px, transparent 50%);
+[data-theme='catppuccin'] {
+	background-image: radial-gradient(at 20% 10%, rgba(234, 118, 203, 0.075) 0px, transparent 40%),
+		radial-gradient(at 75% 10%, rgba(114, 135, 253, 0.075) 0px, transparent 50%);
 }
 
-::selection { @apply bg-primary-500/30; }
+::selection {
+	@apply bg-primary-500/30;
+}

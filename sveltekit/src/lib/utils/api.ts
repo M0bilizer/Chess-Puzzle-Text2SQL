@@ -1,11 +1,11 @@
-import { KOTLIN_SPRING_URL } from './constants';
-import type { PuzzleType } from './types';
+import { KOTLIN_SPRING_URL } from '../constants/endpoints';
+import type { PuzzleType } from '../types/puzzle';
 
 export const fetchSQLData = async (query: string): Promise<PuzzleType[]> => {
 	const res = await fetch(`${KOTLIN_SPRING_URL}/queryPuzzle`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify({ query }),
+		body: JSON.stringify({ query })
 	});
 
 	if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
@@ -23,7 +23,7 @@ export const fetchLLMData = async (query: string): Promise<string> => {
 	const res = await fetch(`${KOTLIN_SPRING_URL}/debug/llm`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify({ query }),
+		body: JSON.stringify({ query })
 	});
 
 	if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
