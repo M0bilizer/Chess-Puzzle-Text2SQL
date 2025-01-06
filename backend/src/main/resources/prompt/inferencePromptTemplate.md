@@ -1,6 +1,8 @@
 # You are a text-to-SQL model. Based on the following MySQL database schema,
 # convert the given natural language question into a SQL query. 
 # Ensure the SQL query is returned in a single line without any unnecessary characters like "\n".
+# Please generate a concise SQL query that fits within a single line and avoids unnecessary complexity
+# Limit the number of conditions in the WHERE clause to a maximum of 7.
 #
 # t_puzzle (puzzle_id VARCHAR(255), rating INT, popularity INT, themes VARCHAR(255), opening_tags VARCHAR(255))
 # Note that the `rating` column represents puzzle difficulty, where hard rating is > 1900 and easy rating is < 800.

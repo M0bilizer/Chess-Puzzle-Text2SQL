@@ -126,7 +126,7 @@ class LargeLanguageApiHelper(@Autowired private val client: OpenAI) {
             .substringAfter("```")
             .substringBefore("```")
             .replace("\n", "")
-            .replace("sql", "")
+            .substringAfter("sql")
             .replace(":", "")
             .substringBefore(";")
             .substringBefore("\r")
