@@ -1,4 +1,4 @@
-package com.chess.puzzle.text2sql.web.entities
+package com.chess.puzzle.text2sql.web.domain.model
 
 /**
  * Represents the result of a function, encapsulating either success with data or an error.

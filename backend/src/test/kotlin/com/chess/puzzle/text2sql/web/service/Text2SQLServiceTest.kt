@@ -1,10 +1,13 @@
 package com.chess.puzzle.text2sql.web.service
 
 import com.chess.puzzle.text2sql.web.config.FilePaths
-import com.chess.puzzle.text2sql.web.entities.Demonstration
-import com.chess.puzzle.text2sql.web.entities.ModelName
-import com.chess.puzzle.text2sql.web.entities.ResultWrapper
-import com.chess.puzzle.text2sql.web.entities.helper.*
+import com.chess.puzzle.text2sql.web.domain.model.Demonstration
+import com.chess.puzzle.text2sql.web.domain.model.ModelName
+import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
+import com.chess.puzzle.text2sql.web.error.CallDeepSeekError
+import com.chess.puzzle.text2sql.web.error.GetSimilarDemonstrationError
+import com.chess.puzzle.text2sql.web.error.GetTextFileError
+import com.chess.puzzle.text2sql.web.error.ProcessPromptError
 import com.chess.puzzle.text2sql.web.service.helper.LargeLanguageApiHelper
 import com.chess.puzzle.text2sql.web.service.helper.PreprocessingHelper
 import com.chess.puzzle.text2sql.web.service.helper.SentenceTransformerHelper

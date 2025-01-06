@@ -1,12 +1,14 @@
 package com.chess.puzzle.text2sql.web.controllers
 
-import com.chess.puzzle.text2sql.web.entities.ModelName.Full
-import com.chess.puzzle.text2sql.web.entities.QueryRequest
-import com.chess.puzzle.text2sql.web.entities.ResultWrapper
+import com.chess.puzzle.text2sql.web.domain.input.QueryRequest
+import com.chess.puzzle.text2sql.web.domain.input.Text2SqlInput
+import com.chess.puzzle.text2sql.web.domain.input.Text2SqlRequest
+import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
 import com.chess.puzzle.text2sql.web.service.PuzzleService
 import com.chess.puzzle.text2sql.web.service.Text2SQLService
 import com.chess.puzzle.text2sql.web.service.helper.LargeLanguageApiHelper
 import com.chess.puzzle.text2sql.web.service.helper.SentenceTransformerHelper
+import com.chess.puzzle.text2sql.web.utility.ResponseUtils.badRequest
 import com.chess.puzzle.text2sql.web.utility.ResponseUtils.failure
 import com.chess.puzzle.text2sql.web.utility.ResponseUtils.success
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -111,15 +113,20 @@ class DebuggingController(
      *
      * Converts the input query into an SQL query.
      *
-     * @param input The [QueryRequest] containing the natural language query.
+     * @param request The [QueryRequest] containing the natural language query.
      * @return A [ResponseEntity] containing the generated SQL query if successful, or an error
      *   message if the process fails.
      */
     @PostMapping("/api/debug/text2sql")
-    suspend fun text2sql(@RequestBody input: QueryRequest): ResponseEntity<String> {
-        logger.info { "Received POST on /api/debug/text2sql { input = $input }" }
-        val query = input.query
-        return when (val result = text2SQLService.convertToSQL(query, Full)) {
+    suspend fun text2sql(@RequestBody request: Text2SqlRequest): ResponseEntity<String> {
+        logger.info { "Received POST on /api/debug/text2sql { request = $request }" }
+        val input: Text2SqlInput
+        when (val result = request.toInput()) {
+            is ResultWrapper.Success -> input = result.data
+            is ResultWrapper.Failure -> return badRequest("bad")
+        }
+        val (query, model) = input
+        return when (val result = text2SQLService.convertToSQL(query, model)) {
             is ResultWrapper.Success -> success(result.data)
             is ResultWrapper.Failure -> failure(result.error)
         }

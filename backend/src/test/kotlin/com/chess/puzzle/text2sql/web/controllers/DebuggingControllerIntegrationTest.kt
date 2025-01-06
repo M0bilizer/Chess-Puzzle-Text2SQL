@@ -9,8 +9,14 @@ import com.aallam.openai.api.model.ModelId
 import com.aallam.openai.client.OpenAI
 import com.chess.puzzle.text2sql.web.config.FilePaths
 import com.chess.puzzle.text2sql.web.config.SentenceTransformerEndpoints
+import com.chess.puzzle.text2sql.web.domain.input.QueryRequest
+import com.chess.puzzle.text2sql.web.domain.input.Text2SqlRequest
+import com.chess.puzzle.text2sql.web.domain.model.Demonstration
+import com.chess.puzzle.text2sql.web.domain.model.ModelName
+import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
 import com.chess.puzzle.text2sql.web.entities.*
-import com.chess.puzzle.text2sql.web.entities.helper.*
+import com.chess.puzzle.text2sql.web.error.*
+import com.chess.puzzle.text2sql.web.integration.FastApiResponse
 import com.chess.puzzle.text2sql.web.repositories.PuzzleRepository
 import com.chess.puzzle.text2sql.web.service.FileLoaderService
 import com.chess.puzzle.text2sql.web.service.PuzzleService
@@ -417,8 +423,8 @@ class DebuggingControllerIntegrationTest {
                 largeLanguageApiHelperMock,
             )
 
-        val queryRequest = QueryRequest(query)
-        val response = controller.text2sql(queryRequest)
+        val text2SqlRequest = Text2SqlRequest(query)
+        val response = controller.text2sql(text2SqlRequest)
 
         val expectedResponse =
             objectMapper.writeValueAsString(mapOf("status" to "success", "data" to sql))
@@ -442,8 +448,8 @@ class DebuggingControllerIntegrationTest {
                 largeLanguageApiHelperMock,
             )
 
-        val queryRequest = QueryRequest(query)
-        val response = controller.text2sql(queryRequest)
+        val text2SqlRequest = Text2SqlRequest(query)
+        val response = controller.text2sql(text2SqlRequest)
 
         val expectedResponse =
             objectMapper.writeValueAsString(mapOf("status" to "failure", "data" to error.message))
@@ -470,8 +476,8 @@ class DebuggingControllerIntegrationTest {
                 largeLanguageApiHelperMock,
             )
 
-        val queryRequest = QueryRequest(query)
-        val response = controller.text2sql(queryRequest)
+        val text2SqlRequest = Text2SqlRequest(query)
+        val response = controller.text2sql(text2SqlRequest)
 
         val expectedResponse =
             objectMapper.writeValueAsString(mapOf("status" to "failure", "data" to error.message))
@@ -507,8 +513,8 @@ class DebuggingControllerIntegrationTest {
                 largeLanguageApiHelperMock,
             )
 
-        val queryRequest = QueryRequest(query)
-        val response = controller.text2sql(queryRequest)
+        val text2SqlRequest = Text2SqlRequest(query)
+        val response = controller.text2sql(text2SqlRequest)
 
         val expectedResponse =
             objectMapper.writeValueAsString(mapOf("status" to "failure", "data" to error.message))
@@ -548,8 +554,8 @@ class DebuggingControllerIntegrationTest {
                 largeLanguageApiHelperMock,
             )
 
-        val queryRequest = QueryRequest(query)
-        val response = controller.text2sql(queryRequest)
+        val text2SqlRequest = Text2SqlRequest(query)
+        val response = controller.text2sql(text2SqlRequest)
 
         val expectedResponse =
             objectMapper.writeValueAsString(mapOf("status" to "failure", "data" to error.message))

@@ -1,10 +1,15 @@
 package com.chess.puzzle.text2sql.web.controllers
 
+import com.chess.puzzle.text2sql.web.domain.input.QueryRequest
+import com.chess.puzzle.text2sql.web.domain.input.Text2SqlRequest
+import com.chess.puzzle.text2sql.web.domain.model.Demonstration
+import com.chess.puzzle.text2sql.web.domain.model.ModelName
+import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
 import com.chess.puzzle.text2sql.web.entities.*
-import com.chess.puzzle.text2sql.web.entities.helper.CallDeepSeekError
-import com.chess.puzzle.text2sql.web.entities.helper.GetRandomPuzzlesError
-import com.chess.puzzle.text2sql.web.entities.helper.GetSimilarDemonstrationError
-import com.chess.puzzle.text2sql.web.entities.helper.ProcessQueryError
+import com.chess.puzzle.text2sql.web.error.CallDeepSeekError
+import com.chess.puzzle.text2sql.web.error.GetRandomPuzzlesError
+import com.chess.puzzle.text2sql.web.error.GetSimilarDemonstrationError
+import com.chess.puzzle.text2sql.web.error.ProcessQueryError
 import com.chess.puzzle.text2sql.web.service.PuzzleService
 import com.chess.puzzle.text2sql.web.service.Text2SQLService
 import com.chess.puzzle.text2sql.web.service.helper.LargeLanguageApiHelper
@@ -174,16 +179,79 @@ class DebuggingControllerTest {
 
     @Test
     fun `test text2sql endpoint success`(): Unit = runBlocking {
-        val queryRequest = QueryRequest(query = "some natural language query")
+        val query = "some natural language query"
+        val text2SqlRequest = Text2SqlRequest(query)
         val sqlQuery = "SELECT * FROM puzzles"
 
         val text2SQLService: Text2SQLService = mockk {
-            coEvery { convertToSQL(queryRequest.query, ModelName.Full) } returns
+            coEvery { convertToSQL(query, ModelName.Full) } returns ResultWrapper.Success(sqlQuery)
+        }
+
+        val response =
+            DebuggingController(text2SQLService, mockk(), mockk(), mockk())
+                .text2sql(text2SqlRequest)
+        val expectedResponse =
+            objectMapper.writeValueAsString(mapOf("status" to "success", "data" to sqlQuery))
+
+        expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
+        expectThat(response.body).isEqualTo(expectedResponse)
+    }
+
+    @Test
+    fun `test text2sql endpoint success with full`(): Unit = runBlocking {
+        val query = "some natural language query"
+        val text2SqlRequest = Text2SqlRequest(query, "full")
+        val sqlQuery = "SELECT * FROM puzzles"
+
+        val text2SQLService: Text2SQLService = mockk {
+            coEvery { convertToSQL(query, ModelName.Full) } returns ResultWrapper.Success(sqlQuery)
+        }
+
+        val response =
+            DebuggingController(text2SQLService, mockk(), mockk(), mockk())
+                .text2sql(text2SqlRequest)
+        val expectedResponse =
+            objectMapper.writeValueAsString(mapOf("status" to "success", "data" to sqlQuery))
+
+        expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
+        expectThat(response.body).isEqualTo(expectedResponse)
+    }
+
+    @Test
+    fun `test text2sql endpoint success with partial`(): Unit = runBlocking {
+        val query = "some natural language query"
+        val text2SqlRequest = Text2SqlRequest(query, "partial")
+        val sqlQuery = "SELECT * FROM puzzles"
+
+        val text2SQLService: Text2SQLService = mockk {
+            coEvery { convertToSQL(query, ModelName.Partial) } returns
                 ResultWrapper.Success(sqlQuery)
         }
 
         val response =
-            DebuggingController(text2SQLService, mockk(), mockk(), mockk()).text2sql(queryRequest)
+            DebuggingController(text2SQLService, mockk(), mockk(), mockk())
+                .text2sql(text2SqlRequest)
+        val expectedResponse =
+            objectMapper.writeValueAsString(mapOf("status" to "success", "data" to sqlQuery))
+
+        expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
+        expectThat(response.body).isEqualTo(expectedResponse)
+    }
+
+    @Test
+    fun `test text2sql endpoint success with baseline`(): Unit = runBlocking {
+        val query = "some natural language query"
+        val text2SqlRequest = Text2SqlRequest(query, "baseline")
+        val sqlQuery = "SELECT * FROM puzzles"
+
+        val text2SQLService: Text2SQLService = mockk {
+            coEvery { convertToSQL(query, ModelName.Baseline) } returns
+                ResultWrapper.Success(sqlQuery)
+        }
+
+        val response =
+            DebuggingController(text2SQLService, mockk(), mockk(), mockk())
+                .text2sql(text2SqlRequest)
         val expectedResponse =
             objectMapper.writeValueAsString(mapOf("status" to "success", "data" to sqlQuery))
 
@@ -193,15 +261,16 @@ class DebuggingControllerTest {
 
     @Test
     fun `test text2sql endpoint failure`(): Unit = runBlocking {
-        val queryRequest = QueryRequest(query = "some natural language query")
+        val query = "some natural language query"
+        val text2SqlRequest = Text2SqlRequest(query)
         val error = CallDeepSeekError.ServerError
         val text2SQLService: Text2SQLService = mockk {
-            coEvery { convertToSQL(queryRequest.query, ModelName.Full) } returns
-                ResultWrapper.Failure(error)
+            coEvery { convertToSQL(query, ModelName.Full) } returns ResultWrapper.Failure(error)
         }
 
         val response =
-            DebuggingController(text2SQLService, mockk(), mockk(), mockk()).text2sql(queryRequest)
+            DebuggingController(text2SQLService, mockk(), mockk(), mockk())
+                .text2sql(text2SqlRequest)
         val expectedResponse =
             objectMapper.writeValueAsString(mapOf("status" to "failure", "data" to error.message))
 

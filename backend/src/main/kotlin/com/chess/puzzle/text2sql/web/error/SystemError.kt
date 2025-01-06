@@ -1,18 +1,19 @@
-package com.chess.puzzle.text2sql.web.entities.helper
+package com.chess.puzzle.text2sql.web.error
 
 /**
- * Interface representing a custom error with a message.
+ * Interface representing a system error with a message. A system error is when the application is
+ * not able to process the client's request.
  *
  * This interface is implemented by various error classes to provide a consistent way to retrieve
  * error messages.
  */
-interface CustomError {
+interface SystemError {
     /** The error message associated with the error. */
     val message: String
 }
 
 /** A sealed class representing generic errors. */
-sealed class GenericError : CustomError {
+sealed class GenericError : SystemError {
     /** Represents a generic error with a default message. */
     data object Error : GenericError() {
         override val message: String = "Generic Error"
@@ -20,7 +21,7 @@ sealed class GenericError : CustomError {
 }
 
 /** A sealed class representing errors related to calling the DeepSeek API. */
-sealed class CallDeepSeekError : CustomError {
+sealed class CallDeepSeekError : SystemError {
     /** Represents an unexpected result from the DeepSeek API. */
     data object UnexpectedResult : CallDeepSeekError() {
         override val message: String = "Unexpected result from DeepSeek API"
@@ -86,7 +87,7 @@ sealed class CallDeepSeekError : CustomError {
  * A sealed class representing errors related to getting similar demonstrations from the Sentence
  * Transformer microservice.
  */
-sealed class GetSimilarDemonstrationError : CustomError {
+sealed class GetSimilarDemonstrationError : SystemError {
     /** Represents a network error when interacting with the Sentence Transformer microservice. */
     data object NetworkError : GetSimilarDemonstrationError() {
         override val message: String = "Network error with Sentence Transformer Microservice"
@@ -99,7 +100,7 @@ sealed class GetSimilarDemonstrationError : CustomError {
 }
 
 /** A sealed class representing errors related to retrieving random puzzles. */
-sealed class GetRandomPuzzlesError : CustomError {
+sealed class GetRandomPuzzlesError : SystemError {
     /**
      * Represents an error caused by a throwable when retrieving random puzzles.
      *
@@ -111,7 +112,7 @@ sealed class GetRandomPuzzlesError : CustomError {
 }
 
 /** A sealed class representing errors related to processing prompts. */
-sealed class ProcessPromptError : CustomError {
+sealed class ProcessPromptError : SystemError {
     /** Represents an error when there are insufficient demonstrations to process the prompt. */
     data object InsufficientDemonstrationsError : ProcessPromptError() {
         override val message: String = "Not enough Demonstrations when processing prompt"
@@ -129,7 +130,7 @@ sealed class ProcessPromptError : CustomError {
 }
 
 /** A sealed class representing errors related to processing SQL queries. */
-sealed class ProcessQueryError : CustomError {
+sealed class ProcessQueryError : SystemError {
     /**
      * Represents a validation error when processing a query.
      *
@@ -148,7 +149,7 @@ sealed class ProcessQueryError : CustomError {
 }
 
 /** A sealed class representing errors related to writing to a file. */
-sealed class WriteToFileError : CustomError {
+sealed class WriteToFileError : SystemError {
     /**
      * Represents an error caused by an exception when writing to a file.
      *
@@ -160,7 +161,7 @@ sealed class WriteToFileError : CustomError {
 }
 
 /** A sealed class representing errors related to retrieving benchmark entries. */
-sealed class GetBenchmarkEntriesError : CustomError {
+sealed class GetBenchmarkEntriesError : SystemError {
     /**
      * Represents an IO exception when retrieving benchmark entries.
      *
@@ -177,7 +178,7 @@ sealed class GetBenchmarkEntriesError : CustomError {
 }
 
 /** A sealed class representing errors related to retrieving text files. */
-sealed class GetTextFileError : CustomError {
+sealed class GetTextFileError : SystemError {
     /**
      * Represents an IO exception when retrieving a text file.
      *

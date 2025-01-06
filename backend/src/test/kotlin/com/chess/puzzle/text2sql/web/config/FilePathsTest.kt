@@ -1,6 +1,6 @@
 package com.chess.puzzle.text2sql.web.config
 
-import com.chess.puzzle.text2sql.web.entities.ModelName
+import com.chess.puzzle.text2sql.web.domain.model.ModelName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest

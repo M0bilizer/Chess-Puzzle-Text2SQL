@@ -11,8 +11,6 @@
 # Here are five example records:
 # 007XE, 645, 79, backRankMate fork mate mateIn2 middlegame short, Kings_Pawn_Game Kings_Pawn_Game_Leonardis_Variation
 # 07Q5s, 2126, 48, advancedPawn advantage intermezzo middlegame short, Kings_Indian_Defense Kings_Indian_Defense_Normal_Variation
-# 000hf, 1573, 90, mate mateIn2 middlegame short, Horwitz_Defense Horwitz_Defense_Other_variations
-# 07SP3, 1314, 0, advantage hangingPiece opening short, English_Opening English_Opening_Kings_English_Variation
 # 0kNf5, 2062, 70, advancedPawn discoveredAttack kingsideAttack mate mateIn4 middlegame pin promotion sacrifice veryLong, ""
 #
 # Below are some demonstrations to guide you

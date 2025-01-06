@@ -1,13 +1,13 @@
 package com.chess.puzzle.text2sql.web.controllers
 
 import com.chess.puzzle.text2sql.web.config.FilePaths
-import com.chess.puzzle.text2sql.web.entities.BenchmarkEntry
-import com.chess.puzzle.text2sql.web.entities.BenchmarkResult
-import com.chess.puzzle.text2sql.web.entities.ModelName
-import com.chess.puzzle.text2sql.web.entities.ResultWrapper
-import com.chess.puzzle.text2sql.web.entities.helper.CallDeepSeekError
-import com.chess.puzzle.text2sql.web.entities.helper.GetBenchmarkEntriesError
-import com.chess.puzzle.text2sql.web.entities.helper.SqlResult
+import com.chess.puzzle.text2sql.web.domain.model.BenchmarkEntry
+import com.chess.puzzle.text2sql.web.domain.model.BenchmarkResult
+import com.chess.puzzle.text2sql.web.domain.model.ModelName
+import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
+import com.chess.puzzle.text2sql.web.domain.model.SqlResult
+import com.chess.puzzle.text2sql.web.error.CallDeepSeekError
+import com.chess.puzzle.text2sql.web.error.GetBenchmarkEntriesError
 import com.chess.puzzle.text2sql.web.service.BenchmarkService
 import com.chess.puzzle.text2sql.web.service.FileLoaderService
 import com.chess.puzzle.text2sql.web.service.JsonWriterService
@@ -15,7 +15,6 @@ import com.chess.puzzle.text2sql.web.service.Text2SQLService
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.mockk.coEvery
 import io.mockk.mockk
-import java.io.IOException
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance

@@ -1,11 +1,11 @@
 package com.chess.puzzle.text2sql.web.service
 
 import com.chess.puzzle.text2sql.web.config.FilePaths
-import com.chess.puzzle.text2sql.web.entities.Demonstration
-import com.chess.puzzle.text2sql.web.entities.ModelName
-import com.chess.puzzle.text2sql.web.entities.ModelName.*
-import com.chess.puzzle.text2sql.web.entities.ResultWrapper
-import com.chess.puzzle.text2sql.web.entities.helper.CustomError
+import com.chess.puzzle.text2sql.web.domain.model.Demonstration
+import com.chess.puzzle.text2sql.web.domain.model.ModelName
+import com.chess.puzzle.text2sql.web.domain.model.ModelName.*
+import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
+import com.chess.puzzle.text2sql.web.error.SystemError
 import com.chess.puzzle.text2sql.web.service.helper.LargeLanguageApiHelper
 import com.chess.puzzle.text2sql.web.service.helper.PreprocessingHelper
 import com.chess.puzzle.text2sql.web.service.helper.SentenceTransformerHelper
@@ -51,7 +51,7 @@ class Text2SQLService(
     suspend fun convertToSQL(
         query: String,
         modelName: ModelName,
-    ): ResultWrapper<String, CustomError> {
+    ): ResultWrapper<String, SystemError> {
         return when (modelName) {
             Full -> full(query)
             Partial -> partial(query)
@@ -71,7 +71,7 @@ class Text2SQLService(
      * @param query The natural language query to convert.
      * @return A [ResultWrapper] containing the SQL query or an error.
      */
-    private suspend fun full(query: String): ResultWrapper<String, CustomError> {
+    private suspend fun full(query: String): ResultWrapper<String, SystemError> {
         val promptTemplate: String
         val demonstrations: List<Demonstration>
         val processedPrompt: String
@@ -109,7 +109,7 @@ class Text2SQLService(
      * @param query The natural language query to convert.
      * @return A [ResultWrapper] containing the SQL query or an error.
      */
-    private suspend fun partial(query: String): ResultWrapper<String, CustomError> {
+    private suspend fun partial(query: String): ResultWrapper<String, SystemError> {
         val promptTemplate: String
         val demonstrations: List<Demonstration>
         val processedPrompt: String
@@ -146,7 +146,7 @@ class Text2SQLService(
      * @param query The natural language query to convert.
      * @return A [ResultWrapper] containing the SQL query or an error.
      */
-    private suspend fun baseline(query: String): ResultWrapper<String, CustomError> {
+    private suspend fun baseline(query: String): ResultWrapper<String, SystemError> {
         val promptTemplate: String
         val processedPrompt: String
         val sql: String

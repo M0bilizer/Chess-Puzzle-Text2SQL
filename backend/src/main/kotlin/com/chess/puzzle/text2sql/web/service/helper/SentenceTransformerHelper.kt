@@ -1,10 +1,13 @@
 package com.chess.puzzle.text2sql.web.service.helper
 
 import com.chess.puzzle.text2sql.web.config.SentenceTransformerEndpoints
-import com.chess.puzzle.text2sql.web.entities.*
-import com.chess.puzzle.text2sql.web.entities.helper.GetSimilarDemonstrationError
-import com.chess.puzzle.text2sql.web.entities.helper.GetSimilarDemonstrationError.InternalError
-import com.chess.puzzle.text2sql.web.entities.helper.GetSimilarDemonstrationError.NetworkError
+import com.chess.puzzle.text2sql.web.domain.input.QueryRequest
+import com.chess.puzzle.text2sql.web.domain.model.Demonstration
+import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
+import com.chess.puzzle.text2sql.web.error.GetSimilarDemonstrationError
+import com.chess.puzzle.text2sql.web.error.GetSimilarDemonstrationError.InternalError
+import com.chess.puzzle.text2sql.web.error.GetSimilarDemonstrationError.NetworkError
+import com.chess.puzzle.text2sql.web.integration.FastApiResponse
 import com.google.gson.Gson
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.client.HttpClient

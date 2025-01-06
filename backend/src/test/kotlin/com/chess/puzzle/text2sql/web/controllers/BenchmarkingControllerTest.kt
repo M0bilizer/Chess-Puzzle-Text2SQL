@@ -1,13 +1,13 @@
 package com.chess.puzzle.text2sql.web.controllers
 
 import com.chess.puzzle.text2sql.web.config.FilePaths
-import com.chess.puzzle.text2sql.web.entities.BenchmarkEntry
-import com.chess.puzzle.text2sql.web.entities.BenchmarkResult
-import com.chess.puzzle.text2sql.web.entities.ResultWrapper
-import com.chess.puzzle.text2sql.web.entities.helper.GenericError
-import com.chess.puzzle.text2sql.web.entities.helper.GetBenchmarkEntriesError
-import com.chess.puzzle.text2sql.web.entities.helper.SqlResult
-import com.chess.puzzle.text2sql.web.entities.helper.WriteToFileError
+import com.chess.puzzle.text2sql.web.domain.model.BenchmarkEntry
+import com.chess.puzzle.text2sql.web.domain.model.BenchmarkResult
+import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
+import com.chess.puzzle.text2sql.web.domain.model.SqlResult
+import com.chess.puzzle.text2sql.web.error.GenericError
+import com.chess.puzzle.text2sql.web.error.GetBenchmarkEntriesError
+import com.chess.puzzle.text2sql.web.error.WriteToFileError
 import com.chess.puzzle.text2sql.web.service.BenchmarkService
 import com.chess.puzzle.text2sql.web.service.FileLoaderService
 import com.chess.puzzle.text2sql.web.service.JsonWriterService

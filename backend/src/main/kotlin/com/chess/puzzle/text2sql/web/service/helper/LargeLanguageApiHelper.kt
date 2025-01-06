@@ -4,9 +4,9 @@ import com.aallam.openai.api.chat.*
 import com.aallam.openai.api.exception.*
 import com.aallam.openai.api.model.ModelId
 import com.aallam.openai.client.OpenAI
-import com.chess.puzzle.text2sql.web.entities.ResultWrapper
-import com.chess.puzzle.text2sql.web.entities.helper.CallDeepSeekError
-import com.chess.puzzle.text2sql.web.entities.helper.CallDeepSeekError.*
+import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
+import com.chess.puzzle.text2sql.web.error.CallDeepSeekError
+import com.chess.puzzle.text2sql.web.error.CallDeepSeekError.*
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -126,7 +126,8 @@ class LargeLanguageApiHelper(@Autowired private val client: OpenAI) {
             .substringAfter("```")
             .substringBefore("```")
             .replace("\n", "")
-            .substringAfter("sql: ")
+            .replace("sql", "")
+            .replace(":", "")
             .substringBefore(";")
             .substringBefore("\r")
             .replace("\"", "")
