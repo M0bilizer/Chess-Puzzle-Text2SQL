@@ -15,7 +15,10 @@ data class Text2SqlRequest(val query: String? = null, val model: String? = null)
         val validator =
             RequestValidator<Text2SqlInput> {
                 isNotNull(query, MissingQuery)
-                ifPresent(model) { isInCollection(model, ModelName.entries, InvalidModelName) }
+                ifPresent(model) {
+                    isNotNull(ModelName.toEnum(model!!), InvalidModelName)
+                    isInCollection(ModelName.toEnum(model), ModelName.entries, InvalidModelName)
+                }
             }
         if (validator.haveErrors()) {
             return ResultWrapper.Failure(validator.getErrors())
