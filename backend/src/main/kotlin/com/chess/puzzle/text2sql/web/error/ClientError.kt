@@ -10,7 +10,7 @@ sealed class ClientError {
     }
 
     data object InvalidModelName : ClientError() {
-        override val field: String = "modelName"
+        override val field: String = "model"
         override val message: String = "Model Name is not valid"
     }
 }

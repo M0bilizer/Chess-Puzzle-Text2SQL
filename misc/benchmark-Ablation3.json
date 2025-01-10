@@ -1038,854 +1038,854 @@
   "text" : "I want to improve my endgame strategy.",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%endgame%' OR themes LIKE '%pawnEndgame%' OR themes LIKE '%bishopEndgame%' OR themes LIKE '%knightEndgame%' OR themes LIKE '%queenEndgame%' OR themes LIKE '%queenRookEndgame%' OR themes LIKE '%rookEndgame%'",
-    "status" : ""
+    "status" : "2"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%endgame%' OR themes LIKE '%pawnEndgame%' OR themes LIKE '%bishopEndgame%' OR themes LIKE '%knightEndgame%' OR themes LIKE '%queenEndgame%' OR themes LIKE '%queenRookEndgame%' OR themes LIKE '%rookEndgame%'",
-    "status" : ""
+    "status" : "2"
   },
   "baseline" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%endgame%' AND rating BETWEEN 800 AND 1900 ORDER BY popularity DESC",
-    "status" : ""
+    "status" : "1"
   }
 }, {
   "text" : "I love solving tactical puzzles.",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%fork%' OR themes LIKE '%pin%' OR themes LIKE '%skewer%' OR themes LIKE '%discoveredAttack%' OR themes LIKE '%doubleAttack%' OR themes LIKE '%deflection%' OR themes LIKE '%interference%' OR themes LIKE '%clearance%' OR themes LIKE '%sacrifice%' OR themes LIKE '%xRayAttack%' OR themes LIKE '%zugzwang%' OR themes LIKE '%attraction%' OR themes LIKE '%capturingDefender%' OR themes LIKE '%trappedPiece%' OR themes LIKE '%hangingPiece%' OR themes LIKE '%exposedKing%' OR themes LIKE '%promotion%' OR themes LIKE '%castling%' OR themes LIKE '%enPassant%' OR themes LIKE '%intermezzo%' OR themes LIKE '%quietMove%' OR themes LIKE '%crushing%' OR themes LIKE '%defensiveMove%' OR themes LIKE '%equality%' OR themes LIKE '%advantage%' OR themes LIKE '%mate%' OR themes LIKE '%mateIn1%' OR themes LIKE '%mateIn2%' OR themes LIKE '%mateIn3%' OR themes LIKE '%mateIn4%' OR themes LIKE '%mateIn5%' OR themes LIKE '%backRankMate%' OR themes LIKE '%anastasiaMate%' OR themes LIKE '%arabianMate%' OR themes LIKE '%bodenMate%' OR themes LIKE '%dovetailMate%' OR themes LIKE '%hookMate%' OR themes LIKE '%smotheredMate%' OR themes LIKE '%doubleBishopMate%' OR themes LIKE '%doubleCheck%' OR themes LIKE '%kingsideAttack%' OR themes LIKE '%queensideAttack%' OR themes LIKE '%pawnEndgame%' OR themes LIKE '%knightEndgame%' OR themes LIKE '%bishopEndgame%' OR themes LIKE '%rookEndgame%' OR themes LIKE '%queenEndgame%' OR themes LIKE '%queenRookEndgame%' OR themes LIKE '%endgame%' OR themes LIKE '%middlegame%' OR themes LIKE '%opening%' OR themes LIKE '%oneMove%' OR themes LIKE '%short%' OR themes LIKE '%long%' OR themes LIKE '%veryLong%' OR themes LIKE '%master%' OR themes LIKE '%masterVsMaster%' OR themes LIKE '%superGM%' OR themes LIKE '%advancedPawn%' OR themes LIKE '%attackingF2F7%' OR themes LIKE '%fork%' OR themes LIKE '%pin%' OR themes LIKE '%skewer%' OR themes LIKE '%discoveredAttack%' OR themes LIKE '%doubleAttack%' OR themes LIKE '%deflection%' OR themes LIKE '%interference%' OR themes LIKE '%clearance%' OR themes LIKE '%sacrifice%' OR themes LIKE '%xRayAttack%' OR themes LIKE '%zugzwang%' OR themes LIKE '%attraction%' OR themes LIKE '%capturingDefender%' OR themes LIKE '%trappedPiece%' OR themes LIKE '%hangingPiece%' OR themes LIKE '%exposedKing%' OR themes LIKE '%promotion%' OR themes LIKE '%castling%' OR themes LIKE '%enPassant%' OR themes LIKE '%intermezzo%' OR themes LIKE '%quietMove%' OR themes LIKE '%crushing%' OR themes LIKE '%defensiveMove%' OR themes LIKE '%equality%' OR themes LIKE '%advantage%' OR themes LIKE '%mate%' OR themes LIKE '%mateIn1%' OR themes LIKE '%mateIn2%' OR themes LIKE '%mateIn3%' OR themes LIKE '%mateIn4%' OR themes LIKE '%mateIn5%' OR themes LIKE '%backRankMate%' OR themes LIKE '%anastasiaMate%' OR themes LIKE '%arabianMate%' OR themes LIKE '%bodenMate%' OR themes LIKE '%dovetailMate%' OR themes LIKE '%hookMate%' OR themes LIKE '%smotheredMate%' OR themes LIKE '%doubleBishopMate%' OR themes LIKE '%doubleCheck%' OR themes LIKE '%kingsideAttack%' OR themes LIKE '%queensideAttack%' OR themes LIKE '%pawnEndgame%' OR themes LIKE '%knightEndgame%' OR themes LIKE '%bishopEndgame%' OR themes LIKE '%rookEndgame%' OR themes LIKE '%queenEndgame%' OR themes LIKE '%queenRookEndgame%' OR themes LIKE '%endgame%' OR themes LIKE '%middlegame%' OR themes LIKE '%opening%' OR themes LIKE '%oneMove%' OR themes LIKE '%short%' OR themes LIKE '%long%' OR themes LIKE '%veryLong%' OR themes LIKE '%master%' OR themes LIKE '%masterVsMaster%' OR themes LIKE '%superGM%' OR themes LIKE '%advancedPawn%' OR themes LIKE '%attackingF2F7%'",
-    "status" : ""
+    "status" : "2"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%tactics%' OR themes LIKE '%fork%' OR themes LIKE '%pin%' OR themes LIKE '%skewer%' OR themes LIKE '%discoveredAttack%' OR themes LIKE '%deflection%' OR themes LIKE '%interference%' OR themes LIKE '%sacrifice%' OR themes LIKE '%clearance%' OR themes LIKE '%attraction%' OR themes LIKE '%xRayAttack%' OR themes LIKE '%zugzwang%'",
-    "status" : ""
+    "status" : "2"
   },
   "baseline" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%fork%' OR themes LIKE '%pin%' OR themes LIKE '%skewer%' OR themes LIKE '%discoveredAttack%' OR themes LIKE '%deflection%' OR themes LIKE '%interference%' OR themes LIKE '%clearance%' OR themes LIKE '%sacrifice%' OR themes LIKE '%attraction%' OR themes LIKE '%xRayAttack%' OR themes LIKE '%zugzwang%'",
-    "status" : ""
+    "status" : "2"
   }
 }, {
   "text" : "I enjoy analyzing grandmaster games.",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%master%' OR themes LIKE '%masterVsMaster%' OR themes LIKE '%superGM%'",
-    "status" : ""
+    "status" : "2"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%masterVsMaster%' OR themes LIKE '%superGM%'",
-    "status" : ""
+    "status" : "2"
   },
   "baseline" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%master%' OR themes LIKE '%masterVsMaster%' OR themes LIKE '%superGM%'",
-    "status" : ""
+    "status" : "2"
   }
 }, {
   "text" : "I want to practice playing blitz.",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%short%' OR themes LIKE '%oneMove%'",
-    "status" : ""
+    "status" : "2"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%short%' OR themes LIKE '%oneMove%'",
-    "status" : ""
+    "status" : "2"
   },
   "baseline" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%short%' AND rating < 800",
-    "status" : ""
+    "status" : "1"
   }
 }, {
   "text" : "I want to learn how to play the endgame better.",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%endgame%'",
-    "status" : ""
+    "status" : "2"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%endgame%'",
-    "status" : ""
+    "status" : "2"
   },
   "baseline" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%endgame%' ORDER BY rating ASC",
-    "status" : ""
+    "status" : "2"
   }
 }, {
   "text" : "I want to improve my calculation skills.",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%mateIn1%' OR themes LIKE '%mateIn2%' OR themes LIKE '%mateIn3%' OR themes LIKE '%mateIn4%' OR themes LIKE '%mateIn5%' OR themes LIKE '%long%' OR themes LIKE '%veryLong%' OR themes LIKE '%intermezzo%' OR themes LIKE '%discoveredAttack%' OR themes LIKE '%fork%' OR themes LIKE '%pin%' OR themes LIKE '%skewer%' OR themes LIKE '%xRayAttack%' OR themes LIKE '%zugzwang%' OR themes LIKE '%clearance%' OR themes LIKE '%deflection%' OR themes LIKE '%interference%' OR themes LIKE '%sacrifice%' OR themes LIKE '%promotion%' OR themes LIKE '%attraction%' OR themes LIKE '%capturingDefender%' OR themes LIKE '%exposedKing%' OR themes LIKE '%hangingPiece%' OR themes LIKE '%trappedPiece%' OR themes LIKE '%doubleCheck%' OR themes LIKE '%doubleBishopMate%' OR themes LIKE '%smotheredMate%' OR themes LIKE '%anastasiaMate%' OR themes LIKE '%arabianMate%' OR themes LIKE '%backRankMate%' OR themes LIKE '%bodenMate%' OR themes LIKE '%dovetailMate%' OR themes LIKE '%hookMate%' OR themes LIKE '%kingsideAttack%' OR themes LIKE '%queensideAttack%' OR themes LIKE '%crushing%' OR themes LIKE '%equality%' OR themes LIKE '%advantage%' OR themes LIKE '%advancedPawn%' OR themes LIKE '%endgame%' OR themes LIKE '%pawnEndgame%' OR themes LIKE '%knightEndgame%' OR themes LIKE '%bishopEndgame%' OR themes LIKE '%rookEndgame%' OR themes LIKE '%queenEndgame%' OR themes LIKE '%queenRookEndgame%' OR themes LIKE '%middlegame%' OR themes LIKE '%opening%' OR themes LIKE '%castling%' OR themes LIKE '%enPassant%' OR themes LIKE '%oneMove%' OR themes LIKE '%short%' OR themes LIKE '%master%' OR themes LIKE '%masterVsMaster%' OR themes LIKE '%superGM%'",
-    "status" : ""
+    "status" : "2"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%middlegame%' AND (themes LIKE '%calculation%' OR themes LIKE '%long%' OR themes LIKE '%veryLong%')",
-    "status" : ""
+    "status" : "2"
   },
   "baseline" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%middlegame%' AND rating > 1900 ORDER BY popularity DESC LIMIT 10",
-    "status" : ""
+    "status" : "1"
   }
 }, {
   "text" : "I want to practice solving chess compositions.",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%mate%' OR themes LIKE '%endgame%' OR themes LIKE '%promotion%' OR themes LIKE '%sacrifice%' OR themes LIKE '%fork%' OR themes LIKE '%pin%' OR themes LIKE '%skewer%' OR themes LIKE '%discoveredAttack%' OR themes LIKE '%xRayAttack%' OR themes LIKE '%zugzwang%' OR themes LIKE '%interference%' OR themes LIKE '%deflection%' OR themes LIKE '%clearance%' OR themes LIKE '%attraction%' OR themes LIKE '%capturingDefender%' OR themes LIKE '%trappedPiece%' OR themes LIKE '%hangingPiece%' OR themes LIKE '%exposedKing%' OR themes LIKE '%advantage%' OR themes LIKE '%equality%' OR themes LIKE '%crushing%' OR themes LIKE '%defensiveMove%' OR themes LIKE '%quietMove%' OR themes LIKE '%intermezzo%' OR themes LIKE '%oneMove%' OR themes LIKE '%veryLong%' OR themes LIKE '%long%' OR themes LIKE '%short%' OR themes LIKE '%middlegame%' OR themes LIKE '%opening%' OR themes LIKE '%master%' OR themes LIKE '%masterVsMaster%' OR themes LIKE '%superGM%' OR themes LIKE '%advancedPawn%' OR themes LIKE '%bishopEndgame%' OR themes LIKE '%knightEndgame%' OR themes LIKE '%pawnEndgame%' OR themes LIKE '%queenEndgame%' OR themes LIKE '%queenRookEndgame%' OR themes LIKE '%rookEndgame%' OR themes LIKE '%castling%' OR themes LIKE '%enPassant%' OR themes LIKE '%kingsideAttack%' OR themes LIKE '%queensideAttack%' OR themes LIKE '%anastasiaMate%' OR themes LIKE '%arabianMate%' OR themes LIKE '%attackingF2F7%' OR themes LIKE '%backRankMate%' OR themes LIKE '%bodenMate%' OR themes LIKE '%dovetailMate%' OR themes LIKE '%hookMate%' OR themes LIKE '%smotheredMate%' OR themes LIKE '%doubleBishopMate%' OR themes LIKE '%doubleCheck%' OR themes LIKE '%mateIn1%' OR themes LIKE '%mateIn2%' OR themes LIKE '%mateIn3%' OR themes LIKE '%mateIn4%' OR themes LIKE '%mateIn5%'",
-    "status" : ""
+    "status" : "2"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%mate%' OR themes LIKE '%endgame%' OR themes LIKE '%middlegame%' OR themes LIKE '%opening%'",
-    "status" : ""
+    "status" : "2"
   },
   "baseline" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%mate%' OR themes LIKE '%endgame%' OR themes LIKE '%middlegame%'",
-    "status" : ""
+    "status" : "2"
   }
 }, {
   "text" : "Sicilian Defense, Najdorf Variation, Yugoslav Attack",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE opening_tags LIKE '%Sicilian_Defense%' AND opening_tags LIKE '%Najdorf_Variation%' AND opening_tags LIKE '%Yugoslav_Attack%'",
-    "status" : ""
+    "status" : "2"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE opening_tags LIKE '%Sicilian_Defense%' AND opening_tags LIKE '%Najdorf_Variation%' AND opening_tags LIKE '%Yugoslav_Attack%'",
-    "status" : ""
+    "status" : "2"
   },
   "baseline" : {
     "sql" : "SELECT * FROM t_puzzle WHERE opening_tags LIKE '%Sicilian_Defense%' AND opening_tags LIKE '%Najdorf_Variation%' AND opening_tags LIKE '%Yugoslav_Attack%'",
-    "status" : ""
+    "status" : "2"
   }
 }, {
   "text" : "Ruy Lopez, Berlin Defense",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE opening_tags LIKE '%Ruy_Lopez%' AND opening_tags LIKE '%Berlin_Defense%'",
-    "status" : ""
+    "status" : "2"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE opening_tags LIKE '%Ruy_Lopez%' AND opening_tags LIKE '%Berlin_Defense%'",
-    "status" : ""
+    "status" : "2"
   },
   "baseline" : {
     "sql" : "SELECT * FROM t_puzzle WHERE opening_tags LIKE '%Ruy_Lopez%' AND opening_tags LIKE '%Berlin_Defense%'",
-    "status" : ""
+    "status" : "2"
   }
 }, {
   "text" : "King's Indian Defense, Fianchetto Variation",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE opening_tags LIKE '%Kings_Indian_Defense%' AND opening_tags LIKE '%Fianchetto_Variation%'",
-    "status" : ""
+    "status" : "2"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE opening_tags LIKE '%Kings_Indian_Defense%' AND opening_tags LIKE '%Fianchetto_Variation%'",
-    "status" : ""
+    "status" : "2"
   },
   "baseline" : {
     "sql" : "SELECT * FROM t_puzzle WHERE opening_tags LIKE '%Kings_Indian_Defense%' AND opening_tags LIKE '%Fianchetto_Variation%'",
-    "status" : ""
+    "status" : "2"
   }
 }, {
   "text" : "endgame technique and pawn promotion",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%endgame%' AND themes LIKE '%promotion%'",
-    "status" : ""
+    "status" : "2"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%endgame%' AND themes LIKE '%promotion%'",
-    "status" : ""
+    "status" : "2"
   },
   "baseline" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%endgame%' AND themes LIKE '%promotion%'",
-    "status" : ""
+    "status" : "2"
   }
 }, {
   "text" : "zugzwang and underpromotion",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%zugzwang%' AND themes LIKE '%promotion%'",
-    "status" : ""
+    "status" : "2"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%zugzwang%' AND themes LIKE '%promotion%'",
-    "status" : ""
+    "status" : "2"
   },
   "baseline" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%zugzwang%' AND themes LIKE '%promotion%'",
-    "status" : ""
+    "status" : "2"
   }
 }, {
   "text" : "discovered attack and deflection",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%discoveredAttack%' AND themes LIKE '%deflection%'",
-    "status" : ""
+    "status" : "2"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%discoveredAttack%' AND themes LIKE '%deflection%'",
-    "status" : ""
+    "status" : "2"
   },
   "baseline" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%discoveredAttack%' AND themes LIKE '%deflection%'",
-    "status" : ""
+    "status" : "2"
   }
 }, {
   "text" : "straightforward",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%oneMove%' OR themes LIKE '%short%' OR themes LIKE '%mateIn1%'",
-    "status" : ""
+    "status" : "1"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%oneMove%' OR themes LIKE '%short%'",
-    "status" : ""
+    "status" : "1"
   },
   "baseline" : {
     "sql" : "SELECT * FROM t_puzzle WHERE rating < 800",
-    "status" : ""
+    "status" : "2"
   }
 }, {
   "text" : "simple",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE rating < 800",
-    "status" : ""
+    "status" : "2"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE rating < 800",
-    "status" : ""
+    "status" : "2"
   },
   "baseline" : {
     "sql" : "SELECT * FROM t_puzzle WHERE rating < 800",
-    "status" : ""
+    "status" : "2"
   }
 }, {
   "text" : "trivial",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE rating < 800",
-    "status" : ""
+    "status" : "2"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE rating < 800",
-    "status" : ""
+    "status" : "2"
   },
   "baseline" : {
     "sql" : "SELECT * FROM t_puzzle WHERE rating < 800",
-    "status" : ""
+    "status" : "2"
   }
 }, {
   "text" : "Can you give me a long, complex puzzle to solve?",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%long%' AND themes LIKE '%veryLong%' AND rating > 1900",
-    "status" : ""
+    "status" : "2"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%veryLong%' AND rating > 1900",
-    "status" : ""
+    "status" : "2"
   },
   "baseline" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%veryLong%' AND themes LIKE '%middlegame%' AND rating > 1900 ORDER BY popularity DESC LIMIT 1",
-    "status" : ""
+    "status" : "1"
   }
 }, {
   "text" : "Can you give me a complex puzzle to solve?",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE rating > 1900 AND (themes LIKE '%advancedPawn%' OR themes LIKE '%advantage%' OR themes LIKE '%intermezzo%' OR themes LIKE '%middlegame%' OR themes LIKE '%sacrifice%' OR themes LIKE '%veryLong%' OR themes LIKE '%xRayAttack%' OR themes LIKE '%zugzwang%')",
-    "status" : ""
+    "status" : "2"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE rating > 1900 AND LENGTH(themes) - LENGTH(REPLACE(themes, ' ', '')) + 1 >= 5",
-    "status" : ""
+    "status" : "2"
   },
   "baseline" : {
     "sql" : "SELECT * FROM t_puzzle WHERE rating > 1900 ORDER BY popularity DESC LIMIT 1",
-    "status" : ""
+    "status" : "2"
   }
 }, {
   "text" : "Can you give me a difficult puzzle to solve?",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE rating > 1900",
-    "status" : ""
+    "status" : "2"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE rating > 1900 ORDER BY popularity DESC LIMIT 1",
-    "status" : ""
+    "status" : "1"
   },
   "baseline" : {
     "sql" : "SELECT * FROM t_puzzle WHERE rating > 1900 ORDER BY RAND() LIMIT 1",
-    "status" : ""
+    "status" : "1"
   }
 }, {
   "text" : "Give me a simple puzzle that involves a queen sacrifice.",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%sacrifice%' AND themes LIKE '%queen%' AND rating < 800",
-    "status" : ""
+    "status" : "2"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%sacrifice%' AND themes LIKE '%queenEndgame%' AND rating < 800",
-    "status" : ""
+    "status" : "2"
   },
   "baseline" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%sacrifice%' AND themes LIKE '%queen%' AND rating < 800",
-    "status" : ""
+    "status" : "2"
   }
 }, {
   "text" : "Give me a simple puzzle that involves a kingside attack.",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%kingsideAttack%' AND rating < 800",
-    "status" : ""
+    "status" : "2"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE rating < 800 AND themes LIKE '%kingsideAttack%'",
-    "status" : ""
+    "status" : "2"
   },
   "baseline" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%kingsideAttack%' AND rating < 800 LIMIT 1",
-    "status" : ""
+    "status" : "1"
   }
 }, {
   "text" : "Give me a simple puzzle that involves a queenside attack.",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%queensideAttack%' AND rating < 800",
-    "status" : ""
+    "status" : "2"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%queensideAttack%' AND rating < 800",
-    "status" : ""
+    "status" : "2"
   },
   "baseline" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%queensideAttack%' AND rating < 800 LIMIT 1",
-    "status" : ""
+    "status" : "1"
   }
 }, {
   "text" : "I need a puzzle about the Sicilian Defense in the endgame.",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE opening_tags LIKE '%Sicilian_Defense%' AND themes LIKE '%endgame%'",
-    "status" : ""
+    "status" : "2"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE opening_tags LIKE '%Sicilian_Defense%' AND themes LIKE '%endgame%'",
-    "status" : ""
+    "status" : "2"
   },
   "baseline" : {
     "sql" : "SELECT * FROM t_puzzle WHERE opening_tags LIKE '%Sicilian_Defense%' AND themes LIKE '%endgame%'",
-    "status" : ""
+    "status" : "2"
   }
 }, {
   "text" : "I need a puzzle about the Ruy Lopez in the middlegame.",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE opening_tags LIKE '%Ruy_Lopez%' AND themes LIKE '%middlegame%'",
-    "status" : ""
+    "status" : "2"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE opening_tags LIKE '%Ruy_Lopez%' AND themes LIKE '%middlegame%'",
-    "status" : ""
+    "status" : "2"
   },
   "baseline" : {
     "sql" : "SELECT * FROM t_puzzle WHERE opening_tags LIKE '%Ruy_Lopez%' AND themes LIKE '%middlegame%'",
-    "status" : ""
+    "status" : "2"
   }
 }, {
   "text" : "I need a puzzle about the French Defense in the endgame.",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE opening_tags LIKE '%French_Defense%' AND themes LIKE '%endgame%'",
-    "status" : ""
+    "status" : "2"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE opening_tags LIKE '%French_Defense%' AND themes LIKE '%endgame%'",
-    "status" : ""
+    "status" : "2"
   },
   "baseline" : {
     "sql" : "SELECT * FROM t_puzzle WHERE opening_tags LIKE '%French_Defense%' AND themes LIKE '%endgame%'",
-    "status" : ""
+    "status" : "2"
   }
 }, {
   "text" : "I want to get better at defending.",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%defensiveMove%' OR themes LIKE '%interference%' OR themes LIKE '%pin%' OR themes LIKE '%skewer%' OR themes LIKE '%xRayAttack%' OR themes LIKE '%capturingDefender%' OR themes LIKE '%deflection%' OR themes LIKE '%clearance%' OR themes LIKE '%intermezzo%' OR themes LIKE '%zugzwang%'",
-    "status" : ""
+    "status" : "2"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%defensiveMove%' OR themes LIKE '%interference%' OR themes LIKE '%clearance%' OR themes LIKE '%deflection%'",
-    "status" : ""
+    "status" : "2"
   },
   "baseline" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%defensiveMove%' OR themes LIKE '%interference%' OR themes LIKE '%pin%' OR themes LIKE '%skewer%' OR themes LIKE '%xRayAttack%'",
-    "status" : ""
+    "status" : "2"
   }
 }, {
   "text" : "I want to get better at endgames.",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%endgame%'",
-    "status" : ""
+    "status" : "2"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%endgame%' ORDER BY rating ASC",
-    "status" : ""
+    "status" : "2"
   },
   "baseline" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%endgame%'",
-    "status" : ""
+    "status" : "2"
   }
 }, {
   "text" : "I want to get better at positional play.",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%quietMove%' AND (opening_tags LIKE '%Queens_Gambit%' OR opening_tags LIKE '%Ruy_Lopez%' OR opening_tags LIKE '%Caro-Kann%' OR opening_tags LIKE '%English_Opening%' OR opening_tags LIKE '%Slav_Defense%' OR opening_tags LIKE '%Catalan_Opening%' OR opening_tags LIKE '%Nimzo-Indian_Defense%' OR opening_tags LIKE '%Queens_Indian_Defense%' OR opening_tags LIKE '%Bogo-Indian_Defense%' OR opening_tags LIKE '%Colle_System%')",
-    "status" : ""
+    "status" : "2"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%middlegame%' OR themes LIKE '%positional%' OR themes LIKE '%quietMove%' OR themes LIKE '%equality%' OR themes LIKE '%interference%' OR themes LIKE '%clearance%' OR themes LIKE '%defensiveMove%'",
-    "status" : ""
+    "status" : "2"
   },
   "baseline" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%middlegame%' AND themes LIKE '%positional%' AND rating BETWEEN 800 AND 1900 ORDER BY popularity DESC",
-    "status" : ""
+    "status" : "1"
   }
 }, {
   "text" : "I love closed games.",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE opening_tags LIKE '%Caro-Kann_Defense%' OR opening_tags LIKE '%French_Defense%' OR opening_tags LIKE '%Slav_Defense%' OR opening_tags LIKE '%Queen\\'s_Gambit_Declined%' OR opening_tags LIKE '%King\\'s_Indian_Defense%' OR opening_tags LIKE '%Nimzo-Indian_Defense%' OR opening_tags LIKE '%Pirc_Defense%' OR opening_tags LIKE '%Alekhine\\'s_Defense%' OR opening_tags LIKE '%Modern_Defense%' OR opening_tags LIKE '%Benoni_Defense%'",
-    "status" : ""
+    "status" : "0"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE opening_tags LIKE '%Closed_Game%'",
-    "status" : ""
+    "status" : "0"
   },
   "baseline" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%closed%'",
-    "status" : ""
+    "status" : "0"
   }
 }, {
   "text" : "I prefer open games.",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE opening_tags LIKE '%Sicilian_Defense%' OR opening_tags LIKE '%Kings_Gambit%' OR opening_tags LIKE '%Danish_Gambit%' OR opening_tags LIKE '%Dragon_Variation%' OR opening_tags LIKE '%Najdorf_Variation%' OR opening_tags LIKE '%Grünfeld_Defense%' OR opening_tags LIKE '%Benko_Gambit%' OR opening_tags LIKE '%Two_Knights_Defense%' OR opening_tags LIKE '%Scotch_Game%' OR opening_tags LIKE '%French_Defense_Winawer_Variation%'",
-    "status" : ""
+    "status" : "2"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE opening_tags LIKE '%Kings_Pawn_Game%' OR opening_tags LIKE '%Sicilian_Defense%' OR opening_tags LIKE '%Ruy_Lopez%' OR opening_tags LIKE '%Italian_Game%' OR opening_tags LIKE '%Scotch_Game%'",
-    "status" : ""
+    "status" : "2"
   },
   "baseline" : {
     "sql" : "SELECT * FROM t_puzzle WHERE opening_tags LIKE '%Kings_Pawn_Game%' OR opening_tags LIKE '%Sicilian_Defense%' OR opening_tags LIKE '%Ruy_Lopez%' OR opening_tags LIKE '%Italian_Game%' OR opening_tags LIKE '%Scotch_Game%'",
-    "status" : ""
+    "status" : "2"
   }
 }, {
   "text" : "I like tactical puzzles.",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%fork%' OR themes LIKE '%pin%' OR themes LIKE '%skewer%' OR themes LIKE '%discoveredAttack%' OR themes LIKE '%deflection%' OR themes LIKE '%interference%' OR themes LIKE '%xRayAttack%' OR themes LIKE '%sacrifice%' OR themes LIKE '%attraction%' OR themes LIKE '%clearance%' OR themes LIKE '%doubleCheck%' OR themes LIKE '%zugzwang%' OR themes LIKE '%capturingDefender%' OR themes LIKE '%intermezzo%' OR themes LIKE '%exposedKing%' OR themes LIKE '%hangingPiece%' OR themes LIKE '%trappedPiece%' OR themes LIKE '%promotion%' OR themes LIKE '%castling%' OR themes LIKE '%enPassant%' OR themes LIKE '%fork%' OR themes LIKE '%pin%' OR themes LIKE '%skewer%' OR themes LIKE '%discoveredAttack%' OR themes LIKE '%deflection%' OR themes LIKE '%interference%' OR themes LIKE '%xRayAttack%' OR themes LIKE '%sacrifice%' OR themes LIKE '%attraction%' OR themes LIKE '%clearance%' OR themes LIKE '%doubleCheck%' OR themes LIKE '%zugzwang%' OR themes LIKE '%capturingDefender%' OR themes LIKE '%intermezzo%' OR themes LIKE '%exposedKing%' OR themes LIKE '%hangingPiece%' OR themes LIKE '%trappedPiece%' OR themes LIKE '%promotion%' OR themes LIKE '%castling%' OR themes LIKE '%enPassant%'",
-    "status" : ""
+    "status" : "2"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%fork%' OR themes LIKE '%pin%' OR themes LIKE '%skewer%' OR themes LIKE '%discoveredAttack%' OR themes LIKE '%deflection%' OR themes LIKE '%interference%' OR themes LIKE '%sacrifice%' OR themes LIKE '%clearance%' OR themes LIKE '%attraction%' OR themes LIKE '%xRayAttack%' OR themes LIKE '%zugzwang%' OR themes LIKE '%capturingDefender%' OR themes LIKE '%exposedKing%' OR themes LIKE '%hangingPiece%' OR themes LIKE '%trappedPiece%' OR themes LIKE '%doubleCheck%' OR themes LIKE '%intermezzo%' OR themes LIKE '%quietMove%' OR themes LIKE '%crushing%' OR themes LIKE '%defensiveMove%' OR themes LIKE '%equality%' OR themes LIKE '%advantage%' OR themes LIKE '%promotion%' OR themes LIKE '%castling%' OR themes LIKE '%enPassant%' OR themes LIKE '%endgame%' OR themes LIKE '%middlegame%' OR themes LIKE '%opening%' OR themes LIKE '%oneMove%' OR themes LIKE '%mate%' OR themes LIKE '%mateIn1%' OR themes LIKE '%mateIn2%' OR themes LIKE '%mateIn3%' OR themes LIKE '%mateIn4%' OR themes LIKE '%mateIn5%' OR themes LIKE '%long%' OR themes LIKE '%short%' OR themes LIKE '%veryLong%' OR themes LIKE '%master%' OR themes LIKE '%masterVsMaster%' OR themes LIKE '%superGM%' OR themes LIKE '%bishopEndgame%' OR themes LIKE '%knightEndgame%' OR themes LIKE '%pawnEndgame%' OR themes LIKE '%queenEndgame%' OR themes LIKE '%queenRookEndgame%' OR themes LIKE '%rookEndgame%' OR themes LIKE '%kingsideAttack%' OR themes LIKE '%queensideAttack%' OR themes LIKE '%advancedPawn%' OR themes LIKE '%backRankMate%' OR themes LIKE '%anastasiaMate%' OR themes LIKE '%arabianMate%' OR themes LIKE '%attackingF2F7%' OR themes LIKE '%bodenMate%' OR themes LIKE '%dovetailMate%' OR themes LIKE '%hookMate%' OR themes LIKE '%smotheredMate%' OR themes LIKE '%doubleBishopMate%' OR themes LIKE '%xRayAttack%' OR themes LIKE '%zugzwang%'",
-    "status" : ""
+    "status" : "2"
   },
   "baseline" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%fork%' OR themes LIKE '%pin%' OR themes LIKE '%skewer%' OR themes LIKE '%discoveredAttack%' OR themes LIKE '%deflection%' OR themes LIKE '%interference%' OR themes LIKE '%clearance%' OR themes LIKE '%sacrifice%' OR themes LIKE '%xRayAttack%' OR themes LIKE '%attraction%' OR themes LIKE '%capturingDefender%' OR themes LIKE '%doubleCheck%' OR themes LIKE '%exposedKing%' OR themes LIKE '%hangingPiece%' OR themes LIKE '%intermezzo%' OR themes LIKE '%quietMove%' OR themes LIKE '%zugzwang%'",
-    "status" : ""
+    "status" : "2"
   }
 }, {
   "text" : "I want to improve my endgame skills.",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%endgame%' OR themes LIKE '%pawnEndgame%' OR themes LIKE '%knightEndgame%' OR themes LIKE '%bishopEndgame%' OR themes LIKE '%rookEndgame%' OR themes LIKE '%queenEndgame%' OR themes LIKE '%queenRookEndgame%'",
-    "status" : ""
+    "status" : "2"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%endgame%' AND (themes LIKE '%pawnEndgame%' OR themes LIKE '%bishopEndgame%' OR themes LIKE '%knightEndgame%' OR themes LIKE '%queenEndgame%' OR themes LIKE '%queenRookEndgame%' OR themes LIKE '%rookEndgame%')",
-    "status" : ""
+    "status" : "2"
   },
   "baseline" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%endgame%' ORDER BY popularity DESC",
-    "status" : ""
+    "status" : "2"
   }
 }, {
   "text" : "I want to learn new openings.",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%opening%'",
-    "status" : ""
+    "status" : "2"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE opening_tags IS NOT NULL AND opening_tags != ''",
-    "status" : ""
+    "status" : "1"
   },
   "baseline" : {
     "sql" : "SELECT DISTINCT opening_tags FROM t_puzzle WHERE opening_tags IS NOT NULL AND opening_tags != ''",
-    "status" : ""
+    "status" : "0"
   }
 }, {
   "text" : "I want to learn new tactical motifs.",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%fork%' OR themes LIKE '%pin%' OR themes LIKE '%skewer%' OR themes LIKE '%discoveredAttack%' OR themes LIKE '%deflection%' OR themes LIKE '%interference%' OR themes LIKE '%xRayAttack%' OR themes LIKE '%zugzwang%' OR themes LIKE '%attraction%' OR themes LIKE '%clearance%' OR themes LIKE '%sacrifice%' OR themes LIKE '%doubleCheck%' OR themes LIKE '%capturingDefender%' OR themes LIKE '%trappedPiece%' OR themes LIKE '%hangingPiece%' OR themes LIKE '%exposedKing%' OR themes LIKE '%promotion%' OR themes LIKE '%castling%' OR themes LIKE '%enPassant%' OR themes LIKE '%intermezzo%' OR themes LIKE '%quietMove%' OR themes LIKE '%crushing%' OR themes LIKE '%defensiveMove%' OR themes LIKE '%advantage%' OR themes LIKE '%equality%' OR themes LIKE '%fork%' OR themes LIKE '%pin%' OR themes LIKE '%skewer%' OR themes LIKE '%discoveredAttack%' OR themes LIKE '%deflection%' OR themes LIKE '%interference%' OR themes LIKE '%xRayAttack%' OR themes LIKE '%zugzwang%' OR themes LIKE '%attraction%' OR themes LIKE '%clearance%' OR themes LIKE '%sacrifice%' OR themes LIKE '%doubleCheck%' OR themes LIKE '%capturingDefender%' OR themes LIKE '%trappedPiece%' OR themes LIKE '%hangingPiece%' OR themes LIKE '%exposedKing%' OR themes LIKE '%promotion%' OR themes LIKE '%castling%' OR themes LIKE '%enPassant%' OR themes LIKE '%intermezzo%' OR themes LIKE '%quietMove%' OR themes LIKE '%crushing%' OR themes LIKE '%defensiveMove%' OR themes LIKE '%advantage%' OR themes LIKE '%equality%'",
-    "status" : ""
+    "status" : "2"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%fork%' OR themes LIKE '%pin%' OR themes LIKE '%skewer%' OR themes LIKE '%discoveredAttack%' OR themes LIKE '%deflection%' OR themes LIKE '%interference%' OR themes LIKE '%clearance%' OR themes LIKE '%sacrifice%' OR themes LIKE '%xRayAttack%' OR themes LIKE '%zugzwang%' OR themes LIKE '%attraction%' OR themes LIKE '%capturingDefender%' OR themes LIKE '%hangingPiece%' OR themes LIKE '%trappedPiece%' OR themes LIKE '%exposedKing%' OR themes LIKE '%promotion%' OR themes LIKE '%castling%' OR themes LIKE '%enPassant%' OR themes LIKE '%intermezzo%' OR themes LIKE '%quietMove%' OR themes LIKE '%crushing%' OR themes LIKE '%defensiveMove%' OR themes LIKE '%equality%' OR themes LIKE '%advantage%' OR themes LIKE '%attackingF2F7%' OR themes LIKE '%kingsideAttack%' OR themes LIKE '%queensideAttack%' OR themes LIKE '%backRankMate%' OR themes LIKE '%anastasiaMate%' OR themes LIKE '%arabianMate%' OR themes LIKE '%bodenMate%' OR themes LIKE '%dovetailMate%' OR themes LIKE '%hookMate%' OR themes LIKE '%smotheredMate%' OR themes LIKE '%doubleBishopMate%' OR themes LIKE '%doubleCheck%' OR themes LIKE '%mate%' OR themes LIKE '%mateIn1%' OR themes LIKE '%mateIn2%' OR themes LIKE '%mateIn3%' OR themes LIKE '%mateIn4%' OR themes LIKE '%mateIn5%' OR themes LIKE '%endgame%' OR themes LIKE '%pawnEndgame%' OR themes LIKE '%bishopEndgame%' OR themes LIKE '%knightEndgame%' OR themes LIKE '%queenEndgame%' OR themes LIKE '%queenRookEndgame%' OR themes LIKE '%rookEndgame%' OR themes LIKE '%middlegame%' OR themes LIKE '%opening%' OR themes LIKE '%oneMove%' OR themes LIKE '%short%' OR themes LIKE '%long%' OR themes LIKE '%veryLong%' OR themes LIKE '%master%' OR themes LIKE '%masterVsMaster%' OR themes LIKE '%superGM%'",
-    "status" : ""
+    "status" : "2"
   },
   "baseline" : {
     "sql" : "SELECT DISTINCT themes FROM t_puzzle WHERE themes IS NOT NULL",
-    "status" : ""
+    "status" : "0"
   }
 }, {
   "text" : "knight sacrifice attack",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%knight%' AND themes LIKE '%sacrifice%' AND themes LIKE '%attack%'",
-    "status" : ""
+    "status" : "2"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%knightEndgame%' OR themes LIKE '%sacrifice%' OR themes LIKE '%kingsideAttack%' OR themes LIKE '%queensideAttack%' OR themes LIKE '%attackingF2F7%' OR themes LIKE '%discoveredAttack%' OR themes LIKE '%fork%' OR themes LIKE '%pin%' OR themes LIKE '%skewer%' OR themes LIKE '%xRayAttack%' OR themes LIKE '%interference%' OR themes LIKE '%deflection%' OR themes LIKE '%clearance%' OR themes LIKE '%intermezzo%' OR themes LIKE '%crushing%' OR themes LIKE '%advantage%' OR themes LIKE '%mate%' OR themes LIKE '%mateIn1%' OR themes LIKE '%mateIn2%' OR themes LIKE '%mateIn3%' OR themes LIKE '%mateIn4%' OR themes LIKE '%mateIn5%' OR themes LIKE '%anastasiaMate%' OR themes LIKE '%arabianMate%' OR themes LIKE '%backRankMate%' OR themes LIKE '%bodenMate%' OR themes LIKE '%dovetailMate%' OR themes LIKE '%hookMate%' OR themes LIKE '%smotheredMate%' OR themes LIKE '%doubleBishopMate%' OR themes LIKE '%doubleCheck%' OR themes LIKE '%exposedKing%' OR themes LIKE '%hangingPiece%' OR themes LIKE '%trappedPiece%' OR themes LIKE '%zugzwang%' OR themes LIKE '%promotion%' OR themes LIKE '%castling%' OR themes LIKE '%enPassant%' OR themes LIKE '%endgame%' OR themes LIKE '%equality%' OR themes LIKE '%middlegame%' OR themes LIKE '%opening%' OR themes LIKE '%oneMove%' OR themes LIKE '%short%' OR themes LIKE '%long%' OR themes LIKE '%veryLong%' OR themes LIKE '%master%' OR themes LIKE '%masterVsMaster%' OR themes LIKE '%superGM%' OR themes LIKE '%advancedPawn%' OR themes LIKE '%attraction%' OR themes LIKE '%capturingDefender%' OR themes LIKE '%defensiveMove%' OR themes LIKE '%bishopEndgame%' OR themes LIKE '%pawnEndgame%' OR themes LIKE '%queenEndgame%' OR themes LIKE '%queenRookEndgame%' OR themes LIKE '%rookEndgame%'",
-    "status" : ""
+    "status" : "2"
   },
   "baseline" : {
     "sql" : "SELECT puzzle_id FROM t_puzzle WHERE themes LIKE '%sacrifice%' AND themes LIKE '%knightEndgame%' AND rating > 1900",
-    "status" : ""
+    "status" : "0"
   }
 }, {
   "text" : "pawn promotion endgame",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%pawnEndgame%' AND themes LIKE '%promotion%' AND themes LIKE '%endgame%'",
-    "status" : ""
+    "status" : "2"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%pawnEndgame%' AND themes LIKE '%promotion%'",
-    "status" : ""
+    "status" : "2"
   },
   "baseline" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%pawnEndgame%' AND themes LIKE '%promotion%'",
-    "status" : ""
+    "status" : "2"
   }
 }, {
   "text" : "queen sacrifice tactic",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%sacrifice%' AND themes LIKE '%queen%'",
-    "status" : ""
+    "status" : "2"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%sacrifice%' AND themes LIKE '%queenEndgame%'",
-    "status" : ""
+    "status" : "2"
   },
   "baseline" : {
     "sql" : "SELECT puzzle_id FROM t_puzzle WHERE themes LIKE '%sacrifice%' AND themes LIKE '%queen%'",
-    "status" : ""
+    "status" : "0"
   }
 }, {
   "text" : "back rank checkmate",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%backRankMate%'",
-    "status" : ""
+    "status" : "2"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%backRankMate%'",
-    "status" : ""
+    "status" : "2"
   },
   "baseline" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%backRankMate%'",
-    "status" : ""
+    "status" : "2"
   }
 }, {
   "text" : "isolani pawn structure",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%isolani%'",
-    "status" : ""
+    "status" : "0"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%isolani%'",
-    "status" : ""
+    "status" : "0"
   },
   "baseline" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%isolani%'",
-    "status" : ""
+    "status" : "0"
   }
 }, {
   "text" : "king safety checkmate",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%exposedKing%' AND themes LIKE '%mate%'",
-    "status" : ""
+    "status" : "2"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%mate%' AND themes LIKE '%exposedKing%'",
-    "status" : ""
+    "status" : "2"
   },
   "baseline" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%exposedKing%' AND themes LIKE '%mate%'",
-    "status" : ""
+    "status" : "2"
   }
 }, {
   "text" : "easy checkmate",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE rating < 800 AND themes LIKE '%mate%'",
-    "status" : ""
+    "status" : "2"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE rating < 800 AND themes LIKE '%mate%'",
-    "status" : ""
+    "status" : "2"
   },
   "baseline" : {
     "sql" : "SELECT * FROM t_puzzle WHERE rating < 800 AND themes LIKE '%mate%'",
-    "status" : ""
+    "status" : "2"
   }
 }, {
   "text" : "simple tactics",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%fork%' OR themes LIKE '%pin%' OR themes LIKE '%skewer%' OR themes LIKE '%discoveredAttack%' OR themes LIKE '%xRayAttack%' OR themes LIKE '%deflection%' OR themes LIKE '%interference%' OR themes LIKE '%clearance%' OR themes LIKE '%attraction%' OR themes LIKE '%capturingDefender%' OR themes LIKE '%sacrifice%' OR themes LIKE '%promotion%' OR themes LIKE '%zugzwang%' OR themes LIKE '%mateIn1%' OR themes LIKE '%mateIn2%' OR themes LIKE '%mateIn3%' OR themes LIKE '%mateIn4%' OR themes LIKE '%mateIn5%' OR themes LIKE '%oneMove%' OR themes LIKE '%short%' OR themes LIKE '%middlegame%' OR themes LIKE '%endgame%' OR themes LIKE '%opening%' OR themes LIKE '%equality%' OR themes LIKE '%advantage%' OR themes LIKE '%crushing%' OR themes LIKE '%defensiveMove%' OR themes LIKE '%intermezzo%' OR themes LIKE '%quietMove%' OR themes LIKE '%veryLong%' OR themes LIKE '%long%' OR themes LIKE '%master%' OR themes LIKE '%masterVsMaster%' OR themes LIKE '%superGM%' OR themes LIKE '%advancedPawn%' OR themes LIKE '%bishopEndgame%' OR themes LIKE '%knightEndgame%' OR themes LIKE '%pawnEndgame%' OR themes LIKE '%queenEndgame%' OR themes LIKE '%queenRookEndgame%' OR themes LIKE '%rookEndgame%' OR themes LIKE '%castling%' OR themes LIKE '%enPassant%' OR themes LIKE '%exposedKing%' OR themes LIKE '%hangingPiece%' OR themes LIKE '%trappedPiece%' OR themes LIKE '%backRankMate%' OR themes LIKE '%anastasiaMate%' OR themes LIKE '%arabianMate%' OR themes LIKE '%attackingF2F7%' OR themes LIKE '%bodenMate%' OR themes LIKE '%dovetailMate%' OR themes LIKE '%hookMate%' OR themes LIKE '%kingsideAttack%' OR themes LIKE '%queensideAttack%' OR themes LIKE '%smotheredMate%' OR themes LIKE '%doubleBishopMate%' OR themes LIKE '%doubleCheck%' OR themes LIKE '%mate%' OR themes LIKE '%zugzwang%' AND rating < 800",
-    "status" : ""
+    "status" : "1"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE rating < 800 AND (themes LIKE '%fork%' OR themes LIKE '%pin%' OR themes LIKE '%skewer%' OR themes LIKE '%discoveredAttack%' OR themes LIKE '%doubleAttack%')",
-    "status" : ""
+    "status" : "2"
   },
   "baseline" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%fork%' OR themes LIKE '%pin%' OR themes LIKE '%skewer%' OR themes LIKE '%discoveredAttack%' OR themes LIKE '%doubleAttack%' AND rating < 800",
-    "status" : ""
+    "status" : "1"
   }
 }, {
   "text" : "quick stalemate",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%zugzwang%' OR themes LIKE '%stalemate%'",
-    "status" : ""
+    "status" : "1"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%zugzwang%' OR themes LIKE '%stalemate%'",
-    "status" : ""
+    "status" : "1"
   },
   "baseline" : {
     "sql" : "SELECT puzzle_id FROM t_puzzle WHERE themes LIKE '%stalemate%' AND rating < 800",
-    "status" : ""
+    "status" : "0"
   }
 }, {
   "text" : "Please set up a complex endgame scenario.",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%endgame%' AND rating > 1900",
-    "status" : ""
+    "status" : "2"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%endgame%' AND (themes LIKE '%pawnEndgame%' OR themes LIKE '%bishopEndgame%' OR themes LIKE '%knightEndgame%' OR themes LIKE '%queenEndgame%' OR themes LIKE '%queenRookEndgame%' OR themes LIKE '%rookEndgame%') AND rating > 1900",
-    "status" : ""
+    "status" : "2"
   },
   "baseline" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%endgame%' AND rating > 1900",
-    "status" : ""
+    "status" : "2"
   }
 }, {
   "text" : "Try solving a queen and pawn versus king endgame.",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%queenEndgame%' AND themes LIKE '%pawnEndgame%'",
-    "status" : ""
+    "status" : "2"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%queenEndgame%' AND themes LIKE '%pawnEndgame%' AND themes LIKE '%endgame%'",
-    "status" : ""
+    "status" : "2"
   },
   "baseline" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%queenEndgame%' AND themes LIKE '%pawnEndgame%' AND themes LIKE '%endgame%'",
-    "status" : ""
+    "status" : "2"
   }
 }, {
   "text" : "Set up a position with a forced checkmate in three moves.",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%mateIn3%'",
-    "status" : ""
+    "status" : "2"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%mateIn3%'",
-    "status" : ""
+    "status" : "2"
   },
   "baseline" : {
     "sql" : "SELECT puzzle_id FROM t_puzzle WHERE themes LIKE '%mateIn3%'",
-    "status" : ""
+    "status" : "0"
   }
 }, {
   "text" : "Show me a puzzle with a back rank checkmate.",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%backRankMate%'",
-    "status" : ""
+    "status" : "2"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%backRankMate%'",
-    "status" : ""
+    "status" : "2"
   },
   "baseline" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%backRankMate%'",
-    "status" : ""
+    "status" : "2"
   }
 }, {
   "text" : "Provide a puzzle with a queen sacrifice for checkmate.",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%sacrifice%' AND themes LIKE '%queen%' AND themes LIKE '%mate%'",
-    "status" : ""
+    "status" : "2"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%sacrifice%' AND themes LIKE '%mate%' AND themes LIKE '%queen%'",
-    "status" : ""
+    "status" : "2"
   },
   "baseline" : {
     "sql" : "SELECT puzzle_id FROM t_puzzle WHERE themes LIKE '%sacrifice%' AND themes LIKE '%mate%' AND themes LIKE '%queen%'",
-    "status" : ""
+    "status" : "0"
   }
 }, {
   "text" : "Give me a puzzle where I can promote a pawn.",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%promotion%'",
-    "status" : ""
+    "status" : "2"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%promotion%'",
-    "status" : ""
+    "status" : "2"
   },
   "baseline" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%promotion%'",
-    "status" : ""
+    "status" : "2"
   }
 }, {
   "text" : "Provide a puzzle with a king and pawn endgame.",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%pawnEndgame%' AND themes LIKE '%king%'",
-    "status" : ""
+    "status" : "2"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%pawnEndgame%' AND themes LIKE '%kingEndgame%'",
-    "status" : ""
+    "status" : "0"
   },
   "baseline" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%pawnEndgame%' AND themes LIKE '%kingEndgame%'",
-    "status" : ""
+    "status" : "0"
   }
 }, {
   "text" : "Give me a puzzle that ends with a smothered mate.",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%smotheredMate%'",
-    "status" : ""
+    "status" : "2"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%smotheredMate%'",
-    "status" : ""
+    "status" : "2"
   },
   "baseline" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%smotheredMate%'",
-    "status" : ""
+    "status" : "2"
   }
 }, {
   "text" : "Give me a puzzle that involves a forced rook checkmate.",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%rookEndgame%' AND themes LIKE '%mate%' AND themes LIKE '%forced%'",
-    "status" : ""
+    "status" : "2"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%backRankMate%' OR themes LIKE '%hookMate%' OR themes LIKE '%smotheredMate%'",
-    "status" : ""
+    "status" : "2"
   },
   "baseline" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%rookEndgame%' AND themes LIKE '%mate%'",
-    "status" : ""
+    "status" : "2"
   }
 }, {
   "text" : "I want to improve my endgame technique.",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%endgame%' OR themes LIKE '%pawnEndgame%' OR themes LIKE '%bishopEndgame%' OR themes LIKE '%knightEndgame%' OR themes LIKE '%queenEndgame%' OR themes LIKE '%queenRookEndgame%' OR themes LIKE '%rookEndgame%'",
-    "status" : ""
+    "status" : "2"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%endgame%' OR themes LIKE '%pawnEndgame%' OR themes LIKE '%bishopEndgame%' OR themes LIKE '%knightEndgame%' OR themes LIKE '%queenEndgame%' OR themes LIKE '%queenRookEndgame%' OR themes LIKE '%rookEndgame%'",
-    "status" : ""
+    "status" : "2"
   },
   "baseline" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%endgame%' ORDER BY popularity DESC",
-    "status" : ""
+    "status" : "2"
   }
 }, {
   "text" : "I want to focus on defensive strategies.",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%defensiveMove%' OR themes LIKE '%interference%' OR themes LIKE '%pin%' OR themes LIKE '%skewer%' OR themes LIKE '%xRayAttack%' OR themes LIKE '%capturingDefender%' OR themes LIKE '%clearance%' OR themes LIKE '%deflection%' OR themes LIKE '%sacrifice%' OR themes LIKE '%zugzwang%'",
-    "status" : ""
+    "status" : "1"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%defensiveMove%' OR themes LIKE '%interference%' OR themes LIKE '%clearance%' OR themes LIKE '%intermezzo%'",
-    "status" : ""
+    "status" : "2"
   },
   "baseline" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%defensiveMove%'",
-    "status" : ""
+    "status" : "2"
   }
 }, {
   "text" : "I want to improve my pawn structure.",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%advancedPawn%' OR themes LIKE '%pawnEndgame%' OR themes LIKE '%promotion%' OR themes LIKE '%clearance%' OR themes LIKE '%interference%' OR themes LIKE '%zugzwang%' OR themes LIKE '%equality%' OR themes LIKE '%sacrifice%' OR themes LIKE '%capturingDefender%' OR themes LIKE '%defensiveMove%' OR themes LIKE '%fork%' OR themes LIKE '%pin%' OR themes LIKE '%skewer%' OR themes LIKE '%xRayAttack%' OR themes LIKE '%discoveredAttack%' OR themes LIKE '%attraction%' OR themes LIKE '%deflection%' OR themes LIKE '%intermezzo%' OR themes LIKE '%quietMove%' OR themes LIKE '%crushing%' OR themes LIKE '%advantage%' OR themes LIKE '%hangingPiece%' OR themes LIKE '%trappedPiece%' OR themes LIKE '%exposedKing%' OR themes LIKE '%castling%' OR themes LIKE '%enPassant%' OR themes LIKE '%middlegame%' OR themes LIKE '%endgame%' OR themes LIKE '%opening%' OR themes LIKE '%oneMove%' OR themes LIKE '%mate%' OR themes LIKE '%mateIn1%' OR themes LIKE '%mateIn2%' OR themes LIKE '%mateIn3%' OR themes LIKE '%mateIn4%' OR themes LIKE '%mateIn5%' OR themes LIKE '%long%' OR themes LIKE '%veryLong%' OR themes LIKE '%short%' OR themes LIKE '%master%' OR themes LIKE '%masterVsMaster%' OR themes LIKE '%superGM%' OR themes LIKE '%kingsideAttack%' OR themes LIKE '%queensideAttack%' OR themes LIKE '%bishopEndgame%' OR themes LIKE '%knightEndgame%' OR themes LIKE '%queenEndgame%' OR themes LIKE '%queenRookEndgame%' OR themes LIKE '%rookEndgame%' OR themes LIKE '%anastasiaMate%' OR themes LIKE '%arabianMate%' OR themes LIKE '%attackingF2F7%' OR themes LIKE '%backRankMate%' OR themes LIKE '%bodenMate%' OR themes LIKE '%dovetailMate%' OR themes LIKE '%hookMate%' OR themes LIKE '%smotheredMate%' OR themes LIKE '%doubleBishopMate%' OR themes LIKE '%doubleCheck%' OR themes LIKE '%xRayAttack%' OR themes LIKE '%zugzwang%'",
-    "status" : ""
+    "status" : "1"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%advancedPawn%' OR themes LIKE '%pawnEndgame%' OR themes LIKE '%promotion%'",
-    "status" : ""
+    "status" : "2"
   },
   "baseline" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%advancedPawn%' OR themes LIKE '%pawnEndgame%' OR themes LIKE '%promotion%'",
-    "status" : ""
+    "status" : "2"
   }
 }, {
   "text" : "I love studying endgame positions.",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%endgame%' OR themes LIKE '%pawnEndgame%' OR themes LIKE '%knightEndgame%' OR themes LIKE '%bishopEndgame%' OR themes LIKE '%queenEndgame%' OR themes LIKE '%queenRookEndgame%' OR themes LIKE '%rookEndgame%'",
-    "status" : ""
+    "status" : "2"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%endgame%'",
-    "status" : ""
+    "status" : "2"
   },
   "baseline" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%endgame%'",
-    "status" : ""
+    "status" : "2"
   }
 }, {
   "text" : "I enjoy exploring tactical sacrifices.",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%sacrifice%'",
-    "status" : ""
+    "status" : "2"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%sacrifice%'",
-    "status" : ""
+    "status" : "2"
   },
   "baseline" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%sacrifice%'",
-    "status" : ""
+    "status" : "2"
   }
 }, {
   "text" : "I prefer analyzing king safety and checkmates.",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%exposedKing%' OR themes LIKE '%mate%' OR themes LIKE '%backRankMate%' OR themes LIKE '%anastasiaMate%' OR themes LIKE '%arabianMate%' OR themes LIKE '%bodenMate%' OR themes LIKE '%dovetailMate%' OR themes LIKE '%hookMate%' OR themes LIKE '%smotheredMate%' OR themes LIKE '%doubleBishopMate%' OR themes LIKE '%mateIn1%' OR themes LIKE '%mateIn2%' OR themes LIKE '%mateIn3%' OR themes LIKE '%mateIn4%' OR themes LIKE '%mateIn5%' OR themes LIKE '%xRayAttack%' OR themes LIKE '%zugzwang%'",
-    "status" : ""
+    "status" : "2"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%exposedKing%' OR themes LIKE '%mate%' OR themes LIKE '%backRankMate%' OR themes LIKE '%anastasiaMate%' OR themes LIKE '%arabianMate%' OR themes LIKE '%bodenMate%' OR themes LIKE '%doubleBishopMate%' OR themes LIKE '%dovetailMate%' OR themes LIKE '%hookMate%' OR themes LIKE '%smotheredMate%'",
-    "status" : ""
+    "status" : "2"
   },
   "baseline" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%exposedKing%' OR themes LIKE '%mate%' OR themes LIKE '%backRankMate%' OR themes LIKE '%anastasiaMate%' OR themes LIKE '%arabianMate%' OR themes LIKE '%bodenMate%' OR themes LIKE '%dovetailMate%' OR themes LIKE '%hookMate%' OR themes LIKE '%smotheredMate%'",
-    "status" : ""
+    "status" : "2"
   }
 }, {
   "text" : "I want to master endgames with just a king and pawn.",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%pawnEndgame%' AND themes LIKE '%kingEndgame%'",
-    "status" : ""
+    "status" : "0"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%pawnEndgame%' AND themes LIKE '%kingEndgame%' AND themes LIKE '%endgame%'",
-    "status" : ""
+    "status" : "0"
   },
   "baseline" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%pawnEndgame%' AND themes LIKE '%kingEndgame%'",
-    "status" : ""
+    "status" : "0"
   }
 }, {
   "text" : "I want to improve my calculation skills for complex tactics.",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%veryLong%' OR themes LIKE '%long%' OR themes LIKE '%crushing%' OR themes LIKE '%sacrifice%' OR themes LIKE '%interference%' OR themes LIKE '%deflection%' OR themes LIKE '%discoveredAttack%' OR themes LIKE '%xRayAttack%' OR themes LIKE '%skewer%' OR themes LIKE '%pin%' OR themes LIKE '%fork%' OR themes LIKE '%zugzwang%' OR themes LIKE '%clearance%' OR themes LIKE '%attraction%' OR themes LIKE '%intermezzo%' OR themes LIKE '%doubleCheck%' OR themes LIKE '%exposedKing%' OR themes LIKE '%hangingPiece%' OR themes LIKE '%trappedPiece%' OR themes LIKE '%capturingDefender%' OR themes LIKE '%promotion%' OR themes LIKE '%castling%' OR themes LIKE '%enPassant%' OR themes LIKE '%advancedPawn%' OR themes LIKE '%advantage%' OR themes LIKE '%equality%' OR themes LIKE '%defensiveMove%' OR themes LIKE '%quietMove%' OR themes LIKE '%attackingF2F7%' OR themes LIKE '%kingsideAttack%' OR themes LIKE '%queensideAttack%' OR themes LIKE '%bishopEndgame%' OR themes LIKE '%knightEndgame%' OR themes LIKE '%pawnEndgame%' OR themes LIKE '%queenEndgame%' OR themes LIKE '%rookEndgame%' OR themes LIKE '%queenRookEndgame%' OR themes LIKE '%anastasiaMate%' OR themes LIKE '%arabianMate%' OR themes LIKE '%backRankMate%' OR themes LIKE '%bodenMate%' OR themes LIKE '%dovetailMate%' OR themes LIKE '%hookMate%' OR themes LIKE '%smotheredMate%' OR themes LIKE '%doubleBishopMate%' OR themes LIKE '%mate%' OR themes LIKE '%mateIn1%' OR themes LIKE '%mateIn2%' OR themes LIKE '%mateIn3%' OR themes LIKE '%mateIn4%' OR themes LIKE '%mateIn5%' OR themes LIKE '%middlegame%' OR themes LIKE '%endgame%' OR themes LIKE '%opening%' OR themes LIKE '%oneMove%' OR themes LIKE '%short%' OR themes LIKE '%master%' OR themes LIKE '%masterVsMaster%' OR themes LIKE '%superGM%'",
-    "status" : ""
+    "status" : "2"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%discoveredAttack%' OR themes LIKE '%deflection%' OR themes LIKE '%interference%' OR themes LIKE '%clearance%' OR themes LIKE '%xRayAttack%' OR themes LIKE '%zugzwang%' OR themes LIKE '%intermezzo%' OR themes LIKE '%sacrifice%' OR themes LIKE '%attraction%' OR themes LIKE '%fork%' OR themes LIKE '%skewer%' OR themes LIKE '%pin%' OR themes LIKE '%doubleCheck%' OR themes LIKE '%exposedKing%' OR themes LIKE '%crushing%' OR themes LIKE '%veryLong%' OR themes LIKE '%long%' OR themes LIKE '%mateIn4%' OR themes LIKE '%mateIn5%'",
-    "status" : ""
+    "status" : "2"
   },
   "baseline" : {
     "sql" : "SELECT puzzle_id, rating, popularity, themes, opening_tags FROM t_puzzle WHERE themes LIKE '%discoveredAttack%' OR themes LIKE '%interference%' OR themes LIKE '%deflection%' OR themes LIKE '%clearance%' OR themes LIKE '%xRayAttack%' OR themes LIKE '%skewer%' OR themes LIKE '%pin%' OR themes LIKE '%fork%' OR themes LIKE '%sacrifice%' OR themes LIKE '%zugzwang%' ORDER BY rating DESC",
-    "status" : ""
+    "status" : "0"
   }
 }, {
   "text" : "I want to practice handling endgames with minimal material.",
   "full" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%endgame%' AND (themes LIKE '%pawnEndgame%' OR themes LIKE '%knightEndgame%' OR themes LIKE '%bishopEndgame%' OR themes LIKE '%queenEndgame%' OR themes LIKE '%rookEndgame%' OR themes LIKE '%queenRookEndgame%')",
-    "status" : ""
+    "status" : "2"
   },
   "partial" : {
     "sql" : "SELECT * FROM t_puzzle WHERE themes LIKE '%endgame%' AND (themes LIKE '%bishopEndgame%' OR themes LIKE '%knightEndgame%' OR themes LIKE '%pawnEndgame%' OR themes LIKE '%queenEndgame%' OR themes LIKE '%queenRookEndgame%' OR themes LIKE '%rookEndgame%') AND rating < 800",
-    "status" : ""
+    "status" : "1"
   },
   "baseline" : {
     "sql" : "SELECT puzzle_id FROM t_puzzle WHERE themes LIKE '%endgame%' AND (themes LIKE '%pawnEndgame%' OR themes LIKE '%knightEndgame%' OR themes LIKE '%bishopEndgame%' OR themes LIKE '%rookEndgame%' OR themes LIKE '%queenEndgame%' OR themes LIKE '%queenRookEndgame%') AND rating < 800",
-    "status" : ""
+    "status" : "0"
   }
 } ]

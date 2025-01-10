@@ -1,5 +1,6 @@
 package com.chess.puzzle.text2sql.web.utility
 
+import com.chess.puzzle.text2sql.web.error.ClientError
 import com.chess.puzzle.text2sql.web.error.SystemError
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.springframework.http.HttpStatus
@@ -63,7 +64,10 @@ object ResponseUtils {
             .body(objectMapper.writeValueAsString(response))
     }
 
-    fun badRequest(message: String): ResponseEntity<String> {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message)
+    fun badRequest(clientErrors: List<ClientError>): ResponseEntity<String> {
+        val message = clientErrors.associate { it.field to it.message }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(objectMapper.writeValueAsString(message))
     }
 }

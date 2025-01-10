@@ -123,7 +123,7 @@ class DebuggingController(
         val input: Text2SqlInput
         when (val result = request.toInput()) {
             is ResultWrapper.Success -> input = result.data
-            is ResultWrapper.Failure -> return badRequest("bad")
+            is ResultWrapper.Failure -> return badRequest(result.error)
         }
         val (query, model) = input
         return when (val result = text2SQLService.convertToSQL(query, model)) {
