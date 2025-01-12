@@ -4,8 +4,8 @@
 </script>
 
 <div class="flex flex-row items-center justify-center gap-2">
-<SearchIcon />
-<span>Search...</span>
+	<SearchIcon />
+	<span>Search...</span>
 </div>
 
 <style>

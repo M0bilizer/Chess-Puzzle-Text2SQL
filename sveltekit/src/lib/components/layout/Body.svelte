@@ -4,7 +4,7 @@
 
 <div class="container mx-auto grid grid-cols-1 xl:grid-cols-[200px_minmax(0px,_1fr)_290px]">
 	<aside class="left">aside</aside>
-	<main id="_top" class="space-y-8 self-start p-4 xl:p-10 xl:pb-48">
+	<main id="_top" class="center">
 		{@render children()}
 	</main>
 	<aside class="right">right</aside>
@@ -26,6 +26,21 @@
 			display: block;
 			padding-left: 0;
 			padding-right: 0;
+		}
+	}
+
+	.center {
+		display: flex;
+		flex-direction: column;
+		align-self: flex-start;
+		padding: 1rem;
+		gap: 2rem; /* space-y-8 */
+	}
+
+	@media (min-width: 1280px) {
+		.center {
+			padding: 2.5rem; /* xl:p-10 */
+			padding-bottom: 12rem; /* xl:pb-48 */
 		}
 	}
 
