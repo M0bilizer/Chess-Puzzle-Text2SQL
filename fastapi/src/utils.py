@@ -1,13 +1,18 @@
 import json
+from typing import List
 
 import commentjson
 import torch
 from sentence_transformers import util
 
-from .config import model
+from .config import MODEL, KEYWORD_FILE_PATH, DEMONSTRATIONS_FILE_PATH
 
 
-def ngrams(input_text, n):
+def tokenize(sentence):
+    return set(sentence.lower().split())
+
+
+def _ngrams(input_text: str, n) -> List[str]:
     words = input_text.split()
     return [" ".join(words[i : i + n]) for i in range(len(words) - n + 1)]
 
@@ -21,9 +26,9 @@ def mask_keywords(input_text: str) -> str:
 
     ngrams_list = []
     for n in range(1, max_ngram + 1):
-        ngrams_list.extend(ngrams(cleaned, n))
+        ngrams_list.extend(_ngrams(cleaned, n))
 
-    ngram_embeddings = model.encode(ngrams_list, convert_to_tensor=True)
+    ngram_embeddings = MODEL.encode(ngrams_list, convert_to_tensor=True)
 
     masked_ngrams = []
     for ngram, ngram_embedding in zip(ngrams_list, ngram_embeddings):
@@ -45,26 +50,24 @@ def mask_keywords(input_text: str) -> str:
     return masked_text
 
 
-def tokenize(sentence):
-    return set(sentence.lower().split())
-
-
 def jaccard_similarity(set1, set2):
     intersection = set1.intersection(set2)
     union = set1.union(set2)
     return len(intersection) / len(union)
 
 
-with open("src/data/keywords.json", "r") as f:
+with open(KEYWORD_FILE_PATH, "r") as f:
     keywords_data = json.load(f)
 
+with open(DEMONSTRATIONS_FILE_PATH, "r") as f:
+    demonstrations = commentjson.load(f)
+
 keyword_embeddings = {
-    category: model.encode(keywords, convert_to_tensor=True)
+    category: MODEL.encode(keywords, convert_to_tensor=True)
     for category, keywords in keywords_data.items()
 }
 
-with open("src/data/demonstrations.json", "r") as f:
-    demonstrations = commentjson.load(f)
-
 demo_texts = [tokenize(mask_keywords(demo["text"])) for demo in demonstrations]
-demo_embedding = [model.encode(demo["text"]) for demo in demonstrations]
+demo_embedding = [
+    MODEL.encode(demo["text"], convert_to_tensor=True) for demo in demonstrations
+]

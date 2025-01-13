@@ -1,3 +1,5 @@
 from sentence_transformers import SentenceTransformer
 
-model = SentenceTransformer("all-mpnet-base-v2")
+MODEL = SentenceTransformer("all-mpnet-base-v2")
+KEYWORD_FILE_PATH = "src/data/keywords.json"
+DEMONSTRATIONS_FILE_PATH = "src/data/demonstrations.json"
