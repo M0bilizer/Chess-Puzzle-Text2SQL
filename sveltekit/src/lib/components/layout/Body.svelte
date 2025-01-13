@@ -2,7 +2,7 @@
 	let { children } = $props();
 </script>
 
-<div class="container mx-auto grid grid-cols-1 xl:grid-cols-[200px_minmax(0px,_1fr)_290px]">
+<div class="container mx-auto grid grid-cols-1 sm:grid-cols-[200px_minmax(0px,_1fr)_290px]">
 	<aside class="left">aside</aside>
 	<main id="_top" class="center">
 		{@render children()}
@@ -21,7 +21,7 @@
 		padding: 2.5rem 1rem 24rem;
 	}
 
-	@media (min-width: 1280px) {
+	@media (min-width: 640px) {
 		.left {
 			display: block;
 			padding-left: 0;
@@ -37,7 +37,7 @@
 		gap: 2rem; /* space-y-8 */
 	}
 
-	@media (min-width: 1280px) {
+	@media (min-width: 640px) {
 		.center {
 			padding: 2.5rem; /* xl:p-10 */
 			padding-bottom: 12rem; /* xl:pb-48 */
@@ -54,7 +54,7 @@
 		padding: 1rem;
 	}
 
-	@media (min-width: 1280px) {
+	@media (min-width: 640px) {
 		.right {
 			display: block;
 			padding: 2.5rem;

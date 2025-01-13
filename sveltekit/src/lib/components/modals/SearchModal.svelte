@@ -1,12 +1,11 @@
 <script lang="ts">
-	import { Modal, ProgressRing, type ToastContext } from '@skeletonlabs/skeleton-svelte';
+	import { Modal, ProgressRing } from '@skeletonlabs/skeleton-svelte';
 	import SearchBox from '$lib/components/SearchBox.svelte';
 	import { Search } from 'lucide-svelte';
 	import Fa6SolidChessKing from 'virtual:icons/fa6-solid/chess-king';
 	import Fa6SolidChessQueen from 'virtual:icons/fa6-solid/chess-queen';
 	import { fetchLLMData } from '$lib/utils/api';
 	import HelpToolTip from '$lib/components/modals/HelpToolTip.svelte';
-	import { getContext } from 'svelte';
 
 	let openState = $state(false);
 	let query = $state('');
@@ -16,7 +15,6 @@
 		openState = false;
 	}
 
-	const toast: ToastContext = getContext('toast');
 	const handleSQLSubmit = async (event: Event) => {
 		event.preventDefault();
 
@@ -24,11 +22,6 @@
 			isLoading = true;
 			const data = await fetchLLMData(query);
 			query = '';
-			toast.create({
-				title: 'Success',
-				description: 'The task was was completed successfully!',
-				type: 'success'
-			});
 		} catch (error) {
 			toast.create({
 				title: 'Error',
@@ -37,7 +30,6 @@
 			});
 		} finally {
 			isLoading = false;
-			modalClose()
 		}
 	};
 </script>
@@ -65,7 +57,7 @@
 				</header>
 				<div class="input-group grid-cols-[auto_1fr_auto] divide-x divide-surface-200-800">
 					<div class="input-group-cell">
-						<Search class="lucide-icon lucide lucide-search size-4 opacity-60" size={16} />
+						<Search size={16} />
 					</div>
 					<input type="search" placeholder="Search..." bind:value={query} disabled={isLoading} />
 					<button class="p-2 text-primary-50-950" disabled={isLoading}> Search </button>
