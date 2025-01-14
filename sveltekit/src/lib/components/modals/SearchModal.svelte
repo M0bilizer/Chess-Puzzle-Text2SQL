@@ -6,6 +6,10 @@
 	import Fa6SolidChessQueen from 'virtual:icons/fa6-solid/chess-queen';
 	import { fetchLLMData } from '$lib/utils/api';
 	import HelpToolTip from '$lib/components/modals/HelpToolTip.svelte';
+	import { getContext } from 'svelte';
+	import { type ToastContext } from '@skeletonlabs/skeleton-svelte';
+
+	export const toast: ToastContext = getContext('toast');
 
 	let openState = $state(false);
 	let query = $state('');
@@ -17,7 +21,6 @@
 
 	const handleSQLSubmit = async (event: Event) => {
 		event.preventDefault();
-
 		try {
 			isLoading = true;
 			const data = await fetchLLMData(query);
