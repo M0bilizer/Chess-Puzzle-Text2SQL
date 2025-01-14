@@ -8,7 +8,10 @@
 	let { children } = $props();
 </script>
 
-<ToastProvider groupBase="z-[1000] absolute">
+<ToastProvider
+	groupBase="toast !z-[1000] absolute"
+	toastBase="card border border-error-950 border-x-2 border-b-1 grid grid-cols-[1fr_auto] items-center"
+>
 	<Header />
 	<Body {children} />
 	<Footer />

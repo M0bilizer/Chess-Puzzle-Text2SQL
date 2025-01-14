@@ -1,9 +1,5 @@
 <script lang="ts">
-	import SearchBox from '$lib/components/SearchBox.svelte';
 	import SearchModal from '$lib/components/modals/SearchModal.svelte';
-
-	import { getContext } from 'svelte';
-	import { type ToastContext } from '@skeletonlabs/skeleton-svelte';
 </script>
 
 <header class="w-full border-b-[1px] border-surface-500/20 p-4 py-3 bg-surface-50-950 sm:px-10">

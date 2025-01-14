@@ -29,7 +29,8 @@
 			toast.create({
 				title: 'Error',
 				description: error.message,
-				type: 'error'
+				type: 'error',
+				duration: 50000
 			});
 		} finally {
 			isLoading = false;
