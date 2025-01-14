@@ -6,10 +6,7 @@
 	import Fa6SolidChessQueen from 'virtual:icons/fa6-solid/chess-queen';
 	import { fetchLLMData } from '$lib/utils/api';
 	import HelpToolTip from '$lib/components/modals/HelpToolTip.svelte';
-	import { getContext } from 'svelte';
-	import { type ToastContext } from '@skeletonlabs/skeleton-svelte';
-
-	export const toast: ToastContext = getContext('toast');
+	import { toast, Toaster } from 'svelte-sonner';
 
 	let openState = $state(false);
 	let query = $state('');
@@ -26,12 +23,7 @@
 			const data = await fetchLLMData(query);
 			query = '';
 		} catch (error) {
-			toast.create({
-				title: 'Error',
-				description: error.message,
-				type: 'error',
-				duration: 50000
-			});
+			toast(error.message);
 		} finally {
 			isLoading = false;
 		}
@@ -47,17 +39,29 @@
 >
 	{#snippet trigger()}<SearchBox />{/snippet}
 	{#snippet content()}
-		<div class="flex flex-1 flex-col gap-2">
+		<div>
+			<Toaster
+				closeButton
+				duration={9999999}
+				toastOptions={{
+					unstyled: true,
+					classes: {
+						toast: '!z-[1000] toast card shadow-xl p-4 bg-surface-50-950',
+						title: 'text-primary-950-50',
+						closeButton: 'chip-icon preset-filled'
+					}
+				}}
+			/>
 			<form onsubmit={handleSQLSubmit}>
 				<header class="flex items-center justify-center gap-2">
-					<Fa6SolidChessKing class="size-6 text-primary-50-950" />
+					<Fa6SolidChessKing class="size-6 text-tertiary-500" />
 					<h1 class="h1">
 						<span
 							class="bg-gradient-radial from-tertiary-500 to-primary-500 box-decoration-clone bg-clip-text text-transparent"
 							>Search for Puzzles</span
 						>
 					</h1>
-					<Fa6SolidChessQueen class="size-6 text-primary-50-950" />
+					<Fa6SolidChessQueen class="size-6 text-tertiary-500" />
 				</header>
 				<div class="input-group grid-cols-[auto_1fr_auto] divide-x divide-surface-200-800">
 					<div class="input-group-cell">
@@ -67,11 +71,7 @@
 					<button class="p-2 text-primary-50-950" disabled={isLoading}> Search </button>
 				</div>
 				<div class="type-subtitle w-full py-1 text-right">
-					{#if !isLoading}
-						<p>You can also search using <kbd class="kbd">Enter</kbd></p>
-					{:else}
-						<p>Searching...</p>
-					{/if}
+					<p>You can also search using <kbd class="kbd">Enter</kbd></p>
 				</div>
 				<article class="flex flex-row items-center justify-center gap-1 py-10">
 					{#if !isLoading}

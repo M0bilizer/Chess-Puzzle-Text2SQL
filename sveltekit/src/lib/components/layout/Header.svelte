@@ -7,7 +7,7 @@
 	<div
 		class="container mx-auto grid max-w-screen-2xl grid-cols-[auto_1fr_auto] items-center gap-4 sm:grid-cols-[1fr_auto_1fr]"
 	>
-		<div class="left"><Title/></div>
+		<div class="left"><Title /></div>
 		<div class="middle"><SearchModal /></div>
 		<div class="right"></div>
 	</div>

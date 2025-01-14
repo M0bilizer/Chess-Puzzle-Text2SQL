@@ -18,7 +18,7 @@ export default {
 		forms,
 		containerQueries,
 		skeleton({
-			themes: [themes.catppuccin]
+			themes: [themes.catppuccin, themes.pine]
 		})
 	]
 } satisfies Config;
