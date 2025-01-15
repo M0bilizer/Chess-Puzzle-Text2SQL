@@ -12,7 +12,7 @@ const initialState: { puzzleData: PuzzleType[]; loading: boolean; error: any } =
 
 const apiStore = writable(initialState);
 
-async function fetchPuzzle(query: string) {
+async function fetchPuzzle(query: string): Promise<boolean> {
 	try {
 		apiStore.update((state) => ({ ...state, loading: true, error: null }));
 
@@ -31,9 +31,11 @@ async function fetchPuzzle(query: string) {
 
 		console.log(responseData.data);
 		apiStore.update((state) => ({ ...state, puzzleData: responseData.data, loading: false }));
+		return true;
 	} catch (error) {
 		apiStore.update((state) => ({ ...state, error: error.message, loading: false }));
 		toast(error.message);
+		return false;
 	}
 }
 

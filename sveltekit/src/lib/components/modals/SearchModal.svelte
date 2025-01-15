@@ -15,8 +15,12 @@
 		openState = false;
 	}
 
-	function handleSearch() {
-		apiStore.fetchPuzzle(query);
+	async function handleSearch() {
+		const success = await apiStore.fetchPuzzle(query);
+		if (success) {
+			modalClose();
+		} else {
+		}
 	}
 </script>
 
