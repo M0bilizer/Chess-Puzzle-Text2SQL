@@ -1,12 +1,19 @@
 <script lang="ts">
 	import apiStore from '$lib/stores/apiStore';
-	import { Chessground } from 'svelte-chessground';
+	import { Chess } from 'svelte-chess';
 	import type { PuzzleType } from '$lib/types/puzzle';
-
+	import { getActiveColor } from '$lib/utils/chessUtils';
 	let puzzles: PuzzleType[] = [];
+
+	let chess;
+	let orientation: 'w' | 'b' = 'w';
+	let fen: string;
 	apiStore.subscribe((state) => {
 		puzzles = state.puzzleData;
-		console.log(state.puzzleData);
+		if (puzzles.length !== 0) {
+			chess?.load(puzzles[0].fen);
+			orientation = getActiveColor(puzzles[0].fen);
+		}
 	});
 </script>
 
@@ -20,7 +27,7 @@
 			aside
 		</aside>
 		<main id="_top" class="flex-start flex flex-col">
-			<Chessground fen={puzzles[0].fen} />
+			<Chess bind:this={chess} {fen} {orientation} />
 		</main>
 		<aside
 			class="card border-[1px] text-center border-surface-200-800 preset-filled-surface-100-900"
