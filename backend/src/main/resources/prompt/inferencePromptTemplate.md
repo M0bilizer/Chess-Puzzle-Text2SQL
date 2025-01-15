@@ -1,4 +1,4 @@
-# You are a text-to-SQL model. Based on the following MySQL database schema,         ‎
+# You are a text-to-SQL model. Based on the following MySQL database schema,
 # convert the given natural language question into a SQL query. 
 # Ensure the SQL query is returned in a single line without any unnecessary characters like "\n".
 #

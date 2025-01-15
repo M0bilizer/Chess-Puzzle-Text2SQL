@@ -4,30 +4,20 @@
 	import { Search } from 'lucide-svelte';
 	import Fa6SolidChessKing from 'virtual:icons/fa6-solid/chess-king';
 	import Fa6SolidChessQueen from 'virtual:icons/fa6-solid/chess-queen';
-	import { fetchLLMData } from '$lib/utils/api';
 	import HelpToolTip from '$lib/components/modals/HelpToolTip.svelte';
-	import { toast, Toaster } from 'svelte-sonner';
+	import { Toaster } from 'svelte-sonner';
+	import apiStore from '$lib/stores/apiStore';
 
 	let openState = $state(false);
 	let query = $state('');
-	let isLoading = $state(false);
 
 	function modalClose() {
 		openState = false;
 	}
 
-	const handleSQLSubmit = async (event: Event) => {
-		event.preventDefault();
-		try {
-			isLoading = true;
-			const data = await fetchLLMData(query);
-			query = '';
-		} catch (error) {
-			toast(error.message);
-		} finally {
-			isLoading = false;
-		}
-	};
+	function handleSearch() {
+		apiStore.fetchPuzzle(query);
+	}
 </script>
 
 <Modal
@@ -46,13 +36,13 @@
 				toastOptions={{
 					unstyled: true,
 					classes: {
-						toast: '!z-[1000] toast card shadow-xl p-4 bg-surface-50-950',
+						toast: '!z-[1000] toast card shadow-xl p-4 bg-surface-50-950 right-0',
 						title: 'text-primary-950-50',
 						closeButton: 'chip-icon preset-filled'
 					}
 				}}
 			/>
-			<form onsubmit={handleSQLSubmit}>
+			<form onsubmit={handleSearch}>
 				<header class="flex items-center justify-center gap-2">
 					<Fa6SolidChessKing class="size-6 text-tertiary-500" />
 					<h1 class="h1">
@@ -67,20 +57,27 @@
 					<div class="input-group-cell">
 						<Search size={16} />
 					</div>
-					<input type="search" placeholder="Search..." bind:value={query} disabled={isLoading} />
-					<button class="p-2 text-primary-50-950" disabled={isLoading}> Search </button>
+					<input
+						type="search"
+						placeholder="Search..."
+						bind:value={query}
+						disabled={$apiStore.loading}
+					/>
+					<button class="p-2 text-primary-50-950" disabled={$apiStore.loading}> Search </button>
 				</div>
-				<div class="type-subtitle w-full py-1 text-right">
+				<div class="type-subtitle hidden w-full py-1 text-right sm:block">
 					<p>You can also search using <kbd class="kbd">Enter</kbd></p>
 				</div>
-				<article class="flex flex-row items-center justify-center gap-1 py-10">
-					{#if !isLoading}
-						<p class="text-center">This uses Text2Sql..!</p>
-						<HelpToolTip />
+				<article class="flex items-center justify-center py-10">
+					{#if !$apiStore.loading}
+						<div class="flex flex-row gap-1 p-3">
+							<p class="text-center">This uses Text2Sql..!</p>
+							<HelpToolTip />
+						</div>
 					{:else}
 						<ProgressRing
 							value={null}
-							size="size-14"
+							size="size-12"
 							meterStroke="stroke-primary-600-400"
 							trackStroke="stroke-tertiary-50-950"
 						/>
