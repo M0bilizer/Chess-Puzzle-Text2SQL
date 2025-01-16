@@ -6,7 +6,7 @@
 	import Fa6SolidChessQueen from 'virtual:icons/fa6-solid/chess-queen';
 	import HelpToolTip from '$lib/components/modals/HelpToolTip.svelte';
 	import { Toaster } from 'svelte-sonner';
-	import apiStore from '$lib/stores/apiStore';
+	import { searchPuzzles, isLoading } from '$lib/stores/puzzleStore.js';
 
 	let openState = $state(false);
 	let query = $state('');
@@ -16,10 +16,11 @@
 	}
 
 	async function handleSearch() {
-		const success = await apiStore.fetchPuzzle(query);
+		const success = await searchPuzzles(query, true);
 		if (success) {
 			modalClose();
 		} else {
+			console.log('nothing');
 		}
 	}
 </script>
@@ -61,19 +62,14 @@
 					<div class="input-group-cell">
 						<Search size={16} />
 					</div>
-					<input
-						type="search"
-						placeholder="Search..."
-						bind:value={query}
-						disabled={$apiStore.loading}
-					/>
-					<button class="p-2 text-primary-50-950" disabled={$apiStore.loading}> Search </button>
+					<input type="search" placeholder="Search..." bind:value={query} disabled={$isLoading} />
+					<button class="p-2 text-primary-50-950" disabled={$isLoading}> Search </button>
 				</div>
 				<div class="type-subtitle hidden w-full py-1 text-right sm:block">
 					<p>You can also search using <kbd class="kbd">Enter</kbd></p>
 				</div>
 				<article class="flex items-center justify-center py-10">
-					{#if !$apiStore.loading}
+					{#if !$isLoading}
 						<div class="flex flex-row gap-1 p-3">
 							<p class="text-center">This uses Text2Sql..!</p>
 							<HelpToolTip />

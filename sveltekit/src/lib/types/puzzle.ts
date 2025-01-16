@@ -1,4 +1,4 @@
-export type PuzzleType = {
+export type Puzzle = {
 	id: number;
 	puzzleId: string;
 	fen: string;
