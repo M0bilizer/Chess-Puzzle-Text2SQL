@@ -7,6 +7,11 @@
 		radial-gradient(at 75% 10%, rgba(114, 135, 253, 0.075) 0px, transparent 50%);
 }
 
+[data-theme='pine'] {
+	background-image: radial-gradient(at 20% 10%, rgba(224, 176, 67, 0.075) 0px, transparent 40%),
+		radial-gradient(at 75% 10%, rgba(161, 129, 74, 0.075) 0px, transparent 50%);
+}
+
 ::selection {
 	@apply bg-primary-500/30;
 }

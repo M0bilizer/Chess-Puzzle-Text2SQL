@@ -1,6 +1,6 @@
 <script lang="ts">
-	import ChessLeftCard from '$lib/components/layout/ChessLeftCard.svelte';
-	import ChessRightCard from '$lib/components/layout/ChessRightCard.svelte';
+	import ChessRight from '$lib/components/layout/ChessRight.svelte';
+	import ChessLeft from '$lib/components/layout/ChessLeft.svelte';
 	import ChessBoard from '$lib/components/layout/ChessBoard.svelte';
 </script>
 
@@ -8,13 +8,13 @@
 	class="container mx-auto grid grid-cols-1 gap-x-4 py-4 sm:grid-cols-[250px_minmax(0px,_1fr)_300px]"
 >
 	<aside>
-		<ChessLeftCard />
+		<ChessLeft />
 	</aside>
 	<main id="_top" class="flex-start flex flex-col">
 		<ChessBoard />
 	</main>
 	<aside>
-		<ChessRightCard />
+		<ChessRight />
 	</aside>
 </div>
 
