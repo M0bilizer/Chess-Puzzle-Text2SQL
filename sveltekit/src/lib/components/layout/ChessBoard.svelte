@@ -1,25 +1,28 @@
 <script lang="ts">
-	import { currentPuzzles } from '$lib/stores/puzzleStore';
+	import { gameState } from '$lib/stores/puzzleStore';
 	import { Chess } from 'svelte-chess';
-	import type { Puzzle } from '$lib/types/puzzle';
-	import { getActiveColor } from '$lib/utils/chessUtils';
 
-	let puzzles: Puzzle[] = [];
-
-	let chess;
+	let chess: Chess = Chess;
 	let orientation: 'w' | 'b' = 'w';
-	let fen: string;
-	currentPuzzles.subscribe((state) => {
-		if (state.puzzles.length !== 0) {
-			const puzzle = state.puzzles[state.currentPuzzle];
-			chess.load(puzzle.fen);
-			orientation = getActiveColor(puzzle.fen);
+	gameState.subscribe((state) => {
+		if (state.fen !== '') {
+			chess.load(state.fen);
+			orientation = state.orientation;
+
+			setTimeout(() => {
+				chess.move(state.moves[0]);
+				gameState.update((currentState) => ({
+					...currentState,
+					moveIndex: 1,
+					fen: chess.fen()
+				}));
+			}, 500);
 		}
 	});
 </script>
 
 <div>
-	<Chess bind:this={chess} {fen} {orientation} />
+	<Chess bind:this={chess} {orientation} />
 </div>
 
 <style>

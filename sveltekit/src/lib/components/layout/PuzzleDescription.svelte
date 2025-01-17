@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { currentPuzzles } from '$lib/stores/puzzleStore';
+	import { puzzleList } from '$lib/stores/puzzleStore';
 
 	let puzzleId: string;
 	let rating: number;
 	let nbPlays: number;
-	currentPuzzles.subscribe((state) => {
+	puzzleList.subscribe((state) => {
 		if (state.puzzles.length !== 0) {
 			const puzzle = state.puzzles[state.currentPuzzle];
 			puzzleId = puzzle.puzzleId;

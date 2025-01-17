@@ -16,7 +16,7 @@
 	}
 
 	async function handleSearch() {
-		const success = await searchPuzzles(query, true);
+		const success = await searchPuzzles(query, 'stub');
 		if (success) {
 			modalClose();
 		} else {

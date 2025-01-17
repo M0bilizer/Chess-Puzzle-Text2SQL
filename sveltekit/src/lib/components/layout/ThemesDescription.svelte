@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { currentPuzzles } from '$lib/stores/puzzleStore';
+	import { puzzleList } from '$lib/stores/puzzleStore';
 
 	let themes: string[];
-	currentPuzzles.subscribe((state) => {
+	puzzleList.subscribe((state) => {
 		if (state.puzzles.length !== 0) {
 			const puzzle = state.puzzles[state.currentPuzzle];
 			themes = puzzle.themes.split(' ');

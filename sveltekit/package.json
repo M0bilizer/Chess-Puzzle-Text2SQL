@@ -46,6 +46,7 @@
 		"@tailwindcss/container-queries": "^0.1.1",
 		"@tailwindcss/forms": "^0.5.9",
 		"@tailwindcss/typography": "^0.5.15",
+		"chess.js": "^1.0.0",
 		"lucide-svelte": "^0.471.0",
 		"svelte-chess": "^0.11.1",
 		"svelte-sonner": "^0.3.28"
