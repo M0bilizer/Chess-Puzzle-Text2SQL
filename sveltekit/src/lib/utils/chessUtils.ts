@@ -50,3 +50,15 @@ export function convertUciToSan(fen: string, uciMove: string): string[] {
 
 	return sanMoves; // Return the list of SAN moves
 }
+
+export function playMove(fen: string, sanMove: string): string {
+	const chess = new Chess(fen);
+
+	const move = chess.move(sanMove);
+
+	if (!move) {
+		throw new Error(`Invalid move: ${sanMove}`);
+	}
+
+	return chess.fen();
+}
