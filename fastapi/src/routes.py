@@ -2,9 +2,9 @@ import torch
 from fastapi import APIRouter
 from scipy.spatial.distance import cosine
 
-from .models import Request, ResponseDto
-from .config import MODEL
-from .utils import (
+from src.models import Request, ResponseDto
+from src.config import MODEL
+from src.utils import (
     mask_keywords,
     tokenize,
     jaccard_similarity,
@@ -53,4 +53,6 @@ async def find_similar(request: Request):
     top_k_indices = torch.tensor(cosine_similarities).topk(3).indices.tolist()
     similar_demonstrations = [demonstrations[i] for i in top_k_indices]
 
-    return ResponseDto(status="success", masked_query="<DISABLED>", data=similar_demonstrations)
+    return ResponseDto(
+        status="success", masked_query="<DISABLED>", data=similar_demonstrations
+    )

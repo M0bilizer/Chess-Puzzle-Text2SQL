@@ -3,16 +3,18 @@ from typing import List
 
 import commentjson
 import torch
+import re
 from sentence_transformers import util
 
-from .config import MODEL, KEYWORD_FILE_PATH, DEMONSTRATIONS_FILE_PATH
+from src.config import MODEL, KEYWORD_FILE_PATH, DEMONSTRATIONS_FILE_PATH
 
 
 def tokenize(sentence):
-    return set(sentence.lower().split())
+    cleaned_sentence = re.sub(r"[^\w\s]", "", sentence.lower())
+    return set(cleaned_sentence.lower().split())
 
 
-def _ngrams(input_text: str, n) -> List[str]:
+def ngrams(input_text: str, n) -> List[str]:
     words = input_text.split()
     return [" ".join(words[i : i + n]) for i in range(len(words) - n + 1)]
 
@@ -26,7 +28,7 @@ def mask_keywords(input_text: str) -> str:
 
     ngrams_list = []
     for n in range(1, max_ngram + 1):
-        ngrams_list.extend(_ngrams(cleaned, n))
+        ngrams_list.extend(ngrams(cleaned, n))
 
     ngram_embeddings = MODEL.encode(ngrams_list, convert_to_tensor=True)
 
