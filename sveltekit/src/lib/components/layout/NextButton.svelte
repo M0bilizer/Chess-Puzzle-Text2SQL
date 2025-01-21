@@ -1,8 +1,7 @@
 <script lang="ts">
 	import Fa6SolidSquareCaretRightRight from 'virtual:icons/fa6-solid/square-caret-right';
 	import Fa6SolidChessKing from 'virtual:icons/fa6-solid/chess-king';
-	import { gameState, loadChess } from '$lib/stores/puzzleStore';
-	import { puzzleList } from '$lib/stores/puzzleStore';
+	import { gameState, loadChess, puzzleList } from '$lib/stores/puzzleStore';
 
 	let hasWon = false;
 	let orientation: 'w' | 'b' = 'w';
@@ -12,7 +11,16 @@
 	});
 
 	function loadNextGame() {
-		const nextGame = $puzzleList.puzzles[$puzzleList.currentPuzzle + 1];
+		if ($puzzleList.puzzles.length - 1 === $puzzleList.currentPuzzle) {
+			console.log('finished');
+			return;
+		}
+		puzzleList.update((currentState) => ({
+			...currentState,
+			currentPuzzle: currentState.currentPuzzle + 1
+		}));
+		const nextGame = $puzzleList.puzzles[$puzzleList.currentPuzzle];
+		console.log(nextGame);
 		loadChess(nextGame);
 	}
 </script>
@@ -35,8 +43,7 @@
 			class:white={orientation === 'w'}
 			class:black={orientation === 'b'}
 		>
-				<Fa6SolidChessKing  class="size-16 text-inherit">
-				</Fa6SolidChessKing>
+			<Fa6SolidChessKing class="size-16 text-inherit"></Fa6SolidChessKing>
 			<h3 class="h3 font-semibold text-inherit">Your Turn</h3>
 		</div>
 	{/if}
@@ -45,11 +52,10 @@
 
 <style>
 	.white {
-      @apply text-primary-50
+		@apply text-primary-50;
 	}
 
 	.black {
-      @apply text-primary-700
+		@apply text-surface-950;
 	}
-
 </style>
