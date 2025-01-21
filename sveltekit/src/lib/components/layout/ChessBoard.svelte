@@ -9,6 +9,7 @@
 		if (state.fen !== '' && state.hasWon == false) {
 			chess.load(state.fen);
 			orientation = state.orientation;
+			console.log(orientation)
 
 			if (state.moveIndex % 2 === 0) {
 				if (state.moveIndex > state.moves.length - 1) {
