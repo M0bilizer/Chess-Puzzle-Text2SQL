@@ -1,11 +1,18 @@
 <script lang="ts">
 	import Fa6SolidSquareCaretRightRight from 'virtual:icons/fa6-solid/square-caret-right';
-	import { gameState } from '$lib/stores/puzzleStore';
+	import { gameState, loadChess } from '$lib/stores/puzzleStore';
+	import { puzzleList} from '$lib/stores/puzzleStore';
 
 	let hasWon = false;
 	gameState.subscribe((state) => {
 		hasWon = state.hasWon;
+		console.log(hasWon)
 	});
+
+	function loadNextGame() {
+		const nextGame = $puzzleList.puzzles[$puzzleList.currentPuzzle + 1]
+		loadChess(nextGame)
+	}
 </script>
 
 <div
@@ -13,12 +20,11 @@
 >
 	{#if hasWon}
 		<div class="h-20"></div>
-		<div
-			class="flex flex-row items-center gap-2 py-10 pl-2 preset-filled-primary-100-900 hover:preset-filled-primary-200-800"
-		>
+		<button class="flex flex-row items-center gap-2 py-10 pl-2 preset-filled-primary-100-900 hover:preset-filled-primary-200-800"
+		on:click={() => loadNextGame()}>
 			<Fa6SolidSquareCaretRightRight class="size-16 text-tertiary-500" />
 			<h3 class="h3">Next Puzzle</h3>
-		</div>
+		</button>
 		<div class="h-20"></div>
 	{:else}
 		<div class="h-20"></div>

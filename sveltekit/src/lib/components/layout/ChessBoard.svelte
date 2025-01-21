@@ -6,7 +6,7 @@
 	let chess: Chess = Chess;
 	let orientation: 'w' | 'b' = 'w';
 	gameState.subscribe((state) => {
-		if (state.fen !== '') {
+		if (state.fen !== '' && state.hasWon == false) {
 			chess.load(state.fen);
 			orientation = state.orientation;
 
@@ -31,10 +31,6 @@
 			}
 		}
 	});
-
-	function isPlayerMove(): boolean {
-		return $gameState.moveIndex % 2 === 0;
-	}
 
 	function moveListener(event) {
 		if ($gameState.moveIndex % 2 === 0) {

@@ -30,7 +30,7 @@ export const puzzleList = writable<puzzleListState>({ puzzles: [], currentPuzzle
 export const pastPuzzles = writable<Puzzle[][]>([]);
 export const isLoading = writable<boolean>(false);
 
-function loadChess(puzzle: Puzzle) {
+export function loadChess(puzzle: Puzzle) {
 	const fen = puzzle.fen;
 	const moves = convertUciToSan(fen, puzzle.moves);
 	const orientation = getFirstMoveColor(puzzle.fen) === 'w' ? 'b' : 'w';
