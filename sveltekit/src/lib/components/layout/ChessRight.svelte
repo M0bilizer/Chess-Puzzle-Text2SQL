@@ -6,13 +6,13 @@
 	import ThemesOrOpening from '$lib/components/layout/ThemesOrOpening.svelte';
 
 	puzzleList.subscribe((state) => {
-		if (state.puzzles.length !== 0) {
+		if (state.puzzles.length) {
 			const puzzle = state.puzzles[state.currentPuzzle];
 		}
 	});
 </script>
 
-{#if $puzzleList.puzzles.length !== 0}
+{#if $puzzleList.puzzles.length}
 	<div class="flex flex-col gap-5 px-2">
 		<PuzzleDescription />
 		<ThemesOrOpening />

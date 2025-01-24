@@ -5,7 +5,7 @@
 	let rating: number;
 	let nbPlays: number;
 	puzzleList.subscribe((state) => {
-		if (state.puzzles.length !== 0) {
+		if (state.puzzles.length) {
 			const puzzle = state.puzzles[state.currentPuzzle];
 			puzzleId = puzzle.puzzleId;
 			rating = puzzle.rating;

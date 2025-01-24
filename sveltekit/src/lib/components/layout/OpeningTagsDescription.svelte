@@ -3,7 +3,7 @@
 
 	let openings: string[];
 	puzzleList.subscribe((state) => {
-		if (state.puzzles.length !== 0) {
+		if (state.puzzles.length) {
 			const puzzle = state.puzzles[state.currentPuzzle];
 			console.log(puzzle.openingTags);
 			openings = puzzle.openingTags.split(' ');

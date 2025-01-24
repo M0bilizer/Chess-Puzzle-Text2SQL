@@ -3,7 +3,7 @@
 
 	let themes: string[];
 	puzzleList.subscribe((state) => {
-		if (state.puzzles.length !== 0) {
+		if (state.puzzles.length) {
 			const puzzle = state.puzzles[state.currentPuzzle];
 			themes = puzzle.themes.split(' ');
 		}

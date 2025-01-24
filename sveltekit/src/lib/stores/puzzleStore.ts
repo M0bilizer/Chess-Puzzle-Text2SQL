@@ -5,6 +5,7 @@ import type { Puzzle } from '$lib/types/puzzle';
 import { toast } from 'svelte-sonner';
 import { getDataStub } from '$lib/stores/dataStub';
 import { convertUciToSan, getFirstMoveColor } from '$lib/utils/chessUtils';
+import type { Search } from '$lib/types/search';
 
 interface gameStateState {
 	fen: string;
@@ -27,7 +28,7 @@ export const gameState = writable<gameStateState>({
 	hasWon: false
 });
 export const puzzleList = writable<puzzleListState>({ puzzles: [], currentPuzzle: 0 });
-export const pastPuzzles = writable<Puzzle[][]>([]);
+export const pastPuzzles = writable<Search[]>([]);
 export const isLoading = writable<boolean>(false);
 
 export function loadChess(puzzle: Puzzle) {
@@ -81,7 +82,7 @@ export async function searchPuzzles(
 
 		loadChess(newPuzzles[0]);
 		puzzleList.set({ puzzles: newPuzzles, currentPuzzle: 0 });
-		pastPuzzles.update((pastResults) => [...pastResults, newPuzzles]);
+		pastPuzzles.update((pastResults) => [...pastResults, { query: query, result: newPuzzles }]);
 
 		isLoading.set(false);
 		return true;
