@@ -3,7 +3,7 @@
 	import { Chess } from 'svelte-chess';
 	import { playMove } from '$lib/utils/chessUtils';
 
-	let chess: Chess = Chess;
+	let chess: Chess;
 	let orientation: 'w' | 'b' = 'w';
 	gameState.subscribe((state) => {
 		if (state.fen !== '' && state.hasWon == false) {
@@ -33,7 +33,7 @@
 		}
 	});
 
-	function moveListener(event) {
+	function moveListener(event: CustomEvent) {
 		if ($gameState.moveIndex % 2 === 0) {
 			return;
 		}
