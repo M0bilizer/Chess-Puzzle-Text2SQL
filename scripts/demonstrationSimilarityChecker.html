@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Similarity Report</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .file-input {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Text Similarity Report</h1>
+    <input type="file" id="jsonFileInput" accept=".json" class="file-input">
+    <table id="similarityTable">
+        <thead>
+            <tr>
+                <th>Text 1</th>
+                <th>Text 2</th>
+                <th>Similarity</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Rows will be inserted here by JavaScript -->
+        </tbody>
+    </table>
+
+    <!-- Include the Compromise library -->
+    <script src="https://cdn.jsdelivr.net/npm/compromise@latest/builds/compromise.min.js"></script>
+    <script>
+        // Function to remove comments from a JSON string
+        function removeComments(jsonString) {
+            // Remove single-line comments (// ...)
+            jsonString = jsonString.replace(/\/\/.*$/gm, '');
+
+            // Remove multi-line comments (/* ... */)
+            jsonString = jsonString.replace(/\/\*[\s\S]*?\*\//g, '');
+
+            return jsonString;
+        }
+
+        // Function to compute cosine similarity between two vectors
+        function cosineSimilarity(vecA, vecB) {
+            let dotProduct = 0;
+            let magnitudeA = 0;
+            let magnitudeB = 0;
+
+            for (let i = 0; i < vecA.length; i++) {
+                dotProduct += vecA[i] * vecB[i];
+                magnitudeA += vecA[i] * vecA[i];
+                magnitudeB += vecB[i] * vecB[i];
+            }
+
+            magnitudeA = Math.sqrt(magnitudeA);
+            magnitudeB = Math.sqrt(magnitudeB);
+
+            if (magnitudeA === 0 || magnitudeB === 0) {
+                return 0; // Avoid division by zero
+            }
+
+            return dotProduct / (magnitudeA * magnitudeB);
+        }
+
+        // Function to process the uploaded JSON file
+        function processJsonFile(file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                try {
+                    // Remove comments from the JSON string
+                    const jsonString = removeComments(event.target.result);
+
+                    // Parse the JSON data
+                    const data = JSON.parse(jsonString);
+                    displaySimilarityReport(data);
+                } catch (error) {
+                    console.error('Error parsing JSON:', error);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // Function to display the similarity report in a table
+        function displaySimilarityReport(data) {
+            const tableBody = document.querySelector('#similarityTable tbody');
+            tableBody.innerHTML = ''; // Clear previous results
+
+            // Extract texts from the JSON data
+            const texts = data["data"].map(item => item.text);
+
+            // Tokenize texts using Compromise
+            const tokenizedTexts = texts.map(text => {
+                const doc = window.nlp(text);
+                return doc.terms().out('array');
+            });
+
+            // Compute TF-IDF vectors
+            const tfidfMatrix = computeTfIdf(tokenizedTexts);
+
+            // Compute cosine similarity between all pairs of texts
+            for (let i = 0; i < texts.length; i++) {
+                for (let j = i + 1; j < texts.length; j++) {
+                    const similarity = cosineSimilarity(tfidfMatrix[i], tfidfMatrix[j]);
+
+                    // Add a row to the table
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${texts[i]}</td>
+                        <td>${texts[j]}</td>
+                        <td>${similarity.toFixed(2)}</td>
+                    `;
+                    tableBody.appendChild(row);
+                }
+            }
+        }
+
+        // Function to compute TF-IDF vectors
+        function computeTfIdf(tokenizedTexts) {
+            const tfidfMatrix = [];
+            const idf = {};
+
+            // Compute IDF
+            const totalDocuments = tokenizedTexts.length;
+            tokenizedTexts.forEach(tokens => {
+                const uniqueTokens = new Set(tokens);
+                uniqueTokens.forEach(token => {
+                    idf[token] = (idf[token] || 0) + 1;
+                });
+            });
+
+            for (const token in idf) {
+                idf[token] = Math.log(totalDocuments / idf[token]);
+            }
+
+            // Compute TF-IDF for each document
+            tokenizedTexts.forEach(tokens => {
+                const termFrequency = {};
+                tokens.forEach(token => {
+                    termFrequency[token] = (termFrequency[token] || 0) + 1;
+                });
+
+                const tfidfVector = [];
+                for (const token in idf) {
+                    const tf = termFrequency[token] || 0;
+                    tfidfVector.push(tf * idf[token]);
+                }
+
+                tfidfMatrix.push(tfidfVector);
+            });
+
+            return tfidfMatrix;
+        }
+
+        // Handle file input change event
+        document.getElementById('jsonFileInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                processJsonFile(file);
+            }
+        });
+    </script>
+</body>
+</html>

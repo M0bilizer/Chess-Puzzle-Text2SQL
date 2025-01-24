@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Benchmark Results</title>
+    <style>
+        .file-results {
+            margin-bottom: 20px;
+            border: 2px solid #000;
+            padding: 15px;
+            border-radius: 8px;
+            width: fit-content;
+        }
+        .file-results h3 {
+            margin-bottom: 10px;
+        }
+        .totals {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Benchmark Results</h1>
+    <input type="file" id="jsonFileInput" accept=".json" multiple>
+    <br><br>
+    <div id="resultsContainer">
+        <!-- Results for each file will be inserted here -->
+    </div>
+
+    <script>
+        // Function to process the uploaded JSON file
+        function processJsonFile(file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                try {
+                    const data = JSON.parse(event.target.result);
+                    displayResults(file.name, data);
+                } catch (error) {
+                    console.error('Error parsing JSON:', error);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // Function to display totals for a single file
+        function displayResults(fileName, data) {
+            const resultsContainer = document.getElementById('resultsContainer');
+
+            // Create a div for this file's results
+            const fileResultsDiv = document.createElement('div');
+            fileResultsDiv.className = 'file-results';
+
+            // Add a heading for the file
+            const fileHeading = document.createElement('h3');
+            fileHeading.textContent = `Results for: ${fileName}`;
+            fileResultsDiv.appendChild(fileHeading);
+
+            // Calculate totals
+            let fullTotal = 0;
+            let partialTotal = 0;
+            let baselineTotal = 0;
+
+            data.forEach(item => {
+                fullTotal += parseInt(item.full.status);
+                partialTotal += parseInt(item.partial.status);
+                baselineTotal += parseInt(item.baseline.status);
+            });
+
+            // Display totals
+            const totalsParagraph = document.createElement('p');
+            totalsParagraph.className = 'totals';
+            totalsParagraph.textContent = `Full = ${fullTotal}, Partial = ${partialTotal}, Baseline = ${baselineTotal}`;
+            fileResultsDiv.appendChild(totalsParagraph);
+
+            // Add the file's results to the container
+            resultsContainer.appendChild(fileResultsDiv);
+        }
+
+        // Handle file input change event
+        document.getElementById('jsonFileInput').addEventListener('change', function(event) {
+            const files = event.target.files;
+            if (files.length > 0) {
+                // Clear previous results
+                document.getElementById('resultsContainer').innerHTML = '';
+
+                // Process each uploaded file
+                for (let i = 0; i < files.length; i++) {
+                    processJsonFile(files[i]);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
