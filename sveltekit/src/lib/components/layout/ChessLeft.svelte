@@ -13,7 +13,7 @@
 			<div class="flex flex-col gap-2">
 				{#each $pastPuzzles as row}
 					<div class="px-2 text-left text-sm hover:preset-tonal-primary">
-						<p class="text-surface-500">{row.query}</p>
+						<p class="text-surface-500 truncate">{row.query}</p>
 					</div>
 				{/each}
 				<div class="flex w-full justify-end">

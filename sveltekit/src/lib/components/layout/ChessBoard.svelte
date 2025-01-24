@@ -8,8 +8,9 @@
 	gameState.subscribe((state) => {
 		if (state.fen !== '' && state.hasWon == false) {
 			chess.load(state.fen);
-			orientation = state.orientation;
-
+			if (orientation !== state.orientation) {
+				chess.toggleOrientation()
+			}
 			if (state.moveIndex % 2 === 0) {
 				if (state.moveIndex > state.moves.length - 1) {
 					setTimeout(() => {
@@ -53,7 +54,7 @@
 </script>
 
 <div>
-	<Chess bind:this={chess} {orientation} on:move={moveListener} />
+	<Chess bind:this={chess} bind:orientation={orientation} on:move={moveListener} />
 </div>
 
 <style>
