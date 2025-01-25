@@ -1,18 +1,21 @@
 <script lang="ts">
 	import Fa6SolidSquareCaretRightRight from 'virtual:icons/fa6-solid/square-caret-right';
 	import Fa6SolidChessKing from 'virtual:icons/fa6-solid/chess-king';
-	import { gameState, loadChess, puzzleList } from '$lib/stores/puzzleStore';
+	import { currentGameProgress, loadAsCurrentGame, puzzleList } from '$lib/stores/puzzleStore';
+	import { modalState } from '$lib/stores/congratulationModalStore';
+	import CongratulationModal from '$lib/components/modals/CongratulationModal.svelte';
 
 	let hasWon = false;
 	let orientation: 'w' | 'b' = 'w';
-	gameState.subscribe((state) => {
+	currentGameProgress.subscribe((state) => {
 		hasWon = state.hasWon;
 		orientation = state.orientation;
 	});
 
 	function loadNextGame() {
+		console.log(modalState);
 		if ($puzzleList.puzzles.length - 1 === $puzzleList.currentPuzzle) {
-			console.log('finished');
+			modalState.set({ open: true });
 			return;
 		}
 		puzzleList.update((currentState) => ({
@@ -20,8 +23,7 @@
 			currentPuzzle: currentState.currentPuzzle + 1
 		}));
 		const nextGame = $puzzleList.puzzles[$puzzleList.currentPuzzle];
-		console.log(nextGame);
-		loadChess(nextGame);
+		loadAsCurrentGame(nextGame);
 	}
 </script>
 
@@ -49,6 +51,7 @@
 	{/if}
 	<div class="h-20"></div>
 </div>
+<CongratulationModal />
 
 <style>
 	.white {

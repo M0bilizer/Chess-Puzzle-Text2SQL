@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { pastPuzzles } from '$lib/stores/puzzleStore';
+	import { pastSearches } from '$lib/stores/puzzleStore';
 	import ClearButton from '$lib/components/ClearButton.svelte';
 </script>
 
@@ -9,11 +9,11 @@
 	<h4 class="h4">Recent Search</h4>
 	<hr class="hr" />
 	<div>
-		{#if $pastPuzzles.length}
+		{#if $pastSearches.length}
 			<div class="flex flex-col gap-2">
-				{#each $pastPuzzles as row}
+				{#each $pastSearches as row}
 					<div class="px-2 text-left text-sm hover:preset-tonal-primary">
-						<p class="text-surface-500 truncate">{row.query}</p>
+						<p class="truncate text-surface-500">{row.query}</p>
 					</div>
 				{/each}
 				<div class="flex w-full justify-end">

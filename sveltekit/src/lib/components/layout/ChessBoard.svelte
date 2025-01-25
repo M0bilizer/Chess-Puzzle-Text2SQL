@@ -1,20 +1,20 @@
 <script lang="ts">
-	import { gameState } from '$lib/stores/puzzleStore';
+	import { currentGameProgress } from '$lib/stores/puzzleStore';
 	import { Chess } from 'svelte-chess';
 	import { playMove } from '$lib/utils/chessUtils';
 
 	let chess: Chess;
 	let orientation: 'w' | 'b' = 'w';
-	gameState.subscribe((state) => {
-		if (state.fen !== '' && state.hasWon == false) {
-			chess.load(state.fen);
+	currentGameProgress.subscribe((state) => {
+		if (state.currentFen !== '' && state.hasWon == false) {
+			chess.load(state.currentFen);
 			if (orientation !== state.orientation) {
-				chess.toggleOrientation()
+				chess.toggleOrientation();
 			}
 			if (state.moveIndex % 2 === 0) {
 				if (state.moveIndex > state.moves.length - 1) {
 					setTimeout(() => {
-						gameState.update((currentState) => ({
+						currentGameProgress.update((currentState) => ({
 							...currentState,
 							hasWon: true
 						}));
@@ -22,10 +22,10 @@
 				} else {
 					setTimeout(() => {
 						chess.move(state.moves[state.moveIndex]);
-						gameState.update((currentState) => ({
+						currentGameProgress.update((currentState) => ({
 							...currentState,
 							moveIndex: currentState.moveIndex + 1,
-							fen: playMove(state.fen, state.moves[state.moveIndex])
+							currentFen: playMove(state.currentFen, state.moves[state.moveIndex])
 						}));
 					}, 500);
 				}
@@ -34,27 +34,27 @@
 	});
 
 	function moveListener(event: CustomEvent) {
-		if ($gameState.moveIndex % 2 === 0) {
+		if ($currentGameProgress.moveIndex % 2 === 0) {
 			return;
 		}
 		const move = event.detail;
 
-		if ($gameState.moves[$gameState.moveIndex] !== move.san) {
+		if ($currentGameProgress.moves[$currentGameProgress.moveIndex] !== move.san) {
 			setTimeout(() => {
 				chess.undo();
 			}, 250);
 		} else {
-			gameState.update((currentState) => ({
+			currentGameProgress.update((currentState) => ({
 				...currentState,
 				moveIndex: currentState.moveIndex + 1,
-				fen: move.after
+				currentFen: move.after
 			}));
 		}
 	}
 </script>
 
 <div>
-	<Chess bind:this={chess} bind:orientation={orientation} on:move={moveListener} />
+	<Chess bind:this={chess} bind:orientation on:move={moveListener} />
 </div>
 
 <style>

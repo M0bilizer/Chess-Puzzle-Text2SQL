@@ -5,7 +5,6 @@
 	puzzleList.subscribe((state) => {
 		if (state.puzzles.length) {
 			const puzzle = state.puzzles[state.currentPuzzle];
-			console.log(puzzle.openingTags);
 			openings = puzzle.openingTags.split(' ');
 		}
 	});

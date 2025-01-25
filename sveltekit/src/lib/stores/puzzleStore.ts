@@ -7,8 +7,8 @@ import { getDataStub } from '$lib/stores/dataStub';
 import { convertUciToSan, getFirstMoveColor } from '$lib/utils/chessUtils';
 import type { Search } from '$lib/types/search';
 
-interface gameStateState {
-	fen: string;
+interface gameProgressState {
+	currentFen: string;
 	orientation: 'w' | 'b';
 	moves: string[];
 	moveIndex: number;
@@ -20,22 +20,23 @@ interface puzzleListState {
 	currentPuzzle: number;
 }
 
-export const gameState = writable<gameStateState>({
-	fen: '',
+export const currentGameProgress = writable<gameProgressState>({
+	currentFen: '',
 	orientation: 'w',
 	moves: [],
 	moveIndex: 0,
 	hasWon: false
 });
+
 export const puzzleList = writable<puzzleListState>({ puzzles: [], currentPuzzle: 0 });
-export const pastPuzzles = writable<Search[]>([]);
+export const pastSearches = writable<Search[]>([]);
 export const isLoading = writable<boolean>(false);
 
-export function loadChess(puzzle: Puzzle) {
+export function loadAsCurrentGame(puzzle: Puzzle) {
 	const fen = puzzle.fen;
 	const moves = convertUciToSan(fen, puzzle.moves);
 	const orientation = getFirstMoveColor(puzzle.fen) === 'w' ? 'b' : 'w';
-	gameState.set({ fen, orientation, moves, moveIndex: 0, hasWon: false });
+	currentGameProgress.set({ currentFen: fen, orientation, moves, moveIndex: 0, hasWon: false });
 }
 
 export async function searchPuzzles(
@@ -46,11 +47,11 @@ export async function searchPuzzles(
 		isLoading.set(true);
 
 		let res: Response;
-		let newPuzzles: Puzzle[];
+		let result: Puzzle[];
 
 		switch (debug) {
 			case 'stub':
-				newPuzzles = getDataStub();
+				result = getDataStub();
 				break;
 
 			case 'ping':
@@ -58,7 +59,7 @@ export async function searchPuzzles(
 					method: 'GET'
 				});
 				if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
-				newPuzzles = (await res.json()).data;
+				result = (await res.json()).data;
 				break;
 
 			case 'live': {
@@ -72,7 +73,7 @@ export async function searchPuzzles(
 				if (responseData.status !== 'success') {
 					throw new Error(`API error: ${responseData.status}`);
 				}
-				newPuzzles = responseData.data;
+				result = responseData.data;
 				break;
 			}
 
@@ -80,9 +81,9 @@ export async function searchPuzzles(
 				throw new Error(`Invalid debug mode: ${debug}`);
 		}
 
-		loadChess(newPuzzles[0]);
-		puzzleList.set({ puzzles: newPuzzles, currentPuzzle: 0 });
-		pastPuzzles.update((pastResults) => [...pastResults, { query: query, result: newPuzzles }]);
+		loadAsCurrentGame(result[0]);
+		puzzleList.set({ puzzles: result, currentPuzzle: 0 });
+		pastSearches.update((pastResults) => [...pastResults, { query: query, result: result }]);
 
 		isLoading.set(false);
 		return true;

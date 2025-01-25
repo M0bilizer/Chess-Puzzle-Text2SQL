@@ -1,32 +1,29 @@
 <script lang="ts">
 	import { Modal, ProgressRing } from '@skeletonlabs/skeleton-svelte';
 	import SearchBox from '$lib/components/SearchBox.svelte';
-	import { Search } from 'lucide-svelte';
+	import { Toaster } from 'svelte-sonner';
 	import Fa6SolidChessKing from 'virtual:icons/fa6-solid/chess-king';
 	import Fa6SolidChessQueen from 'virtual:icons/fa6-solid/chess-queen';
 	import HelpToolTip from '$lib/components/modals/HelpToolTip.svelte';
-	import { Toaster } from 'svelte-sonner';
-	import { searchPuzzles, isLoading } from '$lib/stores/puzzleStore.js';
+	import { Search } from 'lucide-svelte';
+	import { isLoading, searchPuzzles } from '$lib/stores/puzzleStore';
 
-	let openState = $state(false);
+	let modalOpen = $state(false);
 	let query = $state('');
 
-	function modalClose() {
-		openState = false;
-	}
-
-	async function handleSearch() {
+	async function handleSearch(event: Event) {
+		event.preventDefault();
 		const success = await searchPuzzles(query, 'stub');
 		if (success) {
-			modalClose();
+			modalOpen = false;
 		} else {
-			console.log('nothing');
+			console.log('couldnt get data');
 		}
 	}
 </script>
 
 <Modal
-	bind:open={openState}
+	bind:open={modalOpen}
 	triggerBase="btn btn-lg preset-filled-primary-500"
 	contentBase="bg-surface-50-950 rounded-container top-[10%] m-0 mx-auto max-h-[90%] w-full max-w-[90%] space-y-8 p-8 text-inherit shadow-2xl md:max-w-[75%] md:max-w-2xl lg:max-w-4xl"
 	backdropBackground="bg-tertiary-500/25"
