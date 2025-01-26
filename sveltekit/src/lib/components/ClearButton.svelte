@@ -1,11 +1,11 @@
 <script lang="ts">
 	import Fa6SolidTrashCan from 'virtual:icons/fa6-solid/trash-can';
 	import { Tooltip } from '@skeletonlabs/skeleton-svelte';
-	import { pastSearches } from '$lib/stores/puzzleStore';
+	import { deleteAllSearchResult } from '$lib/stores/searchesStore';
 	let openState = $state(false);
 
 	function clearResult() {
-		pastSearches.update(() => []);
+		deleteAllSearchResult();
 	}
 </script>
 

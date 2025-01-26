@@ -1,18 +1,11 @@
 <script lang="ts">
-	import { puzzleList } from '$lib/stores/puzzleStore';
 	import PuzzleDescription from '$lib/components/layout/PuzzleDescription.svelte';
-	import ThemesDescription from '$lib/components/layout/ThemesDescription.svelte';
 	import NextButton from '$lib/components/layout/NextButton.svelte';
 	import ThemesOrOpening from '$lib/components/layout/ThemesOrOpening.svelte';
-
-	puzzleList.subscribe((state) => {
-		if (state.puzzles.length) {
-			const puzzle = state.puzzles[state.currentPuzzle];
-		}
-	});
+	import { currentGame } from '$lib/stores/currentGameStore';
 </script>
 
-{#if $puzzleList.puzzles.length}
+{#if $currentGame.list}
 	<div class="flex flex-col gap-5 px-2">
 		<PuzzleDescription />
 		<ThemesOrOpening />

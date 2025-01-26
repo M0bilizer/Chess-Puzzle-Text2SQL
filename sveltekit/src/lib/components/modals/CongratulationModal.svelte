@@ -2,10 +2,15 @@
 	import { Modal } from '@skeletonlabs/skeleton-svelte';
 	import { PartyPopper } from 'lucide-svelte';
 	import { modalState } from '$lib/stores/congratulationModalStore';
-	import { pastSearches, puzzleList } from '$lib/stores/puzzleStore';
+	import { currentGame } from '$lib/stores/currentGameStore';
 
-	const query = $puzzleList.puzzles.length ? $pastSearches.at(-1).query : 'null';
-	const length = $pastSearches.length;
+	let query: string = '';
+	let length: number = 0;
+
+	currentGame.subscribe((state) => {
+		query = state.query;
+		length = state.list.length;
+	});
 
 	let open = false;
 	modalState.subscribe((state) => {
@@ -36,7 +41,9 @@
 					>
 				</h1>
 			</header>
-			<p class="text-center">You finished {length} puzzles that was found using <code class="code">{query}</code></p>
+			<p class="text-center">
+				You finished {length} puzzles that was found using <code class="code">{query}</code>
+			</p>
 			<div class="flex items-center justify-around">
 				<button onclick={() => closeModal()}><span class="underline">Close</span></button>
 			</div>

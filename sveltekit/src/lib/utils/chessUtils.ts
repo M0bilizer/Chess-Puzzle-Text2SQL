@@ -1,5 +1,4 @@
 import { Chess } from 'chess.js';
-import { loadAsCurrentGame, puzzleList } from '$lib/stores/puzzleStore';
 
 export function getFirstMoveColor(fen: string): 'w' | 'b' {
 	const fields = fen.split(' ');

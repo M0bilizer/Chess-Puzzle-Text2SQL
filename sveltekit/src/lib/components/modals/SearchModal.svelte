@@ -6,7 +6,8 @@
 	import Fa6SolidChessQueen from 'virtual:icons/fa6-solid/chess-queen';
 	import HelpToolTip from '$lib/components/modals/HelpToolTip.svelte';
 	import { Search } from 'lucide-svelte';
-	import { isLoading, searchPuzzles } from '$lib/stores/puzzleStore';
+	import { isLoading } from '$lib/stores/isLoading';
+	import { searchPuzzles } from '$lib/utils/storeUtils';
 
 	let modalOpen = $state(false);
 	let query = $state('');

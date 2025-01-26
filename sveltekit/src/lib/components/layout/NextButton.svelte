@@ -1,29 +1,26 @@
 <script lang="ts">
 	import Fa6SolidSquareCaretRightRight from 'virtual:icons/fa6-solid/square-caret-right';
 	import Fa6SolidChessKing from 'virtual:icons/fa6-solid/chess-king';
-	import { currentGameProgress, loadAsCurrentGame, puzzleList } from '$lib/stores/puzzleStore';
 	import { modalState } from '$lib/stores/congratulationModalStore';
 	import CongratulationModal from '$lib/components/modals/CongratulationModal.svelte';
+	import { isLastGame, loadNextGame, saveGame } from '$lib/utils/storeUtils';
+	import { currentGame } from '$lib/stores/currentGameStore';
 
 	let hasWon = false;
 	let orientation: 'w' | 'b' = 'w';
-	currentGameProgress.subscribe((state) => {
-		hasWon = state.hasWon;
-		orientation = state.orientation;
+	currentGame.subscribe((state) => {
+		hasWon = state.game.hasWon;
+		orientation = state.game.orientation;
 	});
 
-	function loadNextGame() {
-		console.log(modalState);
-		if ($puzzleList.puzzles.length - 1 === $puzzleList.currentPuzzle) {
+	function handleClick() {
+		saveGame();
+		if (isLastGame()) {
+			console.log('yep');
 			modalState.set({ open: true });
-			return;
+		} else {
+			loadNextGame();
 		}
-		puzzleList.update((currentState) => ({
-			...currentState,
-			currentPuzzle: currentState.currentPuzzle + 1
-		}));
-		const nextGame = $puzzleList.puzzles[$puzzleList.currentPuzzle];
-		loadAsCurrentGame(nextGame);
 	}
 </script>
 
@@ -34,10 +31,10 @@
 	{#if hasWon}
 		<button
 			class="flex flex-row items-center gap-2 py-10 pl-2 preset-filled-primary-100-900 hover:preset-filled-primary-200-800"
-			on:click={() => loadNextGame()}
+			on:click={() => handleClick()}
 		>
 			<Fa6SolidSquareCaretRightRight class="size-16 text-tertiary-500" />
-			<h3 class="h3">Next Puzzle</h3>
+			<span class="h3">Next Puzzle</span>
 		</button>
 	{:else}
 		<div

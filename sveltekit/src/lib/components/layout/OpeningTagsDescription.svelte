@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { puzzleList } from '$lib/stores/puzzleStore';
+	import { currentGame } from '$lib/stores/currentGameStore';
 
 	let openings: string[];
-	puzzleList.subscribe((state) => {
-		if (state.puzzles.length) {
-			const puzzle = state.puzzles[state.currentPuzzle];
+	currentGame.subscribe((state) => {
+		if (state.list.length) {
+			const puzzle = state.list[state.index].puzzle;
 			openings = puzzle.openingTags.split(' ');
 		}
 	});
