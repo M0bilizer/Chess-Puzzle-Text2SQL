@@ -14,8 +14,7 @@
 
 	async function handleSearch(event: Event) {
 		event.preventDefault();
-		if (isGameInProgress())
-			saveGame()
+		if (isGameInProgress()) saveGame();
 		const success = await searchPuzzles(query, 'stub');
 		if (success) {
 			modalOpen = false;

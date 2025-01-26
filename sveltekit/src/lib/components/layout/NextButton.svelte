@@ -16,7 +16,6 @@
 	function handleClick() {
 		saveGame();
 		if (isLastGame()) {
-			console.log('yep');
 			modalState.set({ open: true });
 		} else {
 			loadNextGame();

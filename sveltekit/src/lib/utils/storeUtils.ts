@@ -5,7 +5,7 @@ import { KOTLIN_SPRING_URL } from '$lib/constants/endpoints';
 import { toast } from 'svelte-sonner';
 import { convertUciToSan, getFirstMoveColor } from '$lib/utils/chessUtils';
 import { addSearchResult, updateSearchResult } from '$lib/stores/searchesStore';
-import { currentGame } from '$lib/stores/currentGameStore';
+import { currentGame, updateCurrentGame } from '$lib/stores/currentGameStore';
 import type { PuzzleInstance } from '$lib/types/puzzleInstance';
 import { get } from 'svelte/store';
 
@@ -25,12 +25,13 @@ export function saveGame(): boolean {
 	if (query == null || index == null || game == null) {
 		return false;
 	}
+	updateCurrentGame(index, game);
 	updateSearchResult(query, index, game);
 	return true;
 }
 
 export function isGameInProgress(): boolean {
-	return get(currentGame).list.length > 0
+	return get(currentGame).list.length > 0;
 }
 
 export function isLastGame(): boolean {

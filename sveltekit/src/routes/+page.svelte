@@ -2,6 +2,7 @@
 	import ChessRight from '$lib/components/layout/ChessRight.svelte';
 	import ChessLeft from '$lib/components/layout/ChessLeft.svelte';
 	import ChessBoard from '$lib/components/layout/ChessBoard.svelte';
+	import ChipBar from '$lib/components/layout/ChipBar.svelte';
 </script>
 
 <div
@@ -10,8 +11,9 @@
 	<aside>
 		<ChessLeft />
 	</aside>
-	<main id="_top" class="flex-start flex flex-col">
+	<main id="_top" class="flex-start flex flex-col gap-2">
 		<ChessBoard />
+		<ChipBar />
 	</main>
 	<aside>
 		<ChessRight />
