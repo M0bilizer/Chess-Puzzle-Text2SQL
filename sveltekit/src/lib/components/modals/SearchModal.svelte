@@ -7,13 +7,15 @@
 	import HelpToolTip from '$lib/components/modals/HelpToolTip.svelte';
 	import { Search } from 'lucide-svelte';
 	import { isLoading } from '$lib/stores/isLoading';
-	import { searchPuzzles } from '$lib/utils/storeUtils';
+	import { isGameInProgress, saveGame, searchPuzzles } from '$lib/utils/storeUtils';
 
 	let modalOpen = $state(false);
 	let query = $state('');
 
 	async function handleSearch(event: Event) {
 		event.preventDefault();
+		if (isGameInProgress())
+			saveGame()
 		const success = await searchPuzzles(query, 'stub');
 		if (success) {
 			modalOpen = false;

@@ -29,6 +29,10 @@ export function saveGame(): boolean {
 	return true;
 }
 
+export function isGameInProgress(): boolean {
+	return get(currentGame).list.length > 0
+}
+
 export function isLastGame(): boolean {
 	const state = get(currentGame);
 	return !(state.index + 1 < state.list.length);

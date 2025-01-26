@@ -5,7 +5,7 @@
 	import { currentGame } from '$lib/stores/currentGameStore';
 </script>
 
-{#if $currentGame.list}
+{#if $currentGame.list.length}
 	<div class="flex flex-col gap-5 px-2">
 		<PuzzleDescription />
 		<ThemesOrOpening />
