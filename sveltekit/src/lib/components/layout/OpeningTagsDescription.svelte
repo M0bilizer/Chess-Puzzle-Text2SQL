@@ -19,7 +19,7 @@
 		<div class="mx-auto w-11/12">
 			<hr class="hr" />
 		</div>
-		<div>
+		<div class="h-14 overflow-auto">
 			{#each openings as row}
 				<div class="px-2 text-left text-sm hover:preset-tonal-primary">
 					{row}

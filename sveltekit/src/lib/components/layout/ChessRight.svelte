@@ -6,7 +6,7 @@
 </script>
 
 {#if $currentGame.list.length}
-	<div class="flex flex-col gap-5 px-2">
+	<div class="grid grid-rows-[auto_250px_auto] gap-4">
 		<PuzzleDescription />
 		<ThemesOrOpening />
 		<NextButton />
