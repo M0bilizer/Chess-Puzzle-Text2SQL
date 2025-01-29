@@ -27,8 +27,8 @@
 	}
 
 	currentGame.subscribe((state: currentGameState) => {
-		if (state.game.fen !== '' && state.game.hasWon == false) {
-			loadGame(state);
+		if (state.game.fen !== '') loadGame(state);
+		if (state.game.hasWon == false) {
 			if (!isPlayerMove()) {
 				if (isLastMove()) {
 					setTimeout(() => {

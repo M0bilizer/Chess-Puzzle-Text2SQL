@@ -50,15 +50,6 @@ export function loadNextGame(): boolean {
 	return isNextGameLoaded;
 }
 
-export function loadGame(index: number) {
-	saveGame();
-	currentGame.update((state) => ({
-		...state,
-		index: index,
-		game: state.list[state.index].progress
-	}));
-}
-
 export async function searchPuzzles(
 	query: string,
 	debug: 'stub' | 'ping' | 'live' = 'live'
@@ -136,6 +127,15 @@ function mapToInstance(list: Puzzle[]): PuzzleInstance[] {
 		};
 		return puzzleInstance;
 	});
+}
+
+export function loadGame(index: number) {
+	saveGame();
+	currentGame.update((state) => ({
+		...state,
+		index: index,
+		game: state.list[index].progress
+	}));
 }
 
 export function loadFromSearchRecord(query: string) {
