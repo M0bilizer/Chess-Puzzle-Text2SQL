@@ -3,8 +3,8 @@
 	import Fa6SolidChessKing from 'virtual:icons/fa6-solid/chess-king';
 	import { modalState } from '$lib/stores/congratulationModalStore';
 	import CongratulationModal from '$lib/components/modals/CongratulationModal.svelte';
-	import { isLastGame, loadNextGame, saveGame } from '$lib/utils/storeUtils';
-	import { currentGame } from '$lib/stores/currentGameStore';
+	import { loadNextGame, saveGame } from '$lib/utils/storeUtils';
+	import { currentGame, isAllFinished } from '$lib/stores/currentGameStore';
 
 	let hasWon = false;
 	let orientation: 'w' | 'b' = 'w';
@@ -15,7 +15,7 @@
 
 	function handleClick() {
 		saveGame();
-		if (isLastGame()) {
+		if (isAllFinished()) {
 			modalState.set({ open: true });
 		} else {
 			loadNextGame();

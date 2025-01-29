@@ -2,17 +2,35 @@
 	import { Chess } from 'svelte-chess';
 	import { playMove } from '$lib/utils/chessUtils';
 	import { currentGame, type currentGameState } from '$lib/stores/currentGameStore';
+	import { get } from 'svelte/store';
 
 	let chess: Chess;
 	let orientation: 'w' | 'b' = 'w';
+
+	function loadGame(state: currentGameState) {
+		chess.load(state.game.fen);
+		if (orientation !== state.game.orientation) {
+			chess.toggleOrientation();
+		}
+	}
+
+	function isPlayerMove() {
+		return get(currentGame).game.moveIndex % 2 !== 0;
+	}
+
+	function isCorrectMove(move: string) {
+		return get(currentGame).game.moves[get(currentGame).game.moveIndex] === move;
+	}
+
+	function isLastMove() {
+		return get(currentGame).game.moveIndex > get(currentGame).game.moves.length - 1;
+	}
+
 	currentGame.subscribe((state: currentGameState) => {
 		if (state.game.fen !== '' && state.game.hasWon == false) {
-			chess.load(state.game.fen);
-			if (orientation !== state.game.orientation) {
-				chess.toggleOrientation();
-			}
-			if (state.game.moveIndex % 2 === 0) {
-				if (state.game.moveIndex > state.game.moves.length - 1) {
+			loadGame(state);
+			if (!isPlayerMove()) {
+				if (isLastMove()) {
 					setTimeout(() => {
 						currentGame.update((currentState) => ({
 							...currentState,
@@ -40,12 +58,12 @@
 	});
 
 	function moveListener(event: CustomEvent) {
-		if ($currentGame.game.moveIndex % 2 === 0) {
+		if (!isPlayerMove()) {
 			return;
 		}
 		const move = event.detail;
 
-		if ($currentGame.game.moves[$currentGame.game.moveIndex] !== move.san) {
+		if (!isCorrectMove(move.san)) {
 			setTimeout(() => {
 				chess.undo();
 			}, 250);

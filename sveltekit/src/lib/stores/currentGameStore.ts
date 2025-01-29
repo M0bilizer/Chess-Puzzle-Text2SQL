@@ -1,7 +1,6 @@
-import { writable } from 'svelte/store';
+import { get, writable } from 'svelte/store';
 import type { GameProgress } from '$lib/types/gameProgress';
 import type { PuzzleInstance } from '$lib/types/puzzleInstance';
-import { Searches } from '$lib/stores/searchesStore';
 
 export interface currentGameState {
 	query: string;
@@ -22,6 +21,18 @@ export const currentGame = writable<currentGameState>({
 		hasWon: false
 	}
 });
+
+export function haveGame() {
+	return get(currentGame).list.length > 0;
+}
+
+export function isAllFinished() {
+	return get(currentGame).list.findIndex((value) => !value.progress.hasWon) === -1;
+}
+
+export function getNextGameIndex() {
+	return get(currentGame).list.findIndex((value) => !value.progress.hasWon);
+}
 
 export function updateCurrentGame(index: number, game: GameProgress) {
 	currentGame.update((state) => {

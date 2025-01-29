@@ -1,4 +1,4 @@
-import { writable } from 'svelte/store';
+import { get, writable } from 'svelte/store';
 import type { PuzzleInstance } from '$lib/types/puzzleInstance';
 import type { GameProgress } from '$lib/types/gameProgress';
 
@@ -24,6 +24,10 @@ export function updateSearchResult(query: string, index: number, game: GameProgr
 		state.set(query, updated);
 		return state;
 	});
+}
+
+export function hasSearched(query: string): boolean {
+	return get(Searches).has(query);
 }
 
 export function deleteSearchResult(query: string) {

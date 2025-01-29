@@ -7,14 +7,15 @@
 	import HelpToolTip from '$lib/components/modals/HelpToolTip.svelte';
 	import { Search } from 'lucide-svelte';
 	import { isLoading } from '$lib/stores/isLoading';
-	import { isGameInProgress, saveGame, searchPuzzles } from '$lib/utils/storeUtils';
+	import { saveGame, searchPuzzles } from '$lib/utils/storeUtils';
+	import { haveGame } from '$lib/stores/currentGameStore';
 
 	let modalOpen = $state(false);
 	let query = $state('');
 
 	async function handleSearch(event: Event) {
 		event.preventDefault();
-		if (isGameInProgress()) saveGame();
+		if (haveGame()) saveGame();
 		const success = await searchPuzzles(query, 'stub');
 		if (success) {
 			modalOpen = false;
@@ -36,7 +37,7 @@
 		<div>
 			<Toaster
 				closeButton
-				duration={9999999}
+				duration={10000}
 				toastOptions={{
 					unstyled: true,
 					classes: {

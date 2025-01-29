@@ -5,7 +5,7 @@ import { KOTLIN_SPRING_URL } from '$lib/constants/endpoints';
 import { toast } from 'svelte-sonner';
 import { convertUciToSan, getFirstMoveColor } from '$lib/utils/chessUtils';
 import { addSearchResult, updateSearchResult } from '$lib/stores/searchesStore';
-import { currentGame, updateCurrentGame } from '$lib/stores/currentGameStore';
+import { currentGame, getNextGameIndex, updateCurrentGame } from '$lib/stores/currentGameStore';
 import type { PuzzleInstance } from '$lib/types/puzzleInstance';
 import { get } from 'svelte/store';
 
@@ -20,8 +20,7 @@ export function loadFirstGame(query: string, list: PuzzleInstance[]) {
 }
 
 export function saveGame(): boolean {
-	const state = get(currentGame);
-	const { query, index, game } = state;
+	const { query, index, game } = get(currentGame);
 	if (query == null || index == null || game == null) {
 		return false;
 	}
@@ -30,32 +29,34 @@ export function saveGame(): boolean {
 	return true;
 }
 
-export function isGameInProgress(): boolean {
-	return get(currentGame).list.length > 0;
-}
-
-export function isLastGame(): boolean {
-	const state = get(currentGame);
-	return !(state.index + 1 < state.list.length);
-}
-
 export function loadNextGame(): boolean {
 	let isNextGameLoaded = false;
 
 	currentGame.update((state) => {
-		if (state.index + 1 < state.list.length) {
+		const nextGameIndex = getNextGameIndex();
+
+		if (nextGameIndex !== -1 && nextGameIndex < state.list.length) {
 			isNextGameLoaded = true;
 			return {
 				...state,
-				index: state.index + 1,
-				game: state.list[state.index + 1].progress
+				index: nextGameIndex,
+				game: state.list[nextGameIndex].progress
 			};
-		} else {
-			return state;
 		}
+
+		return state;
 	});
 
 	return isNextGameLoaded;
+}
+
+export function loadGame(index: number) {
+	saveGame();
+	currentGame.update((state) => ({
+		...state,
+		index: index,
+		game: state.list[state.index].progress
+	}));
 }
 
 export async function searchPuzzles(
@@ -65,42 +66,9 @@ export async function searchPuzzles(
 	try {
 		isLoading.set(true);
 
-		let res: Response;
-		let result: Puzzle[];
-
-		switch (debug) {
-			case 'stub':
-				result = getDataStub();
-				break;
-
-			case 'ping':
-				res = await fetch(`${KOTLIN_SPRING_URL}/debug/db`, {
-					method: 'GET'
-				});
-				if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
-				result = (await res.json()).data;
-				break;
-
-			case 'live': {
-				res = await fetch(`${KOTLIN_SPRING_URL}/queryPuzzle`, {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({ query })
-				});
-				if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
-				const responseData = await res.json();
-				if (responseData.status !== 'success') {
-					throw new Error(`API error: ${responseData.status}`);
-				}
-				result = responseData.data;
-				break;
-			}
-
-			default:
-				throw new Error(`Invalid debug mode: ${debug}`);
-		}
-
+		const result: Puzzle[] = await getResponse(query, debug);
 		const list = mapToInstance(result);
+
 		loadFirstGame(query, list);
 		addSearchResult(query, list);
 
@@ -112,6 +80,43 @@ export async function searchPuzzles(
 		isLoading.set(false);
 		return false;
 	}
+}
+
+async function getResponse(query: string, debug: 'stub' | 'ping' | 'live'): Promise<Puzzle[]> {
+	let res;
+	let result: Puzzle[];
+	switch (debug) {
+		case 'stub':
+			result = getDataStub();
+			break;
+
+		case 'ping':
+			res = await fetch(`${KOTLIN_SPRING_URL}/debug/db`, {
+				method: 'GET'
+			});
+			if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+			result = (await res.json()).data;
+			break;
+
+		case 'live': {
+			res = await fetch(`${KOTLIN_SPRING_URL}/queryPuzzle`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ query })
+			});
+			if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+			const responseData = await res.json();
+			if (responseData.status !== 'success') {
+				throw new Error(`API error: ${responseData.status}`);
+			}
+			result = responseData.data;
+			break;
+		}
+
+		default:
+			throw new Error(`Invalid debug mode: ${debug}`);
+	}
+	return result;
 }
 
 function mapToInstance(list: Puzzle[]): PuzzleInstance[] {
