@@ -4,7 +4,7 @@ import { getDataStub } from '$lib/utils/dataStub';
 import { KOTLIN_SPRING_URL } from '$lib/constants/endpoints';
 import { toast } from 'svelte-sonner';
 import { convertUciToSan, getFirstMoveColor } from '$lib/utils/chessUtils';
-import { addSearchResult, updateSearchResult } from '$lib/stores/searchesStore';
+import { addSearchResult, Searches, updateSearchResult } from '$lib/stores/searchesStore';
 import { currentGame, getNextGameIndex, updateCurrentGame } from '$lib/stores/currentGameStore';
 import type { PuzzleInstance } from '$lib/types/puzzleInstance';
 import { get } from 'svelte/store';
@@ -135,5 +135,21 @@ function mapToInstance(list: Puzzle[]): PuzzleInstance[] {
 			}
 		};
 		return puzzleInstance;
+	});
+}
+
+export function loadFromSearchRecord(query: string) {
+	if (get(currentGame).query === query) return;
+	saveGame();
+	const result = get(Searches).get(query) as PuzzleInstance[];
+	let index = result.findIndex((value) => !value.progress.hasWon);
+	if (index === -1) {
+		index = result.length - 1;
+	}
+	currentGame.set({
+		query: query,
+		list: result,
+		index: index,
+		game: result[index].progress
 	});
 }

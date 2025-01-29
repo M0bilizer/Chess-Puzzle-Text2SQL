@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Searches } from '$lib/stores/searchesStore';
 	import ClearButton from '$lib/components/ClearButton.svelte';
+	import SearchRecord from '$lib/components/layout/SearchRecord.svelte';
 </script>
 
 <div
@@ -12,9 +13,7 @@
 		{#if $Searches.size}
 			<div class="flex flex-col gap-2">
 				{#each [...$Searches.keys()] as key}
-					<div class="px-2 text-left text-sm hover:preset-tonal-primary">
-						<p class="truncate text-surface-500">{key}</p>
-					</div>
+					<SearchRecord {key} />
 				{/each}
 				<div class="flex w-full justify-end">
 					<ClearButton />
