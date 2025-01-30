@@ -11,7 +11,7 @@
 </script>
 
 <div
-	class="card w-full min-w-0 max-w-md border-[1px] p-4 border-surface-200-800 shadow-xl preset-filled-surface-100-900"
+	class="card w-full min-w-0 max-w-md border-[1px] p-4 shadow-xl border-surface-200-800 preset-filled-surface-100-900"
 >
 	{#if num}
 		<div class="flex flex-col">

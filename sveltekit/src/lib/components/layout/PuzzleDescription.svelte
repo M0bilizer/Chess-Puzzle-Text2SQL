@@ -20,7 +20,7 @@
 	<ul class="list-inside list-none space-y-1">
 		<li class="text-left">Puzzle: #{puzzleId}</li>
 		<li class="text-left">Rating: <b>{rating}</b></li>
-		<li class="text-left">Played <b>{nbPlays}</b> {nbPlays === 1 ? "time" : "times"}</li>
+		<li class="text-left">Played <b>{nbPlays}</b> {nbPlays === 1 ? 'time' : 'times'}</li>
 	</ul>
 </div>
 
