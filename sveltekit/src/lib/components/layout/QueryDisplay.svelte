@@ -15,7 +15,7 @@
 >
 	{#if num}
 		<div class="flex flex-col">
-			<span class="truncate">You searched <code class="code">{query}></code></span>
+			<span class="truncate">You searched <code class="code">{query}</code></span>
 			<span>and got <code class="code">{num}</code> {num === 1 ? 'puzzle' : 'puzzles'}</span>
 		</div>
 	{:else}
