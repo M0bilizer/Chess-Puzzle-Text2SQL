@@ -80,7 +80,9 @@
 	}
 </script>
 
-<div>
+<div
+	class={`transition ${$currentGame.game.fen === '' ? 'grayscale-[0.75]' : $currentGame.game.hasWon ? 'saturate-200' : ''}`}
+>
 	<Chess bind:this={chess} bind:orientation on:move={moveListener} />
 </div>
 
