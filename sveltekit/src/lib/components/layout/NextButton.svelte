@@ -5,7 +5,6 @@
 	import CongratulationModal from '$lib/components/modals/CongratulationModal.svelte';
 	import { loadNextGame, saveGame } from '$lib/utils/storeUtils';
 	import { currentGame, isAllFinished } from '$lib/stores/currentGameStore';
-	import { decrementJump, incrementJump } from '$lib/stores/jumpStore';
 
 	let hasWon = false;
 	let orientation: 'w' | 'b' = 'w';
@@ -22,23 +21,15 @@
 			loadNextGame();
 		}
 	}
-
-	function handleUndo() {
-		decrementJump();
-	}
-
-	function handleRedo() {
-		incrementJump();
-	}
 </script>
 
 <div
-	class="card grid h-max w-full max-w-md grid-rows-[auto_1fr_auto] border-[1px] shadow-xl border-surface-200-800 preset-filled-surface-100-900"
+	class="card h-max w-full max-w-md border-[1px] shadow-xl border-surface-200-800 preset-filled-surface-100-900"
 >
-	<div class="h-20"></div>
+	<div class="h2">&nbsp;</div>
 	{#if hasWon}
 		<button
-			class="flex flex-row items-center gap-2 py-10 pl-2 preset-filled-primary-100-900 hover:preset-filled-primary-200-800"
+			class="flex w-full flex-row items-center gap-2 py-10 pl-2 preset-filled-primary-100-900 hover:preset-filled-primary-200-800"
 			on:click={() => handleClick()}
 		>
 			<Fa6SolidSquareCaretRightRight class="size-16 text-tertiary-500" />
@@ -54,12 +45,9 @@
 			<h3 class="h3 font-semibold text-inherit">Your Turn</h3>
 		</div>
 	{/if}
-	<div class="h-20">
-		<button class="btn" on:click={() => handleUndo()}>Undo</button>
-		<button class="btn" on:click={() => handleRedo()}>Redo</button>
-	</div>
+	<div class="h2">&nbsp;</div>
 </div>
-<CongratulationModal />
+<div class="hidden"><CongratulationModal /></div>
 
 <style>
 	.white {

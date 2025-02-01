@@ -4,7 +4,7 @@ import { currentGame } from '$lib/stores/currentGameStore';
 export interface jumpState {
 	latest: number;
 	current: number;
-	action: 'undo' | 'redo' | 'init' | 'teardown';
+	action: 'reset' | 'undo' | 'redo' | 'init' | 'teardown';
 }
 
 export const jump = writable<jumpState>({ latest: -1, current: -1, action: 'init' });
@@ -19,6 +19,15 @@ export function init() {
 
 export function tearDown() {
 	jump.set({ latest: -1, current: -1, action: 'teardown' });
+}
+
+export function reset() {
+	if (!isInJump()) init();
+	jump.update((state) => ({
+		latest: state.latest,
+		current: 0,
+		action: 'reset'
+	}));
 }
 
 export function decrementJump() {

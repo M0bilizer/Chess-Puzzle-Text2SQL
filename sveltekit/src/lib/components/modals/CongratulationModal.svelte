@@ -24,12 +24,10 @@
 
 <Modal
 	bind:open
-	triggerBase=""
 	contentBase="md:max-w-sm md:max-w-sm lg:max-w-sm bg-surface-50-950 rounded-container top-[10%] m-0 mx-auto max-h-[90%] w-full max-w-[90%] space-y-8 p-8 text-inherit shadow-2xl"
 	backdropBackground="bg-tertiary-500/25"
 	backdropClasses="backdrop-blur-sm"
 >
-	{#snippet trigger()}<div></div>{/snippet}
 	{#snippet content()}
 		<div class="flex flex-col gap-4">
 			<header class="flex flex-col items-center justify-center gap-2">

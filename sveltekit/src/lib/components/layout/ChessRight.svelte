@@ -3,6 +3,7 @@
 	import NextButton from '$lib/components/layout/NextButton.svelte';
 	import ThemesOrOpening from '$lib/components/layout/ThemesOrOpening.svelte';
 	import { currentGame } from '$lib/stores/currentGameStore';
+	import JumpBar from '$lib/components/layout/JumpBar.svelte';
 </script>
 
 {#if $currentGame.list.length}
@@ -10,6 +11,7 @@
 		<PuzzleDescription />
 		<ThemesOrOpening />
 		<NextButton />
+		<JumpBar />
 	</div>
 {/if}
 
