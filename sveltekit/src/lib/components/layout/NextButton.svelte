@@ -5,6 +5,7 @@
 	import CongratulationModal from '$lib/components/modals/CongratulationModal.svelte';
 	import { loadNextGame, saveGame } from '$lib/utils/storeUtils';
 	import { currentGame, isAllFinished } from '$lib/stores/currentGameStore';
+	import { decrementJump, incrementJump } from '$lib/stores/jumpStore';
 
 	let hasWon = false;
 	let orientation: 'w' | 'b' = 'w';
@@ -20,6 +21,14 @@
 		} else {
 			loadNextGame();
 		}
+	}
+
+	function handleUndo() {
+		decrementJump();
+	}
+
+	function handleRedo() {
+		incrementJump();
 	}
 </script>
 
@@ -45,7 +54,10 @@
 			<h3 class="h3 font-semibold text-inherit">Your Turn</h3>
 		</div>
 	{/if}
-	<div class="h-20"></div>
+	<div class="h-20">
+		<button class="btn" on:click={() => handleUndo()}>Undo</button>
+		<button class="btn" on:click={() => handleRedo()}>Redo</button>
+	</div>
 </div>
 <CongratulationModal />
 

@@ -8,6 +8,7 @@ import { addSearchResult, Searches, updateSearchResult } from '$lib/stores/searc
 import { currentGame, getNextGameIndex, updateCurrentGame } from '$lib/stores/currentGameStore';
 import type { PuzzleInstance } from '$lib/types/puzzleInstance';
 import { get } from 'svelte/store';
+import { isInJump, tearDown } from '$lib/stores/jumpStore';
 
 export function loadFirstGame(query: string, list: PuzzleInstance[]) {
 	const first = list[0];
@@ -24,6 +25,7 @@ export function saveGame(): boolean {
 	if (query == null || index == null || game == null) {
 		return false;
 	}
+	if (isInJump()) tearDown();
 	updateCurrentGame(index, game);
 	updateSearchResult(query, index, game);
 	return true;

@@ -3,9 +3,11 @@
 	import { playMove } from '$lib/utils/chessUtils';
 	import { currentGame, type currentGameState } from '$lib/stores/currentGameStore';
 	import { get } from 'svelte/store';
+	import { jump, isInJump } from '$lib/stores/jumpStore';
 
 	let chess: Chess;
-	let orientation: 'w' | 'b' = 'w';
+	let orientation: 'w' | 'b' = $state('w');
+	let isJumping = $state(false);
 
 	function loadGame(state: currentGameState) {
 		chess.load(state.game.fen);
@@ -24,6 +26,27 @@
 
 	function isLastMove() {
 		return get(currentGame).game.moveIndex > get(currentGame).game.moves.length - 1;
+	}
+
+	function initJump() {
+		const currentGameStore: currentGameState = get(currentGame);
+		chess.load(currentGameStore.list[currentGameStore.index].puzzle.fen);
+		currentGameStore.game.moves
+			.slice(0, currentGameStore.game.moveIndex)
+			.forEach((move) => chess.move(move));
+	}
+
+	function redoJump() {
+		const currentGameStore: currentGameState = get(currentGame);
+		chess.load(currentGameStore.list[currentGameStore.index].puzzle.fen);
+		currentGameStore.game.moves.slice(0, get(jump).current).forEach((move) => chess.move(move));
+	}
+
+	function undoJump() {
+		const currentGameStore: currentGameState = get(currentGame);
+		chess.load(currentGameStore.list[currentGameStore.index].puzzle.fen);
+		currentGameStore.game.moves.slice(0, get(jump).current + 1).forEach((move) => chess.move(move));
+		chess.undo();
 	}
 
 	currentGame.subscribe((state: currentGameState) => {
@@ -57,8 +80,33 @@
 		}
 	});
 
+	jump.subscribe((state) => {
+		if (isInJump()) {
+			isJumping = true;
+			switch (state.action) {
+				case 'init': {
+					initJump();
+					break;
+				}
+				case 'redo': {
+					redoJump();
+					break;
+				}
+				case 'undo': {
+					undoJump();
+					break;
+				}
+				case 'teardown': {
+					chess.load(get(currentGame).game.fen);
+				}
+			}
+		} else {
+			isJumping = false;
+		}
+	});
+
 	function moveListener(event: CustomEvent) {
-		if (!isPlayerMove()) {
+		if (!isPlayerMove() || isJumping) {
 			return;
 		}
 		const move = event.detail;
@@ -81,9 +129,15 @@
 </script>
 
 <div
-	class={`transition ${$currentGame.game.fen === '' ? 'grayscale-[0.75]' : $currentGame.game.hasWon ? 'saturate-200' : ''}`}
+	class={`transition ${
+		$currentGame.game.fen === '' || isJumping
+			? 'grayscale-[0.75]'
+			: $currentGame.game.hasWon
+				? 'saturate-200'
+				: ''
+	}`}
 >
-	<Chess bind:this={chess} bind:orientation on:move={moveListener} />
+	<Chess bind:this={chess} bind:orientation on:move={moveListener}></Chess>
 </div>
 
 <style>
