@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { loadFromSearchRecord } from '$lib/utils/storeUtils';
 	import SearchRecordToolTip from '$lib/components/modals/SearchRecordToolTip.svelte';
+	import { SearchRecordToolTipType } from '$lib/components/modals/SearchRecordToolTipType';
 
 	let { key } = $props();
 
@@ -13,8 +14,8 @@
 	<span class="flex flex-row justify-between gap-2">
 		<span class="truncate text-surface-500">{key}</span>
 		<span class="flex flex-row gap-1">
-			<SearchRecordToolTip {key} type={'won'} />
-			<SearchRecordToolTip {key} type={'notWon'} />
+			<SearchRecordToolTip {key} type={SearchRecordToolTipType.won} />
+			<SearchRecordToolTip {key} type={SearchRecordToolTipType.notWon} />
 		</span>
 	</span>
 </button>
