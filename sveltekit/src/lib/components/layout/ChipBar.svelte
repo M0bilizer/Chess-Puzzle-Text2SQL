@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { isAllFinished, currentGame, getNextGameIndex } from '$lib/stores/currentGameStore';
 	import GameChip from '$lib/components/layout/GameChip.svelte';
+	import { GameChipType } from '$lib/components/layout/GameChipType';
 
-	let types: string[];
+	let types: GameChipType[];
 	currentGame.subscribe((state) => {
 		if (isAllFinished()) {
 			types = new Array(state.list.length).fill('won');
@@ -10,11 +11,11 @@
 			const current = getNextGameIndex();
 			types = state.list.map((instance, index) => {
 				if (index < current) {
-					return 'won';
+					return GameChipType.won;
 				} else if (index === current) {
-					return 'progress';
+					return GameChipType.progress;
 				} else {
-					return 'locked';
+					return GameChipType.locked;
 				}
 			});
 		}
