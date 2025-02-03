@@ -4,21 +4,26 @@ import { currentGame } from '$lib/stores/currentGameStore';
 export interface jumpState {
 	latest: number;
 	current: number;
-	action: 'reset' | 'undo' | 'redo' | 'init' | 'teardown';
+	action: jumpAction;
 }
 
-export const jump = writable<jumpState>({ latest: -1, current: -1, action: 'init' });
+export enum jumpAction {
+	_init,
+	reset,
+	undo,
+	redo,
+	end,
+	_tearDown
+}
+
+export const jump = writable<jumpState>({ latest: -1, current: -1, action: jumpAction._init });
 
 export function init() {
 	jump.set({
 		latest: get(currentGame).game.moveIndex,
 		current: get(currentGame).game.moveIndex,
-		action: 'init'
+		action: jumpAction._init
 	});
-}
-
-export function tearDown() {
-	jump.set({ latest: -1, current: -1, action: 'teardown' });
 }
 
 export function reset() {
@@ -26,7 +31,7 @@ export function reset() {
 	jump.update((state) => ({
 		latest: state.latest,
 		current: 0,
-		action: 'reset'
+		action: jumpAction.reset
 	}));
 }
 
@@ -36,7 +41,7 @@ export function decrementJump() {
 	jump.update((state) => ({
 		latest: state.latest,
 		current: state.current - 1,
-		action: 'undo'
+		action: jumpAction.undo
 	}));
 }
 
@@ -45,11 +50,25 @@ export function incrementJump() {
 	jump.update((state) => ({
 		latest: state.latest,
 		current: state.current + 1,
-		action: 'redo'
+		action: jumpAction.redo
 	}));
 	if (get(jump).current === get(jump).latest) {
 		tearDown();
 	}
+}
+
+export function endJump() {
+	if (!isInJump()) return;
+	jump.update((state) => ({
+		latest: state.latest,
+		current: state.latest,
+		action: jumpAction.end
+	}));
+	tearDown();
+}
+
+export function tearDown() {
+	jump.set({ latest: -1, current: -1, action: jumpAction._tearDown });
 }
 
 export function isInJump() {

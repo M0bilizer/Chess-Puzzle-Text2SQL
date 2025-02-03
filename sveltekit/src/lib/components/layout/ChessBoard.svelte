@@ -3,7 +3,7 @@
 	import { playMove } from '$lib/utils/chessUtils';
 	import { currentGame, type currentGameState } from '$lib/stores/currentGameStore';
 	import { get } from 'svelte/store';
-	import { jump, isInJump } from '$lib/stores/jumpStore';
+	import { jump, isInJump, jumpAction } from '$lib/stores/jumpStore';
 
 	let chess: Chess;
 	let orientation: 'w' | 'b' = $state('w');
@@ -28,12 +28,16 @@
 		return get(currentGame).game.moveIndex > get(currentGame).game.moves.length - 1;
 	}
 
-	function initJump() {
+	function resetJump() {
 		const currentGameStore: currentGameState = get(currentGame);
 		chess.load(currentGameStore.list[currentGameStore.index].puzzle.fen);
-		currentGameStore.game.moves
-			.slice(0, currentGameStore.game.moveIndex)
-			.forEach((move) => chess.move(move));
+	}
+
+	function undoJump() {
+		const currentGameStore: currentGameState = get(currentGame);
+		chess.load(currentGameStore.list[currentGameStore.index].puzzle.fen);
+		currentGameStore.game.moves.slice(0, get(jump).current + 1).forEach((move) => chess.move(move));
+		chess.undo();
 	}
 
 	function redoJump() {
@@ -42,11 +46,10 @@
 		currentGameStore.game.moves.slice(0, get(jump).current).forEach((move) => chess.move(move));
 	}
 
-	function undoJump() {
+	function endJump() {
 		const currentGameStore: currentGameState = get(currentGame);
 		chess.load(currentGameStore.list[currentGameStore.index].puzzle.fen);
-		currentGameStore.game.moves.slice(0, get(jump).current + 1).forEach((move) => chess.move(move));
-		chess.undo();
+		currentGameStore.game.moves.slice(0, get(jump).current).forEach((move) => chess.move(move));
 	}
 
 	currentGame.subscribe((state: currentGameState) => {
@@ -83,21 +86,25 @@
 	jump.subscribe((state) => {
 		if (isInJump()) {
 			isJumping = true;
-			switch (state.action) {
-				case 'init': {
-					initJump();
+			switch (state.action as jumpAction) {
+				case jumpAction.reset: {
+					resetJump();
 					break;
 				}
-				case 'redo': {
-					redoJump();
-					break;
-				}
-				case 'undo': {
+				case jumpAction.undo: {
 					undoJump();
 					break;
 				}
-				case 'teardown': {
-					chess.load(get(currentGame).game.fen);
+				case jumpAction.redo: {
+					redoJump();
+					break;
+				}
+				case jumpAction.end: {
+					endJump();
+					break;
+				}
+				default: {
+					console.warn(`Unrecognized action: ${state.action}`);
 				}
 			}
 		} else {

@@ -4,15 +4,24 @@
 	import Fa6SolidForwardStep from 'virtual:icons/fa6-solid/forward-step';
 	import Fa6SolidForwardFast from 'virtual:icons/fa6-solid/forward-fast';
 	import Fa6SolidBars from 'virtual:icons/fa6-solid/bars';
-	import { decrementJump, incrementJump, isInJump, jump, tearDown } from '$lib/stores/jumpStore';
+	import {
+		decrementJump,
+		endJump,
+		incrementJump,
+		isInJump,
+		jump,
+		reset
+	} from '$lib/stores/jumpStore';
 
 	let isJumping = $state(false);
 
 	jump.subscribe(() => {
-		isJumping = isInJump()
-	})
+		isJumping = isInJump();
+	});
 
-	function handleFastUndo() {}
+	function handleFastUndo() {
+		reset();
+	}
 
 	function handleUndo() {
 		decrementJump();
@@ -23,7 +32,7 @@
 	}
 
 	function handleFastRedo() {
-		tearDown()
+		endJump();
 	}
 </script>
 
