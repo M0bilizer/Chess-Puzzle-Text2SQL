@@ -6,7 +6,7 @@
 	let types: GameChipType[];
 	currentGame.subscribe((state) => {
 		if (isAllFinished()) {
-			types = new Array(state.list.length).fill('won');
+			types = new Array(state.list.length).fill(GameChipType.won);
 		} else {
 			const current = getNextGameIndex();
 			types = state.list.map((instance, index) => {
