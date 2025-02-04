@@ -8,15 +8,18 @@
 		decrementJump,
 		endJump,
 		incrementJump,
+		isAtStart,
 		isInJump,
 		jump,
 		reset
 	} from '$lib/stores/jumpStore';
 
+	let disableUndo = $state(false);
 	let isJumping = $state(false);
 
 	jump.subscribe(() => {
 		isJumping = isInJump();
+		disableUndo = isAtStart();
 	});
 
 	function handleFastUndo() {
@@ -37,10 +40,10 @@
 </script>
 
 <div class="flex flex-row justify-around gap-2">
-	<button onclick={() => handleFastUndo()}>
+	<button onclick={() => handleFastUndo()} disabled={disableUndo}>
 		<Fa6SolidBackwardFast class="size-4 text-tertiary-500" />
 	</button>
-	<button onclick={() => handleUndo()}>
+	<button onclick={() => handleUndo()} disabled={disableUndo}>
 		<Fa6SolidBackwardStep class="size-6 text-tertiary-500" />
 	</button>
 	<button onclick={() => handleRedo()} disabled={!isJumping}>

@@ -74,3 +74,7 @@ export function tearDown() {
 export function isInJump() {
 	return get(jump).latest !== -1;
 }
+
+export function isAtStart() {
+	return get(jump).current === 0;
+}
