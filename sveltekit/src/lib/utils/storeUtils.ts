@@ -22,7 +22,7 @@ export function loadFirstGame(query: string, list: PuzzleInstance[]) {
 
 export function saveGame(): boolean {
 	const { query, index, game } = get(currentGame);
-	if (query == null || index == null || game == null) {
+	if (query == '' || game.fen == '') {
 		return false;
 	}
 	if (isInJump()) tearDown();
