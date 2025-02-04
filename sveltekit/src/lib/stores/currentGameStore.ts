@@ -47,3 +47,18 @@ export function updateCurrentGame(index: number, game: GameProgress) {
 		};
 	});
 }
+
+export function clearCurrentGame() {
+	currentGame.set({
+		query: '',
+		list: [],
+		index: 0,
+		game: {
+			fen: '',
+			orientation: 'w',
+			moves: [],
+			moveIndex: 0,
+			hasWon: false
+		}
+	});
+}

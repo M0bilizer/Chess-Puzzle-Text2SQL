@@ -3,7 +3,7 @@
 	import { playMove } from '$lib/utils/chessUtils';
 	import { currentGame, type currentGameState } from '$lib/stores/currentGameStore';
 	import { get } from 'svelte/store';
-	import { jump, isInJump, jumpAction } from '$lib/stores/jumpStore';
+	import { isInJump, jump, jumpAction } from '$lib/stores/jumpStore';
 
 	let chess: Chess;
 	let orientation: 'w' | 'b' = $state('w');
@@ -53,6 +53,7 @@
 	}
 
 	currentGame.subscribe((state: currentGameState) => {
+		if (state.query === '') chess?.reset();
 		if (state.game.fen !== '') loadGame(state);
 		if (state.game.hasWon == false) {
 			if (!isPlayerMove()) {
