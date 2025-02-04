@@ -59,11 +59,15 @@ export async function searchPuzzles(
 	try {
 		isLoading.set(true);
 
-		const result: Puzzle[] = await getResponse(query, debug);
-		const list = mapToInstance(result);
+		if (get(Searches).get(query) == null) {
+			const result: Puzzle[] = await getResponse(query, debug);
+			const list = mapToInstance(result);
 
-		loadFirstGame(query, list);
-		addSearchResult(query, list);
+			loadFirstGame(query, list);
+			addSearchResult(query, list);
+		} else {
+			loadFromSearchRecord(query);
+		}
 
 		isLoading.set(false);
 		return true;
