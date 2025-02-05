@@ -3,7 +3,6 @@
 	import Fa6SolidBackwardStep from 'virtual:icons/fa6-solid/backward-step';
 	import Fa6SolidForwardStep from 'virtual:icons/fa6-solid/forward-step';
 	import Fa6SolidForwardFast from 'virtual:icons/fa6-solid/forward-fast';
-	import Fa6SolidBars from 'virtual:icons/fa6-solid/bars';
 	import {
 		decrementJump,
 		endJump,
@@ -13,6 +12,7 @@
 		jump,
 		reset
 	} from '$lib/stores/jumpStore';
+	import BurgerMenu from '$lib/components/layout/BurgerMenu.svelte';
 
 	let disableUndo = $state(false);
 	let isJumping = $state(false);
@@ -52,7 +52,7 @@
 	<button onclick={() => handleFastRedo()} disabled={!isJumping}>
 		<Fa6SolidForwardFast class="size-6 text-tertiary-500" />
 	</button>
-	<Fa6SolidBars class="size-4 text-tertiary-500" />
+	<BurgerMenu />
 </div>
 
 <style>
