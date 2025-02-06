@@ -24,9 +24,8 @@
 </script>
 
 <div
-	class="card h-max w-full max-w-md border-[1px] shadow-xl border-surface-200-800 preset-filled-surface-100-900"
+	class="card h-[250px] w-full max-w-md border-[1px] py-12 align-middle shadow-xl border-surface-200-800 preset-filled-surface-100-900"
 >
-	<div class="h2">&nbsp;</div>
 	{#if hasWon}
 		<button
 			class="flex w-full flex-row items-center gap-2 py-10 pl-2 preset-filled-primary-100-900 hover:preset-filled-primary-200-800"
@@ -37,15 +36,23 @@
 		</button>
 	{:else}
 		<div
-			class="flex flex-row items-center justify-center gap-2 py-8 align-middle"
+			class="flex flex-col items-center gap-2"
 			class:white={orientation === 'w'}
 			class:black={orientation === 'b'}
 		>
 			<Fa6SolidChessKing class="size-16 text-inherit"></Fa6SolidChessKing>
-			<h3 class="h3 font-semibold text-inherit">Your Turn</h3>
+			<div class="flex flex-col items-center">
+				<h3 class="h3 font-semibold text-inherit">Your Turn</h3>
+				<span
+					class="text-sm font-semibold text-surface-500"
+					class:white={orientation === 'w'}
+					class:black={orientation === 'b'}
+				>
+					Find the best move for {orientation === 'w' ? 'white' : 'black'}
+				</span>
+			</div>
 		</div>
 	{/if}
-	<div class="h2">&nbsp;</div>
 </div>
 <div class="hidden"><CongratulationModal /></div>
 
