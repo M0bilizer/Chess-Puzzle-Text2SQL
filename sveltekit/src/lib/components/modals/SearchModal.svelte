@@ -7,20 +7,25 @@
 	import HelpToolTip from '$lib/components/modals/HelpToolTip.svelte';
 	import { Search } from 'lucide-svelte';
 	import { isLoading } from '$lib/stores/isLoading';
-	import { saveGame, searchPuzzles } from '$lib/utils/storeUtils';
-	import { haveGame } from '$lib/stores/currentGameStore';
+	import { Result, searchPuzzles } from '$lib/utils/searchUtil';
 
 	let modalOpen = $state(false);
 	let query = $state('');
 
 	async function handleSearch(event: Event) {
 		event.preventDefault();
-		if (haveGame()) saveGame();
-		const success = await searchPuzzles(query, 'stub');
-		if (success) {
-			modalOpen = false;
-		} else {
-			console.log('couldnt get data');
+		const result: Result = await searchPuzzles(query);
+		switch (+result) {
+			case Result.Success: {
+				modalOpen = false;
+				break;
+			}
+			case Result.ClientError: {
+				break;
+			}
+			case Result.BackendError: {
+				break;
+			}
 		}
 	}
 </script>
