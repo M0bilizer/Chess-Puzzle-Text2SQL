@@ -2,6 +2,7 @@
 	import Fa6SolidTrashCan from 'virtual:icons/fa6-solid/trash-can';
 	import { Tooltip } from '@skeletonlabs/skeleton-svelte';
 	import { deleteAllSearchResult } from '$lib/stores/searchesStore';
+
 	let openState = $state(false);
 
 	function clearResult() {

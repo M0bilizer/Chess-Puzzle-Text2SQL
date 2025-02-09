@@ -3,7 +3,6 @@
 	import ChessLeft from '$lib/components/layout/ChessLeft.svelte';
 	import ChessBoard from '$lib/components/layout/ChessBoard.svelte';
 	import ChipBar from '$lib/components/layout/ChipBar.svelte';
-	import CongratulationModal from '$lib/components/modals/CongratulationModal.svelte';
 </script>
 
 <div

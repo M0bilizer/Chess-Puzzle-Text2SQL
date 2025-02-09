@@ -8,7 +8,6 @@
 	import { Result, searchPuzzles } from '$lib/utils/searchUtil';
 	import { searchModalState } from '$lib/stores/modalStore';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
-	import { toastUtil } from '$lib/utils/toastUtils';
 
 	let query = $state('');
 	let open = $state(false);

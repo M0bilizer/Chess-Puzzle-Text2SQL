@@ -6,8 +6,8 @@ import { haveGame } from '$lib/stores/currentGameStore';
 import { loadFirstGame, loadFromSearchRecord, saveGame } from '$lib/utils/storeUtils';
 import { isLoading } from '$lib/stores/isLoading';
 import { addSearchResult, searches } from '$lib/stores/searchesStore';
-import { toast } from '@zerodevx/svelte-toast';
-import { toastUtil } from '$lib/utils/toastUtils';
+import { toastFailure, toastInfo } from '$lib/utils/toastUtils';
+import { getDataStub } from '$lib/utils/dataStub';
 
 export enum Result {
 	Success,
@@ -37,22 +37,31 @@ export async function searchPuzzles(query: string): Promise<Result> {
 				result = Result.Success;
 			} else {
 				console.error('Search failed:', response.statusText);
-				toastUtil('Backend have internal error!', 'root');
+				toastFailure('Backend have internal error!', 'modal');
 				result = Result.BackendError;
 			}
 		} catch (error) {
 			console.error('Search error:', error);
-			toastUtil('Cannot communicate with backend!', 'root');
+			toastFailure('Cannot communicate with backend!', 'modal');
 			result = Result.ClientError;
 		}
 	} else {
 		loadFromSearchRecord(query);
-		toastUtil('Reloaded game progress', 'root');
+		toastInfo('Reloaded game progress', 'root');
 		result = Result.Success;
 	}
 
 	isLoading.set(false);
 	return result;
+}
+
+export async function loadRandomPuzzle(query: string) {
+	isLoading.set(true);
+	const list = _mapToInstance(getDataStub());
+	loadFirstGame(query, list);
+	addSearchResult(query, list);
+	toastInfo('Loaded random puzzles', 'root');
+	isLoading.set(false);
 }
 
 function _mapToInstance(list: Puzzle[]): PuzzleInstance[] {

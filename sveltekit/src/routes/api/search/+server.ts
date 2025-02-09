@@ -1,6 +1,5 @@
 import type { Puzzle } from '$lib/types/puzzle';
 import { KOTLIN_SPRING_URL } from '$env/static/private';
-import { getDataStub } from '$lib/utils/dataStub';
 import { json, type RequestHandler } from '@sveltejs/kit';
 
 class Success {
@@ -24,17 +23,17 @@ type Result = Success | Failure;
 export const POST: RequestHandler = async ({ request }) => {
 	const { query } = await request.json();
 
+	let result: Result;
 	try {
-		const result = await _callBackend(query);
-		if (result instanceof Failure) {
-			const data = getDataStub();
-			return json({ status: 'stub', data });
-		} else {
-			return json({ status: 'success', data: result.data });
-		}
+		result = await _callBackend(query);
 	} catch (error) {
-		const data = getDataStub();
-		return json({ status: 'failure', message: error.message || 'An error occurred', data: data });
+		return json({ status: 'failure', message: error.message });
+	}
+
+	if (result instanceof Failure) {
+		return json({ status: 'failure', message: result.message });
+	} else {
+		return json({ status: 'success', data: result.data });
 	}
 };
 

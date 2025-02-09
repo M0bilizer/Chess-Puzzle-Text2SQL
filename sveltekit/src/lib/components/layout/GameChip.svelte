@@ -8,6 +8,7 @@
 	import { Chessground } from 'svelte-chessground';
 	import { get } from 'svelte/store';
 	import { getFirstMoveColor } from '$lib/utils/chessUtils';
+
 	let openState = $state(false);
 	let { type, index } = $props();
 

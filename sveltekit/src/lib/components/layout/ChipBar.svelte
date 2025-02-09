@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { isAllFinished, currentGame, getNextGameIndex } from '$lib/stores/currentGameStore';
+	import { currentGame, getNextGameIndex, isAllFinished } from '$lib/stores/currentGameStore';
 	import GameChip from '$lib/components/layout/GameChip.svelte';
 	import { GameChipType } from '$lib/components/layout/GameChipType';
 
