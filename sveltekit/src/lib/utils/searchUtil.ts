@@ -37,12 +37,12 @@ export async function searchPuzzles(query: string): Promise<Result> {
 				result = Result.Success;
 			} else {
 				console.error('Search failed:', response.statusText);
-				toastFailure('Backend have internal error!', 'modal');
+				toastFailure('Backend have internal error!', 'modal', query);
 				result = Result.BackendError;
 			}
 		} catch (error) {
 			console.error('Search error:', error);
-			toastFailure('Cannot communicate with backend!', 'modal');
+			toastFailure('Cannot communicate with backend!', 'modal', query);
 			result = Result.ClientError;
 		}
 	} else {
