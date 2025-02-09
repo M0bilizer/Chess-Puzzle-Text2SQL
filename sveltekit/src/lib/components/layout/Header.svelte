@@ -1,6 +1,7 @@
 <script lang="ts">
 	import SearchModal from '$lib/components/modals/SearchModal.svelte';
 	import Title from '$lib/components/Title.svelte';
+	import DebugModal from '$lib/components/modals/DebugModal.svelte';
 </script>
 
 <header class="w-full border-b-[1px] border-surface-500/20 p-4 py-3 bg-surface-50-950 sm:px-10">
@@ -10,9 +11,7 @@
 		<div class="left"><Title /></div>
 		<div class="middle"><SearchModal /></div>
 		<div class="right">
-			<a href="/debug" class="text-sm text-primary-500 hover:text-primary-700 hover:underline"
-				>Debug</a
-			>
+			<DebugModal />
 		</div>
 	</div>
 </header>
