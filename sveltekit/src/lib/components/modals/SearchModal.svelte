@@ -7,10 +7,13 @@
 	import { isLoading } from '$lib/stores/isLoading';
 	import { Result, searchPuzzles } from '$lib/utils/searchUtil';
 	import { searchModalState } from '$lib/stores/modalStore';
-	import { Toaster } from 'svelte-sonner';
+	import { SvelteToast } from '@zerodevx/svelte-toast';
+	import { toastUtil } from '$lib/utils/toastUtils';
 
 	let query = $state('');
 	let open = $state(false);
+
+	const options = {};
 
 	searchModalState.subscribe((state) => {
 		open = state.open;
@@ -19,7 +22,8 @@
 	async function handleSearch(event: Event) {
 		event.preventDefault();
 		const result: Result = await searchPuzzles(query);
-		if (result === Result.Success) searchModalState.set({ open: false });
+		toastUtil('test', 'modal');
+		// if (result === Result.Success) searchModalState.set({ open: false });
 	}
 </script>
 
@@ -31,19 +35,7 @@
 >
 	{#snippet content()}
 		<div>
-			<Toaster
-				closeButton
-				duration={10000}
-				expand={true}
-				toastOptions={{
-					unstyled: true,
-					classes: {
-						toast: '!z-[1000] toast card shadow-xl p-4 bg-surface-50-950 right-0',
-						title: 'text-primary-950-50',
-						closeButton: 'chip-icon preset-filled !z-[1000]'
-					}
-				}}
-			/>
+			<SvelteToast target="modal" {options} />
 			<form onsubmit={handleSearch}>
 				<header class="flex items-center justify-center gap-2">
 					<Fa6SolidChessKing class="size-6 text-tertiary-500" />

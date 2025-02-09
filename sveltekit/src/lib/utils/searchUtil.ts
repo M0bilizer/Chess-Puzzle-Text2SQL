@@ -6,7 +6,7 @@ import { haveGame } from '$lib/stores/currentGameStore';
 import { loadFirstGame, loadFromSearchRecord, saveGame } from '$lib/utils/storeUtils';
 import { isLoading } from '$lib/stores/isLoading';
 import { addSearchResult, searches } from '$lib/stores/searchesStore';
-import { toast } from 'svelte-sonner';
+import { toast } from '@zerodevx/svelte-toast';
 
 export enum Result {
 	Success,
@@ -36,12 +36,10 @@ export async function searchPuzzles(query: string): Promise<Result> {
 				result = Result.Success;
 			} else {
 				console.error('Search failed:', response.statusText);
-				toast('response.statusText');
 				result = Result.BackendError;
 			}
 		} catch (error) {
 			console.error('Search error:', error);
-			toast('response.statusText');
 			result = Result.ClientError;
 		}
 	} else {
@@ -50,7 +48,6 @@ export async function searchPuzzles(query: string): Promise<Result> {
 	}
 
 	isLoading.set(false);
-	toast('response.statusText');
 	return result;
 }
 

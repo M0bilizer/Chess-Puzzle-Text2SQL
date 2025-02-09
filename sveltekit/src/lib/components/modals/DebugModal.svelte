@@ -1,14 +1,5 @@
 <script lang="ts">
-	import { Modal, ProgressRing } from '@skeletonlabs/skeleton-svelte';
-	import SearchBox from '$lib/components/SearchBox.svelte';
-	import { Toaster } from 'svelte-sonner';
-	import Fa6SolidChessKing from 'virtual:icons/fa6-solid/chess-king';
-	import Fa6SolidChessQueen from 'virtual:icons/fa6-solid/chess-queen';
-	import HelpToolTip from '$lib/components/modals/HelpToolTip.svelte';
-	import { Search } from 'lucide-svelte';
-	import { isLoading } from '$lib/stores/isLoading';
-	import { Result, searchPuzzles } from '$lib/utils/searchUtil';
-	import { goto } from '$app/navigation';
+	import { Modal } from '@skeletonlabs/skeleton-svelte';
 
 	let modalOpen = $state(false);
 </script>
