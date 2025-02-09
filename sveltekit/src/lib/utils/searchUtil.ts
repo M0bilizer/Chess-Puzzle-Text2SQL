@@ -7,6 +7,7 @@ import { loadFirstGame, loadFromSearchRecord, saveGame } from '$lib/utils/storeU
 import { isLoading } from '$lib/stores/isLoading';
 import { addSearchResult, searches } from '$lib/stores/searchesStore';
 import { toast } from '@zerodevx/svelte-toast';
+import { toastUtil } from '$lib/utils/toastUtils';
 
 export enum Result {
 	Success,
@@ -36,14 +37,17 @@ export async function searchPuzzles(query: string): Promise<Result> {
 				result = Result.Success;
 			} else {
 				console.error('Search failed:', response.statusText);
+				toastUtil('Backend have internal error!', 'root');
 				result = Result.BackendError;
 			}
 		} catch (error) {
 			console.error('Search error:', error);
+			toastUtil('Cannot communicate with backend!', 'root');
 			result = Result.ClientError;
 		}
 	} else {
 		loadFromSearchRecord(query);
+		toastUtil('Reloaded game progress', 'root');
 		result = Result.Success;
 	}
 

@@ -22,8 +22,7 @@
 	async function handleSearch(event: Event) {
 		event.preventDefault();
 		const result: Result = await searchPuzzles(query);
-		toastUtil('test', 'modal');
-		// if (result === Result.Success) searchModalState.set({ open: false });
+		if (result === Result.Success) searchModalState.set({ open: false });
 	}
 </script>
 
