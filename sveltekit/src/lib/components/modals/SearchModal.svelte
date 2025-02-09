@@ -1,55 +1,46 @@
 <script lang="ts">
 	import { Modal, ProgressRing } from '@skeletonlabs/skeleton-svelte';
-	import SearchBox from '$lib/components/SearchBox.svelte';
-	import { Toaster } from 'svelte-sonner';
 	import Fa6SolidChessKing from 'virtual:icons/fa6-solid/chess-king';
 	import Fa6SolidChessQueen from 'virtual:icons/fa6-solid/chess-queen';
 	import HelpToolTip from '$lib/components/modals/HelpToolTip.svelte';
 	import { Search } from 'lucide-svelte';
 	import { isLoading } from '$lib/stores/isLoading';
 	import { Result, searchPuzzles } from '$lib/utils/searchUtil';
-	import { goto } from '$app/navigation';
+	import { searchModalState } from '$lib/stores/modalStore';
+	import { Toaster } from 'svelte-sonner';
 
-	let modalOpen = $state(false);
 	let query = $state('');
+	let open = $state(false);
+
+	searchModalState.subscribe((state) => {
+		open = state.open;
+	});
 
 	async function handleSearch(event: Event) {
 		event.preventDefault();
 		const result: Result = await searchPuzzles(query);
-		switch (+result) {
-			case Result.Success: {
-				modalOpen = false;
-				break;
-			}
-			case Result.ClientError: {
-				break;
-			}
-			case Result.BackendError: {
-				break;
-			}
-		}
+		if (result === Result.Success) searchModalState.set({ open: false });
 	}
 </script>
 
 <Modal
-	bind:open={modalOpen}
-	triggerBase="btn btn-lg preset-filled-primary-500"
+	bind:open
 	contentBase="bg-surface-50-950 rounded-container top-[10%] m-0 mx-auto max-h-[90%] w-full max-w-[90%] space-y-8 p-8 text-inherit shadow-2xl md:max-w-[75%] md:max-w-2xl lg:max-w-4xl"
 	backdropBackground="bg-tertiary-500/25"
 	backdropClasses="backdrop-blur-sm"
 >
-	{#snippet trigger()}<SearchBox />{/snippet}
 	{#snippet content()}
 		<div>
 			<Toaster
 				closeButton
 				duration={10000}
+				expand={true}
 				toastOptions={{
 					unstyled: true,
 					classes: {
 						toast: '!z-[1000] toast card shadow-xl p-4 bg-surface-50-950 right-0',
 						title: 'text-primary-950-50',
-						closeButton: 'chip-icon preset-filled'
+						closeButton: 'chip-icon preset-filled !z-[1000]'
 					}
 				}}
 			/>

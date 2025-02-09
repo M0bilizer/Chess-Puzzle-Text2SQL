@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { Modal } from '@skeletonlabs/skeleton-svelte';
 	import { PartyPopper } from 'lucide-svelte';
-	import { modalState } from '$lib/stores/congratulationModalStore';
 	import { currentGame } from '$lib/stores/currentGameStore';
+	import { congratulationModalState } from '$lib/stores/modalStore';
 
 	let query: string = '';
 	let length: number = 0;
@@ -13,12 +13,12 @@
 	});
 
 	let open = false;
-	modalState.subscribe((state) => {
+	congratulationModalState.subscribe((state) => {
 		open = state.open;
 	});
 
 	function closeModal() {
-		modalState.set({ open: false });
+		congratulationModalState.set({ open: false });
 	}
 </script>
 

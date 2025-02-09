@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Searches } from '$lib/stores/searchesStore';
+	import { searches } from '$lib/stores/searchesStore';
 	import { Tooltip } from '@skeletonlabs/skeleton-svelte';
 	import { SearchRecordToolTipType } from '$lib/components/modals/SearchRecordToolTipType';
 
@@ -7,7 +7,7 @@
 	let { key, type } = $props();
 
 	let number = $state(0);
-	Searches.subscribe((state) => {
+	searches.subscribe((state) => {
 		const list = state.get(key);
 		if (list === undefined) {
 			number = -2;

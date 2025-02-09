@@ -1,7 +1,7 @@
 <script lang="ts">
-	import SearchModal from '$lib/components/modals/SearchModal.svelte';
 	import Title from '$lib/components/Title.svelte';
 	import DebugModal from '$lib/components/modals/DebugModal.svelte';
+	import SearchBox from '$lib/components/SearchBox.svelte';
 </script>
 
 <header class="w-full border-b-[1px] border-surface-500/20 p-4 py-3 bg-surface-50-950 sm:px-10">
@@ -9,7 +9,7 @@
 		class="container mx-auto grid max-w-screen-2xl grid-cols-[auto_1fr_auto] items-center gap-4 sm:grid-cols-[1fr_auto_1fr]"
 	>
 		<div class="left"><Title /></div>
-		<div class="middle"><SearchModal /></div>
+		<div class="middle"><SearchBox /></div>
 		<div class="right">
 			<DebugModal />
 		</div>

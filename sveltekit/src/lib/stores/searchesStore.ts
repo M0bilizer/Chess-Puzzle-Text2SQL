@@ -2,17 +2,17 @@ import { get, writable } from 'svelte/store';
 import type { PuzzleInstance } from '$lib/types/puzzleInstance';
 import type { GameProgress } from '$lib/types/gameProgress';
 
-export const Searches = writable<Map<string, PuzzleInstance[]>>(new Map());
+export const searches = writable<Map<string, PuzzleInstance[]>>(new Map());
 
 export function addSearchResult(query: string, results: PuzzleInstance[]) {
-	Searches.update((state) => {
+	searches.update((state) => {
 		state.set(query, results);
 		return state;
 	});
 }
 
 export function updateSearchResult(query: string, index: number, game: GameProgress) {
-	Searches.update((state) => {
+	searches.update((state) => {
 		const result = state.get(query);
 		if (!result) {
 			return state;
@@ -27,16 +27,16 @@ export function updateSearchResult(query: string, index: number, game: GameProgr
 }
 
 export function hasSearched(query: string): boolean {
-	return get(Searches).has(query);
+	return get(searches).has(query);
 }
 
 export function deleteSearchResult(query: string) {
-	Searches.update((state) => {
+	searches.update((state) => {
 		state.delete(query);
 		return state;
 	});
 }
 
 export function deleteAllSearchResult() {
-	Searches.set(new Map());
+	searches.set(new Map());
 }

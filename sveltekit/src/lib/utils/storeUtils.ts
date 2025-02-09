@@ -1,4 +1,4 @@
-import { Searches, updateSearchResult } from '$lib/stores/searchesStore';
+import { searches, updateSearchResult } from '$lib/stores/searchesStore';
 import { currentGame, getNextGameIndex, updateCurrentGame } from '$lib/stores/currentGameStore';
 import type { PuzzleInstance } from '$lib/types/puzzleInstance';
 import { get } from 'svelte/store';
@@ -58,7 +58,7 @@ export function loadGame(index: number) {
 export function loadFromSearchRecord(query: string) {
 	if (get(currentGame).query === query) return;
 	saveGame();
-	const result = get(Searches).get(query) as PuzzleInstance[];
+	const result = get(searches).get(query) as PuzzleInstance[];
 	let index = result.findIndex((value) => !value.progress.hasWon);
 	if (index === -1) {
 		index = result.length - 1;
