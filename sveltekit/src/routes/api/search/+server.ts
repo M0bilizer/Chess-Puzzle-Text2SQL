@@ -34,9 +34,9 @@ export const POST: RequestHandler = async ({ request }) => {
 		}
 	} catch (error) {
 		const data = getDataStub();
-		return json({ status: 'failure', message: error.message || 'An error occurred', data: data});
+		return json({ status: 'failure', message: error.message || 'An error occurred', data: data });
 	}
-}
+};
 
 async function _callBackend(query: string): Promise<Result> {
 	const res = await fetch(`${KOTLIN_SPRING_URL}/queryPuzzle`, {

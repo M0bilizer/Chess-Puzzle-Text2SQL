@@ -45,6 +45,3 @@
 		{/if}
 	{/snippet}
 </Tooltip>
-
-<style>
-</style>

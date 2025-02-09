@@ -54,6 +54,3 @@
 	</button>
 	<BurgerMenu />
 </div>
-
-<style>
-</style>

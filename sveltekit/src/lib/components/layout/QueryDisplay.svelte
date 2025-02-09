@@ -22,6 +22,3 @@
 		<h5 class="h5 text-center">No puzzles found...</h5>
 	{/if}
 </div>
-
-<style>
-</style>

@@ -14,6 +14,3 @@
 		<JumpBar />
 	</div>
 {/if}
-
-<style>
-</style>

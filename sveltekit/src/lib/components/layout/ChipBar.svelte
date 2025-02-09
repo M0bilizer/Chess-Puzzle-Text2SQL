@@ -27,6 +27,3 @@
 		<GameChip {type} {index} />
 	{/each}
 </div>
-
-<style>
-</style>

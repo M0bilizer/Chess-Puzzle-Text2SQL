@@ -6,6 +6,3 @@
 	<SearchIcon />
 	<span>Search...</span>
 </div>
-
-<style>
-</style>

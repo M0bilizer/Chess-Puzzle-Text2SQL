@@ -8,6 +8,7 @@
 	import { Search } from 'lucide-svelte';
 	import { isLoading } from '$lib/stores/isLoading';
 	import { Result, searchPuzzles } from '$lib/utils/searchUtil';
+	import { goto } from '$app/navigation';
 
 	let modalOpen = $state(false);
 	let query = $state('');
@@ -92,6 +93,3 @@
 		</div>
 	{/snippet}
 </Modal>
-
-<style>
-</style>

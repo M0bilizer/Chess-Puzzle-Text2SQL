@@ -147,6 +147,3 @@
 >
 	<Chess bind:this={chess} bind:orientation on:move={moveListener}></Chess>
 </div>
-
-<style>
-</style>

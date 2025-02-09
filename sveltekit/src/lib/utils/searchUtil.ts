@@ -10,7 +10,7 @@ import { addSearchResult, Searches } from '$lib/stores/searchesStore';
 export enum Result {
 	Success,
 	BackendError,
-	ClientError,
+	ClientError
 }
 
 export async function searchPuzzles(query: string): Promise<Result> {
@@ -32,10 +32,10 @@ export async function searchPuzzles(query: string): Promise<Result> {
 				const list = _mapToInstance(json.data);
 				loadFirstGame(query, list);
 				addSearchResult(query, list);
-				result = Result.Success
+				result = Result.Success;
 			} else {
 				console.error('Search failed:', response.statusText);
-				result = Result.BackendError
+				result = Result.BackendError;
 			}
 		} catch (error) {
 			console.error('Search error:', error);

@@ -19,6 +19,3 @@
 		</span>
 	</span>
 </button>
-
-<style>
-</style>

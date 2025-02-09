@@ -9,7 +9,11 @@
 	>
 		<div class="left"><Title /></div>
 		<div class="middle"><SearchModal /></div>
-		<div class="right"></div>
+		<div class="right">
+			<a href="/debug" class="text-sm text-primary-500 hover:text-primary-700 hover:underline"
+				>Debug</a
+			>
+		</div>
 	</div>
 </header>
 

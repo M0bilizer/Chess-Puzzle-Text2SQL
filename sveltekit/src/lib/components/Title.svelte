@@ -15,6 +15,3 @@
 	<Fa6SolidChess class="size-6" />
 	<span class="text-xs font-bold tracking-tighter">Text2SQL</span>
 </button>
-
-<style>
-</style>

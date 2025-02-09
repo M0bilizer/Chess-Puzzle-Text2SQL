@@ -48,6 +48,3 @@
 		</div>
 	{/snippet}
 </Modal>
-
-<style>
-</style>

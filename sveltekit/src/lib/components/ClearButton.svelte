@@ -23,6 +23,3 @@
 		</button>{/snippet}
 	{#snippet content()}<span class="text-surface-500">Clear all search</span>{/snippet}
 </Tooltip>
-
-<style>
-</style>

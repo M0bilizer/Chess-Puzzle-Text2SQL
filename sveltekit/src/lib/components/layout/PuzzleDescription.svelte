@@ -23,6 +23,3 @@
 		<li class="text-left">Played <b>{nbPlays}</b> {nbPlays === 1 ? 'time' : 'times'}</li>
 	</ul>
 </div>
-
-<style>
-</style>

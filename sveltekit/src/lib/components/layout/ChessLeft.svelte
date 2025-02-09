@@ -7,6 +7,3 @@
 	<QueryDisplay />
 	<RecentSearches />
 </div>
-
-<style>
-</style>
