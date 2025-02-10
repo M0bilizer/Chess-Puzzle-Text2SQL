@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Tooltip } from '@skeletonlabs/skeleton-svelte';
-	import { CircleHelp } from 'lucide-svelte';
+	import Fa6SolidCircleQuestion from 'virtual:icons/fa6-solid/circle-question';
 
 	let openState = $state(false);
 </script>
@@ -13,6 +13,6 @@
 	openDelay={200}
 	classes="hidden sm:block"
 >
-	{#snippet trigger()}<CircleHelp class="align-vertical size-4" />{/snippet}
+	{#snippet trigger()}<Fa6SolidCircleQuestion class="size-4" />{/snippet}
 	{#snippet content()}Text2Sql allows you to search using natural language!{/snippet}
 </Tooltip>

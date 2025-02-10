@@ -3,7 +3,7 @@
 	import Fa6SolidChessKing from 'virtual:icons/fa6-solid/chess-king';
 	import Fa6SolidChessQueen from 'virtual:icons/fa6-solid/chess-queen';
 	import HelpToolTip from '$lib/components/modals/HelpToolTip.svelte';
-	import { Search } from 'lucide-svelte';
+	import Fa6SolidMagnifyingGlass from 'virtual:icons/fa6-solid/magnifying-glass';
 	import { isLoading } from '$lib/stores/isLoading';
 	import { Result, searchPuzzles } from '$lib/utils/searchUtil';
 	import { searchModalState } from '$lib/stores/modalStore';
@@ -47,10 +47,10 @@
 				</header>
 				<div class="input-group grid-cols-[auto_1fr_auto] divide-x divide-surface-200-800">
 					<div class="input-group-cell">
-						<Search size={16} />
+						<Fa6SolidMagnifyingGlass class="size-4 text-tertiary-500" />
 					</div>
 					<input type="search" placeholder="Search..." bind:value={query} disabled={$isLoading} />
-					<button class="p-2 text-primary-50-950" disabled={$isLoading}> Search </button>
+					<button class="p-2" disabled={$isLoading}> <span>Search</span> </button>
 				</div>
 				<div class="type-subtitle hidden w-full py-1 text-right sm:block">
 					<p>You can also search using <kbd class="kbd">Enter</kbd></p>

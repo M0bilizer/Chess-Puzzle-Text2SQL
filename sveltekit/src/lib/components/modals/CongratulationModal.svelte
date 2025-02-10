@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { Modal } from '@skeletonlabs/skeleton-svelte';
-	import { PartyPopper } from 'lucide-svelte';
 	import { currentGame } from '$lib/stores/currentGameStore';
 	import { congratulationModalState } from '$lib/stores/modalStore';
 
@@ -31,7 +30,7 @@
 	{#snippet content()}
 		<div class="flex flex-col gap-4">
 			<header class="flex flex-col items-center justify-center gap-2">
-				<PartyPopper class="size-40 text-tertiary-500" />
+				<span class="select-none text-9xl">🎉</span>
 				<h1 class="h1">
 					<span
 						class="bg-gradient-radial from-tertiary-500 to-primary-500 box-decoration-clone bg-clip-text text-transparent"
