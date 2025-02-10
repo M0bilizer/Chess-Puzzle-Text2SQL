@@ -2,13 +2,13 @@
 	import { toast } from '@zerodevx/svelte-toast';
 	import Fa6SolidXmark from 'virtual:icons/fa6-solid/xmark';
 	import { loadRandomPuzzle } from '$lib/utils/searchUtil.ts';
-	import { searchModalState } from '$lib/stores/modalStore';
+	import { closeSearchModal } from '$lib/stores/modalStore';
 
 	let { message, toastId, query } = $props();
 
 	function handleLoadRandomPuzzle() {
 		loadRandomPuzzle(query);
-		searchModalState.set({ open: false });
+		closeSearchModal();
 		toast.pop(toastId);
 	}
 

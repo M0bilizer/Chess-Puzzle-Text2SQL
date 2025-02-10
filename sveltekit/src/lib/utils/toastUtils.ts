@@ -21,6 +21,8 @@ const settings = {
 export function toastInfo(message: string, target: string) {
 	toast.push({
 		component: {
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-expect-error
 			src: ToastInfo,
 			props: {
 				message: message
@@ -35,6 +37,8 @@ export function toastInfo(message: string, target: string) {
 export function toastFailure(message: string, target: string, query: string) {
 	toast.push({
 		component: {
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-expect-error
 			src: ToastFailure,
 			props: {
 				message: message,

@@ -6,13 +6,11 @@
 	import Fa6SolidMagnifyingGlass from 'virtual:icons/fa6-solid/magnifying-glass';
 	import { isLoading } from '$lib/stores/isLoading';
 	import { Result, searchPuzzles } from '$lib/utils/searchUtil';
-	import { searchModalState } from '$lib/stores/modalStore';
+	import { closeSearchModal, searchModalState } from '$lib/stores/modalStore';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
 
 	let query = $state('');
 	let open = $state(false);
-
-	const options = {};
 
 	searchModalState.subscribe((state) => {
 		open = state.open;
@@ -30,10 +28,12 @@
 	contentBase="bg-surface-50-950 rounded-container top-[10%] m-0 mx-auto max-h-[90%] w-full max-w-[90%] space-y-8 p-8 text-inherit shadow-2xl md:max-w-[75%] md:max-w-2xl lg:max-w-4xl"
 	backdropBackground="bg-tertiary-500/25"
 	backdropClasses="backdrop-blur-sm"
+	closeOnInteractOutside={false}
+	onInteractOutside={() => closeSearchModal()}
 >
 	{#snippet content()}
 		<div>
-			<SvelteToast target="modal" {options} />
+			<SvelteToast target="modal"/>
 			<form onsubmit={handleSearch}>
 				<header class="flex items-center justify-center gap-2">
 					<Fa6SolidChessKing class="size-6 text-tertiary-500" />
