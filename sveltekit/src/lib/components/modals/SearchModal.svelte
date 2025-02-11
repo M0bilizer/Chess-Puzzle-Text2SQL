@@ -8,7 +8,8 @@
 	import { searchPuzzles } from '$lib/utils/searchUtil';
 	import { closeSearchModal, searchModalState } from '$lib/stores/modalStore';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
-	import { SearchResultEnum } from '../../../enums/searchResultEnum';
+	import { SearchResultEnum } from '$lib/enums/searchResultEnum';
+	import { ModelEnum } from '$lib/enums/modelEnum';
 
 	let query = $state('');
 	let open = $state(false);
@@ -19,7 +20,7 @@
 
 	async function handleSearch(event: Event) {
 		event.preventDefault();
-		const result: SearchResultEnum = await searchPuzzles(query);
+		const result: SearchResultEnum = await searchPuzzles(query, ModelEnum.DeepSeek);
 		if (result === SearchResultEnum.Success) searchModalState.set({ open: false });
 	}
 </script>

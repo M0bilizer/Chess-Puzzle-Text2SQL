@@ -1,6 +1,6 @@
 import type { Puzzle } from '$lib/types/puzzle';
 import { json } from '@sveltejs/kit';
-import { SearchResultEnum } from '../../enums/searchResultEnum';
+import { SearchResultEnum } from '$lib/enums/searchResultEnum';
 
 export interface Result {
 	getJson(): Response;

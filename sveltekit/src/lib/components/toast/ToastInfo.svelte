@@ -11,10 +11,10 @@
 
 <div class="toast-container">
 	<div
-		class="card flex min-h-12 min-w-12 flex-row items-center justify-around gap-2 rounded-md border-[1px] border-surface-500/20 px-4 py-2 shadow-xl bg-surface-50-950"
+		class="card flex min-h-12 min-w-12 flex-row items-center justify-around gap-6 rounded-md border-[1px] border-surface-950/20 px-4 py-2 shadow-xl bg-primary-50-950"
 	>
 		<p class="text-sm font-light text-primary-50">{message}</p>
-		<div class="flex items-center">
+		<div class="flex items-start">
 			<button onclick={() => handleOnClick()}>
 				<Fa6SolidXmark class="size-4 text-primary-50 " />
 			</button>

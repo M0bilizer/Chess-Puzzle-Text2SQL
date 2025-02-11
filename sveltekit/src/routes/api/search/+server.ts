@@ -8,14 +8,15 @@ import {
 	Success,
 	UnknownError
 } from '$lib/utils/serverUtils';
+import type { ModelEnum } from '$lib/enums/modelEnum';
 
 export const POST: RequestHandler = async ({ request }) => {
-	const { query } = await request.json();
-	const result = await _callBackend(query);
+	const { query, model } = await request.json();
+	const result = await _callBackend(query, model);
 	return result.getJson();
 };
 
-async function _callBackend(query: string): Promise<Result> {
+async function _callBackend(query: string, model: ModelEnum): Promise<Result> {
 	if (!`${KOTLIN_SPRING_URL}` || `${KOTLIN_SPRING_URL}`.length === 0) {
 		return new ConfigurationError();
 	}
@@ -24,7 +25,7 @@ async function _callBackend(query: string): Promise<Result> {
 		res = await fetch(`${KOTLIN_SPRING_URL}/queryPuzzle`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ query })
+			body: JSON.stringify({ query, model })
 		});
 	} catch (error: unknown) {
 		if (error instanceof Error) {

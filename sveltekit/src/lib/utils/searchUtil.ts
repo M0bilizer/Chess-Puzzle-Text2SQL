@@ -5,11 +5,12 @@ import { haveGame } from '$lib/stores/currentGameStore';
 import { loadFirstGame, loadFromSearchRecord, saveGame } from '$lib/utils/storeUtils';
 import { isLoading } from '$lib/stores/isLoading';
 import { addSearchResult, hasSearched } from '$lib/stores/searchesStore';
-import { toastFailure, toastInfo } from '$lib/utils/toastUtils';
+import { toastFailure, toastInfo, toastModelFailure } from '$lib/utils/toastUtils';
 import { getDataStub } from '$lib/utils/dataStub';
-import { isStandardError, SearchResultEnum } from '../../enums/searchResultEnum';
+import { isStandardError, SearchResultEnum } from '$lib/enums/searchResultEnum';
+import { ModelEnum } from '$lib/enums/modelEnum';
 
-export async function searchPuzzles(query: string): Promise<SearchResultEnum> {
+export async function searchPuzzles(query: string, model: ModelEnum): Promise<SearchResultEnum> {
 	isLoading.set(true);
 	if (haveGame()) saveGame();
 
@@ -25,10 +26,10 @@ export async function searchPuzzles(query: string): Promise<SearchResultEnum> {
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ query })
+				body: JSON.stringify({ query, model })
 			});
 			if (response.ok) {
-				result = await _handleResponse(query, response);
+				result = await _handleResponse(query, model, response);
 			} else {
 				toastFailure('Error when sending request', 'modal', query);
 				result = SearchResultEnum.PostError;
@@ -57,7 +58,11 @@ export async function loadRandomPuzzle(query: string) {
 	isLoading.set(false);
 }
 
-async function _handleResponse(query: string, response: Response): Promise<SearchResultEnum> {
+async function _handleResponse(
+	query: string,
+	model: ModelEnum,
+	response: Response
+): Promise<SearchResultEnum> {
 	const json: {
 		status: SearchResultEnum;
 		data: Puzzle[];
@@ -67,12 +72,15 @@ async function _handleResponse(query: string, response: Response): Promise<Searc
 		const list = _mapToInstance(json.data);
 		loadFirstGame(query, list);
 		addSearchResult(query, list);
+		if (model === ModelEnum.DeepSeek)
+			toastInfo('Searched using alternative engine', 'root');
 		return json.status;
 	} else if (isStandardError(json.status)) {
 		toastFailure(json.message, 'modal', query);
 		return json.status;
 	} else if (json.status == SearchResultEnum.BackendError) {
-		toastFailure(json.message, 'modal', query);
+		if (model === ModelEnum.DeepSeek) toastModelFailure(json.message, 'modal', query);
+		else toastFailure(json.message, 'modal', query);
 		return json.status;
 	} else {
 		toastFailure(json.message, 'modal', query);
