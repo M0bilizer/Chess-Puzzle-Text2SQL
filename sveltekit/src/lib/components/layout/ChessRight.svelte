@@ -1,9 +1,9 @@
 <script lang="ts">
-	import PuzzleDescription from '$lib/components/layout/PuzzleDescription.svelte';
-	import NextButton from '$lib/components/layout/NextButton.svelte';
-	import ThemesOrOpening from '$lib/components/layout/ThemesOrOpening.svelte';
+	import PuzzleDescription from '$lib/components/ui/PuzzleDescription.svelte';
+	import NextButton from '$lib/components/ui/NextButton.svelte';
+	import ThemesOrOpening from '$lib/components/ui/ThemesOrOpening.svelte';
 	import { currentGame } from '$lib/stores/currentGameStore';
-	import JumpBar from '$lib/components/layout/JumpBar.svelte';
+	import JumpBar from '$lib/components/ui/JumpBar.svelte';
 </script>
 
 {#if $currentGame.list.length}

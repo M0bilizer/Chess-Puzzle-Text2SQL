@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { searches } from '$lib/stores/searchesStore';
-	import SearchRecord from '$lib/components/layout/SearchRecord.svelte';
-	import ClearButton from '$lib/components/ClearButton.svelte';
+	import SearchRecord from '$lib/components/ui/SearchRecord.svelte';
+	import ClearButton from '$lib/components/ui/ClearButton.svelte';
 </script>
 
 <div

@@ -1,7 +1,7 @@
 <script lang="ts">
-	import Title from '$lib/components/Title.svelte';
+	import Title from '$lib/components/ui/Title.svelte';
 	import DebugModal from '$lib/components/modals/DebugModal.svelte';
-	import SearchBox from '$lib/components/SearchBox.svelte';
+	import SearchBox from '$lib/components/ui/SearchBox.svelte';
 </script>
 
 <header class="w-full border-b-[1px] border-surface-500/20 p-4 py-3 bg-surface-50-950 sm:px-10">

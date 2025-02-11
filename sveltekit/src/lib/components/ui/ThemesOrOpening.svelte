@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Segment } from '@skeletonlabs/skeleton-svelte';
-	import ThemesDescription from '$lib/components/layout/ThemesDescription.svelte';
-	import OpeningTagsDescription from '$lib/components/layout/OpeningTagsDescription.svelte';
+	import ThemesDescription from '$lib/components/ui/ThemesDescription.svelte';
+	import OpeningTagsDescription from '$lib/components/ui/OpeningTagsDescription.svelte';
 
 	let page = $state('themes');
 </script>

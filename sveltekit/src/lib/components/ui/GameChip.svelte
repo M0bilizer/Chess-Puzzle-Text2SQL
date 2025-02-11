@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Fa6SolidCheck from 'virtual:icons/fa6-solid/check';
 	import { loadGame } from '$lib/utils/storeUtils';
-	import { GameChipType } from '$lib/components/layout/GameChipType';
+	import { GameChipType } from '$lib/types/GameChipType';
 	import { Tooltip } from '@skeletonlabs/skeleton-svelte';
 	import { onMount } from 'svelte';
 	import { currentGame } from '$lib/stores/currentGameStore';

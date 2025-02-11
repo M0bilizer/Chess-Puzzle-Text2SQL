@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { currentGame, getNextGameIndex, isAllFinished } from '$lib/stores/currentGameStore';
-	import GameChip from '$lib/components/layout/GameChip.svelte';
-	import { GameChipType } from '$lib/components/layout/GameChipType';
+	import GameChip from '$lib/components/ui/GameChip.svelte';
+	import { GameChipType } from '$lib/types/GameChipType';
 
 	let types: GameChipType[];
 	currentGame.subscribe((state) => {
