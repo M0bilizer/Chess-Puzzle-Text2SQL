@@ -5,9 +5,10 @@
 	import HelpToolTip from '$lib/components/modals/HelpToolTip.svelte';
 	import Fa6SolidMagnifyingGlass from 'virtual:icons/fa6-solid/magnifying-glass';
 	import { isLoading } from '$lib/stores/isLoading';
-	import { Result, searchPuzzles } from '$lib/utils/searchUtil';
+	import { searchPuzzles } from '$lib/utils/searchUtil';
 	import { closeSearchModal, searchModalState } from '$lib/stores/modalStore';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
+	import { SearchResultEnum } from '../../../enums/searchResultEnum';
 
 	let query = $state('');
 	let open = $state(false);
@@ -18,8 +19,8 @@
 
 	async function handleSearch(event: Event) {
 		event.preventDefault();
-		const result: Result = await searchPuzzles(query);
-		if (result === Result.Success) searchModalState.set({ open: false });
+		const result: SearchResultEnum = await searchPuzzles(query);
+		if (result === SearchResultEnum.Success) searchModalState.set({ open: false });
 	}
 </script>
 

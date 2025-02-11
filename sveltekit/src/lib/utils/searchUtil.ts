@@ -7,25 +7,17 @@ import { isLoading } from '$lib/stores/isLoading';
 import { addSearchResult, hasSearched } from '$lib/stores/searchesStore';
 import { toastFailure, toastInfo } from '$lib/utils/toastUtils';
 import { getDataStub } from '$lib/utils/dataStub';
+import { isStandardError, SearchResultEnum } from '../../enums/searchResultEnum';
 
-export enum Result {
-	Success,
-	BackendError,
-	ConnectionError,
-	ConfigurationError,
-	PostError,
-	UnknownError
-}
-
-export async function searchPuzzles(query: string): Promise<Result> {
+export async function searchPuzzles(query: string): Promise<SearchResultEnum> {
 	isLoading.set(true);
 	if (haveGame()) saveGame();
 
-	let result: Result;
+	let result: SearchResultEnum;
 	if (hasSearched(query)) {
 		loadFromSearchRecord(query);
 		toastInfo('Reloaded game progress', 'root');
-		result = Result.Success;
+		result = SearchResultEnum.Success;
 	} else {
 		try {
 			const response = await fetch('/api/search', {
@@ -39,15 +31,15 @@ export async function searchPuzzles(query: string): Promise<Result> {
 				result = await _handleResponse(query, response);
 			} else {
 				toastFailure('Error when sending request', 'modal', query);
-				result = Result.PostError;
+				result = SearchResultEnum.PostError;
 			}
 		} catch (error: unknown) {
 			if (error instanceof Error) {
 				toastFailure('Error when sending request:' + error.message, 'modal', query);
-				result = Result.PostError;
+				result = SearchResultEnum.PostError;
 			} else {
 				toastFailure('Unknown Error when sending request:', 'modal', query);
-				result = Result.UnknownError;
+				result = SearchResultEnum.UnknownClientError;
 			}
 		}
 	}
@@ -65,25 +57,26 @@ export async function loadRandomPuzzle(query: string) {
 	isLoading.set(false);
 }
 
-async function _handleResponse(query: string, response: Response): Promise<Result> {
-	const json = await response.json();
-	if (json.status == 'success') {
+async function _handleResponse(query: string, response: Response): Promise<SearchResultEnum> {
+	const json: {
+		status: SearchResultEnum;
+		data: Puzzle[];
+		message: string;
+	} = await response.json();
+	if (json.status == SearchResultEnum.Success) {
 		const list = _mapToInstance(json.data);
 		loadFirstGame(query, list);
 		addSearchResult(query, list);
-		return Result.Success;
-	} else if (json.status == 'connectionFailure') {
+		return json.status;
+	} else if (isStandardError(json.status)) {
 		toastFailure(json.message, 'modal', query);
-		return Result.ConnectionError;
-	} else if (json.status == 'backendFailure') {
+		return json.status;
+	} else if (json.status == SearchResultEnum.BackendError) {
 		toastFailure(json.message, 'modal', query);
-		return Result.BackendError;
-	} else if (json.status == 'configurationError') {
-		toastFailure(json.message, 'modal', query);
-		return Result.ConfigurationError;
+		return json.status;
 	} else {
 		toastFailure(json.message, 'modal', query);
-		return Result.UnknownError;
+		return SearchResultEnum.UnknownServerStatusError;
 	}
 }
 
