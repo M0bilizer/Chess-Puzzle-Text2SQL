@@ -1,7 +1,23 @@
 <script lang="ts">
 	import { Modal } from '@skeletonlabs/skeleton-svelte';
+	import { currentGame } from '$lib/stores/currentGameStore';
 
 	let modalOpen = $state(false);
+
+	let query = $state('');
+	let maskedQuery = $state('');
+	let sql = $state('');
+
+	currentGame.subscribe((state) => {
+		query = state.query
+		sql = formatSql("SELECT * FROM t_puzzle WHERE 'opening_tags' LIKE '%DUTCH_DEFENSE%' AND 'difficulty' is 900 AND 'blah' LIKE 'aa' OR 'ok'")
+	})
+
+	function formatSql(sql: string) {
+		sql = sql.replace(/(WHERE)/gi, '\n$1');
+		sql = sql.replace(/(AND|OR)/gi, '\n  $1');
+		return sql
+	}
 </script>
 
 <Modal
@@ -15,6 +31,22 @@
 		>
 	{/snippet}
 	{#snippet content()}
-		<div>ok</div>
+		<table class="table">
+			<caption>Debug menu</caption>
+			<tbody>
+			<tr>
+				<td>Query:</td>
+				<td><span class="code">{query}</span></td>
+			</tr>
+			<tr>
+				<td>Masked Query:</td>
+				<td><span class="code">{maskedQuery}</span></td>
+			</tr>
+			<tr>
+				<td>SQL Statement:</td>
+				<td><pre class="pre">{sql}</pre></td>
+			</tr>
+			</tbody>
+		</table>
 	{/snippet}
 </Modal>
