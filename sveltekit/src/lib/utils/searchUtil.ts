@@ -1,18 +1,20 @@
-import { get } from 'svelte/store';
 import type { Puzzle } from '$lib/types/puzzle';
 import type { PuzzleInstance } from '$lib/types/puzzleInstance';
 import { convertUciToSan, getFirstMoveColor } from '$lib/utils/chessUtils';
 import { haveGame } from '$lib/stores/currentGameStore';
 import { loadFirstGame, loadFromSearchRecord, saveGame } from '$lib/utils/storeUtils';
 import { isLoading } from '$lib/stores/isLoading';
-import { addSearchResult, searches } from '$lib/stores/searchesStore';
+import { addSearchResult, hasSearched } from '$lib/stores/searchesStore';
 import { toastFailure, toastInfo } from '$lib/utils/toastUtils';
 import { getDataStub } from '$lib/utils/dataStub';
 
 export enum Result {
 	Success,
 	BackendError,
-	ClientError
+	ConnectionError,
+	ConfigurationError,
+	PostError,
+	UnknownError
 }
 
 export async function searchPuzzles(query: string): Promise<Result> {
@@ -20,7 +22,11 @@ export async function searchPuzzles(query: string): Promise<Result> {
 	if (haveGame()) saveGame();
 
 	let result: Result;
-	if (get(searches).get(query) == undefined) {
+	if (hasSearched(query)) {
+		loadFromSearchRecord(query);
+		toastInfo('Reloaded game progress', 'root');
+		result = Result.Success;
+	} else {
 		try {
 			const response = await fetch('/api/search', {
 				method: 'POST',
@@ -30,25 +36,20 @@ export async function searchPuzzles(query: string): Promise<Result> {
 				body: JSON.stringify({ query })
 			});
 			if (response.ok) {
-				const json = await response.json();
-				const list = _mapToInstance(json.data);
-				loadFirstGame(query, list);
-				addSearchResult(query, list);
-				result = Result.Success;
+				result = await _handleResponse(query, response);
 			} else {
-				console.error('Search failed:', response.statusText);
-				toastFailure('Backend have internal error!', 'modal', query);
-				result = Result.BackendError;
+				toastFailure('Error when sending request', 'modal', query);
+				result = Result.PostError;
 			}
-		} catch (error) {
-			console.error('Search error:', error);
-			toastFailure('Cannot communicate with backend!', 'modal', query);
-			result = Result.ClientError;
+		} catch (error: unknown) {
+			if (error instanceof Error) {
+				toastFailure('Error when sending request:' + error.message, 'modal', query);
+				result = Result.PostError;
+			} else {
+				toastFailure('Unknown Error when sending request:', 'modal', query);
+				result = Result.UnknownError;
+			}
 		}
-	} else {
-		loadFromSearchRecord(query);
-		toastInfo('Reloaded game progress', 'root');
-		result = Result.Success;
 	}
 
 	isLoading.set(false);
@@ -62,6 +63,28 @@ export async function loadRandomPuzzle(query: string) {
 	addSearchResult(query, list);
 	toastInfo('Loaded random puzzles', 'root');
 	isLoading.set(false);
+}
+
+async function _handleResponse(query: string, response: Response): Promise<Result> {
+	const json = await response.json();
+	if (json.status == 'success') {
+		const list = _mapToInstance(json.data);
+		loadFirstGame(query, list);
+		addSearchResult(query, list);
+		return Result.Success;
+	} else if (json.status == 'connectionFailure') {
+		toastFailure(json.message, 'modal', query);
+		return Result.ConnectionError;
+	} else if (json.status == 'backendFailure') {
+		toastFailure(json.message, 'modal', query);
+		return Result.BackendError;
+	} else if (json.status == 'configurationError') {
+		toastFailure(json.message, 'modal', query);
+		return Result.ConfigurationError;
+	} else {
+		toastFailure(json.message, 'modal', query);
+		return Result.UnknownError;
+	}
 }
 
 function _mapToInstance(list: Puzzle[]): PuzzleInstance[] {

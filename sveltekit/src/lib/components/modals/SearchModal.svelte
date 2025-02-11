@@ -33,7 +33,7 @@
 >
 	{#snippet content()}
 		<div>
-			<SvelteToast target="modal"/>
+			<SvelteToast target="modal" />
 			<form onsubmit={handleSearch}>
 				<header class="flex items-center justify-center gap-2">
 					<Fa6SolidChessKing class="size-6 text-tertiary-500" />
