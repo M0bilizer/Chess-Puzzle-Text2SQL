@@ -1,20 +1,23 @@
 import type { Puzzle } from '$lib/types/puzzle';
 import { json } from '@sveltejs/kit';
 import { SearchResultEnum } from '$lib/enums/searchResultEnum';
+import type { SearchMetadata } from '$lib/types/SearchMetadata';
 
 export interface Result {
 	getJson(): Response;
 }
 
 export class Success implements Result {
+	public readonly metadata: SearchMetadata;
 	public readonly data: Puzzle[];
 
-	constructor(data: Puzzle[]) {
+	constructor(metadata: SearchMetadata, data: Puzzle[]) {
+		this.metadata = metadata;
 		this.data = data;
 	}
 
 	getJson() {
-		return json({ status: SearchResultEnum.Success, data: this.data });
+		return json({ status: SearchResultEnum.Success, metadata: this.metadata, data: this.data });
 	}
 }
 

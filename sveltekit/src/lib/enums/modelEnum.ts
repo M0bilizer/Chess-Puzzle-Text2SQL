@@ -1,4 +1,4 @@
 export enum ModelEnum {
-	DeepSeek = "deepseek",
-	Mistral = "mistral",
+	DeepSeek = 'deepseek',
+	Mistral = 'mistral'
 }

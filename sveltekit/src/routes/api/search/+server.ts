@@ -40,9 +40,9 @@ async function _callBackend(query: string, model: ModelEnum): Promise<Result> {
 	}
 
 	//TODO
-	const responseData = await res.json();
-	if (responseData.status !== 'success') {
-		return new BackendFailure(responseData.message || 'Unexpected error from backend');
+	const json = await res.json();
+	if (json.status !== 'success') {
+		return new BackendFailure(json.message || 'Unexpected error from backend');
 	}
-	return new Success(responseData.data);
+	return new Success(json.metadata, json.data);
 }

@@ -1,6 +1,7 @@
-type SearchMetadata = {
-	status: string;
+import { ModelEnum } from '$lib/enums/modelEnum';
+
+export type SearchMetadata = {
 	query: string;
-	message: string;
-	sql: string;
+	model: ModelEnum | null;
+	sql: string | null;
 };

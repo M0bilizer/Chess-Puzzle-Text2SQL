@@ -9,6 +9,7 @@ import { toastFailure, toastInfo, toastModelFailure } from '$lib/utils/toastUtil
 import { getDataStub } from '$lib/utils/dataStub';
 import { isStandardError, SearchResultEnum } from '$lib/enums/searchResultEnum';
 import { ModelEnum } from '$lib/enums/modelEnum';
+import type { SearchMetadata } from '$lib/types/SearchMetadata';
 
 export async function searchPuzzles(query: string, model: ModelEnum): Promise<SearchResultEnum> {
 	isLoading.set(true);
@@ -51,9 +52,14 @@ export async function searchPuzzles(query: string, model: ModelEnum): Promise<Se
 
 export async function loadRandomPuzzle(query: string) {
 	isLoading.set(true);
+	const metadata: SearchMetadata = {
+		model: null,
+		query: query,
+		sql: null
+	};
 	const list = _mapToInstance(getDataStub());
 	loadFirstGame(query, list);
-	addSearchResult(query, list);
+	addSearchResult(query, metadata, list);
 	toastInfo('Loaded random puzzles', 'root');
 	isLoading.set(false);
 }
@@ -65,15 +71,16 @@ async function _handleResponse(
 ): Promise<SearchResultEnum> {
 	const json: {
 		status: SearchResultEnum;
+		metadata: SearchMetadata;
 		data: Puzzle[];
 		message: string;
 	} = await response.json();
 	if (json.status == SearchResultEnum.Success) {
-		const list = _mapToInstance(json.data);
-		loadFirstGame(query, list);
-		addSearchResult(query, list);
-		if (model === ModelEnum.DeepSeek)
-			toastInfo('Searched using alternative engine', 'root');
+		const metadata = json.metadata;
+		const data = _mapToInstance(json.data);
+		loadFirstGame(query, data);
+		addSearchResult(query, metadata, data);
+		if (model === ModelEnum.DeepSeek) toastInfo('Searched using alternative engine', 'root');
 		return json.status;
 	} else if (isStandardError(json.status)) {
 		toastFailure(json.message, 'modal', query);

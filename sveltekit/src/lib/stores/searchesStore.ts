@@ -1,12 +1,18 @@
 import { get, writable } from 'svelte/store';
 import type { PuzzleInstance } from '$lib/types/puzzleInstance';
 import type { GameProgress } from '$lib/types/gameProgress';
+import type { SearchMetadata } from '$lib/types/SearchMetadata';
+import type { Search } from '$lib/types/SearchInformation';
 
-export const searches = writable<Map<string, PuzzleInstance[]>>(new Map());
+export const searches = writable<Map<string, Search>>(new Map());
 
-export function addSearchResult(query: string, results: PuzzleInstance[]) {
+export function addSearchResult(
+	query: string,
+	metadata: SearchMetadata,
+	results: PuzzleInstance[]
+) {
 	searches.update((state) => {
-		state.set(query, results);
+		state.set(query, { metadata: metadata, data: results });
 		return state;
 	});
 }
@@ -17,11 +23,11 @@ export function updateSearchResult(query: string, index: number, game: GameProgr
 		if (!result) {
 			return state;
 		}
-		const updated = result.with(index, {
-			...result[index],
-			progress: game.hasWon ? game : result[index].progress
+		const updated = result.data.with(index, {
+			...result.data[index],
+			progress: game.hasWon ? game : result.data[index].progress
 		});
-		state.set(query, updated);
+		state.set(query, { metadata: result.metadata, data: updated });
 		return state;
 	});
 }

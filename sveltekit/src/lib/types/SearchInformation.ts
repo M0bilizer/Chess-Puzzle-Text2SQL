@@ -1,6 +1,7 @@
 import type { PuzzleInstance } from '$lib/types/puzzleInstance';
+import type { SearchMetadata } from '$lib/types/SearchMetadata';
 
-type Search = {
+export type Search = {
 	metadata: SearchMetadata;
 	data: PuzzleInstance[];
 };

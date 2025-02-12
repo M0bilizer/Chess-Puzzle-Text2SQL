@@ -1,22 +1,34 @@
 <script lang="ts">
 	import { Modal } from '@skeletonlabs/skeleton-svelte';
 	import { currentGame } from '$lib/stores/currentGameStore';
+	import { searches } from '$lib/stores/searchesStore';
+	import { get } from 'svelte/store';
 
 	let modalOpen = $state(false);
 
 	let query = $state('');
-	let maskedQuery = $state('');
+	let model = $state('');
 	let sql = $state('');
 
 	currentGame.subscribe((state) => {
-		query = state.query
-		sql = formatSql("SELECT * FROM t_puzzle WHERE 'opening_tags' LIKE '%DUTCH_DEFENSE%' AND 'difficulty' is 900 AND 'blah' LIKE 'aa' OR 'ok'")
-	})
+		/*
+		 when searching for new game is success
+		 load to current game first, then update searches
+		 because of that, searches is still undefined when current game updates.
+		 */
+		if (state.query !== '') {
+			const search = get(searches).get(state.query);
+			if (search === undefined) return;
+			query = search.metadata.query;
+			model = search.metadata.model == null ? 'Local data' : search.metadata.model;
+			sql = search.metadata.sql == null ? 'Not applicable' : formatSql(sql);
+		}
+	});
 
 	function formatSql(sql: string) {
 		sql = sql.replace(/(WHERE)/gi, '\n$1');
 		sql = sql.replace(/(AND|OR)/gi, '\n  $1');
-		return sql
+		return sql;
 	}
 </script>
 
@@ -34,18 +46,18 @@
 		<table class="table">
 			<caption>Debug menu</caption>
 			<tbody>
-			<tr>
-				<td>Query:</td>
-				<td><span class="code">{query}</span></td>
-			</tr>
-			<tr>
-				<td>Masked Query:</td>
-				<td><span class="code">{maskedQuery}</span></td>
-			</tr>
-			<tr>
-				<td>SQL Statement:</td>
-				<td><pre class="pre">{sql}</pre></td>
-			</tr>
+				<tr>
+					<td>Query:</td>
+					<td><span class="code">{query}</span></td>
+				</tr>
+				<tr>
+					<td>Model Used:</td>
+					<td><span class="code">{model}</span></td>
+				</tr>
+				<tr>
+					<td>SQL Statement:</td>
+					<td><pre class="pre">{sql}</pre></td>
+				</tr>
 			</tbody>
 		</table>
 	{/snippet}

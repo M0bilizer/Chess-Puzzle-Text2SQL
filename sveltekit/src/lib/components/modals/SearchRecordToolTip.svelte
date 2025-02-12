@@ -8,15 +8,15 @@
 
 	let number = $state(0);
 	searches.subscribe((state) => {
-		const list = state.get(key);
-		if (list === undefined) {
+		const search = state.get(key);
+		if (search === undefined) {
 			number = -2;
 			return;
 		}
 		if (type === SearchRecordToolTipType.won)
-			number = list.reduce((sum, instance) => sum + (instance.progress.hasWon ? 1 : 0), 0);
+			number = search.data.reduce((sum, instance) => sum + (instance.progress.hasWon ? 1 : 0), 0);
 		else if (type === SearchRecordToolTipType.notWon)
-			number = list.reduce((sum, instance) => sum + (instance.progress.hasWon ? 0 : 1), 0);
+			number = search.data.reduce((sum, instance) => sum + (instance.progress.hasWon ? 0 : 1), 0);
 		else number = -1;
 	});
 </script>

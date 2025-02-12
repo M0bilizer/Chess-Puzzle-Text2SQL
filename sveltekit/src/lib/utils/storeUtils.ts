@@ -58,7 +58,9 @@ export function loadGame(index: number) {
 export function loadFromSearchRecord(query: string) {
 	if (get(currentGame).query === query) return;
 	saveGame();
-	const result = get(searches).get(query) as PuzzleInstance[];
+	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+	// @ts-expect-error
+	const result = get(searches).get(query).data as PuzzleInstance[];
 	let index = result.findIndex((value) => !value.progress.hasWon);
 	if (index === -1) {
 		index = result.length - 1;

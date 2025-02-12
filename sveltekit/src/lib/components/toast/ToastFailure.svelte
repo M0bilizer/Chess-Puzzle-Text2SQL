@@ -23,7 +23,7 @@
 		class="card flex min-w-12 flex-row justify-around gap-6 rounded-md border-[1px] border-surface-500/20 px-4 py-2 shadow-xl bg-surface-50-950"
 	>
 		<div class="flex flex-col gap-1">
-			<div class="flex flex-row gap-1 items-center">
+			<div class="flex flex-row items-center gap-1">
 				<Fa6SolidTriangleExclamation class="size-4 text-warning-500" />
 				<p class="text-sm font-light text-warning-500">{message}</p>
 			</div>
