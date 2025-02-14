@@ -3,7 +3,7 @@ package com.chess.puzzle.text2sql.web.controllers
 import com.chess.puzzle.text2sql.web.config.FilePaths
 import com.chess.puzzle.text2sql.web.domain.model.BenchmarkEntry
 import com.chess.puzzle.text2sql.web.domain.model.BenchmarkResult
-import com.chess.puzzle.text2sql.web.domain.model.ModelName
+import com.chess.puzzle.text2sql.web.domain.model.ModelVariant
 import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
 import com.chess.puzzle.text2sql.web.domain.model.SqlResult
 import com.chess.puzzle.text2sql.web.error.CallDeepSeekError
@@ -86,11 +86,11 @@ class BenchmarkingControllerIntegrationTest {
         for ((index, benchmarkEntry) in benchmarkEntries.withIndex()) {
             val text = benchmarkEntry.text
             val result = benchmarkSuccessResults[index]
-            coEvery { text2SQLService.convertToSQL(text, ModelName.Full) } returns
+            coEvery { text2SQLService.convertToSQL(text, ModelVariant.Full) } returns
                 ResultWrapper.Success(result.full.sql)
-            coEvery { text2SQLService.convertToSQL(text, ModelName.Partial) } returns
+            coEvery { text2SQLService.convertToSQL(text, ModelVariant.Partial) } returns
                 ResultWrapper.Success(result.partial.sql)
-            coEvery { text2SQLService.convertToSQL(text, ModelName.Baseline) } returns
+            coEvery { text2SQLService.convertToSQL(text, ModelVariant.Baseline) } returns
                 ResultWrapper.Success(result.baseline.sql)
         }
 
@@ -110,11 +110,11 @@ class BenchmarkingControllerIntegrationTest {
     fun `test benchmark failure`(): Unit = runBlocking {
         for (benchmarkEntry in benchmarkEntries) {
             val text = benchmarkEntry.text
-            coEvery { text2SQLService.convertToSQL(text, ModelName.Full) } returns
+            coEvery { text2SQLService.convertToSQL(text, ModelVariant.Full) } returns
                 ResultWrapper.Failure(CallDeepSeekError.HttpError)
-            coEvery { text2SQLService.convertToSQL(text, ModelName.Partial) } returns
+            coEvery { text2SQLService.convertToSQL(text, ModelVariant.Partial) } returns
                 ResultWrapper.Failure(CallDeepSeekError.IOException)
-            coEvery { text2SQLService.convertToSQL(text, ModelName.Baseline) } returns
+            coEvery { text2SQLService.convertToSQL(text, ModelVariant.Baseline) } returns
                 ResultWrapper.Failure(CallDeepSeekError.UnknownError(1, ""))
         }
 

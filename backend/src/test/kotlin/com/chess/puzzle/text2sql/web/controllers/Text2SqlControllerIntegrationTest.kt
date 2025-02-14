@@ -3,7 +3,7 @@ package com.chess.puzzle.text2sql.web.controllers
 import com.chess.puzzle.text2sql.web.config.FilePaths
 import com.chess.puzzle.text2sql.web.domain.input.QueryRequest
 import com.chess.puzzle.text2sql.web.domain.model.Demonstration
-import com.chess.puzzle.text2sql.web.domain.model.ModelName
+import com.chess.puzzle.text2sql.web.domain.model.ModelVariant
 import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
 import com.chess.puzzle.text2sql.web.entities.*
 import com.chess.puzzle.text2sql.web.error.*
@@ -81,7 +81,7 @@ class Text2SqlControllerIntegrationTest {
             "Find puzzles with rating > 1500 Find puzzles with rating > 2000 SELECT * FROM puzzles WHERE rating > 2000"
         val sql = "SELECT * FROM puzzles WHERE rating > 1500"
 
-        coEvery { filePaths.getPromptTemplate(ModelName.Full) } returns "full_prompt_template.txt"
+        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns "full_prompt_template.txt"
         coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
             ResultWrapper.Success(promptTemplate)
         coEvery { sentenceTransformerHelper.getSimilarDemonstration(query) } returns
@@ -120,7 +120,7 @@ class Text2SqlControllerIntegrationTest {
             "Find puzzles with rating > 1500 Find puzzles with rating > 2000 SELECT * FROM puzzles WHERE rating > 2000"
         val sql = "SELECT * FROM puzzles WHERE rating > 1500"
 
-        coEvery { filePaths.getPromptTemplate(ModelName.Full) } returns "full_prompt_template.txt"
+        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns "full_prompt_template.txt"
         coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
             ResultWrapper.Success(promptTemplate)
         coEvery { sentenceTransformerHelper.getSimilarDemonstration(query) } returns
@@ -161,7 +161,7 @@ class Text2SqlControllerIntegrationTest {
             "Find puzzles with rating > 1500 Find puzzles with rating > 2000 SELECT * FROM puzzles WHERE rating > 2000"
         val sql = "SELECT * FROM puzzles WHERE rating > 1500"
 
-        coEvery { filePaths.getPromptTemplate(ModelName.Full) } returns "full_prompt_template.txt"
+        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns "full_prompt_template.txt"
         coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
             ResultWrapper.Success(promptTemplate)
         coEvery { sentenceTransformerHelper.getSimilarDemonstration(query) } returns
@@ -205,7 +205,7 @@ class Text2SqlControllerIntegrationTest {
             "Find puzzles with rating > 1500 Find puzzles with rating > 2000 SELECT * FROM puzzles WHERE rating > 2000"
         val sql = "SELECT * FROM puzzles WHERE rating > 1500"
 
-        coEvery { filePaths.getPromptTemplate(ModelName.Full) } returns "full_prompt_template.txt"
+        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns "full_prompt_template.txt"
         coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
             ResultWrapper.Success(promptTemplate)
         coEvery { sentenceTransformerHelper.getSimilarDemonstration(query) } returns
@@ -248,7 +248,7 @@ class Text2SqlControllerIntegrationTest {
         val processedPrompt =
             "Find puzzles with rating > 1500 Find puzzles with rating > 2000 SELECT * FROM puzzles WHERE rating > 2000"
 
-        coEvery { filePaths.getPromptTemplate(ModelName.Full) } returns "full_prompt_template.txt"
+        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns "full_prompt_template.txt"
         coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
             ResultWrapper.Success(promptTemplate)
         coEvery { sentenceTransformerHelper.getSimilarDemonstration(query) } returns
@@ -281,7 +281,7 @@ class Text2SqlControllerIntegrationTest {
                 )
             )
 
-        coEvery { filePaths.getPromptTemplate(ModelName.Full) } returns "full_prompt_template.txt"
+        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns "full_prompt_template.txt"
         coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
             ResultWrapper.Success(promptTemplate)
         coEvery { sentenceTransformerHelper.getSimilarDemonstration(query) } returns
@@ -308,7 +308,7 @@ class Text2SqlControllerIntegrationTest {
         val queryRequest = QueryRequest(query)
         val promptTemplate = "{{prompt}} {{text0}} {{sql0}}"
 
-        coEvery { filePaths.getPromptTemplate(ModelName.Full) } returns "full_prompt_template.txt"
+        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns "full_prompt_template.txt"
         coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
             ResultWrapper.Success(promptTemplate)
         coEvery { sentenceTransformerHelper.getSimilarDemonstration(query) } returns
@@ -332,7 +332,7 @@ class Text2SqlControllerIntegrationTest {
         val query = "some natural language query"
         val queryRequest = QueryRequest(query)
 
-        coEvery { filePaths.getPromptTemplate(ModelName.Full) } returns "full_prompt_template.txt"
+        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns "full_prompt_template.txt"
         coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
             ResultWrapper.Failure(GetTextFileError.FileNotFoundError)
 

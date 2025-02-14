@@ -1,7 +1,7 @@
 package com.chess.puzzle.text2sql.web.controllers
 
 import com.chess.puzzle.text2sql.web.domain.input.QueryRequest
-import com.chess.puzzle.text2sql.web.domain.model.ModelName
+import com.chess.puzzle.text2sql.web.domain.model.ModelVariant
 import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
 import com.chess.puzzle.text2sql.web.entities.Puzzle
 import com.chess.puzzle.text2sql.web.error.GetSimilarDemonstrationError
@@ -47,7 +47,7 @@ class Text2SqlControllerTest {
                 )
             )
 
-        coEvery { text2SQLService.convertToSQL(queryRequest.query, ModelName.Full) } returns
+        coEvery { text2SQLService.convertToSQL(queryRequest.query, ModelVariant.Full) } returns
             ResultWrapper.Success(sqlQuery)
         coEvery { puzzleService.processQuery(sqlQuery) } returns ResultWrapper.Success(puzzles)
 
@@ -63,7 +63,7 @@ class Text2SqlControllerTest {
     fun `test queryPuzzle failure in text2SQLService`(): Unit = runBlocking {
         val queryRequest = QueryRequest(query = "some natural language query")
         val error = GetSimilarDemonstrationError.NetworkError
-        coEvery { text2SQLService.convertToSQL(queryRequest.query, ModelName.Full) } returns
+        coEvery { text2SQLService.convertToSQL(queryRequest.query, ModelVariant.Full) } returns
             ResultWrapper.Failure(error)
 
         val response: ResponseEntity<String> = controller.queryPuzzle(queryRequest)
@@ -79,7 +79,7 @@ class Text2SqlControllerTest {
         val queryRequest = QueryRequest(query = "some natural language query")
         val sqlQuery = "SELECT * FROM puzzles WHERE ..."
         val error = ProcessQueryError.HibernateError
-        coEvery { text2SQLService.convertToSQL(queryRequest.query, ModelName.Full) } returns
+        coEvery { text2SQLService.convertToSQL(queryRequest.query, ModelVariant.Full) } returns
             ResultWrapper.Success(sqlQuery)
         coEvery { puzzleService.processQuery(sqlQuery) } returns ResultWrapper.Failure(error)
 

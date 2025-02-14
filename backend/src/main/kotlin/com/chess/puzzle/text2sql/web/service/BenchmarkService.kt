@@ -3,8 +3,8 @@ package com.chess.puzzle.text2sql.web.service
 import ch.qos.logback.classic.Level
 import com.chess.puzzle.text2sql.web.domain.model.BenchmarkEntry
 import com.chess.puzzle.text2sql.web.domain.model.BenchmarkResult
-import com.chess.puzzle.text2sql.web.domain.model.ModelName
-import com.chess.puzzle.text2sql.web.domain.model.ModelName.*
+import com.chess.puzzle.text2sql.web.domain.model.ModelVariant
+import com.chess.puzzle.text2sql.web.domain.model.ModelVariant.*
 import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
 import com.chess.puzzle.text2sql.web.domain.model.SqlResult
 import com.chess.puzzle.text2sql.web.error.SystemError
@@ -72,21 +72,21 @@ class BenchmarkService(@Autowired private val text2SQLService: Text2SQLService) 
      * 'ERROR' for the 'sql' field.
      *
      * @param text The text to convert to SQL.
-     * @param modelName The model to use for the conversion ([Full], [Partial], [Baseline]).
+     * @param modelVariant The model to use for the conversion ([Full], [Partial], [Baseline]).
      * @return An [SqlResult] object containing the SQL result or an 'ERROR' SQL.
      */
-    private suspend fun getSqlResult(text: String, modelName: ModelName): SqlResult {
+    private suspend fun getSqlResult(text: String, modelVariant: ModelVariant): SqlResult {
         val result: ResultWrapper<String, SystemError> =
             withLogLevel(Level.OFF) {
-                return@withLogLevel text2SQLService.convertToSQL(text, modelName)
+                return@withLogLevel text2SQLService.convertToSQL(text, modelVariant)
             }
         return when (result) {
             is ResultWrapper.Success -> {
-                logger.info { "  $modelName - ok!" }
+                logger.info { "  $modelVariant - ok!" }
                 SqlResult(sql = result.data, status = "")
             }
             is ResultWrapper.Failure -> {
-                logger.info { "  $modelName - Error: ${result.error.message}" }
+                logger.info { "  $modelVariant - Error: ${result.error.message}" }
                 SqlResult(sql = "ERROR", status = "0")
             }
         }

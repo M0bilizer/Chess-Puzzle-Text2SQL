@@ -12,7 +12,7 @@ import com.chess.puzzle.text2sql.web.config.SentenceTransformerEndpoints
 import com.chess.puzzle.text2sql.web.domain.input.QueryRequest
 import com.chess.puzzle.text2sql.web.domain.input.Text2SqlRequest
 import com.chess.puzzle.text2sql.web.domain.model.Demonstration
-import com.chess.puzzle.text2sql.web.domain.model.ModelName
+import com.chess.puzzle.text2sql.web.domain.model.ModelVariant
 import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
 import com.chess.puzzle.text2sql.web.entities.*
 import com.chess.puzzle.text2sql.web.error.*
@@ -406,7 +406,7 @@ class DebuggingControllerIntegrationTest {
             "Find puzzles with rating > 1500 Find puzzles with rating > 2000 SELECT * FROM puzzles WHERE rating > 2000"
         val sql = "SELECT * FROM puzzles WHERE rating > 1500"
 
-        coEvery { filePaths.getPromptTemplate(ModelName.Full) } returns "full_prompt_template.txt"
+        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns "full_prompt_template.txt"
         coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
             ResultWrapper.Success(promptTemplate)
         coEvery { sentenceTransformerHelperMock.getSimilarDemonstration(query) } returns
@@ -437,7 +437,7 @@ class DebuggingControllerIntegrationTest {
         val query = "Find puzzles with rating > 1500"
         val error = GetTextFileError.IOException(IOException())
 
-        coEvery { filePaths.getPromptTemplate(ModelName.Full) } returns "full_prompt_template.txt"
+        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns "full_prompt_template.txt"
         coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
             ResultWrapper.Failure(error)
         val controller =
@@ -463,7 +463,7 @@ class DebuggingControllerIntegrationTest {
         val promptTemplate = "{{prompt}} {{text0}} {{sql0}}"
         val error = GetSimilarDemonstrationError.InternalError
 
-        coEvery { filePaths.getPromptTemplate(ModelName.Full) } returns "full_prompt_template.txt"
+        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns "full_prompt_template.txt"
         coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
             ResultWrapper.Success(promptTemplate)
         coEvery { sentenceTransformerHelperMock.getSimilarDemonstration(query) } returns
@@ -498,7 +498,7 @@ class DebuggingControllerIntegrationTest {
             )
         val error = ProcessPromptError.MissingPlaceholderError
 
-        coEvery { filePaths.getPromptTemplate(ModelName.Full) } returns "full_prompt_template.txt"
+        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns "full_prompt_template.txt"
         coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
             ResultWrapper.Success(promptTemplate)
         coEvery { sentenceTransformerHelperMock.getSimilarDemonstration(query) } returns
@@ -537,7 +537,7 @@ class DebuggingControllerIntegrationTest {
             "Find puzzles with rating > 1500 Find puzzles with rating > 2000 SELECT * FROM puzzles WHERE rating > 2000"
         val error = CallDeepSeekError.InsufficientBalanceError
 
-        coEvery { filePaths.getPromptTemplate(ModelName.Full) } returns "full_prompt_template.txt"
+        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns "full_prompt_template.txt"
         coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
             ResultWrapper.Success(promptTemplate)
         coEvery { sentenceTransformerHelperMock.getSimilarDemonstration(query) } returns

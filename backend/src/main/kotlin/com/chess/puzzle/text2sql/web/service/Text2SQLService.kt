@@ -2,8 +2,8 @@ package com.chess.puzzle.text2sql.web.service
 
 import com.chess.puzzle.text2sql.web.config.FilePaths
 import com.chess.puzzle.text2sql.web.domain.model.Demonstration
-import com.chess.puzzle.text2sql.web.domain.model.ModelName
-import com.chess.puzzle.text2sql.web.domain.model.ModelName.*
+import com.chess.puzzle.text2sql.web.domain.model.ModelVariant
+import com.chess.puzzle.text2sql.web.domain.model.ModelVariant.*
 import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
 import com.chess.puzzle.text2sql.web.error.SystemError
 import com.chess.puzzle.text2sql.web.service.helper.LargeLanguageApiHelper
@@ -45,14 +45,14 @@ class Text2SQLService(
      * Converts a natural language query into an SQL query based on the specified model.
      *
      * @param query The natural language query to convert.
-     * @param modelName The model to use for the conversion (Full, Partial, or Baseline).
+     * @param modelVariant The model to use for the conversion (Full, Partial, or Baseline).
      * @return A [ResultWrapper] containing the SQL query or an error.
      */
     suspend fun convertToSQL(
         query: String,
-        modelName: ModelName,
+        modelVariant: ModelVariant,
     ): ResultWrapper<String, SystemError> {
-        return when (modelName) {
+        return when (modelVariant) {
             Full -> full(query)
             Partial -> partial(query)
             Baseline -> baseline(query)

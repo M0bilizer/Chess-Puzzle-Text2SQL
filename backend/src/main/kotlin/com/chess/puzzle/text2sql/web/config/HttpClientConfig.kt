@@ -27,8 +27,9 @@ import org.springframework.context.annotation.Configuration
 class HttpClientConfig {
 
     @Value("\${api_key}") lateinit var apiKey: String
-
     @Value("\${base_url}") lateinit var baseUrl: String
+    @Value("\${alt_api_key}") lateinit var altApiKey: String
+    @Value("\${alt_base_url}") lateinit var altBaseUrl: String
 
     /**
      * Creates and configures an HTTP client using Ktor's OkHttp engine.
@@ -56,6 +57,15 @@ class HttpClientConfig {
     fun openAi(): OpenAI {
         val apiKey = apiKey
         val baseUrl = baseUrl
+        val loggingConfig =
+            LoggingConfig(logLevel = LogLevel.None, logger = Logger.Simple, sanitize = true)
+        return OpenAI(token = apiKey, host = OpenAIHost(baseUrl), logging = loggingConfig)
+    }
+
+    @Bean
+    fun altOpenAi(): OpenAI {
+        val apiKey = altApiKey
+        val baseUrl = altBaseUrl
         val loggingConfig =
             LoggingConfig(logLevel = LogLevel.None, logger = Logger.Simple, sanitize = true)
         return OpenAI(token = apiKey, host = OpenAIHost(baseUrl), logging = loggingConfig)

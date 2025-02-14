@@ -1,6 +1,6 @@
 package com.chess.puzzle.text2sql.web.config
 
-import com.chess.puzzle.text2sql.web.domain.model.ModelName
+import com.chess.puzzle.text2sql.web.domain.model.ModelVariant
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -34,7 +34,7 @@ class FilePathsTest {
     @Test
     fun `test getPromptTemplate with Full model`() {
         // Act
-        val result = filePaths.getPromptTemplate(ModelName.Full)
+        val result = filePaths.getPromptTemplate(ModelVariant.Full)
 
         // Assert
         expectThat(result) { isEqualTo("path/to/promptTemplate.md") }
@@ -43,7 +43,7 @@ class FilePathsTest {
     @Test
     fun `test getPromptTemplate with Partial model`() {
         // Act
-        val result = filePaths.getPromptTemplate(ModelName.Partial)
+        val result = filePaths.getPromptTemplate(ModelVariant.Partial)
 
         // Assert
         expectThat(result) { isEqualTo("path/to/promptTemplate.md") }
@@ -52,7 +52,7 @@ class FilePathsTest {
     @Test
     fun `test getPromptTemplate with Baseline model`() {
         // Act
-        val result = filePaths.getPromptTemplate(ModelName.Baseline)
+        val result = filePaths.getPromptTemplate(ModelVariant.Baseline)
 
         // Assert
         expectThat(result) { isEqualTo("path/to/baselinePromptTemplate.md") }

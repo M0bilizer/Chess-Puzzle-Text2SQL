@@ -1,6 +1,6 @@
 package com.chess.puzzle.text2sql.web.domain.input
 
-import com.chess.puzzle.text2sql.web.domain.model.ModelName
+import com.chess.puzzle.text2sql.web.domain.model.ModelVariant
 import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
 import com.chess.puzzle.text2sql.web.error.ClientError
 import com.chess.puzzle.text2sql.web.error.ClientError.InvalidModelName
@@ -16,8 +16,8 @@ data class Text2SqlRequest(val query: String? = null, val model: String? = null)
             RequestValidator<Text2SqlInput> {
                 isNotNull(query, MissingQuery)
                 ifPresent(model) {
-                    isNotNull(ModelName.toEnum(model!!), InvalidModelName)
-                    isInCollection(ModelName.toEnum(model), ModelName.entries, InvalidModelName)
+                    isNotNull(ModelVariant.toEnum(model!!), InvalidModelName)
+                    isInCollection(ModelVariant.toEnum(model), ModelVariant.entries, InvalidModelName)
                 }
             }
         if (validator.haveErrors()) {
@@ -27,10 +27,10 @@ data class Text2SqlRequest(val query: String? = null, val model: String? = null)
         val input =
             Text2SqlInput(
                 query = query!!,
-                model = model?.let { ModelName.toEnum(it) } ?: ModelName.Full,
+                model = model?.let { ModelVariant.toEnum(it) } ?: ModelVariant.Full,
             )
         return ResultWrapper.Success(input)
     }
 }
 
-@Serializable data class Text2SqlInput(val query: String, val model: ModelName)
+@Serializable data class Text2SqlInput(val query: String, val model: ModelVariant)

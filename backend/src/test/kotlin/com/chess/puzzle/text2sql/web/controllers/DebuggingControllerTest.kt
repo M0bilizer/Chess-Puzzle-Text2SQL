@@ -3,7 +3,7 @@ package com.chess.puzzle.text2sql.web.controllers
 import com.chess.puzzle.text2sql.web.domain.input.QueryRequest
 import com.chess.puzzle.text2sql.web.domain.input.Text2SqlRequest
 import com.chess.puzzle.text2sql.web.domain.model.Demonstration
-import com.chess.puzzle.text2sql.web.domain.model.ModelName
+import com.chess.puzzle.text2sql.web.domain.model.ModelVariant
 import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
 import com.chess.puzzle.text2sql.web.entities.*
 import com.chess.puzzle.text2sql.web.error.CallDeepSeekError
@@ -184,7 +184,7 @@ class DebuggingControllerTest {
         val sqlQuery = "SELECT * FROM puzzles"
 
         val text2SQLService: Text2SQLService = mockk {
-            coEvery { convertToSQL(query, ModelName.Full) } returns ResultWrapper.Success(sqlQuery)
+            coEvery { convertToSQL(query, ModelVariant.Full) } returns ResultWrapper.Success(sqlQuery)
         }
 
         val response =
@@ -204,7 +204,7 @@ class DebuggingControllerTest {
         val sqlQuery = "SELECT * FROM puzzles"
 
         val text2SQLService: Text2SQLService = mockk {
-            coEvery { convertToSQL(query, ModelName.Full) } returns ResultWrapper.Success(sqlQuery)
+            coEvery { convertToSQL(query, ModelVariant.Full) } returns ResultWrapper.Success(sqlQuery)
         }
 
         val response =
@@ -224,7 +224,7 @@ class DebuggingControllerTest {
         val sqlQuery = "SELECT * FROM puzzles"
 
         val text2SQLService: Text2SQLService = mockk {
-            coEvery { convertToSQL(query, ModelName.Partial) } returns
+            coEvery { convertToSQL(query, ModelVariant.Partial) } returns
                 ResultWrapper.Success(sqlQuery)
         }
 
@@ -245,7 +245,7 @@ class DebuggingControllerTest {
         val sqlQuery = "SELECT * FROM puzzles"
 
         val text2SQLService: Text2SQLService = mockk {
-            coEvery { convertToSQL(query, ModelName.Baseline) } returns
+            coEvery { convertToSQL(query, ModelVariant.Baseline) } returns
                 ResultWrapper.Success(sqlQuery)
         }
 
@@ -265,7 +265,7 @@ class DebuggingControllerTest {
         val text2SqlRequest = Text2SqlRequest(query)
         val error = CallDeepSeekError.ServerError
         val text2SQLService: Text2SQLService = mockk {
-            coEvery { convertToSQL(query, ModelName.Full) } returns ResultWrapper.Failure(error)
+            coEvery { convertToSQL(query, ModelVariant.Full) } returns ResultWrapper.Failure(error)
         }
 
         val response =

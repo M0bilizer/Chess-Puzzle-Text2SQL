@@ -2,7 +2,7 @@ package com.chess.puzzle.text2sql.web.service
 
 import com.chess.puzzle.text2sql.web.config.FilePaths
 import com.chess.puzzle.text2sql.web.domain.model.Demonstration
-import com.chess.puzzle.text2sql.web.domain.model.ModelName
+import com.chess.puzzle.text2sql.web.domain.model.ModelVariant
 import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
 import com.chess.puzzle.text2sql.web.error.CallDeepSeekError
 import com.chess.puzzle.text2sql.web.error.GetSimilarDemonstrationError
@@ -53,7 +53,7 @@ class Text2SQLServiceTest {
             "Find puzzles with rating > 1500 Find puzzles with rating > 2000 SELECT * FROM puzzles WHERE rating > 2000"
         val sql = "SELECT * FROM puzzles WHERE rating > 1500"
 
-        coEvery { filePaths.getPromptTemplate(ModelName.Full) } returns "full_prompt_template.txt"
+        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns "full_prompt_template.txt"
         coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
             ResultWrapper.Success(promptTemplate)
         coEvery { sentenceTransformerHelper.getSimilarDemonstration(query) } returns
@@ -63,7 +63,7 @@ class Text2SQLServiceTest {
         coEvery { largeLanguageApiHelper.callDeepSeek(processedPrompt) } returns
             ResultWrapper.Success(sql)
 
-        val result = text2SQLService.convertToSQL(query, ModelName.Full)
+        val result = text2SQLService.convertToSQL(query, ModelVariant.Full)
 
         expectThat(result) { isEqualTo(ResultWrapper.Success(sql)) }
     }
@@ -74,12 +74,12 @@ class Text2SQLServiceTest {
         val query = "Find puzzles with rating > 1500"
         val error = GetTextFileError.IOException(IOException())
 
-        coEvery { filePaths.getPromptTemplate(ModelName.Full) } returns "full_prompt_template.txt"
+        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns "full_prompt_template.txt"
         coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
             ResultWrapper.Failure(error)
 
         // Act
-        val result = text2SQLService.convertToSQL(query, ModelName.Full)
+        val result = text2SQLService.convertToSQL(query, ModelVariant.Full)
 
         // Assert
         expectThat(result) { isEqualTo(ResultWrapper.Failure(error)) }
@@ -92,14 +92,14 @@ class Text2SQLServiceTest {
         val promptTemplate = "{{prompt}} {{text0}} {{sql0}}"
         val error = GetSimilarDemonstrationError.InternalError
 
-        coEvery { filePaths.getPromptTemplate(ModelName.Full) } returns "full_prompt_template.txt"
+        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns "full_prompt_template.txt"
         coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
             ResultWrapper.Success(promptTemplate)
         coEvery { sentenceTransformerHelper.getSimilarDemonstration(query) } returns
             ResultWrapper.Failure(error)
 
         // Act
-        val result = text2SQLService.convertToSQL(query, ModelName.Full)
+        val result = text2SQLService.convertToSQL(query, ModelVariant.Full)
 
         // Assert
         expectThat(result) { isEqualTo(ResultWrapper.Failure(error)) }
@@ -119,7 +119,7 @@ class Text2SQLServiceTest {
             )
         val error = ProcessPromptError.MissingPlaceholderError
 
-        coEvery { filePaths.getPromptTemplate(ModelName.Full) } returns "full_prompt_template.txt"
+        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns "full_prompt_template.txt"
         coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
             ResultWrapper.Success(promptTemplate)
         coEvery { sentenceTransformerHelper.getSimilarDemonstration(query) } returns
@@ -128,7 +128,7 @@ class Text2SQLServiceTest {
             ResultWrapper.Failure(error)
 
         // Act
-        val result = text2SQLService.convertToSQL(query, ModelName.Full)
+        val result = text2SQLService.convertToSQL(query, ModelVariant.Full)
 
         // Assert
         expectThat(result) { isEqualTo(ResultWrapper.Failure(error)) }
@@ -150,7 +150,7 @@ class Text2SQLServiceTest {
             "Find puzzles with rating > 1500 Find puzzles with rating > 2000 SELECT * FROM puzzles WHERE rating > 2000"
         val error = CallDeepSeekError.InsufficientBalanceError
 
-        coEvery { filePaths.getPromptTemplate(ModelName.Full) } returns "full_prompt_template.txt"
+        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns "full_prompt_template.txt"
         coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
             ResultWrapper.Success(promptTemplate)
         coEvery { sentenceTransformerHelper.getSimilarDemonstration(query) } returns
@@ -161,7 +161,7 @@ class Text2SQLServiceTest {
             ResultWrapper.Failure(error)
 
         // Act
-        val result = text2SQLService.convertToSQL(query, ModelName.Full)
+        val result = text2SQLService.convertToSQL(query, ModelVariant.Full)
 
         // Assert
         expectThat(result) { isEqualTo(ResultWrapper.Failure(error)) }
@@ -182,7 +182,7 @@ class Text2SQLServiceTest {
             "Find puzzles with rating > 1500 Find puzzles with rating > 2000 SELECT * FROM puzzles WHERE rating > 2000"
         val sql = "SELECT * FROM puzzles WHERE rating > 1500"
 
-        coEvery { filePaths.getPromptTemplate(ModelName.Partial) } returns
+        coEvery { filePaths.getPromptTemplate(ModelVariant.Partial) } returns
             "partial_prompt_template.txt"
         coEvery { fileLoaderService.getTextFile("partial_prompt_template.txt") } returns
             ResultWrapper.Success(promptTemplate)
@@ -193,7 +193,7 @@ class Text2SQLServiceTest {
         coEvery { largeLanguageApiHelper.callDeepSeek(processedPrompt) } returns
             ResultWrapper.Success(sql)
 
-        val result = text2SQLService.convertToSQL(query, ModelName.Partial)
+        val result = text2SQLService.convertToSQL(query, ModelVariant.Partial)
 
         expectThat(result) { isEqualTo(ResultWrapper.Success(sql)) }
     }
@@ -204,13 +204,13 @@ class Text2SQLServiceTest {
         val query = "Find puzzles with rating > 1500"
         val error = GetTextFileError.IOException(IOException())
 
-        coEvery { filePaths.getPromptTemplate(ModelName.Partial) } returns
+        coEvery { filePaths.getPromptTemplate(ModelVariant.Partial) } returns
             "partial_prompt_template.txt"
         coEvery { fileLoaderService.getTextFile("partial_prompt_template.txt") } returns
             ResultWrapper.Failure(error)
 
         // Act
-        val result = text2SQLService.convertToSQL(query, ModelName.Partial)
+        val result = text2SQLService.convertToSQL(query, ModelVariant.Partial)
 
         // Assert
         expectThat(result) { isEqualTo(ResultWrapper.Failure(error)) }
@@ -224,7 +224,7 @@ class Text2SQLServiceTest {
             val promptTemplate = "{{prompt}} {{text0}} {{sql0}}"
             val error = GetSimilarDemonstrationError.NetworkError
 
-            coEvery { filePaths.getPromptTemplate(ModelName.Partial) } returns
+            coEvery { filePaths.getPromptTemplate(ModelVariant.Partial) } returns
                 "partial_prompt_template.txt"
             coEvery { fileLoaderService.getTextFile("partial_prompt_template.txt") } returns
                 ResultWrapper.Success(promptTemplate)
@@ -232,7 +232,7 @@ class Text2SQLServiceTest {
                 ResultWrapper.Failure(error)
 
             // Act
-            val result = text2SQLService.convertToSQL(query, ModelName.Partial)
+            val result = text2SQLService.convertToSQL(query, ModelVariant.Partial)
 
             // Assert
             expectThat(result) { isEqualTo(ResultWrapper.Failure(error)) }
@@ -252,7 +252,7 @@ class Text2SQLServiceTest {
             )
         val error = ProcessPromptError.InvalidDemonstrationError
 
-        coEvery { filePaths.getPromptTemplate(ModelName.Partial) } returns
+        coEvery { filePaths.getPromptTemplate(ModelVariant.Partial) } returns
             "partial_prompt_template.txt"
         coEvery { fileLoaderService.getTextFile("partial_prompt_template.txt") } returns
             ResultWrapper.Success(promptTemplate)
@@ -262,7 +262,7 @@ class Text2SQLServiceTest {
             ResultWrapper.Failure(error)
 
         // Act
-        val result = text2SQLService.convertToSQL(query, ModelName.Partial)
+        val result = text2SQLService.convertToSQL(query, ModelVariant.Partial)
 
         // Assert
         expectThat(result) { isEqualTo(ResultWrapper.Failure(error)) }
@@ -284,7 +284,7 @@ class Text2SQLServiceTest {
             "Find puzzles with rating > 1500 Find puzzles with rating > 2000 SELECT * FROM puzzles WHERE rating > 2000"
         val error = CallDeepSeekError.RateLimitError
 
-        coEvery { filePaths.getPromptTemplate(ModelName.Partial) } returns
+        coEvery { filePaths.getPromptTemplate(ModelVariant.Partial) } returns
             "partial_prompt_template.txt"
         coEvery { fileLoaderService.getTextFile("partial_prompt_template.txt") } returns
             ResultWrapper.Success(promptTemplate)
@@ -296,7 +296,7 @@ class Text2SQLServiceTest {
             ResultWrapper.Failure(error)
 
         // Act
-        val result = text2SQLService.convertToSQL(query, ModelName.Partial)
+        val result = text2SQLService.convertToSQL(query, ModelVariant.Partial)
 
         // Assert
         expectThat(result) { isEqualTo(ResultWrapper.Failure(error)) }
@@ -309,7 +309,7 @@ class Text2SQLServiceTest {
         val processedPrompt = "Find puzzles with rating > 1500"
         val sql = "SELECT * FROM puzzles WHERE rating > 1500"
 
-        coEvery { filePaths.getPromptTemplate(ModelName.Full) } returns
+        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns
             "baseline_prompt_template.txt"
         coEvery { fileLoaderService.getTextFile("baseline_prompt_template.txt") } returns
             ResultWrapper.Success(promptTemplate)
@@ -318,7 +318,7 @@ class Text2SQLServiceTest {
         coEvery { largeLanguageApiHelper.callDeepSeek(processedPrompt) } returns
             ResultWrapper.Success(sql)
 
-        val result = text2SQLService.convertToSQL(query, ModelName.Baseline)
+        val result = text2SQLService.convertToSQL(query, ModelVariant.Baseline)
 
         expectThat(result) { isEqualTo(ResultWrapper.Success(sql)) }
     }
@@ -329,13 +329,13 @@ class Text2SQLServiceTest {
         val query = "Find puzzles with rating > 1500"
         val error = GetTextFileError.FileNotFoundError
 
-        coEvery { filePaths.getPromptTemplate(ModelName.Full) } returns
+        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns
             "baseline_prompt_template.txt"
         coEvery { fileLoaderService.getTextFile("baseline_prompt_template.txt") } returns
             ResultWrapper.Failure(error)
 
         // Act
-        val result = text2SQLService.convertToSQL(query, ModelName.Baseline)
+        val result = text2SQLService.convertToSQL(query, ModelVariant.Baseline)
 
         // Assert
         expectThat(result) { isEqualTo(ResultWrapper.Failure(error)) }
@@ -348,7 +348,7 @@ class Text2SQLServiceTest {
         val promptTemplate = "{{prompt}}"
         val error = ProcessPromptError.MissingPlaceholderError
 
-        coEvery { filePaths.getPromptTemplate(ModelName.Full) } returns
+        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns
             "baseline_prompt_template.txt"
         coEvery { fileLoaderService.getTextFile("baseline_prompt_template.txt") } returns
             ResultWrapper.Success(promptTemplate)
@@ -356,7 +356,7 @@ class Text2SQLServiceTest {
             ResultWrapper.Failure(error)
 
         // Act
-        val result = text2SQLService.convertToSQL(query, ModelName.Baseline)
+        val result = text2SQLService.convertToSQL(query, ModelVariant.Baseline)
 
         // Assert
         expectThat(result) { isEqualTo(ResultWrapper.Failure(error)) }
@@ -370,7 +370,7 @@ class Text2SQLServiceTest {
         val processedPrompt = "Find puzzles with rating > 1500"
         val error = CallDeepSeekError.PermissionError
 
-        coEvery { filePaths.getPromptTemplate(ModelName.Full) } returns
+        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns
             "baseline_prompt_template.txt"
         coEvery { fileLoaderService.getTextFile("baseline_prompt_template.txt") } returns
             ResultWrapper.Success(promptTemplate)
@@ -380,7 +380,7 @@ class Text2SQLServiceTest {
             ResultWrapper.Failure(error)
 
         // Act
-        val result = text2SQLService.convertToSQL(query, ModelName.Baseline)
+        val result = text2SQLService.convertToSQL(query, ModelVariant.Baseline)
 
         // Assert
         expectThat(result) { isEqualTo(ResultWrapper.Failure(error)) }

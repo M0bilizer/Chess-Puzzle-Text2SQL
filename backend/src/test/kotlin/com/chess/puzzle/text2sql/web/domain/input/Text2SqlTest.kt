@@ -1,6 +1,6 @@
 package com.chess.puzzle.text2sql.web.domain.input
 
-import com.chess.puzzle.text2sql.web.domain.model.ModelName
+import com.chess.puzzle.text2sql.web.domain.model.ModelVariant
 import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
 import com.chess.puzzle.text2sql.web.error.ClientError
 import com.chess.puzzle.text2sql.web.error.ClientError.InvalidModelName
@@ -19,7 +19,7 @@ class Text2SqlRequestTest {
         val request = Text2SqlRequest(query, "Full")
         val result = request.toInput()
 
-        val expected = Text2SqlInput(query, ModelName.Full)
+        val expected = Text2SqlInput(query, ModelVariant.Full)
         expectThat(result).isEqualTo(ResultWrapper.Success(expected))
     }
 
@@ -29,7 +29,7 @@ class Text2SqlRequestTest {
         val request = Text2SqlRequest(query, "Partial")
         val result = request.toInput()
 
-        val expected = Text2SqlInput(query, ModelName.Partial)
+        val expected = Text2SqlInput(query, ModelVariant.Partial)
         expectThat(result).isEqualTo(ResultWrapper.Success(expected))
     }
 
@@ -39,7 +39,7 @@ class Text2SqlRequestTest {
         val request = Text2SqlRequest(query, "Baseline")
         val result = request.toInput()
 
-        val expected = Text2SqlInput(query, ModelName.Baseline)
+        val expected = Text2SqlInput(query, ModelVariant.Baseline)
         expectThat(result).isEqualTo(ResultWrapper.Success(expected))
     }
 
@@ -49,7 +49,7 @@ class Text2SqlRequestTest {
         val request = Text2SqlRequest(query, "FULL")
         val result = request.toInput()
 
-        val expected = Text2SqlInput(query, ModelName.Full)
+        val expected = Text2SqlInput(query, ModelVariant.Full)
         expectThat(result).isEqualTo(ResultWrapper.Success(expected))
     }
 
@@ -59,7 +59,7 @@ class Text2SqlRequestTest {
         val request = Text2SqlRequest(query, "partial")
         val result = request.toInput()
 
-        val expected = Text2SqlInput(query, ModelName.Partial)
+        val expected = Text2SqlInput(query, ModelVariant.Partial)
         expectThat(result).isEqualTo(ResultWrapper.Success(expected))
     }
 
@@ -69,7 +69,7 @@ class Text2SqlRequestTest {
         val request = Text2SqlRequest(query, "bAseLInE")
         val result = request.toInput()
 
-        val expected = Text2SqlInput(query, ModelName.Baseline)
+        val expected = Text2SqlInput(query, ModelVariant.Baseline)
         expectThat(result).isEqualTo(ResultWrapper.Success(expected))
     }
 
@@ -97,7 +97,7 @@ class Text2SqlRequestTest {
         val request = Text2SqlRequest(query)
         val result = request.toInput()
 
-        val expected = Text2SqlInput(query, ModelName.Full)
+        val expected = Text2SqlInput(query, ModelVariant.Full)
         expectThat(result).isEqualTo(ResultWrapper.Success(expected))
     }
 
