@@ -184,7 +184,8 @@ class DebuggingControllerTest {
         val sqlQuery = "SELECT * FROM puzzles"
 
         val text2SQLService: Text2SQLService = mockk {
-            coEvery { convertToSQL(query, ModelVariant.Full) } returns ResultWrapper.Success(sqlQuery)
+            coEvery { convertToSQL(query, ModelVariant.Full) } returns
+                ResultWrapper.Success(sqlQuery)
         }
 
         val response =
@@ -204,7 +205,8 @@ class DebuggingControllerTest {
         val sqlQuery = "SELECT * FROM puzzles"
 
         val text2SQLService: Text2SQLService = mockk {
-            coEvery { convertToSQL(query, ModelVariant.Full) } returns ResultWrapper.Success(sqlQuery)
+            coEvery { convertToSQL(query, ModelVariant.Full) } returns
+                ResultWrapper.Success(sqlQuery)
         }
 
         val response =

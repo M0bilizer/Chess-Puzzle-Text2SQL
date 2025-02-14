@@ -1,5 +1,6 @@
 package com.chess.puzzle.text2sql.web
 
+import io.github.cdimascio.dotenv.dotenv
 import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.Value
@@ -51,5 +52,9 @@ class KotlinSpring {
  * @param args Command-line arguments passed to the application.
  */
 fun main(args: Array<String>) {
+
+    val dotenv = dotenv()
+    dotenv.entries().forEach { entry -> System.setProperty(entry.key, entry.value) }
+
     runApplication<KotlinSpring>(*args)
 }

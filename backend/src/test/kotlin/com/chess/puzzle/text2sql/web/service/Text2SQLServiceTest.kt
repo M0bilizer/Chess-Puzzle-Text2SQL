@@ -53,7 +53,8 @@ class Text2SQLServiceTest {
             "Find puzzles with rating > 1500 Find puzzles with rating > 2000 SELECT * FROM puzzles WHERE rating > 2000"
         val sql = "SELECT * FROM puzzles WHERE rating > 1500"
 
-        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns "full_prompt_template.txt"
+        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns
+            "full_prompt_template.txt"
         coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
             ResultWrapper.Success(promptTemplate)
         coEvery { sentenceTransformerHelper.getSimilarDemonstration(query) } returns
@@ -74,7 +75,8 @@ class Text2SQLServiceTest {
         val query = "Find puzzles with rating > 1500"
         val error = GetTextFileError.IOException(IOException())
 
-        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns "full_prompt_template.txt"
+        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns
+            "full_prompt_template.txt"
         coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
             ResultWrapper.Failure(error)
 
@@ -92,7 +94,8 @@ class Text2SQLServiceTest {
         val promptTemplate = "{{prompt}} {{text0}} {{sql0}}"
         val error = GetSimilarDemonstrationError.InternalError
 
-        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns "full_prompt_template.txt"
+        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns
+            "full_prompt_template.txt"
         coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
             ResultWrapper.Success(promptTemplate)
         coEvery { sentenceTransformerHelper.getSimilarDemonstration(query) } returns
@@ -119,7 +122,8 @@ class Text2SQLServiceTest {
             )
         val error = ProcessPromptError.MissingPlaceholderError
 
-        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns "full_prompt_template.txt"
+        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns
+            "full_prompt_template.txt"
         coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
             ResultWrapper.Success(promptTemplate)
         coEvery { sentenceTransformerHelper.getSimilarDemonstration(query) } returns
@@ -150,7 +154,8 @@ class Text2SQLServiceTest {
             "Find puzzles with rating > 1500 Find puzzles with rating > 2000 SELECT * FROM puzzles WHERE rating > 2000"
         val error = CallDeepSeekError.InsufficientBalanceError
 
-        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns "full_prompt_template.txt"
+        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns
+            "full_prompt_template.txt"
         coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
             ResultWrapper.Success(promptTemplate)
         coEvery { sentenceTransformerHelper.getSimilarDemonstration(query) } returns

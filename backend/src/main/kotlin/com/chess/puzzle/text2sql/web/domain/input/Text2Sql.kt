@@ -17,7 +17,11 @@ data class Text2SqlRequest(val query: String? = null, val model: String? = null)
                 isNotNull(query, MissingQuery)
                 ifPresent(model) {
                     isNotNull(ModelVariant.toEnum(model!!), InvalidModelName)
-                    isInCollection(ModelVariant.toEnum(model), ModelVariant.entries, InvalidModelName)
+                    isInCollection(
+                        ModelVariant.toEnum(model),
+                        ModelVariant.entries,
+                        InvalidModelName,
+                    )
                 }
             }
         if (validator.haveErrors()) {

@@ -94,6 +94,7 @@ dependencies {
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("com.aallam.openai:openai-client:3.8.2")
     implementation("com.github.jsqlparser:jsqlparser:5.0")
+    implementation("io.github.cdimascio:dotenv-kotlin:6.4.1")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
     runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.9.0")

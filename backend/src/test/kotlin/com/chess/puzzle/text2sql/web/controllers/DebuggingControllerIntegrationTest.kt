@@ -406,7 +406,8 @@ class DebuggingControllerIntegrationTest {
             "Find puzzles with rating > 1500 Find puzzles with rating > 2000 SELECT * FROM puzzles WHERE rating > 2000"
         val sql = "SELECT * FROM puzzles WHERE rating > 1500"
 
-        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns "full_prompt_template.txt"
+        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns
+            "full_prompt_template.txt"
         coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
             ResultWrapper.Success(promptTemplate)
         coEvery { sentenceTransformerHelperMock.getSimilarDemonstration(query) } returns
@@ -437,7 +438,8 @@ class DebuggingControllerIntegrationTest {
         val query = "Find puzzles with rating > 1500"
         val error = GetTextFileError.IOException(IOException())
 
-        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns "full_prompt_template.txt"
+        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns
+            "full_prompt_template.txt"
         coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
             ResultWrapper.Failure(error)
         val controller =
@@ -463,7 +465,8 @@ class DebuggingControllerIntegrationTest {
         val promptTemplate = "{{prompt}} {{text0}} {{sql0}}"
         val error = GetSimilarDemonstrationError.InternalError
 
-        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns "full_prompt_template.txt"
+        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns
+            "full_prompt_template.txt"
         coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
             ResultWrapper.Success(promptTemplate)
         coEvery { sentenceTransformerHelperMock.getSimilarDemonstration(query) } returns
@@ -498,7 +501,8 @@ class DebuggingControllerIntegrationTest {
             )
         val error = ProcessPromptError.MissingPlaceholderError
 
-        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns "full_prompt_template.txt"
+        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns
+            "full_prompt_template.txt"
         coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
             ResultWrapper.Success(promptTemplate)
         coEvery { sentenceTransformerHelperMock.getSimilarDemonstration(query) } returns
@@ -537,7 +541,8 @@ class DebuggingControllerIntegrationTest {
             "Find puzzles with rating > 1500 Find puzzles with rating > 2000 SELECT * FROM puzzles WHERE rating > 2000"
         val error = CallDeepSeekError.InsufficientBalanceError
 
-        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns "full_prompt_template.txt"
+        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns
+            "full_prompt_template.txt"
         coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
             ResultWrapper.Success(promptTemplate)
         coEvery { sentenceTransformerHelperMock.getSimilarDemonstration(query) } returns
