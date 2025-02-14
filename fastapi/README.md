@@ -95,11 +95,11 @@ bash build.sh
 ```
 
 ---
-## Libraries Used
+## Modules Used
 
-| library               | Description / Purpose                              |
-|-----------------------|----------------------------------------------------|
-| Sentence Transformer  | Find similar demonstration, perform schema masking |
-| torch (MUST BE 2.4.1) | Dependencies for Sentence Transformer              |
-| fastapi               | Backend                                            |
-| comment-json          | Remove comments from JSON files                    |
+| Module               | Description / Purpose                              |
+|----------------------|----------------------------------------------------|
+| Sentence Transformer | Find similar demonstration, perform schema masking |
+| fastapi              | Backend                                            |
+| uvicorn              | Server for Fastapi                                 |
+| commentjson          | Remove comments from JSON files                    |

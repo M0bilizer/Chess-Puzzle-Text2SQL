@@ -11,6 +11,7 @@ if __name__ == "__main__":
 
     uvicorn.run("main:app", host="0.0.0.0", port=8000)
 
+# get ruff using: uv tool install ruff@latest
 # lint: ruff format
-# dev: uvicorn src.main:app --reload
-# prod: uvicorn src.main:app --host 0.0.0.0 --port 8000
+# dev: uvicorn main:app --reload
+# prod: uvicorn main:app --host 0.0.0.0 --port 8000
