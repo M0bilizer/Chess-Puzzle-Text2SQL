@@ -1,12 +1,12 @@
 package com.chess.puzzle.text2sql.web.service.helper
 
-import com.aallam.openai.api.chat.*
+import com.aallam.openai.api.chat.ChatCompletion
+import com.aallam.openai.api.chat.TextContent
 import com.aallam.openai.api.exception.*
-import com.aallam.openai.api.model.ModelId
-import com.aallam.openai.client.OpenAI
+import com.chess.puzzle.text2sql.web.domain.model.ModelName
 import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
-import com.chess.puzzle.text2sql.web.error.CallDeepSeekError
-import com.chess.puzzle.text2sql.web.error.CallDeepSeekError.*
+import com.chess.puzzle.text2sql.web.error.CallLargeLanguageModelError
+import com.chess.puzzle.text2sql.web.service.llm.LargeLanguageModelFactory
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -19,43 +19,24 @@ private val logger = KotlinLogging.logger {}
  * This class handles sending queries to the DeepSeek API, processing the responses, and converting
  * them into SQL queries. It also handles exceptions and errors returned by the API.
  *
- * @property client The [OpenAI] client used to interact with the DeepSeek API.
+ * @property largeLanguageModelFactory The [LargeLanguageModelFactory] used to get correct LLM
+ *   Model.
  */
 @Service
-class LargeLanguageApiHelper(@Autowired private val client: OpenAI) {
+class LargeLanguageApiHelper(
+    @Autowired private val largeLanguageModelFactory: LargeLanguageModelFactory
+) {
 
-    /**
-     * Sends a query to the DeepSeek API and returns the result as a [ResultWrapper].
-     *
-     * @param query The user's query to be converted into SQL.
-     * @return A [ResultWrapper] containing the SQL query or an error.
-     */
-    suspend fun callDeepSeek(query: String): ResultWrapper<String, CallDeepSeekError> {
-        val chatCompletionRequest = createChatCompletionRequest(query)
+    suspend fun callModel(
+        query: String,
+        modelName: ModelName,
+    ): ResultWrapper<String, CallLargeLanguageModelError> {
         return try {
-            val chatCompletion = client.chatCompletion(chatCompletionRequest)
+            val chatCompletion = largeLanguageModelFactory.getModel(modelName).callModel(query)
             processChatCompletionResponse(query, chatCompletion)
         } catch (e: OpenAIException) {
             handleOpenAIException(e)
         }
-    }
-
-    /**
-     * Creates a [ChatCompletionRequest] for the given prompt template.
-     *
-     * @param input The custom prompt template to be sent to the API.
-     * @return A [ChatCompletionRequest] object.
-     */
-    private fun createChatCompletionRequest(input: String): ChatCompletionRequest {
-        return ChatCompletionRequest(
-            model = ModelId("deepseek-chat"),
-            messages =
-                listOf(
-                    ChatMessage(role = ChatRole.System, content = "You are a helpful assistant"),
-                    ChatMessage(role = ChatRole.User, content = input),
-                ),
-            temperature = 0.0,
-        )
     }
 
     /**
@@ -65,50 +46,62 @@ class LargeLanguageApiHelper(@Autowired private val client: OpenAI) {
      * @param chatCompletion The [ChatCompletion] response from the API.
      * @return A [ResultWrapper] containing the SQL query or an error.
      */
-    private fun processChatCompletionResponse(
+    fun processChatCompletionResponse(
         query: String,
         chatCompletion: ChatCompletion,
-    ): ResultWrapper<String, CallDeepSeekError> {
+    ): ResultWrapper<String, CallLargeLanguageModelError> {
         return when (val response = chatCompletion.choices.firstOrNull()?.message?.messageContent) {
             is TextContent -> {
                 val sql = stripUnnecessary(response.content)
                 ResultWrapper.Success(sql)
             }
             else -> {
-                ResultWrapper.Failure(UnexpectedResult)
+                ResultWrapper.Failure(CallLargeLanguageModelError.UnexpectedResult)
             }
         }
     }
 
     /**
-     * Handles exceptions thrown by the OpenAI API and returns the appropriate [CallDeepSeekError].
+     * Handles exceptions thrown by the OpenAI API and returns the appropriate
+     * [CallLargeLanguageModelError].
      *
      * @param e The [OpenAIException] to handle.
-     * @return A [ResultWrapper.Failure] containing the corresponding [CallDeepSeekError].
+     * @return A [ResultWrapper.Failure] containing the corresponding [CallLargeLanguageModelError].
      */
-    private fun handleOpenAIException(
+    fun handleOpenAIException(
         e: OpenAIException
-    ): ResultWrapper.Failure<CallDeepSeekError> {
+    ): ResultWrapper.Failure<CallLargeLanguageModelError> {
         return when (e) {
             is OpenAIAPIException ->
                 when (e) {
-                    is RateLimitException -> ResultWrapper.Failure(RateLimitError)
-                    is InvalidRequestException -> ResultWrapper.Failure(InvalidRequestError)
-                    is AuthenticationException -> ResultWrapper.Failure(AuthenticationError)
-                    is PermissionException -> ResultWrapper.Failure(PermissionError)
+                    is RateLimitException ->
+                        ResultWrapper.Failure(CallLargeLanguageModelError.RateLimitError)
+                    is InvalidRequestException ->
+                        ResultWrapper.Failure(CallLargeLanguageModelError.InvalidRequestError)
+                    is AuthenticationException ->
+                        ResultWrapper.Failure(CallLargeLanguageModelError.AuthenticationError)
+                    is PermissionException ->
+                        ResultWrapper.Failure(CallLargeLanguageModelError.PermissionError)
                     is UnknownAPIException ->
                         when (e.statusCode) {
-                            402 -> ResultWrapper.Failure(InsufficientBalanceError)
-                            503 -> ResultWrapper.Failure(ServerOverload)
+                            402 ->
+                                ResultWrapper.Failure(
+                                    CallLargeLanguageModelError.InsufficientBalanceError
+                                )
+                            503 -> ResultWrapper.Failure(CallLargeLanguageModelError.ServerOverload)
                             else ->
                                 ResultWrapper.Failure(
-                                    UnknownError(e.statusCode, e.message ?: "no message")
+                                    CallLargeLanguageModelError.UnknownError(
+                                        e.statusCode,
+                                        e.message ?: "no message",
+                                    )
                                 )
                         }
                 }
-            is OpenAIHttpException -> ResultWrapper.Failure(HttpError)
-            is OpenAIServerException -> ResultWrapper.Failure(ServerError)
-            is OpenAIIOException -> ResultWrapper.Failure(IOException)
+            is OpenAIHttpException -> ResultWrapper.Failure(CallLargeLanguageModelError.HttpError)
+            is OpenAIServerException ->
+                ResultWrapper.Failure(CallLargeLanguageModelError.ServerError)
+            is OpenAIIOException -> ResultWrapper.Failure(CallLargeLanguageModelError.IOException)
         }
     }
 
@@ -121,7 +114,7 @@ class LargeLanguageApiHelper(@Autowired private val client: OpenAI) {
      * @param string The raw response string from the API.
      * @return The cleaned SQL query.
      */
-    private fun stripUnnecessary(string: String): String {
+    fun stripUnnecessary(string: String): String {
         return string
             .substringAfter("```")
             .substringBefore("```")

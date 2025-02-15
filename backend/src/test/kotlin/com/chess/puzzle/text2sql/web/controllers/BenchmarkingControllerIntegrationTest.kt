@@ -6,7 +6,7 @@ import com.chess.puzzle.text2sql.web.domain.model.BenchmarkResult
 import com.chess.puzzle.text2sql.web.domain.model.ModelVariant
 import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
 import com.chess.puzzle.text2sql.web.domain.model.SqlResult
-import com.chess.puzzle.text2sql.web.error.CallDeepSeekError
+import com.chess.puzzle.text2sql.web.error.CallLargeLanguageModelError
 import com.chess.puzzle.text2sql.web.error.GetBenchmarkEntriesError
 import com.chess.puzzle.text2sql.web.service.BenchmarkService
 import com.chess.puzzle.text2sql.web.service.FileLoaderService
@@ -111,11 +111,11 @@ class BenchmarkingControllerIntegrationTest {
         for (benchmarkEntry in benchmarkEntries) {
             val text = benchmarkEntry.text
             coEvery { text2SQLService.convertToSQL(text, ModelVariant.Full) } returns
-                ResultWrapper.Failure(CallDeepSeekError.HttpError)
+                ResultWrapper.Failure(CallLargeLanguageModelError.HttpError)
             coEvery { text2SQLService.convertToSQL(text, ModelVariant.Partial) } returns
-                ResultWrapper.Failure(CallDeepSeekError.IOException)
+                ResultWrapper.Failure(CallLargeLanguageModelError.IOException)
             coEvery { text2SQLService.convertToSQL(text, ModelVariant.Baseline) } returns
-                ResultWrapper.Failure(CallDeepSeekError.UnknownError(1, ""))
+                ResultWrapper.Failure(CallLargeLanguageModelError.UnknownError(1, ""))
         }
 
         val deferredResult = benchmarkingController.benchmark()

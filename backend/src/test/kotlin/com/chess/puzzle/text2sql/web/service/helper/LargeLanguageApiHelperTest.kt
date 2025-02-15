@@ -5,8 +5,8 @@ import com.aallam.openai.api.exception.*
 import com.aallam.openai.api.model.ModelId
 import com.aallam.openai.client.OpenAI
 import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
-import com.chess.puzzle.text2sql.web.error.CallDeepSeekError
-import com.chess.puzzle.text2sql.web.error.CallDeepSeekError.*
+import com.chess.puzzle.text2sql.web.error.CallLargeLanguageModelError
+import com.chess.puzzle.text2sql.web.error.CallLargeLanguageModelError.*
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
@@ -67,7 +67,7 @@ class LargeLanguageApiHelperTest {
         val result = helper.callDeepSeek(promptTemplate)
 
         // Assert
-        expectThat(result).isA<ResultWrapper.Failure<CallDeepSeekError>>().and {
+        expectThat(result).isA<ResultWrapper.Failure<CallLargeLanguageModelError>>().and {
             get { error }.isEqualTo(RateLimitError)
         }
     }
@@ -85,7 +85,7 @@ class LargeLanguageApiHelperTest {
         val result = helper.callDeepSeek(promptTemplate)
 
         // Assert
-        expectThat(result).isA<ResultWrapper.Failure<CallDeepSeekError>>().and {
+        expectThat(result).isA<ResultWrapper.Failure<CallLargeLanguageModelError>>().and {
             get { error }.isEqualTo(InvalidRequestError)
         }
     }
@@ -103,7 +103,7 @@ class LargeLanguageApiHelperTest {
         val result = helper.callDeepSeek(promptTemplate)
 
         // Assert
-        expectThat(result).isA<ResultWrapper.Failure<CallDeepSeekError>>().and {
+        expectThat(result).isA<ResultWrapper.Failure<CallLargeLanguageModelError>>().and {
             get { error }.isEqualTo(AuthenticationError)
         }
     }
@@ -120,7 +120,7 @@ class LargeLanguageApiHelperTest {
         val result = helper.callDeepSeek(promptTemplate)
 
         // Assert
-        expectThat(result).isA<ResultWrapper.Failure<CallDeepSeekError>>().and {
+        expectThat(result).isA<ResultWrapper.Failure<CallLargeLanguageModelError>>().and {
             get { error }.isEqualTo(PermissionError)
         }
     }
@@ -137,7 +137,7 @@ class LargeLanguageApiHelperTest {
         val result = helper.callDeepSeek(promptTemplate)
 
         // Assert
-        expectThat(result).isA<ResultWrapper.Failure<CallDeepSeekError>>().and {
+        expectThat(result).isA<ResultWrapper.Failure<CallLargeLanguageModelError>>().and {
             get { error }.isEqualTo(InsufficientBalanceError)
         }
     }
@@ -154,7 +154,7 @@ class LargeLanguageApiHelperTest {
         val result = helper.callDeepSeek(promptTemplate)
 
         // Assert
-        expectThat(result).isA<ResultWrapper.Failure<CallDeepSeekError>>().and {
+        expectThat(result).isA<ResultWrapper.Failure<CallLargeLanguageModelError>>().and {
             get { error }.isEqualTo(ServerOverload)
         }
     }
@@ -171,7 +171,7 @@ class LargeLanguageApiHelperTest {
         val result = helper.callDeepSeek(promptTemplate)
 
         // Assert
-        expectThat(result).isA<ResultWrapper.Failure<CallDeepSeekError>>().and {
+        expectThat(result).isA<ResultWrapper.Failure<CallLargeLanguageModelError>>().and {
             get { error }.isEqualTo(UnknownError(1, "no message"))
         }
     }
@@ -188,7 +188,7 @@ class LargeLanguageApiHelperTest {
         val result = helper.callDeepSeek(promptTemplate)
 
         // Assert
-        expectThat(result).isA<ResultWrapper.Failure<CallDeepSeekError>>().and {
+        expectThat(result).isA<ResultWrapper.Failure<CallLargeLanguageModelError>>().and {
             get { error }.isEqualTo(HttpError)
         }
     }
@@ -205,7 +205,7 @@ class LargeLanguageApiHelperTest {
         val result = helper.callDeepSeek(promptTemplate)
 
         // Assert
-        expectThat(result).isA<ResultWrapper.Failure<CallDeepSeekError>>().and {
+        expectThat(result).isA<ResultWrapper.Failure<CallLargeLanguageModelError>>().and {
             get { error }.isEqualTo(ServerError)
         }
     }
@@ -223,7 +223,7 @@ class LargeLanguageApiHelperTest {
         val result = helper.callDeepSeek(promptTemplate)
 
         // Assert
-        expectThat(result).isA<ResultWrapper.Failure<CallDeepSeekError>>().and {
+        expectThat(result).isA<ResultWrapper.Failure<CallLargeLanguageModelError>>().and {
             get { error }.isEqualTo(IOException)
         }
     }
@@ -257,7 +257,7 @@ class LargeLanguageApiHelperTest {
         val result = helper.callDeepSeek(promptTemplate)
 
         // Assert
-        expectThat(result).isA<ResultWrapper.Failure<CallDeepSeekError>>().and {
+        expectThat(result).isA<ResultWrapper.Failure<CallLargeLanguageModelError>>().and {
             get { error }.isEqualTo(UnexpectedResult)
         }
     }

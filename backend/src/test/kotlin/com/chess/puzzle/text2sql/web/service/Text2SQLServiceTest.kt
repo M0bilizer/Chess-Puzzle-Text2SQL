@@ -4,7 +4,7 @@ import com.chess.puzzle.text2sql.web.config.FilePaths
 import com.chess.puzzle.text2sql.web.domain.model.Demonstration
 import com.chess.puzzle.text2sql.web.domain.model.ModelVariant
 import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
-import com.chess.puzzle.text2sql.web.error.CallDeepSeekError
+import com.chess.puzzle.text2sql.web.error.CallLargeLanguageModelError
 import com.chess.puzzle.text2sql.web.error.GetSimilarDemonstrationError
 import com.chess.puzzle.text2sql.web.error.GetTextFileError
 import com.chess.puzzle.text2sql.web.error.ProcessPromptError
@@ -152,7 +152,7 @@ class Text2SQLServiceTest {
             )
         val processedPrompt =
             "Find puzzles with rating > 1500 Find puzzles with rating > 2000 SELECT * FROM puzzles WHERE rating > 2000"
-        val error = CallDeepSeekError.InsufficientBalanceError
+        val error = CallLargeLanguageModelError.InsufficientBalanceError
 
         coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns
             "full_prompt_template.txt"
@@ -287,7 +287,7 @@ class Text2SQLServiceTest {
             )
         val processedPrompt =
             "Find puzzles with rating > 1500 Find puzzles with rating > 2000 SELECT * FROM puzzles WHERE rating > 2000"
-        val error = CallDeepSeekError.RateLimitError
+        val error = CallLargeLanguageModelError.RateLimitError
 
         coEvery { filePaths.getPromptTemplate(ModelVariant.Partial) } returns
             "partial_prompt_template.txt"
@@ -373,7 +373,7 @@ class Text2SQLServiceTest {
         val query = "Find puzzles with rating > 1500"
         val promptTemplate = "{{prompt}}"
         val processedPrompt = "Find puzzles with rating > 1500"
-        val error = CallDeepSeekError.PermissionError
+        val error = CallLargeLanguageModelError.PermissionError
 
         coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns
             "baseline_prompt_template.txt"

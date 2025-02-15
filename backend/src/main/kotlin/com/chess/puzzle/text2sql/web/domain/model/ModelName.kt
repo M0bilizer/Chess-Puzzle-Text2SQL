@@ -9,12 +9,12 @@ import kotlinx.serialization.Serializable
  * - [Baseline]: The baseline model with no additional feature.
  */
 @Serializable
-enum class Model {
+enum class ModelName {
     Default,
     Alternative;
 
     companion object {
-        fun toEnum(value: String): Model? {
+        fun toEnum(value: String): ModelName? {
             return try {
                 valueOf(value.lowercase().replaceFirstChar { it.uppercase() })
             } catch (e: IllegalArgumentException) {

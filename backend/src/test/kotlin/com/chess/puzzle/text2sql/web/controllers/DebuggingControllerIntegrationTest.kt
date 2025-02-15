@@ -539,7 +539,7 @@ class DebuggingControllerIntegrationTest {
             )
         val processedPrompt =
             "Find puzzles with rating > 1500 Find puzzles with rating > 2000 SELECT * FROM puzzles WHERE rating > 2000"
-        val error = CallDeepSeekError.InsufficientBalanceError
+        val error = CallLargeLanguageModelError.InsufficientBalanceError
 
         coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns
             "full_prompt_template.txt"
@@ -626,7 +626,7 @@ class DebuggingControllerIntegrationTest {
         val queryRequest = QueryRequest(promptTemplate)
         val response = controller.llm(queryRequest)
 
-        val error = CallDeepSeekError.RateLimitError
+        val error = CallLargeLanguageModelError.RateLimitError
         val expectedResponse =
             objectMapper.writeValueAsString(mapOf("status" to "failure", "data" to error.message))
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
@@ -650,7 +650,7 @@ class DebuggingControllerIntegrationTest {
         val queryRequest = QueryRequest(promptTemplate)
         val response = controller.llm(queryRequest)
 
-        val error = CallDeepSeekError.PermissionError
+        val error = CallLargeLanguageModelError.PermissionError
         val expectedResponse =
             objectMapper.writeValueAsString(mapOf("status" to "failure", "data" to error.message))
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
@@ -674,7 +674,7 @@ class DebuggingControllerIntegrationTest {
         val queryRequest = QueryRequest(promptTemplate)
         val response = controller.llm(queryRequest)
 
-        val error = CallDeepSeekError.InsufficientBalanceError
+        val error = CallLargeLanguageModelError.InsufficientBalanceError
         val expectedResponse =
             objectMapper.writeValueAsString(mapOf("status" to "failure", "data" to error.message))
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
@@ -698,7 +698,7 @@ class DebuggingControllerIntegrationTest {
         val queryRequest = QueryRequest(promptTemplate)
         val response = controller.llm(queryRequest)
 
-        val error = CallDeepSeekError.UnknownError(1, "no message")
+        val error = CallLargeLanguageModelError.UnknownError(1, "no message")
         val expectedResponse =
             objectMapper.writeValueAsString(mapOf("status" to "failure", "data" to error.message))
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
@@ -739,7 +739,7 @@ class DebuggingControllerIntegrationTest {
         val queryRequest = QueryRequest(promptTemplate)
         val response = controller.llm(queryRequest)
 
-        val error = CallDeepSeekError.UnexpectedResult
+        val error = CallLargeLanguageModelError.UnexpectedResult
         val expectedResponse =
             objectMapper.writeValueAsString(mapOf("status" to "failure", "data" to error.message))
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)

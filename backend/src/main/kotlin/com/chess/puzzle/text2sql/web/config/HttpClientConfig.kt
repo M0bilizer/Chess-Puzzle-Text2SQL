@@ -9,6 +9,7 @@ import io.ktor.client.*
 import io.ktor.client.engine.okhttp.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.serialization.kotlinx.json.*
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -54,7 +55,8 @@ class HttpClientConfig {
      * @return An instance of `OpenAI` configured for API communication.
      */
     @Bean
-    fun openAi(): OpenAI {
+    @Qualifier("deepSeekClient")
+    fun deepSeekClient(): OpenAI {
         val apiKey = apiKey
         val baseUrl = baseUrl
         val loggingConfig =
@@ -63,7 +65,8 @@ class HttpClientConfig {
     }
 
     @Bean
-    fun altOpenAi(): OpenAI {
+    @Qualifier("mistralClient")
+    fun mistralClient(): OpenAI {
         val apiKey = altApiKey
         val baseUrl = altBaseUrl
         val loggingConfig =

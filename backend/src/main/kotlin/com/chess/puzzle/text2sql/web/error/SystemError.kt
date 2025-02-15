@@ -21,54 +21,54 @@ sealed class GenericError : SystemError {
 }
 
 /** A sealed class representing errors related to calling the DeepSeek API. */
-sealed class CallDeepSeekError : SystemError {
+sealed class CallLargeLanguageModelError : SystemError {
     /** Represents an unexpected result from the DeepSeek API. */
-    data object UnexpectedResult : CallDeepSeekError() {
+    data object UnexpectedResult : CallLargeLanguageModelError() {
         override val message: String = "Unexpected result from DeepSeek API"
     }
 
     /** Represents a permission error from the DeepSeek API. */
-    data object PermissionError : CallDeepSeekError() {
+    data object PermissionError : CallLargeLanguageModelError() {
         override val message: String = "Permission error from DeepSeek API"
     }
 
     /** Represents an invalid request error from the DeepSeek API. */
-    data object InvalidRequestError : CallDeepSeekError() {
+    data object InvalidRequestError : CallLargeLanguageModelError() {
         override val message: String = "Invalid Request error from DeepSeek API"
     }
 
     /** Represents an HTTP error from the DeepSeek API. */
-    data object HttpError : CallDeepSeekError() {
+    data object HttpError : CallLargeLanguageModelError() {
         override val message: String = "HTTP error from DeepSeek API"
     }
 
     /** Represents an authentication failure with the DeepSeek API. */
-    data object AuthenticationError : CallDeepSeekError() {
+    data object AuthenticationError : CallLargeLanguageModelError() {
         override val message: String = "Authentication failure with DeepSeek API"
     }
 
     /** Represents an IO exception when interacting with the DeepSeek API. */
-    data object IOException : CallDeepSeekError() {
+    data object IOException : CallLargeLanguageModelError() {
         override val message: String = "IO Exception with DeepSeek API"
     }
 
     /** Represents an insufficient balance error for the DeepSeek API. */
-    data object InsufficientBalanceError : CallDeepSeekError() {
+    data object InsufficientBalanceError : CallLargeLanguageModelError() {
         override val message: String = "Insufficient Balance for DeepSeek API"
     }
 
     /** Represents a server error from the DeepSeek API. */
-    data object ServerError : CallDeepSeekError() {
+    data object ServerError : CallLargeLanguageModelError() {
         override val message: String = "Server error from DeepSeek API"
     }
 
     /** Represents a rate limit error from the DeepSeek API. */
-    data object RateLimitError : CallDeepSeekError() {
+    data object RateLimitError : CallLargeLanguageModelError() {
         override val message: String = "Rate limit error from DeepSeek API"
     }
 
     /** Represents an error when the DeepSeek server is overloaded. */
-    data object ServerOverload : CallDeepSeekError() {
+    data object ServerOverload : CallLargeLanguageModelError() {
         override val message: String = "DeepSeek Server is overloaded"
     }
 
@@ -78,7 +78,8 @@ sealed class CallDeepSeekError : SystemError {
      * @property statusCode The HTTP status code associated with the error.
      * @property errorMessage The error message returned by the API.
      */
-    data class UnknownError(val statusCode: Int, val errorMessage: String) : CallDeepSeekError() {
+    data class UnknownError(val statusCode: Int, val errorMessage: String) :
+        CallLargeLanguageModelError() {
         override val message: String = "Unknown error: $statusCode - $errorMessage"
     }
 }

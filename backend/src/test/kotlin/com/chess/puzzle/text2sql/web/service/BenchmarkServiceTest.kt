@@ -5,7 +5,7 @@ import com.chess.puzzle.text2sql.web.domain.model.BenchmarkResult
 import com.chess.puzzle.text2sql.web.domain.model.ModelVariant
 import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
 import com.chess.puzzle.text2sql.web.domain.model.SqlResult
-import com.chess.puzzle.text2sql.web.error.CallDeepSeekError
+import com.chess.puzzle.text2sql.web.error.CallLargeLanguageModelError
 import com.chess.puzzle.text2sql.web.error.GetSimilarDemonstrationError
 import com.chess.puzzle.text2sql.web.error.GetTextFileError
 import io.mockk.coEvery
@@ -118,7 +118,7 @@ class BenchmarkServiceTest {
                 BenchmarkEntry(text = "Find puzzles with rating > 2000"),
             )
 
-        val error = CallDeepSeekError.RateLimitError
+        val error = CallLargeLanguageModelError.RateLimitError
 
         coEvery { text2SQLService.convertToSQL(any(), ModelVariant.Full) } returns
             ResultWrapper.Success("SELECT * FROM puzzles WHERE rating > 1500")

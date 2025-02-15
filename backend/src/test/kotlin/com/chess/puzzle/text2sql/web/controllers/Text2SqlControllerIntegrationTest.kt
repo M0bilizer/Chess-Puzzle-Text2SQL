@@ -261,13 +261,16 @@ class Text2SqlControllerIntegrationTest {
         coEvery { preprocessingHelper.processPrompt(query, promptTemplate, demonstrations) } returns
             ResultWrapper.Success(processedPrompt)
         coEvery { largeLanguageApiHelper.callDeepSeek(processedPrompt) } returns
-            ResultWrapper.Failure(CallDeepSeekError.RateLimitError)
+            ResultWrapper.Failure(CallLargeLanguageModelError.RateLimitError)
 
         val response: ResponseEntity<String> = controller.queryPuzzle(queryRequest)
 
         val expectedResponse =
             objectMapper.writeValueAsString(
-                mapOf("status" to "failure", "data" to CallDeepSeekError.RateLimitError.message)
+                mapOf(
+                    "status" to "failure",
+                    "data" to CallLargeLanguageModelError.RateLimitError.message,
+                )
             )
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
         expectThat(response.body).isEqualTo(expectedResponse)

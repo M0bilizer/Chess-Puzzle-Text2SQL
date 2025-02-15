@@ -6,7 +6,7 @@ import com.chess.puzzle.text2sql.web.domain.model.Demonstration
 import com.chess.puzzle.text2sql.web.domain.model.ModelVariant
 import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
 import com.chess.puzzle.text2sql.web.entities.*
-import com.chess.puzzle.text2sql.web.error.CallDeepSeekError
+import com.chess.puzzle.text2sql.web.error.CallLargeLanguageModelError
 import com.chess.puzzle.text2sql.web.error.GetRandomPuzzlesError
 import com.chess.puzzle.text2sql.web.error.GetSimilarDemonstrationError
 import com.chess.puzzle.text2sql.web.error.ProcessQueryError
@@ -265,7 +265,7 @@ class DebuggingControllerTest {
     fun `test text2sql endpoint failure`(): Unit = runBlocking {
         val query = "some natural language query"
         val text2SqlRequest = Text2SqlRequest(query)
-        val error = CallDeepSeekError.ServerError
+        val error = CallLargeLanguageModelError.ServerError
         val text2SQLService: Text2SQLService = mockk {
             coEvery { convertToSQL(query, ModelVariant.Full) } returns ResultWrapper.Failure(error)
         }
@@ -301,7 +301,7 @@ class DebuggingControllerTest {
     @Test
     fun `test llm endpoint failure`(): Unit = runBlocking {
         val queryRequest = QueryRequest(query = "some prompt")
-        val error = CallDeepSeekError.InsufficientBalanceError
+        val error = CallLargeLanguageModelError.InsufficientBalanceError
         val largeLanguageApiHelper: LargeLanguageApiHelper = mockk {
             coEvery { callDeepSeek(queryRequest.query) } returns ResultWrapper.Failure(error)
         }
