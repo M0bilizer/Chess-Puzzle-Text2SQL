@@ -1,6 +1,6 @@
 package com.chess.puzzle.text2sql.web.validator
 
-import com.chess.puzzle.text2sql.web.error.ClientError.InvalidModelName
+import com.chess.puzzle.text2sql.web.error.ClientError.InvalidModelVariant
 import com.chess.puzzle.text2sql.web.error.ClientError.MissingQuery
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
@@ -16,9 +16,9 @@ class RequestValidatorTest {
     fun `RequestValidator should have no errors when all validations pass`() {
         val validator =
             RequestValidator<String> {
-                isNotNull("valid value", InvalidModelName)
+                isNotNull("valid value", InvalidModelVariant)
                 ifPresent("valid value") {
-                    isInCollection("valid value", listOf("valid value"), InvalidModelName)
+                    isInCollection("valid value", listOf("valid value"), InvalidModelVariant)
                 }
             }
 
@@ -53,13 +53,13 @@ class RequestValidatorTest {
         val validator =
             RequestValidator<String> {
                 ifPresent("invalid value") {
-                    isInCollection("invalid value", listOf("valid value"), InvalidModelName)
+                    isInCollection("invalid value", listOf("valid value"), InvalidModelVariant)
                 }
             }
 
         expectThat(validator) {
             get { haveErrors() }.isTrue()
-            get { getErrors() }.containsExactly(InvalidModelName)
+            get { getErrors() }.containsExactly(InvalidModelVariant)
         }
     }
 
@@ -68,7 +68,7 @@ class RequestValidatorTest {
         val validator =
             RequestValidator<String> {
                 ifPresent("valid value") {
-                    isInCollection("valid value", listOf("valid value"), InvalidModelName)
+                    isInCollection("valid value", listOf("valid value"), InvalidModelVariant)
                 }
             }
 
@@ -82,7 +82,7 @@ class RequestValidatorTest {
     fun `RequestValidator should not execute ifPresent block when value is null`() {
         val validator =
             RequestValidator<String> {
-                ifPresent(null) { isInCollection("value", listOf("value"), InvalidModelName) }
+                ifPresent(null) { isInCollection("value", listOf("value"), InvalidModelVariant) }
             }
 
         expectThat(validator) {
@@ -97,13 +97,13 @@ class RequestValidatorTest {
             RequestValidator<String> {
                 isNotNull(null, MissingQuery)
                 ifPresent("invalid value") {
-                    isInCollection("invalid value", listOf("valid value"), InvalidModelName)
+                    isInCollection("invalid value", listOf("valid value"), InvalidModelVariant)
                 }
             }
 
         expectThat(validator) {
             get { haveErrors() }.isTrue()
-            get { getErrors() }.containsExactlyInAnyOrder(MissingQuery, InvalidModelName)
+            get { getErrors() }.containsExactlyInAnyOrder(MissingQuery, InvalidModelVariant)
         }
     }
 }

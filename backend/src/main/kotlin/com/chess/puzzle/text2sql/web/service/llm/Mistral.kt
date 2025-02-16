@@ -7,7 +7,9 @@ import com.aallam.openai.api.chat.ChatRole
 import com.aallam.openai.api.model.ModelId
 import com.aallam.openai.client.OpenAI
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.stereotype.Component
 
+@Component
 class Mistral(@Qualifier("mistralClient") private val client: OpenAI) : LargeLanguageModel {
     override suspend fun callModel(query: String): ChatCompletion {
         val chatCompletionRequest =

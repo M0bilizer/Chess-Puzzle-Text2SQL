@@ -54,7 +54,7 @@ class ResponseUtilsTest {
 
     @Test
     fun `badRequest should return a ResponseEntity with status error and provided data`() {
-        val errors = listOf(ClientError.InvalidModelName)
+        val errors = listOf(ClientError.InvalidModelVariant)
         val responseEntity = ResponseUtils.badRequest(errors)
 
         expectThat(responseEntity) {
@@ -76,7 +76,7 @@ class ResponseUtilsTest {
 
     @Test
     fun `badRequest should return a ResponseEntity with many error`() {
-        val errors = listOf(ClientError.InvalidModelName, ClientError.MissingQuery)
+        val errors = listOf(ClientError.InvalidModelVariant, ClientError.MissingQuery)
         val responseEntity = ResponseUtils.badRequest(errors)
 
         expectThat(responseEntity) {

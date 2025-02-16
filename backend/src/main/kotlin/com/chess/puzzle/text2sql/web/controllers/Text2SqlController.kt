@@ -1,6 +1,7 @@
 package com.chess.puzzle.text2sql.web.controllers
 
 import com.chess.puzzle.text2sql.web.domain.input.QueryRequest
+import com.chess.puzzle.text2sql.web.domain.model.ModelName.Default
 import com.chess.puzzle.text2sql.web.domain.model.ModelVariant.Full
 import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
 import com.chess.puzzle.text2sql.web.entities.Puzzle
@@ -49,7 +50,7 @@ class Text2SqlController(
         val query = input.query
         val sql: String
         val puzzles: List<Puzzle>
-        when (val result = text2SQLService.convertToSQL(query, Full)) {
+        when (val result = text2SQLService.convertToSQL(query, Default, Full)) {
             is ResultWrapper.Success -> sql = result.data
             is ResultWrapper.Failure -> return failure(result.error)
         }

@@ -3,7 +3,7 @@ package com.chess.puzzle.text2sql.web.domain.input
 import com.chess.puzzle.text2sql.web.domain.model.ModelVariant
 import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
 import com.chess.puzzle.text2sql.web.error.ClientError
-import com.chess.puzzle.text2sql.web.error.ClientError.InvalidModelName
+import com.chess.puzzle.text2sql.web.error.ClientError.InvalidModelVariant
 import com.chess.puzzle.text2sql.web.error.ClientError.MissingQuery
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
@@ -87,7 +87,7 @@ class Text2SqlRequestTest {
         val request = Text2SqlRequest(query = "SELECT * FROM users", model = "InvalidModel")
         val result = request.toInput()
 
-        val expected = listOf(InvalidModelName)
+        val expected = listOf(InvalidModelVariant)
         expectThat(result).isEqualTo(ResultWrapper.Failure(expected))
     }
 
@@ -106,7 +106,7 @@ class Text2SqlRequestTest {
         val request = Text2SqlRequest(query = null, model = "InvalidModel")
         val result = request.toInput()
 
-        val expected = listOf(InvalidModelName, MissingQuery)
+        val expected = listOf(InvalidModelVariant, MissingQuery)
         expectThat(result).isA<ResultWrapper.Failure<List<ClientError>>>().and {
             get { error }.contains(expected)
         }

@@ -3,6 +3,7 @@ package com.chess.puzzle.text2sql.web.controllers
 import com.chess.puzzle.text2sql.web.domain.input.QueryRequest
 import com.chess.puzzle.text2sql.web.domain.input.Text2SqlInput
 import com.chess.puzzle.text2sql.web.domain.input.Text2SqlRequest
+import com.chess.puzzle.text2sql.web.domain.model.ModelName
 import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
 import com.chess.puzzle.text2sql.web.service.PuzzleService
 import com.chess.puzzle.text2sql.web.service.Text2SQLService
@@ -125,8 +126,8 @@ class DebuggingController(
             is ResultWrapper.Success -> input = result.data
             is ResultWrapper.Failure -> return badRequest(result.error)
         }
-        val (query, model) = input
-        return when (val result = text2SQLService.convertToSQL(query, model)) {
+        val (query, model, modelVariant) = input
+        return when (val result = text2SQLService.convertToSQL(query, model, modelVariant)) {
             is ResultWrapper.Success -> success(result.data)
             is ResultWrapper.Failure -> failure(result.error)
         }
@@ -145,7 +146,7 @@ class DebuggingController(
     suspend fun llm(@RequestBody input: QueryRequest): ResponseEntity<String> {
         logger.info { "Received POST on /api/debug/llm { input = $input }" }
         val prompt = input.query
-        return when (val result = largeLanguageApiHelper.callDeepSeek(prompt)) {
+        return when (val result = largeLanguageApiHelper.callModel(prompt, ModelName.Default)) {
             is ResultWrapper.Success -> success(result.data)
             is ResultWrapper.Failure -> failure(result.error)
         }

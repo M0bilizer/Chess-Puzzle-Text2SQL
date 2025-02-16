@@ -1,12 +1,8 @@
 package com.chess.puzzle.text2sql.web.service
 
 import ch.qos.logback.classic.Level
-import com.chess.puzzle.text2sql.web.domain.model.BenchmarkEntry
-import com.chess.puzzle.text2sql.web.domain.model.BenchmarkResult
-import com.chess.puzzle.text2sql.web.domain.model.ModelVariant
+import com.chess.puzzle.text2sql.web.domain.model.*
 import com.chess.puzzle.text2sql.web.domain.model.ModelVariant.*
-import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
-import com.chess.puzzle.text2sql.web.domain.model.SqlResult
 import com.chess.puzzle.text2sql.web.error.SystemError
 import com.chess.puzzle.text2sql.web.utility.withLogLevel
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -78,7 +74,7 @@ class BenchmarkService(@Autowired private val text2SQLService: Text2SQLService) 
     private suspend fun getSqlResult(text: String, modelVariant: ModelVariant): SqlResult {
         val result: ResultWrapper<String, SystemError> =
             withLogLevel(Level.OFF) {
-                return@withLogLevel text2SQLService.convertToSQL(text, modelVariant)
+                return@withLogLevel text2SQLService.convertToSQL(text, ModelName.Default, modelVariant)
             }
         return when (result) {
             is ResultWrapper.Success -> {

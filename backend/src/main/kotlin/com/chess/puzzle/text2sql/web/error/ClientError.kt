@@ -9,8 +9,13 @@ sealed class ClientError {
         override val message: String = "Query should not be null"
     }
 
-    data object InvalidModelName : ClientError() {
+    data object InvalidModel : ClientError() {
         override val field: String = "model"
-        override val message: String = "Model Name is not valid"
+        override val message: String = "Model is not valid"
+    }
+
+    data object InvalidModelVariant : ClientError() {
+        override val field: String = "model"
+        override val message: String = "Model Variant is not valid"
     }
 }
