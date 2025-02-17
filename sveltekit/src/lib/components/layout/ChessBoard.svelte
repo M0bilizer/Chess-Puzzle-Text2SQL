@@ -10,9 +10,9 @@
 	let isJumping = $state(false);
 
 	function loadGame(state: currentGameState) {
-		chess.load(state.game.fen);
+		chess?.load(state.game.fen);
 		if (orientation !== state.game.orientation) {
-			chess.toggleOrientation();
+			chess?.toggleOrientation();
 		}
 	}
 
@@ -30,25 +30,25 @@
 
 	function resetJump() {
 		const currentGameStore: currentGameState = get(currentGame);
-		chess.load(currentGameStore.list[currentGameStore.index].puzzle.fen);
+		chess?.load(currentGameStore.list[currentGameStore.index].puzzle.fen);
 	}
 
 	function undoJump() {
 		const currentGameStore: currentGameState = get(currentGame);
-		chess.load(currentGameStore.list[currentGameStore.index].puzzle.fen);
+		chess?.load(currentGameStore.list[currentGameStore.index].puzzle.fen);
 		currentGameStore.game.moves.slice(0, get(jump).current + 1).forEach((move) => chess.move(move));
-		chess.undo();
+		chess?.undo();
 	}
 
 	function redoJump() {
 		const currentGameStore: currentGameState = get(currentGame);
-		chess.load(currentGameStore.list[currentGameStore.index].puzzle.fen);
+		chess?.load(currentGameStore.list[currentGameStore.index].puzzle.fen);
 		currentGameStore.game.moves.slice(0, get(jump).current).forEach((move) => chess.move(move));
 	}
 
 	function endJump() {
 		const currentGameStore: currentGameState = get(currentGame);
-		chess.load(currentGameStore.list[currentGameStore.index].puzzle.fen);
+		chess?.load(currentGameStore.list[currentGameStore.index].puzzle.fen);
 		currentGameStore.game.moves.slice(0, get(jump).current).forEach((move) => chess.move(move));
 	}
 
@@ -69,7 +69,7 @@
 					}, 250);
 				} else {
 					setTimeout(() => {
-						chess.move(state.game.moves[state.game.moveIndex]);
+						chess?.move(state.game.moves[state.game.moveIndex]);
 						currentGame.update((currentState) => ({
 							...currentState,
 							game: {
