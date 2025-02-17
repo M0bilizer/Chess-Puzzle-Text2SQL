@@ -15,3 +15,19 @@
 ::selection {
 	@apply bg-primary-500/30;
 }
+
+
+
+html {
+	display: flex;              /* Make  <html> of type flex */
+	flex-direction: column;
+	min-height: 100%;           /* Force <html> to fill the whole page */
+} body {
+	  flex-grow: 1;               /* Force <body> to fill the whole page */
+	  flex-direction: column;
+	  display: flex;              /* Make  <body> of type flex */
+  } #svelte-init {
+		flex-grow: 1;               /* Force <div>  to fill the whole page */
+		display: flex;              /* Make  <div>  of type flex */
+		flex-direction: column;     /* Force <div>  to be vertical */
+	}

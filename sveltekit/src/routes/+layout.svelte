@@ -10,4 +10,4 @@
 <Header />
 <ModalContainer />
 {@render children()}
-<Footer />
+<Footer/>

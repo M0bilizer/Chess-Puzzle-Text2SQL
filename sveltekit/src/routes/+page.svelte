@@ -13,9 +13,9 @@
 </script>
 
 <div
-	class="container mx-auto grid grid-cols-1 gap-x-4 gap-y-2 px-2 py-4 md:grid-cols-[minmax(0px,_1fr)_300px] md:px-32 xl:grid-cols-[250px_minmax(0px,_1fr)_300px]"
+	class="container mx-auto grid grid-cols-1 gap-x-4 gap-y-2 px-2 py-4 md:grid-cols-[minmax(0px,_1fr)_250px] md:px-16 xl:grid-cols-[250px_minmax(0px,_1fr)_300px] xl:px-2"
 >
-	<aside class="hidden md:invisible xl:block">
+	<aside class="hidden xl:block">
 		<div class="desktop grid-rows-[auto_auto] gap-4">
 			<QueryDisplay />
 			<RecentSearches />
