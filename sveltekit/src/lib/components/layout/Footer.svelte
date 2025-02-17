@@ -26,8 +26,10 @@
 			</table>
 		</div>
 		<div class="right">
-			<a href={link} class="text-sm text-primary-500 hover:text-primary-700 hover:underline"
-				>View source code</a
+			<a
+				href={link}
+				target="_blank"
+				class="text-sm text-primary-500 hover:text-primary-700 hover:underline">View source code</a
 			>
 		</div>
 	</div>

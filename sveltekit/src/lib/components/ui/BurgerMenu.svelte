@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Popover, Switch } from '@skeletonlabs/skeleton-svelte';
+	import { Popover } from '@skeletonlabs/skeleton-svelte';
 	import Fa6SolidBars from 'virtual:icons/fa6-solid/bars';
 	import { currentGame, skipCurrentGame } from '$lib/stores/currentGameStore';
 
@@ -28,11 +28,11 @@
 	{/snippet}
 	{#snippet content()}
 		<div class="flex flex-col gap-2">
-			<span class="flex items-center justify-around align-middle">
-				<span class="h6">Flip Board</span>
-				<Switch name="example" bind:checked={flipped} />
-			</span>
-			<hr class="hr" />
+			<!--			<span class="flex items-center justify-around align-middle">-->
+			<!--				<span class="h6">Flip Board</span>-->
+			<!--				<Switch name="example" bind:checked={flipped} />-->
+			<!--			</span>-->
+			<!--			<hr class="hr" />-->
 			<button
 				class="px-2 text-left text-sm hover:preset-tonal-primary"
 				onclick={() => handleSkipPuzzle()}

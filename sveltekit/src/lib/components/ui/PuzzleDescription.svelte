@@ -15,7 +15,7 @@
 </script>
 
 <div
-	class="card h-max w-full max-w-md border-[1px] p-4 text-center shadow-xl border-surface-200-800 preset-filled-surface-100-900"
+	class="card h-max w-full border-[1px] p-4 text-center shadow-xl border-surface-200-800 preset-filled-surface-100-900"
 >
 	<ul class="list-inside list-none space-y-1">
 		<li class="text-left">Puzzle: #{puzzleId}</li>

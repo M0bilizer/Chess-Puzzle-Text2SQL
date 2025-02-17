@@ -17,7 +17,6 @@
 		{/if}
 		<div class="ml-auto block">
 			<Segment
-				name="align"
 				bind:value={page}
 				base="inline-flex items-stretch overflow-hidden flex-row gap-2 justify-center"
 				background=""
