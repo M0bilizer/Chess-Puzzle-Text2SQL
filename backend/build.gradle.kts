@@ -16,7 +16,7 @@ plugins {
 }
 
 group = "com.chess.puzzle.text2sql"
-version = "1.1"
+version = "1"
 
 repositories {
     mavenCentral()
@@ -66,15 +66,6 @@ configurations.matching { it.name.startsWith("dokka") }.configureEach {
             useVersion("2.15.3")
         }
     }
-}
-
-tasks.register<Exec>("runPythonScript") {
-    // Path to the Python executable in the virtual environment
-    val pythonExecutable = "$projectDir/src/main/python/venv/bin/python" // For macOS/Linux
-    // val pythonExecutable = "${projectDir}/src/main/python/venv/Scripts/python.exe" // For Windows
-
-    // Specify the updated script to run
-    commandLine(pythonExecutable, "$projectDir/src/main/python/process_demonstration_similarity.py")
 }
 
 //tasks.test {
