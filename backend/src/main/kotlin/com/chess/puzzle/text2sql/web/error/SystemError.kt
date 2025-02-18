@@ -20,56 +20,56 @@ sealed class GenericError : SystemError {
     }
 }
 
-/** A sealed class representing errors related to calling the DeepSeek API. */
+/** A sealed class representing errors related to calling the LLM API. */
 sealed class CallLargeLanguageModelError : SystemError {
-    /** Represents an unexpected result from the DeepSeek API. */
+    /** Represents an unexpected result from the LLM API. */
     data object UnexpectedResult : CallLargeLanguageModelError() {
-        override val message: String = "Unexpected result from DeepSeek API"
+        override val message: String = "Unexpected result from LLM API"
     }
 
-    /** Represents a permission error from the DeepSeek API. */
+    /** Represents a permission error from the LLM API. */
     data object PermissionError : CallLargeLanguageModelError() {
-        override val message: String = "Permission error from DeepSeek API"
+        override val message: String = "Permission error from LLM API"
     }
 
-    /** Represents an invalid request error from the DeepSeek API. */
+    /** Represents an invalid request error from the LLM API. */
     data object InvalidRequestError : CallLargeLanguageModelError() {
-        override val message: String = "Invalid Request error from DeepSeek API"
+        override val message: String = "Invalid Request error from LLM API"
     }
 
-    /** Represents an HTTP error from the DeepSeek API. */
+    /** Represents an HTTP error from the LLM API. */
     data object HttpError : CallLargeLanguageModelError() {
-        override val message: String = "HTTP error from DeepSeek API"
+        override val message: String = "HTTP error from LLM API"
     }
 
-    /** Represents an authentication failure with the DeepSeek API. */
+    /** Represents an authentication failure with the LLM API. */
     data object AuthenticationError : CallLargeLanguageModelError() {
-        override val message: String = "Authentication failure with DeepSeek API"
+        override val message: String = "Authentication failure with LLM API"
     }
 
-    /** Represents an IO exception when interacting with the DeepSeek API. */
+    /** Represents an IO exception when interacting with the LLM API. */
     data object IOException : CallLargeLanguageModelError() {
-        override val message: String = "IO Exception with DeepSeek API"
+        override val message: String = "IO Exception with LLM API"
     }
 
-    /** Represents an insufficient balance error for the DeepSeek API. */
+    /** Represents an insufficient balance error for the LLM API. */
     data object InsufficientBalanceError : CallLargeLanguageModelError() {
-        override val message: String = "Insufficient Balance for DeepSeek API"
+        override val message: String = "Insufficient Balance for LLM API"
     }
 
-    /** Represents a server error from the DeepSeek API. */
+    /** Represents a server error from the LLM API. */
     data object ServerError : CallLargeLanguageModelError() {
-        override val message: String = "Server error from DeepSeek API"
+        override val message: String = "Server error from LLM API"
     }
 
-    /** Represents a rate limit error from the DeepSeek API. */
+    /** Represents a rate limit error from the LLM API. */
     data object RateLimitError : CallLargeLanguageModelError() {
-        override val message: String = "Rate limit error from DeepSeek API"
+        override val message: String = "Rate limit error from LLM API"
     }
 
-    /** Represents an error when the DeepSeek server is overloaded. */
+    /** Represents an error when the LLM server is overloaded. */
     data object ServerOverload : CallLargeLanguageModelError() {
-        override val message: String = "DeepSeek Server is overloaded"
+        override val message: String = "LLM Server is overloaded"
     }
 
     /**

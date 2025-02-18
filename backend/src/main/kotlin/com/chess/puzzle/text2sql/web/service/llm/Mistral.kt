@@ -6,13 +6,11 @@ import com.aallam.openai.api.chat.ChatMessage
 import com.aallam.openai.api.chat.ChatRole
 import com.aallam.openai.api.model.ModelId
 import com.aallam.openai.client.OpenAI
-import com.chess.puzzle.text2sql.web.domain.model.ModelName
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Component
 
 @Component
-class Mistral(private val name: ModelName, @Qualifier("mistralClient") private val client: OpenAI) :
-    LargeLanguageModel {
+class Mistral(@Qualifier("mistralClient") private val client: OpenAI) : LargeLanguageModel {
     override suspend fun callModel(query: String): ChatCompletion {
         val chatCompletionRequest =
             ChatCompletionRequest(
