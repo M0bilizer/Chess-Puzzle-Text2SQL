@@ -2,11 +2,11 @@ package com.chess.puzzle.text2sql.web.service
 
 import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
 import com.chess.puzzle.text2sql.web.error.WriteToFileError
-import java.io.File
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isA
 import strikt.assertions.isEqualTo
+import java.io.File
 
 class JsonWriterServiceTest {
     private val jsonWriterService = JsonWriterService()

@@ -1,21 +1,21 @@
 package com.chess.puzzle.text2sql.web.service.helper
 
 import com.chess.puzzle.text2sql.web.config.SentenceTransformerEndpoints
-import com.chess.puzzle.text2sql.web.domain.input.QueryRequest
+import com.chess.puzzle.text2sql.web.domain.input.GenericRequest
 import com.chess.puzzle.text2sql.web.domain.model.Demonstration
 import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
 import com.chess.puzzle.text2sql.web.error.GetSimilarDemonstrationError
-import com.chess.puzzle.text2sql.web.error.GetSimilarDemonstrationError.*
+import com.chess.puzzle.text2sql.web.error.GetSimilarDemonstrationError.InternalError
+import com.chess.puzzle.text2sql.web.error.GetSimilarDemonstrationError.NetworkError
 import com.chess.puzzle.text2sql.web.integration.FastApiResponse
 import com.google.gson.Gson
-import io.ktor.client.HttpClient
+import io.ktor.client.*
 import io.ktor.client.engine.mock.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.mockk.every
 import io.mockk.mockk
-import java.io.IOException
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -24,6 +24,7 @@ import strikt.api.expectThat
 import strikt.assertions.isA
 import strikt.assertions.isEqualTo
 import strikt.assertions.isNotNull
+import java.io.IOException
 
 class SentenceTransformerHelperTest {
 
@@ -72,7 +73,7 @@ class SentenceTransformerHelperTest {
             get { data }.isEqualTo(expectedResponse.data)
         }
 
-        val expectedRequestBody = Gson().toJson(QueryRequest(input))
+        val expectedRequestBody = Gson().toJson(GenericRequest(input))
         val request =
             mockEngine.requestHistory.firstOrNull {
                 it.url.toString() == expectedUrl && it.method == HttpMethod.Post
@@ -133,7 +134,7 @@ class SentenceTransformerHelperTest {
             get { data }.isEqualTo(expectedResponse.data)
         }
 
-        val expectedRequestBody = Gson().toJson(QueryRequest(input))
+        val expectedRequestBody = Gson().toJson(GenericRequest(input))
         val request =
             mockEngine.requestHistory.firstOrNull {
                 it.url.toString() == expectedUrl && it.method == HttpMethod.Post
@@ -222,7 +223,7 @@ class SentenceTransformerHelperTest {
             get { body.contentType }.isEqualTo(ContentType.Application.Json)
             runBlocking {
                 val bodyText = request!!.body.toByteReadPacket().readText()
-                get { bodyText }.isEqualTo(Gson().toJson(QueryRequest(input)))
+                get { bodyText }.isEqualTo(Gson().toJson(GenericRequest(input)))
             }
         }
     }
@@ -278,7 +279,7 @@ class SentenceTransformerHelperTest {
             get { body.contentType }.isEqualTo(ContentType.Application.Json)
             runBlocking {
                 val bodyText = request!!.body.toByteReadPacket().readText()
-                get { bodyText }.isEqualTo(Gson().toJson(QueryRequest(input)))
+                get { bodyText }.isEqualTo(Gson().toJson(GenericRequest(input)))
             }
         }
     }
@@ -334,7 +335,7 @@ class SentenceTransformerHelperTest {
             get { body.contentType }.isEqualTo(ContentType.Application.Json)
             runBlocking {
                 val bodyText = request!!.body.toByteReadPacket().readText()
-                get { bodyText }.isEqualTo(Gson().toJson(QueryRequest(input)))
+                get { bodyText }.isEqualTo(Gson().toJson(GenericRequest(input)))
             }
         }
     }
@@ -386,7 +387,7 @@ class SentenceTransformerHelperTest {
             get { body.contentType }.isEqualTo(ContentType.Application.Json)
             runBlocking {
                 val bodyText = request!!.body.toByteReadPacket().readText()
-                get { bodyText }.isEqualTo(Gson().toJson(QueryRequest(input)))
+                get { bodyText }.isEqualTo(Gson().toJson(GenericRequest(input)))
             }
         }
     }
@@ -435,7 +436,7 @@ class SentenceTransformerHelperTest {
             get { body.contentType }.isEqualTo(ContentType.Application.Json)
             runBlocking {
                 val bodyText = request!!.body.toByteReadPacket().readText()
-                get { bodyText }.isEqualTo(Gson().toJson(QueryRequest(input)))
+                get { bodyText }.isEqualTo(Gson().toJson(GenericRequest(input)))
             }
         }
     }

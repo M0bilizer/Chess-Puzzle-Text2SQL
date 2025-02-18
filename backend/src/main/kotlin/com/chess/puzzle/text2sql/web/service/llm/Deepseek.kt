@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Component
 
 @Component
-class DeepSeek(@Qualifier("deepSeekClient") private val client: OpenAI) : LargeLanguageModel {
+class Deepseek(@Qualifier("deepSeekClient") private val client: OpenAI) : LargeLanguageModel {
     override suspend fun callModel(query: String): ChatCompletion {
         val chatCompletionRequest =
             ChatCompletionRequest(

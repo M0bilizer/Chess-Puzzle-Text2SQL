@@ -13,12 +13,12 @@ import com.chess.puzzle.text2sql.web.service.helper.PreprocessingHelper
 import com.chess.puzzle.text2sql.web.service.helper.SentenceTransformerHelper
 import io.mockk.coEvery
 import io.mockk.mockk
-import java.io.IOException
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
+import java.io.IOException
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class Text2SQLServiceTest {

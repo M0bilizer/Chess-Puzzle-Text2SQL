@@ -1,5 +1,8 @@
 package com.chess.puzzle.text2sql.web.domain.model
 
+import com.chess.puzzle.text2sql.web.domain.model.ModelVariant.Baseline
+import com.chess.puzzle.text2sql.web.domain.model.ModelVariant.Full
+import com.chess.puzzle.text2sql.web.domain.model.ModelVariant.Partial
 import kotlinx.serialization.Serializable
 
 /**

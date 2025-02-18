@@ -12,8 +12,8 @@ import com.chess.puzzle.text2sql.web.service.BenchmarkService
 import com.chess.puzzle.text2sql.web.service.FileLoaderService
 import com.chess.puzzle.text2sql.web.service.JsonWriterService
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import io.mockk.*
-import java.io.IOException
+import io.mockk.coEvery
+import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -23,6 +23,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
+import java.io.IOException
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class BenchmarkingControllerTest {

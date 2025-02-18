@@ -11,26 +11,14 @@ import com.chess.puzzle.text2sql.web.validator.RequestValidator
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Text2SqlRequest(
-    val query: String? = null,
-    val model: String? = null,
-    val modelVariant: String? = null,
-) {
-    fun toInput(): ResultWrapper<Text2SqlInput, List<ClientError>> {
+data class LlmRequest(val query: String? = null, val model: String? = null) {
+    fun toInput(): ResultWrapper<LlmInput, List<ClientError>> {
 
         val validator =
-            RequestValidator<Text2SqlInput> {
+            RequestValidator<LlmInput> {
                 isNotNull(query, MissingQuery)
                 ifPresent(model) {
                     isNotNull(ModelName.toEnum(model!!), InvalidModel)
-                    isInCollection(
-                        ModelVariant.toEnum(model),
-                        ModelVariant.entries,
-                        InvalidModelVariant,
-                    )
-                }
-                ifPresent(modelVariant) {
-                    isNotNull(ModelVariant.toEnum(model!!), InvalidModelVariant)
                     isInCollection(
                         ModelVariant.toEnum(model),
                         ModelVariant.entries,
@@ -43,18 +31,12 @@ data class Text2SqlRequest(
         }
 
         val input =
-            Text2SqlInput(
+            LlmInput(
                 query = query!!,
                 modelName = model?.let { ModelName.toEnum(it) } ?: ModelName.Deepseek,
-                modelVariant = modelVariant?.let { ModelVariant.toEnum(it) } ?: ModelVariant.Full,
             )
         return ResultWrapper.Success(input)
     }
 }
 
-@Serializable
-data class Text2SqlInput(
-    val query: String,
-    val modelName: ModelName,
-    val modelVariant: ModelVariant,
-)
+@Serializable data class LlmInput(val query: String, val modelName: ModelName)

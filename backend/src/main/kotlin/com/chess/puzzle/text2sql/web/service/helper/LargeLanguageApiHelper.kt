@@ -2,7 +2,16 @@ package com.chess.puzzle.text2sql.web.service.helper
 
 import com.aallam.openai.api.chat.ChatCompletion
 import com.aallam.openai.api.chat.TextContent
-import com.aallam.openai.api.exception.*
+import com.aallam.openai.api.exception.AuthenticationException
+import com.aallam.openai.api.exception.InvalidRequestException
+import com.aallam.openai.api.exception.OpenAIAPIException
+import com.aallam.openai.api.exception.OpenAIException
+import com.aallam.openai.api.exception.OpenAIHttpException
+import com.aallam.openai.api.exception.OpenAIIOException
+import com.aallam.openai.api.exception.OpenAIServerException
+import com.aallam.openai.api.exception.PermissionException
+import com.aallam.openai.api.exception.RateLimitException
+import com.aallam.openai.api.exception.UnknownAPIException
 import com.chess.puzzle.text2sql.web.domain.model.ModelName
 import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
 import com.chess.puzzle.text2sql.web.error.CallLargeLanguageModelError

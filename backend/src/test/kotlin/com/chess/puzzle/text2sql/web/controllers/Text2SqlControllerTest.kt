@@ -1,6 +1,6 @@
 package com.chess.puzzle.text2sql.web.controllers
 
-import com.chess.puzzle.text2sql.web.domain.input.QueryRequest
+import com.chess.puzzle.text2sql.web.domain.input.GenericRequest
 import com.chess.puzzle.text2sql.web.domain.model.ModelVariant
 import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
 import com.chess.puzzle.text2sql.web.entities.Puzzle
@@ -28,7 +28,7 @@ class Text2SqlControllerTest {
 
     @Test
     fun `test queryPuzzle success scenario`(): Unit = runBlocking {
-        val queryRequest = QueryRequest(query = "some natural language query")
+        val genericRequest = GenericRequest(query = "some natural language query")
         val sqlQuery = "SELECT * FROM puzzles WHERE ..."
         val puzzles =
             listOf(
@@ -47,11 +47,11 @@ class Text2SqlControllerTest {
                 )
             )
 
-        coEvery { text2SQLService.convertToSQL(queryRequest.query, ModelVariant.Full) } returns
+        coEvery { text2SQLService.convertToSQL(genericRequest.query, ModelVariant.Full) } returns
             ResultWrapper.Success(sqlQuery)
         coEvery { puzzleService.processQuery(sqlQuery) } returns ResultWrapper.Success(puzzles)
 
-        val response: ResponseEntity<String> = controller.queryPuzzle(queryRequest)
+        val response: ResponseEntity<String> = controller.queryPuzzle(genericRequest)
 
         val expectedResponse =
             objectMapper.writeValueAsString(mapOf("status" to "success", "data" to puzzles))
@@ -61,12 +61,12 @@ class Text2SqlControllerTest {
 
     @Test
     fun `test queryPuzzle failure in text2SQLService`(): Unit = runBlocking {
-        val queryRequest = QueryRequest(query = "some natural language query")
+        val genericRequest = GenericRequest(query = "some natural language query")
         val error = GetSimilarDemonstrationError.NetworkError
-        coEvery { text2SQLService.convertToSQL(queryRequest.query, ModelVariant.Full) } returns
+        coEvery { text2SQLService.convertToSQL(genericRequest.query, ModelVariant.Full) } returns
             ResultWrapper.Failure(error)
 
-        val response: ResponseEntity<String> = controller.queryPuzzle(queryRequest)
+        val response: ResponseEntity<String> = controller.queryPuzzle(genericRequest)
 
         val expectedResponse =
             objectMapper.writeValueAsString(mapOf("status" to "failure", "data" to error.message))
@@ -76,14 +76,14 @@ class Text2SqlControllerTest {
 
     @Test
     fun `test queryPuzzle failure in puzzleService`(): Unit = runBlocking {
-        val queryRequest = QueryRequest(query = "some natural language query")
+        val genericRequest = GenericRequest(query = "some natural language query")
         val sqlQuery = "SELECT * FROM puzzles WHERE ..."
         val error = ProcessQueryError.HibernateError
-        coEvery { text2SQLService.convertToSQL(queryRequest.query, ModelVariant.Full) } returns
+        coEvery { text2SQLService.convertToSQL(genericRequest.query, ModelVariant.Full) } returns
             ResultWrapper.Success(sqlQuery)
         coEvery { puzzleService.processQuery(sqlQuery) } returns ResultWrapper.Failure(error)
 
-        val response: ResponseEntity<String> = controller.queryPuzzle(queryRequest)
+        val response: ResponseEntity<String> = controller.queryPuzzle(genericRequest)
 
         val expectedResponse =
             objectMapper.writeValueAsString(mapOf("status" to "failure", "data" to error.message))

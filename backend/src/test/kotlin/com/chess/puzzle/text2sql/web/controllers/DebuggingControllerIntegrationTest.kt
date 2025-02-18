@@ -9,7 +9,7 @@ import com.aallam.openai.api.model.ModelId
 import com.aallam.openai.client.OpenAI
 import com.chess.puzzle.text2sql.web.config.FilePaths
 import com.chess.puzzle.text2sql.web.config.SentenceTransformerEndpoints
-import com.chess.puzzle.text2sql.web.domain.input.QueryRequest
+import com.chess.puzzle.text2sql.web.domain.input.GenericRequest
 import com.chess.puzzle.text2sql.web.domain.input.Text2SqlRequest
 import com.chess.puzzle.text2sql.web.domain.model.Demonstration
 import com.chess.puzzle.text2sql.web.domain.model.ModelVariant
@@ -34,7 +34,6 @@ import io.ktor.serialization.kotlinx.json.*
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
-import java.io.IOException
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -42,6 +41,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
+import java.io.IOException
 
 class DebuggingControllerIntegrationTest {
 
@@ -151,7 +151,7 @@ class DebuggingControllerIntegrationTest {
             )
 
         val query = "SELECT * FROM puzzles"
-        val queryRequest = QueryRequest(query)
+        val genericRequest = GenericRequest(query)
         val puzzles =
             listOf(
                 Puzzle(
@@ -173,7 +173,7 @@ class DebuggingControllerIntegrationTest {
         coEvery { sqlValidator.isAllowed(query) } returns true
         coEvery { puzzleRepository.executeSqlQuery(query) } returns puzzles
 
-        val response = controller.sql(queryRequest)
+        val response = controller.sql(genericRequest)
         val expectedResponse =
             objectMapper.writeValueAsString(mapOf("status" to "success", "data" to puzzles))
 
@@ -192,14 +192,14 @@ class DebuggingControllerIntegrationTest {
             )
 
         val query = "SELECT * FROM puzzles"
-        val queryRequest = QueryRequest(query)
+        val genericRequest = GenericRequest(query)
         val error = ProcessQueryError.HibernateError
 
         coEvery { sqlValidator.isValidSql(query) } returns true
         coEvery { sqlValidator.isAllowed(query) } returns true
         coEvery { puzzleRepository.executeSqlQuery(query) } throws Throwable()
 
-        val response = controller.sql(queryRequest)
+        val response = controller.sql(genericRequest)
         val expectedResponse =
             objectMapper.writeValueAsString(mapOf("status" to "failure", "data" to error.message))
 
@@ -218,13 +218,13 @@ class DebuggingControllerIntegrationTest {
             )
 
         val query = "SELECT * FROM puzzles"
-        val queryRequest = QueryRequest(query)
+        val genericRequest = GenericRequest(query)
         val error = ProcessQueryError.ValidationError(isValid = true, isAllowed = false)
 
         coEvery { sqlValidator.isValidSql(query) } returns true
         coEvery { sqlValidator.isAllowed(query) } returns false
 
-        val response = controller.sql(queryRequest)
+        val response = controller.sql(genericRequest)
         val expectedResponse =
             objectMapper.writeValueAsString(mapOf("status" to "failure", "data" to error.message))
 
@@ -243,13 +243,13 @@ class DebuggingControllerIntegrationTest {
             )
 
         val query = "SELECT * FROM puzzles"
-        val queryRequest = QueryRequest(query)
+        val genericRequest = GenericRequest(query)
         val error = ProcessQueryError.ValidationError(isValid = false, isAllowed = true)
 
         coEvery { sqlValidator.isValidSql(query) } returns false
         coEvery { sqlValidator.isAllowed(query) } returns true
 
-        val response = controller.sql(queryRequest)
+        val response = controller.sql(genericRequest)
         val expectedResponse =
             objectMapper.writeValueAsString(mapOf("status" to "failure", "data" to error.message))
 
@@ -299,8 +299,8 @@ class DebuggingControllerIntegrationTest {
                 largeLanguageApiHelper,
             )
 
-        val queryRequest = QueryRequest(query = "some query")
-        val response = controller.sentenceTransformer(queryRequest)
+        val genericRequest = GenericRequest(query = "some query")
+        val response = controller.sentenceTransformer(genericRequest)
 
         val expectedResponse =
             objectMapper.writeValueAsString(
@@ -335,8 +335,8 @@ class DebuggingControllerIntegrationTest {
                 largeLanguageApiHelper,
             )
 
-        val queryRequest = QueryRequest(query = "some query")
-        val response = controller.sentenceTransformer(queryRequest)
+        val genericRequest = GenericRequest(query = "some query")
+        val response = controller.sentenceTransformer(genericRequest)
 
         val error = GetSimilarDemonstrationError.NetworkError
         val expectedResponse =
@@ -381,8 +381,8 @@ class DebuggingControllerIntegrationTest {
                 largeLanguageApiHelper,
             )
 
-        val queryRequest = QueryRequest(query = "some query")
-        val response = controller.sentenceTransformer(queryRequest)
+        val genericRequest = GenericRequest(query = "some query")
+        val response = controller.sentenceTransformer(genericRequest)
 
         val error = GetSimilarDemonstrationError.InternalError
         val expectedResponse =
@@ -600,8 +600,8 @@ class DebuggingControllerIntegrationTest {
                 largeLanguageApiHelper,
             )
 
-        val queryRequest = QueryRequest(promptTemplate)
-        val response = controller.llm(queryRequest)
+        val genericRequest = GenericRequest(promptTemplate)
+        val response = controller.llm(genericRequest)
 
         val expectedResponse =
             objectMapper.writeValueAsString(mapOf("status" to "success", "data" to query))
@@ -623,8 +623,8 @@ class DebuggingControllerIntegrationTest {
                 largeLanguageApiHelper,
             )
 
-        val queryRequest = QueryRequest(promptTemplate)
-        val response = controller.llm(queryRequest)
+        val genericRequest = GenericRequest(promptTemplate)
+        val response = controller.llm(genericRequest)
 
         val error = CallLargeLanguageModelError.RateLimitError
         val expectedResponse =
@@ -647,8 +647,8 @@ class DebuggingControllerIntegrationTest {
                 largeLanguageApiHelper,
             )
 
-        val queryRequest = QueryRequest(promptTemplate)
-        val response = controller.llm(queryRequest)
+        val genericRequest = GenericRequest(promptTemplate)
+        val response = controller.llm(genericRequest)
 
         val error = CallLargeLanguageModelError.PermissionError
         val expectedResponse =
@@ -671,8 +671,8 @@ class DebuggingControllerIntegrationTest {
                 largeLanguageApiHelper,
             )
 
-        val queryRequest = QueryRequest(promptTemplate)
-        val response = controller.llm(queryRequest)
+        val genericRequest = GenericRequest(promptTemplate)
+        val response = controller.llm(genericRequest)
 
         val error = CallLargeLanguageModelError.InsufficientBalanceError
         val expectedResponse =
@@ -695,8 +695,8 @@ class DebuggingControllerIntegrationTest {
                 largeLanguageApiHelper,
             )
 
-        val queryRequest = QueryRequest(promptTemplate)
-        val response = controller.llm(queryRequest)
+        val genericRequest = GenericRequest(promptTemplate)
+        val response = controller.llm(genericRequest)
 
         val error = CallLargeLanguageModelError.UnknownError(1, "no message")
         val expectedResponse =
@@ -736,8 +736,8 @@ class DebuggingControllerIntegrationTest {
                 largeLanguageApiHelper,
             )
 
-        val queryRequest = QueryRequest(promptTemplate)
-        val response = controller.llm(queryRequest)
+        val genericRequest = GenericRequest(promptTemplate)
+        val response = controller.llm(genericRequest)
 
         val error = CallLargeLanguageModelError.UnexpectedResult
         val expectedResponse =

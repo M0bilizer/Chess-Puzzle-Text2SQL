@@ -4,7 +4,9 @@ import com.chess.puzzle.text2sql.web.config.FilePaths
 import com.chess.puzzle.text2sql.web.domain.model.Demonstration
 import com.chess.puzzle.text2sql.web.domain.model.ModelName
 import com.chess.puzzle.text2sql.web.domain.model.ModelVariant
-import com.chess.puzzle.text2sql.web.domain.model.ModelVariant.*
+import com.chess.puzzle.text2sql.web.domain.model.ModelVariant.Baseline
+import com.chess.puzzle.text2sql.web.domain.model.ModelVariant.Full
+import com.chess.puzzle.text2sql.web.domain.model.ModelVariant.Partial
 import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
 import com.chess.puzzle.text2sql.web.error.SystemError
 import com.chess.puzzle.text2sql.web.service.helper.LargeLanguageApiHelper

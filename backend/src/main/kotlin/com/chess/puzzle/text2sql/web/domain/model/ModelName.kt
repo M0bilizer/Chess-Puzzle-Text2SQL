@@ -10,8 +10,8 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 enum class ModelName {
-    Default,
-    Alternative;
+    Deepseek,
+    Mistral;
 
     companion object {
         fun toEnum(value: String): ModelName? {

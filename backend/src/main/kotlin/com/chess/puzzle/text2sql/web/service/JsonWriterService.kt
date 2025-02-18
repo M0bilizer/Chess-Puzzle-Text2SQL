@@ -5,9 +5,9 @@ import com.chess.puzzle.text2sql.web.error.WriteToFileError
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import io.github.oshai.kotlinlogging.KotlinLogging
+import org.springframework.stereotype.Service
 import java.io.File
 import java.io.IOException
-import org.springframework.stereotype.Service
 
 private val logger = KotlinLogging.logger {}
 

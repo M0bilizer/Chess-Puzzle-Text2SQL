@@ -1,7 +1,7 @@
 package com.chess.puzzle.text2sql.web.service.helper
 
 import com.chess.puzzle.text2sql.web.config.SentenceTransformerEndpoints
-import com.chess.puzzle.text2sql.web.domain.input.QueryRequest
+import com.chess.puzzle.text2sql.web.domain.input.GenericRequest
 import com.chess.puzzle.text2sql.web.domain.model.Demonstration
 import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
 import com.chess.puzzle.text2sql.web.error.GetSimilarDemonstrationError
@@ -10,14 +10,11 @@ import com.chess.puzzle.text2sql.web.error.GetSimilarDemonstrationError.NetworkE
 import com.chess.puzzle.text2sql.web.integration.FastApiResponse
 import com.google.gson.Gson
 import io.github.oshai.kotlinlogging.KotlinLogging
-import io.ktor.client.HttpClient
-import io.ktor.client.call.body
-import io.ktor.client.request.post
-import io.ktor.client.request.setBody
-import io.ktor.client.statement.HttpResponse
-import io.ktor.http.ContentType
-import io.ktor.http.HttpStatusCode
-import io.ktor.http.contentType
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -82,7 +79,7 @@ class SentenceTransformerHelper(
         url: String,
         logPrefix: String,
     ): ResultWrapper<List<Demonstration>, GetSimilarDemonstrationError> {
-        val jsonString = Gson().toJson(QueryRequest(input))
+        val jsonString = Gson().toJson(GenericRequest(input))
         val response: HttpResponse
         try {
             response =

@@ -1,6 +1,6 @@
 package com.chess.puzzle.text2sql.web.controllers
 
-import com.chess.puzzle.text2sql.web.domain.input.QueryRequest
+import com.chess.puzzle.text2sql.web.domain.input.GenericRequest
 import com.chess.puzzle.text2sql.web.domain.input.Text2SqlRequest
 import com.chess.puzzle.text2sql.web.domain.model.Demonstration
 import com.chess.puzzle.text2sql.web.domain.model.ModelVariant
@@ -81,7 +81,7 @@ class DebuggingControllerTest {
 
     @Test
     fun `test sql endpoint success`() {
-        val queryRequest = QueryRequest(query = "SELECT * FROM puzzles")
+        val genericRequest = GenericRequest(query = "SELECT * FROM puzzles")
         val puzzles =
             listOf(
                 Puzzle(
@@ -100,11 +100,11 @@ class DebuggingControllerTest {
             )
 
         val puzzleService: PuzzleService = mockk {
-            coEvery { processQuery(queryRequest.query) } returns ResultWrapper.Success(puzzles)
+            coEvery { processQuery(genericRequest.query) } returns ResultWrapper.Success(puzzles)
         }
 
         val response =
-            DebuggingController(mockk(), puzzleService, mockk(), mockk()).sql(queryRequest)
+            DebuggingController(mockk(), puzzleService, mockk(), mockk()).sql(genericRequest)
         val expectedResponse =
             objectMapper.writeValueAsString(mapOf("status" to "success", "data" to puzzles))
 
@@ -114,14 +114,14 @@ class DebuggingControllerTest {
 
     @Test
     fun `test sql endpoint failure`() {
-        val queryRequest = QueryRequest(query = "SELECT * FROM puzzles")
+        val genericRequest = GenericRequest(query = "SELECT * FROM puzzles")
         val error = ProcessQueryError.HibernateError
         val puzzleService: PuzzleService = mockk {
-            coEvery { processQuery(queryRequest.query) } returns ResultWrapper.Failure(error)
+            coEvery { processQuery(genericRequest.query) } returns ResultWrapper.Failure(error)
         }
 
         val response =
-            DebuggingController(mockk(), puzzleService, mockk(), mockk()).sql(queryRequest)
+            DebuggingController(mockk(), puzzleService, mockk(), mockk()).sql(genericRequest)
         val expectedResponse =
             objectMapper.writeValueAsString(mapOf("status" to "failure", "data" to error.message))
 
@@ -131,7 +131,7 @@ class DebuggingControllerTest {
 
     @Test
     fun `test sentenceTransformer endpoint success`(): Unit = runBlocking {
-        val queryRequest = QueryRequest(query = "some query")
+        val genericRequest = GenericRequest(query = "some query")
         val similarDemonstrations =
             listOf(
                 Demonstration(
@@ -142,13 +142,13 @@ class DebuggingControllerTest {
             )
 
         val sentenceTransformerHelper: SentenceTransformerHelper = mockk {
-            coEvery { getSimilarDemonstration(queryRequest.query) } returns
+            coEvery { getSimilarDemonstration(genericRequest.query) } returns
                 ResultWrapper.Success(similarDemonstrations)
         }
 
         val response =
             DebuggingController(mockk(), mockk(), sentenceTransformerHelper, mockk())
-                .sentenceTransformer(queryRequest)
+                .sentenceTransformer(genericRequest)
         val expectedResponse =
             objectMapper.writeValueAsString(
                 mapOf("status" to "success", "data" to similarDemonstrations)
@@ -160,16 +160,16 @@ class DebuggingControllerTest {
 
     @Test
     fun `test sentenceTransformer endpoint failure`(): Unit = runBlocking {
-        val queryRequest = QueryRequest(query = "some query")
+        val genericRequest = GenericRequest(query = "some query")
         val error = GetSimilarDemonstrationError.NetworkError
         val sentenceTransformerHelper: SentenceTransformerHelper = mockk {
-            coEvery { getSimilarDemonstration(queryRequest.query) } returns
+            coEvery { getSimilarDemonstration(genericRequest.query) } returns
                 ResultWrapper.Failure(error)
         }
 
         val response =
             DebuggingController(mockk(), mockk(), sentenceTransformerHelper, mockk())
-                .sentenceTransformer(queryRequest)
+                .sentenceTransformer(genericRequest)
         val expectedResponse =
             objectMapper.writeValueAsString(mapOf("status" to "failure", "data" to error.message))
 
@@ -282,15 +282,17 @@ class DebuggingControllerTest {
 
     @Test
     fun `test llm endpoint success`(): Unit = runBlocking {
-        val queryRequest = QueryRequest(query = "some prompt")
+        val genericRequest = GenericRequest(query = "some prompt")
         val llmResponse = "LLM response"
 
         val largeLanguageApiHelper: LargeLanguageApiHelper = mockk {
-            coEvery { callDeepSeek(queryRequest.query) } returns ResultWrapper.Success(llmResponse)
+            coEvery { callDeepSeek(genericRequest.query) } returns
+                ResultWrapper.Success(llmResponse)
         }
 
         val response =
-            DebuggingController(mockk(), mockk(), mockk(), largeLanguageApiHelper).llm(queryRequest)
+            DebuggingController(mockk(), mockk(), mockk(), largeLanguageApiHelper)
+                .llm(genericRequest)
         val expectedResponse =
             objectMapper.writeValueAsString(mapOf("status" to "success", "data" to llmResponse))
 
@@ -300,14 +302,15 @@ class DebuggingControllerTest {
 
     @Test
     fun `test llm endpoint failure`(): Unit = runBlocking {
-        val queryRequest = QueryRequest(query = "some prompt")
+        val genericRequest = GenericRequest(query = "some prompt")
         val error = CallLargeLanguageModelError.InsufficientBalanceError
         val largeLanguageApiHelper: LargeLanguageApiHelper = mockk {
-            coEvery { callDeepSeek(queryRequest.query) } returns ResultWrapper.Failure(error)
+            coEvery { callDeepSeek(genericRequest.query) } returns ResultWrapper.Failure(error)
         }
 
         val response =
-            DebuggingController(mockk(), mockk(), mockk(), largeLanguageApiHelper).llm(queryRequest)
+            DebuggingController(mockk(), mockk(), mockk(), largeLanguageApiHelper)
+                .llm(genericRequest)
         val expectedResponse =
             objectMapper.writeValueAsString(mapOf("status" to "failure", "data" to error.message))
 
