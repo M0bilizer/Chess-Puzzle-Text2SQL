@@ -19,20 +19,16 @@ data class Text2SqlRequest(
     fun toInput(): ResultWrapper<Text2SqlInput, List<ClientError>> {
 
         val validator =
-            RequestValidator<Text2SqlInput> {
+            RequestValidator<Text2SqlRequest> {
                 isNotNull(query, MissingQuery)
                 ifPresent(model) {
                     isNotNull(ModelName.toEnum(model!!), InvalidModel)
-                    isInCollection(
-                        ModelVariant.toEnum(model),
-                        ModelVariant.entries,
-                        InvalidModelVariant,
-                    )
+                    isInCollection(ModelName.toEnum(model), ModelName.entries, InvalidModel)
                 }
                 ifPresent(modelVariant) {
-                    isNotNull(ModelVariant.toEnum(model!!), InvalidModelVariant)
+                    isNotNull(ModelVariant.toEnum(modelVariant!!), InvalidModelVariant)
                     isInCollection(
-                        ModelVariant.toEnum(model),
+                        ModelVariant.toEnum(modelVariant),
                         ModelVariant.entries,
                         InvalidModelVariant,
                     )

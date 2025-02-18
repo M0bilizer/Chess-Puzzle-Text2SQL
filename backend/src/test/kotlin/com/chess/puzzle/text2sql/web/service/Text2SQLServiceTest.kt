@@ -2,6 +2,7 @@ package com.chess.puzzle.text2sql.web.service
 
 import com.chess.puzzle.text2sql.web.config.FilePaths
 import com.chess.puzzle.text2sql.web.domain.model.Demonstration
+import com.chess.puzzle.text2sql.web.domain.model.ModelName
 import com.chess.puzzle.text2sql.web.domain.model.ModelVariant
 import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
 import com.chess.puzzle.text2sql.web.error.CallLargeLanguageModelError
@@ -61,10 +62,10 @@ class Text2SQLServiceTest {
             ResultWrapper.Success(demonstrations)
         coEvery { preprocessingHelper.processPrompt(query, promptTemplate, demonstrations) } returns
             ResultWrapper.Success(processedPrompt)
-        coEvery { largeLanguageApiHelper.callDeepSeek(processedPrompt) } returns
+        coEvery { largeLanguageApiHelper.callModel(processedPrompt, ModelName.Deepseek) } returns
             ResultWrapper.Success(sql)
 
-        val result = text2SQLService.convertToSQL(query, ModelVariant.Full)
+        val result = text2SQLService.convertToSQL(query, ModelName.Deepseek, ModelVariant.Full)
 
         expectThat(result) { isEqualTo(ResultWrapper.Success(sql)) }
     }
@@ -81,7 +82,7 @@ class Text2SQLServiceTest {
             ResultWrapper.Failure(error)
 
         // Act
-        val result = text2SQLService.convertToSQL(query, ModelVariant.Full)
+        val result = text2SQLService.convertToSQL(query, ModelName.Deepseek, ModelVariant.Full)
 
         // Assert
         expectThat(result) { isEqualTo(ResultWrapper.Failure(error)) }
@@ -102,7 +103,7 @@ class Text2SQLServiceTest {
             ResultWrapper.Failure(error)
 
         // Act
-        val result = text2SQLService.convertToSQL(query, ModelVariant.Full)
+        val result = text2SQLService.convertToSQL(query, ModelName.Deepseek, ModelVariant.Full)
 
         // Assert
         expectThat(result) { isEqualTo(ResultWrapper.Failure(error)) }
@@ -132,7 +133,7 @@ class Text2SQLServiceTest {
             ResultWrapper.Failure(error)
 
         // Act
-        val result = text2SQLService.convertToSQL(query, ModelVariant.Full)
+        val result = text2SQLService.convertToSQL(query, ModelName.Deepseek, ModelVariant.Full)
 
         // Assert
         expectThat(result) { isEqualTo(ResultWrapper.Failure(error)) }
@@ -162,11 +163,11 @@ class Text2SQLServiceTest {
             ResultWrapper.Success(demonstrations)
         coEvery { preprocessingHelper.processPrompt(query, promptTemplate, demonstrations) } returns
             ResultWrapper.Success(processedPrompt)
-        coEvery { largeLanguageApiHelper.callDeepSeek(processedPrompt) } returns
+        coEvery { largeLanguageApiHelper.callModel(processedPrompt, ModelName.Deepseek) } returns
             ResultWrapper.Failure(error)
 
         // Act
-        val result = text2SQLService.convertToSQL(query, ModelVariant.Full)
+        val result = text2SQLService.convertToSQL(query, ModelName.Deepseek, ModelVariant.Full)
 
         // Assert
         expectThat(result) { isEqualTo(ResultWrapper.Failure(error)) }
@@ -195,10 +196,10 @@ class Text2SQLServiceTest {
             ResultWrapper.Success(demonstrations)
         coEvery { preprocessingHelper.processPrompt(query, promptTemplate, demonstrations) } returns
             ResultWrapper.Success(processedPrompt)
-        coEvery { largeLanguageApiHelper.callDeepSeek(processedPrompt) } returns
+        coEvery { largeLanguageApiHelper.callModel(processedPrompt, ModelName.Deepseek) } returns
             ResultWrapper.Success(sql)
 
-        val result = text2SQLService.convertToSQL(query, ModelVariant.Partial)
+        val result = text2SQLService.convertToSQL(query, ModelName.Deepseek, ModelVariant.Partial)
 
         expectThat(result) { isEqualTo(ResultWrapper.Success(sql)) }
     }
@@ -215,7 +216,7 @@ class Text2SQLServiceTest {
             ResultWrapper.Failure(error)
 
         // Act
-        val result = text2SQLService.convertToSQL(query, ModelVariant.Partial)
+        val result = text2SQLService.convertToSQL(query, ModelName.Deepseek, ModelVariant.Partial)
 
         // Assert
         expectThat(result) { isEqualTo(ResultWrapper.Failure(error)) }
@@ -237,7 +238,8 @@ class Text2SQLServiceTest {
                 ResultWrapper.Failure(error)
 
             // Act
-            val result = text2SQLService.convertToSQL(query, ModelVariant.Partial)
+            val result =
+                text2SQLService.convertToSQL(query, ModelName.Deepseek, ModelVariant.Partial)
 
             // Assert
             expectThat(result) { isEqualTo(ResultWrapper.Failure(error)) }
@@ -267,7 +269,7 @@ class Text2SQLServiceTest {
             ResultWrapper.Failure(error)
 
         // Act
-        val result = text2SQLService.convertToSQL(query, ModelVariant.Partial)
+        val result = text2SQLService.convertToSQL(query, ModelName.Deepseek, ModelVariant.Partial)
 
         // Assert
         expectThat(result) { isEqualTo(ResultWrapper.Failure(error)) }
@@ -297,11 +299,11 @@ class Text2SQLServiceTest {
             ResultWrapper.Success(demonstrations)
         coEvery { preprocessingHelper.processPrompt(query, promptTemplate, demonstrations) } returns
             ResultWrapper.Success(processedPrompt)
-        coEvery { largeLanguageApiHelper.callDeepSeek(processedPrompt) } returns
+        coEvery { largeLanguageApiHelper.callModel(processedPrompt, ModelName.Deepseek) } returns
             ResultWrapper.Failure(error)
 
         // Act
-        val result = text2SQLService.convertToSQL(query, ModelVariant.Partial)
+        val result = text2SQLService.convertToSQL(query, ModelName.Deepseek, ModelVariant.Partial)
 
         // Assert
         expectThat(result) { isEqualTo(ResultWrapper.Failure(error)) }
@@ -320,10 +322,10 @@ class Text2SQLServiceTest {
             ResultWrapper.Success(promptTemplate)
         coEvery { preprocessingHelper.processPrompt(query, promptTemplate, null) } returns
             ResultWrapper.Success(processedPrompt)
-        coEvery { largeLanguageApiHelper.callDeepSeek(processedPrompt) } returns
+        coEvery { largeLanguageApiHelper.callModel(processedPrompt, ModelName.Deepseek) } returns
             ResultWrapper.Success(sql)
 
-        val result = text2SQLService.convertToSQL(query, ModelVariant.Baseline)
+        val result = text2SQLService.convertToSQL(query, ModelName.Deepseek, ModelVariant.Baseline)
 
         expectThat(result) { isEqualTo(ResultWrapper.Success(sql)) }
     }
@@ -340,7 +342,7 @@ class Text2SQLServiceTest {
             ResultWrapper.Failure(error)
 
         // Act
-        val result = text2SQLService.convertToSQL(query, ModelVariant.Baseline)
+        val result = text2SQLService.convertToSQL(query, ModelName.Deepseek, ModelVariant.Baseline)
 
         // Assert
         expectThat(result) { isEqualTo(ResultWrapper.Failure(error)) }
@@ -361,7 +363,7 @@ class Text2SQLServiceTest {
             ResultWrapper.Failure(error)
 
         // Act
-        val result = text2SQLService.convertToSQL(query, ModelVariant.Baseline)
+        val result = text2SQLService.convertToSQL(query, ModelName.Deepseek, ModelVariant.Baseline)
 
         // Assert
         expectThat(result) { isEqualTo(ResultWrapper.Failure(error)) }
@@ -381,11 +383,11 @@ class Text2SQLServiceTest {
             ResultWrapper.Success(promptTemplate)
         coEvery { preprocessingHelper.processPrompt(query, promptTemplate, null) } returns
             ResultWrapper.Success(processedPrompt)
-        coEvery { largeLanguageApiHelper.callDeepSeek(processedPrompt) } returns
+        coEvery { largeLanguageApiHelper.callModel(processedPrompt, ModelName.Deepseek) } returns
             ResultWrapper.Failure(error)
 
         // Act
-        val result = text2SQLService.convertToSQL(query, ModelVariant.Baseline)
+        val result = text2SQLService.convertToSQL(query, ModelName.Deepseek, ModelVariant.Baseline)
 
         // Assert
         expectThat(result) { isEqualTo(ResultWrapper.Failure(error)) }

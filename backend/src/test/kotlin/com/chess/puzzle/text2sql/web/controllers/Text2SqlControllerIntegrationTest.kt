@@ -1,11 +1,12 @@
 package com.chess.puzzle.text2sql.web.controllers
 
 import com.chess.puzzle.text2sql.web.config.FilePaths
-import com.chess.puzzle.text2sql.web.domain.input.GenericRequest
+import com.chess.puzzle.text2sql.web.domain.input.QueryPuzzleRequest
 import com.chess.puzzle.text2sql.web.domain.model.Demonstration
+import com.chess.puzzle.text2sql.web.domain.model.ModelName
 import com.chess.puzzle.text2sql.web.domain.model.ModelVariant
 import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
-import com.chess.puzzle.text2sql.web.entities.*
+import com.chess.puzzle.text2sql.web.entities.Puzzle
 import com.chess.puzzle.text2sql.web.error.*
 import com.chess.puzzle.text2sql.web.repositories.PuzzleRepository
 import com.chess.puzzle.text2sql.web.service.FileLoaderService
@@ -52,7 +53,7 @@ class Text2SqlControllerIntegrationTest {
     @Test
     fun `test queryPuzzle success scenario`(): Unit = runBlocking {
         val query = "some natural language query"
-        val genericRequest = GenericRequest(query)
+        val queryPuzzleRequest = QueryPuzzleRequest(query)
         val promptTemplate = "{{prompt}} {{text0}} {{sql0}}"
         val demonstrations =
             listOf(
@@ -89,14 +90,14 @@ class Text2SqlControllerIntegrationTest {
             ResultWrapper.Success(demonstrations)
         coEvery { preprocessingHelper.processPrompt(query, promptTemplate, demonstrations) } returns
             ResultWrapper.Success(processedPrompt)
-        coEvery { largeLanguageApiHelper.callDeepSeek(processedPrompt) } returns
+        coEvery { largeLanguageApiHelper.callModel(processedPrompt, ModelName.Deepseek) } returns
             ResultWrapper.Success(sql)
 
         every { sqlValidator.isValidSql(sql) } returns true
         every { sqlValidator.isAllowed(sql) } returns true
         every { puzzleRepository.executeSqlQuery(sql) } returns puzzles
 
-        val response: ResponseEntity<String> = controller.queryPuzzle(genericRequest)
+        val response: ResponseEntity<String> = controller.queryPuzzle(queryPuzzleRequest)
 
         val expectedResponse =
             objectMapper.writeValueAsString(mapOf("status" to "success", "data" to puzzles))
@@ -107,7 +108,7 @@ class Text2SqlControllerIntegrationTest {
     @Test
     fun `test queryPuzzle failure in executeSqlQuery`(): Unit = runBlocking {
         val query = "some natural language query"
-        val genericRequest = GenericRequest(query)
+        val queryPuzzleRequest = QueryPuzzleRequest(query)
         val promptTemplate = "{{prompt}} {{text0}} {{sql0}}"
         val demonstrations =
             listOf(
@@ -129,14 +130,14 @@ class Text2SqlControllerIntegrationTest {
             ResultWrapper.Success(demonstrations)
         coEvery { preprocessingHelper.processPrompt(query, promptTemplate, demonstrations) } returns
             ResultWrapper.Success(processedPrompt)
-        coEvery { largeLanguageApiHelper.callDeepSeek(processedPrompt) } returns
+        coEvery { largeLanguageApiHelper.callModel(processedPrompt, ModelName.Deepseek) } returns
             ResultWrapper.Success(sql)
 
         every { sqlValidator.isValidSql(sql) } returns true
         every { sqlValidator.isAllowed(sql) } returns true
         every { puzzleRepository.executeSqlQuery(sql) } throws RuntimeException("Hibernate error")
 
-        val response: ResponseEntity<String> = controller.queryPuzzle(genericRequest)
+        val response: ResponseEntity<String> = controller.queryPuzzle(queryPuzzleRequest)
 
         val expectedResponse =
             objectMapper.writeValueAsString(
@@ -149,7 +150,7 @@ class Text2SqlControllerIntegrationTest {
     @Test
     fun `test queryPuzzle failure in isAllowed`(): Unit = runBlocking {
         val query = "some natural language query"
-        val genericRequest = GenericRequest(query)
+        val queryPuzzleRequest = QueryPuzzleRequest(query)
         val promptTemplate = "{{prompt}} {{text0}} {{sql0}}"
         val demonstrations =
             listOf(
@@ -171,13 +172,13 @@ class Text2SqlControllerIntegrationTest {
             ResultWrapper.Success(demonstrations)
         coEvery { preprocessingHelper.processPrompt(query, promptTemplate, demonstrations) } returns
             ResultWrapper.Success(processedPrompt)
-        coEvery { largeLanguageApiHelper.callDeepSeek(processedPrompt) } returns
+        coEvery { largeLanguageApiHelper.callModel(processedPrompt, ModelName.Deepseek) } returns
             ResultWrapper.Success(sql)
 
         every { sqlValidator.isValidSql(sql) } returns true
         every { sqlValidator.isAllowed(sql) } returns false
 
-        val response: ResponseEntity<String> = controller.queryPuzzle(genericRequest)
+        val response: ResponseEntity<String> = controller.queryPuzzle(queryPuzzleRequest)
 
         val expectedResponse =
             objectMapper.writeValueAsString(
@@ -194,7 +195,7 @@ class Text2SqlControllerIntegrationTest {
     @Test
     fun `test queryPuzzle failure in isValid`(): Unit = runBlocking {
         val query = "some natural language query"
-        val genericRequest = GenericRequest(query)
+        val queryPuzzleRequest = QueryPuzzleRequest(query)
         val promptTemplate = "{{prompt}} {{text0}} {{sql0}}"
         val demonstrations =
             listOf(
@@ -216,13 +217,13 @@ class Text2SqlControllerIntegrationTest {
             ResultWrapper.Success(demonstrations)
         coEvery { preprocessingHelper.processPrompt(query, promptTemplate, demonstrations) } returns
             ResultWrapper.Success(processedPrompt)
-        coEvery { largeLanguageApiHelper.callDeepSeek(processedPrompt) } returns
+        coEvery { largeLanguageApiHelper.callModel(processedPrompt, ModelName.Deepseek) } returns
             ResultWrapper.Success(sql)
 
         every { sqlValidator.isValidSql(sql) } returns false
         every { sqlValidator.isAllowed(sql) } returns true
 
-        val response: ResponseEntity<String> = controller.queryPuzzle(genericRequest)
+        val response: ResponseEntity<String> = controller.queryPuzzle(queryPuzzleRequest)
 
         val expectedResponse =
             objectMapper.writeValueAsString(
@@ -239,7 +240,7 @@ class Text2SqlControllerIntegrationTest {
     @Test
     fun `test queryPuzzle failure in callDeepSeek`(): Unit = runBlocking {
         val query = "some natural language query"
-        val genericRequest = GenericRequest(query)
+        val queryPuzzleRequest = QueryPuzzleRequest(query)
         val promptTemplate = "{{prompt}} {{text0}} {{sql0}}"
         val demonstrations =
             listOf(
@@ -260,10 +261,10 @@ class Text2SqlControllerIntegrationTest {
             ResultWrapper.Success(demonstrations)
         coEvery { preprocessingHelper.processPrompt(query, promptTemplate, demonstrations) } returns
             ResultWrapper.Success(processedPrompt)
-        coEvery { largeLanguageApiHelper.callDeepSeek(processedPrompt) } returns
+        coEvery { largeLanguageApiHelper.callModel(processedPrompt, ModelName.Deepseek) } returns
             ResultWrapper.Failure(CallLargeLanguageModelError.RateLimitError)
 
-        val response: ResponseEntity<String> = controller.queryPuzzle(genericRequest)
+        val response: ResponseEntity<String> = controller.queryPuzzle(queryPuzzleRequest)
 
         val expectedResponse =
             objectMapper.writeValueAsString(
@@ -279,7 +280,7 @@ class Text2SqlControllerIntegrationTest {
     @Test
     fun `test queryPuzzle failure in ProcessPrompt`(): Unit = runBlocking {
         val query = "some natural language query"
-        val genericRequest = GenericRequest(query)
+        val queryPuzzleRequest = QueryPuzzleRequest(query)
         val promptTemplate = "{{prompt}} {{text0}} {{sql0}}"
         val demonstrations =
             listOf(
@@ -298,7 +299,7 @@ class Text2SqlControllerIntegrationTest {
         coEvery { preprocessingHelper.processPrompt(query, promptTemplate, demonstrations) } returns
             ResultWrapper.Failure(ProcessPromptError.MissingPlaceholderError)
 
-        val response: ResponseEntity<String> = controller.queryPuzzle(genericRequest)
+        val response: ResponseEntity<String> = controller.queryPuzzle(queryPuzzleRequest)
 
         val expectedResponse =
             objectMapper.writeValueAsString(
@@ -314,7 +315,7 @@ class Text2SqlControllerIntegrationTest {
     @Test
     fun `test queryPuzzle failure in getSimilarDemonstration`(): Unit = runBlocking {
         val query = "some natural language query"
-        val genericRequest = GenericRequest(query)
+        val queryPuzzleRequest = QueryPuzzleRequest(query)
         val promptTemplate = "{{prompt}} {{text0}} {{sql0}}"
 
         coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns
@@ -324,7 +325,7 @@ class Text2SqlControllerIntegrationTest {
         coEvery { sentenceTransformerHelper.getSimilarDemonstration(query) } returns
             ResultWrapper.Failure(GetSimilarDemonstrationError.NetworkError)
 
-        val response: ResponseEntity<String> = controller.queryPuzzle(genericRequest)
+        val response: ResponseEntity<String> = controller.queryPuzzle(queryPuzzleRequest)
 
         val expectedResponse =
             objectMapper.writeValueAsString(
@@ -340,14 +341,14 @@ class Text2SqlControllerIntegrationTest {
     @Test
     fun `test queryPuzzle failure in getTextFile`(): Unit = runBlocking {
         val query = "some natural language query"
-        val genericRequest = GenericRequest(query)
+        val queryPuzzleRequest = QueryPuzzleRequest(query)
 
         coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns
             "full_prompt_template.txt"
         coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
             ResultWrapper.Failure(GetTextFileError.FileNotFoundError)
 
-        val response: ResponseEntity<String> = controller.queryPuzzle(genericRequest)
+        val response: ResponseEntity<String> = controller.queryPuzzle(queryPuzzleRequest)
 
         val expectedResponse =
             objectMapper.writeValueAsString(

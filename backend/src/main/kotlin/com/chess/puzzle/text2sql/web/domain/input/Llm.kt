@@ -5,7 +5,6 @@ import com.chess.puzzle.text2sql.web.domain.model.ModelVariant
 import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
 import com.chess.puzzle.text2sql.web.error.ClientError
 import com.chess.puzzle.text2sql.web.error.ClientError.InvalidModel
-import com.chess.puzzle.text2sql.web.error.ClientError.InvalidModelVariant
 import com.chess.puzzle.text2sql.web.error.ClientError.MissingQuery
 import com.chess.puzzle.text2sql.web.validator.RequestValidator
 import kotlinx.serialization.Serializable
@@ -19,11 +18,7 @@ data class LlmRequest(val query: String? = null, val model: String? = null) {
                 isNotNull(query, MissingQuery)
                 ifPresent(model) {
                     isNotNull(ModelName.toEnum(model!!), InvalidModel)
-                    isInCollection(
-                        ModelVariant.toEnum(model),
-                        ModelVariant.entries,
-                        InvalidModelVariant,
-                    )
+                    isInCollection(ModelVariant.toEnum(model), ModelVariant.entries, InvalidModel)
                 }
             }
         if (validator.haveErrors()) {

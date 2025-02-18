@@ -4,6 +4,7 @@ import com.chess.puzzle.text2sql.web.domain.model.ModelVariant
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.TestPropertySource
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
@@ -17,6 +18,7 @@ import strikt.assertions.isEqualTo
             "baselinePromptTemplate.md.path=path/to/baselinePromptTemplate.md",
         ]
 )
+@ActiveProfiles("test")
 class FilePathsTest {
 
     @Autowired private lateinit var filePaths: FilePaths

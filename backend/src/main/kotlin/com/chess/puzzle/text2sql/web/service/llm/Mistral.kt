@@ -15,15 +15,7 @@ class Mistral(@Qualifier("mistralClient") private val client: OpenAI) : LargeLan
         val chatCompletionRequest =
             ChatCompletionRequest(
                 model = ModelId("mistral-small-latest"),
-                messages =
-                    listOf(
-                        ChatMessage(
-                            role = ChatRole.System,
-                            content = "You are a helpful assistant",
-                        ),
-                        ChatMessage(role = ChatRole.User, content = query),
-                    ),
-                temperature = 0.0,
+                messages = listOf(ChatMessage(role = ChatRole.User, content = query)),
             )
         return client.chatCompletion(chatCompletionRequest)
     }

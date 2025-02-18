@@ -3,13 +3,16 @@ package com.chess.puzzle.text2sql.web.service.helper
 import com.aallam.openai.api.chat.*
 import com.aallam.openai.api.exception.*
 import com.aallam.openai.api.model.ModelId
-import com.aallam.openai.client.OpenAI
+import com.chess.puzzle.text2sql.web.domain.model.ModelName
 import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
 import com.chess.puzzle.text2sql.web.error.CallLargeLanguageModelError
 import com.chess.puzzle.text2sql.web.error.CallLargeLanguageModelError.*
+import com.chess.puzzle.text2sql.web.service.llm.LargeLanguageModel
+import com.chess.puzzle.text2sql.web.service.llm.LargeLanguageModelFactory
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isA
@@ -17,15 +20,21 @@ import strikt.assertions.isEqualTo
 
 class LargeLanguageApiHelperTest {
 
-    private val mockOpenAI: OpenAI = mockk()
-    private val helper = LargeLanguageApiHelper(mockOpenAI)
+    private val llmFactory: LargeLanguageModelFactory = mockk()
+    private val openAI: LargeLanguageModel = mockk()
+    private lateinit var helper: LargeLanguageApiHelper
+
+    @BeforeEach
+    fun setUp() {
+        helper = LargeLanguageApiHelper(llmFactory)
+    }
 
     @Test
-    fun `test callDeepSeek with successful response`(): Unit = runBlocking {
+    fun `test callModel with successful response`(): Unit = runBlocking {
         // Arrange
-        val input = "My query string"
-        val query = "SELECT * FROM users"
-        val promptTemplate = "Convert this query to SQL: $input"
+        val query = "My query string"
+        val sqlQuery = "SELECT * FROM users"
+        val promptTemplate = "Convert this query to SQL: $query"
         val chatCompletion =
             ChatCompletion(
                 id = "1",
@@ -38,33 +47,35 @@ class LargeLanguageApiHelperTest {
                             message =
                                 ChatMessage(
                                     role = ChatRole.System,
-                                    messageContent = TextContent(query),
+                                    messageContent = TextContent(sqlQuery),
                                 ),
                         )
                     ),
             )
 
-        coEvery { mockOpenAI.chatCompletion(any()) } returns chatCompletion
+        coEvery { llmFactory.getModel(ModelName.Deepseek) } returns openAI
+        coEvery { openAI.callModel(promptTemplate) } returns chatCompletion
 
         // Act
-        val result = helper.callDeepSeek(promptTemplate)
+        val result = helper.callModel(promptTemplate, ModelName.Deepseek)
 
         // Assert
         expectThat(result).isA<ResultWrapper.Success<String>>().and {
-            get { data }.isEqualTo("SELECT * FROM users")
+            get { data }.isEqualTo(sqlQuery)
         }
     }
 
     @Test
-    fun `test callDeepSeek with RateLimitException`(): Unit = runBlocking {
+    fun `test callModel with RateLimitException`(): Unit = runBlocking {
         // Arrange
-        val input = "My query string"
-        val promptTemplate = "Convert this query to SQL: $input"
+        val query = "My query string"
+        val promptTemplate = "Convert this query to SQL: $query"
 
-        coEvery { mockOpenAI.chatCompletion(any()) } throws RateLimitException(1, OpenAIError())
+        coEvery { llmFactory.getModel(ModelName.Deepseek) } returns openAI
+        coEvery { openAI.callModel(promptTemplate) } throws RateLimitException(1, OpenAIError())
 
         // Act
-        val result = helper.callDeepSeek(promptTemplate)
+        val result = helper.callModel(promptTemplate, ModelName.Deepseek)
 
         // Assert
         expectThat(result).isA<ResultWrapper.Failure<CallLargeLanguageModelError>>().and {
@@ -73,16 +84,17 @@ class LargeLanguageApiHelperTest {
     }
 
     @Test
-    fun `test callDeepSeek with InvalidRequestException`(): Unit = runBlocking {
+    fun `test callModel with InvalidRequestException`(): Unit = runBlocking {
         // Arrange
-        val input = "My query string"
-        val promptTemplate = "Convert this query to SQL: $input"
+        val query = "My query string"
+        val promptTemplate = "Convert this query to SQL: $query"
 
-        coEvery { mockOpenAI.chatCompletion(any()) } throws
+        coEvery { llmFactory.getModel(ModelName.Deepseek) } returns openAI
+        coEvery { openAI.callModel(promptTemplate) } throws
             InvalidRequestException(1, OpenAIError())
 
         // Act
-        val result = helper.callDeepSeek(promptTemplate)
+        val result = helper.callModel(promptTemplate, ModelName.Deepseek)
 
         // Assert
         expectThat(result).isA<ResultWrapper.Failure<CallLargeLanguageModelError>>().and {
@@ -91,16 +103,17 @@ class LargeLanguageApiHelperTest {
     }
 
     @Test
-    fun `test callDeepSeek with AuthenticationException`(): Unit = runBlocking {
+    fun `test callModel with AuthenticationException`(): Unit = runBlocking {
         // Arrange
-        val input = "My query string"
-        val promptTemplate = "Convert this query to SQL: $input"
+        val query = "My query string"
+        val promptTemplate = "Convert this query to SQL: $query"
 
-        coEvery { mockOpenAI.chatCompletion(any()) } throws
+        coEvery { llmFactory.getModel(ModelName.Deepseek) } returns openAI
+        coEvery { openAI.callModel(promptTemplate) } throws
             AuthenticationException(1, OpenAIError())
 
         // Act
-        val result = helper.callDeepSeek(promptTemplate)
+        val result = helper.callModel(promptTemplate, ModelName.Deepseek)
 
         // Assert
         expectThat(result).isA<ResultWrapper.Failure<CallLargeLanguageModelError>>().and {
@@ -109,15 +122,16 @@ class LargeLanguageApiHelperTest {
     }
 
     @Test
-    fun `test callDeepSeek with PermissionException`(): Unit = runBlocking {
+    fun `test callModel with PermissionException`(): Unit = runBlocking {
         // Arrange
-        val input = "My query string"
-        val promptTemplate = "Convert this query to SQL: $input"
+        val query = "My query string"
+        val promptTemplate = "Convert this query to SQL: $query"
 
-        coEvery { mockOpenAI.chatCompletion(any()) } throws PermissionException(1, OpenAIError())
+        coEvery { llmFactory.getModel(ModelName.Deepseek) } returns openAI
+        coEvery { openAI.callModel(promptTemplate) } throws PermissionException(1, OpenAIError())
 
         // Act
-        val result = helper.callDeepSeek(promptTemplate)
+        val result = helper.callModel(promptTemplate, ModelName.Deepseek)
 
         // Assert
         expectThat(result).isA<ResultWrapper.Failure<CallLargeLanguageModelError>>().and {
@@ -126,15 +140,16 @@ class LargeLanguageApiHelperTest {
     }
 
     @Test
-    fun `test callDeepSeek with UnknownAPIException 402`(): Unit = runBlocking {
+    fun `test callModel with UnknownAPIException 402`(): Unit = runBlocking {
         // Arrange
-        val input = "My query string"
-        val promptTemplate = "Convert this query to SQL: $input"
+        val query = "My query string"
+        val promptTemplate = "Convert this query to SQL: $query"
 
-        coEvery { mockOpenAI.chatCompletion(any()) } throws UnknownAPIException(402, OpenAIError())
+        coEvery { llmFactory.getModel(ModelName.Deepseek) } returns openAI
+        coEvery { openAI.callModel(promptTemplate) } throws UnknownAPIException(402, OpenAIError())
 
         // Act
-        val result = helper.callDeepSeek(promptTemplate)
+        val result = helper.callModel(promptTemplate, ModelName.Deepseek)
 
         // Assert
         expectThat(result).isA<ResultWrapper.Failure<CallLargeLanguageModelError>>().and {
@@ -143,15 +158,16 @@ class LargeLanguageApiHelperTest {
     }
 
     @Test
-    fun `test callDeepSeek with UnknownAPIException 503`(): Unit = runBlocking {
+    fun `test callModel with UnknownAPIException 503`(): Unit = runBlocking {
         // Arrange
-        val input = "My query string"
-        val promptTemplate = "Convert this query to SQL: $input"
+        val query = "My query string"
+        val promptTemplate = "Convert this query to SQL: $query"
 
-        coEvery { mockOpenAI.chatCompletion(any()) } throws UnknownAPIException(503, OpenAIError())
+        coEvery { llmFactory.getModel(ModelName.Deepseek) } returns openAI
+        coEvery { openAI.callModel(promptTemplate) } throws UnknownAPIException(503, OpenAIError())
 
         // Act
-        val result = helper.callDeepSeek(promptTemplate)
+        val result = helper.callModel(promptTemplate, ModelName.Deepseek)
 
         // Assert
         expectThat(result).isA<ResultWrapper.Failure<CallLargeLanguageModelError>>().and {
@@ -160,15 +176,16 @@ class LargeLanguageApiHelperTest {
     }
 
     @Test
-    fun `test callDeepSeek with UnknownAPIException unknown`(): Unit = runBlocking {
+    fun `test callModel with UnknownAPIException unknown`(): Unit = runBlocking {
         // Arrange
-        val input = "My query string"
-        val promptTemplate = "Convert this query to SQL: $input"
+        val query = "My query string"
+        val promptTemplate = "Convert this query to SQL: $query"
 
-        coEvery { mockOpenAI.chatCompletion(any()) } throws UnknownAPIException(1, OpenAIError())
+        coEvery { llmFactory.getModel(ModelName.Deepseek) } returns openAI
+        coEvery { openAI.callModel(promptTemplate) } throws UnknownAPIException(1, OpenAIError())
 
         // Act
-        val result = helper.callDeepSeek(promptTemplate)
+        val result = helper.callModel(promptTemplate, ModelName.Deepseek)
 
         // Assert
         expectThat(result).isA<ResultWrapper.Failure<CallLargeLanguageModelError>>().and {
@@ -177,15 +194,16 @@ class LargeLanguageApiHelperTest {
     }
 
     @Test
-    fun `test callDeepSeek with OpenAIHttpException`(): Unit = runBlocking {
+    fun `test callModel with OpenAIHttpException`(): Unit = runBlocking {
         // Arrange
-        val input = "My query string"
-        val promptTemplate = "Convert this query to SQL: $input"
+        val query = "My query string"
+        val promptTemplate = "Convert this query to SQL: $query"
 
-        coEvery { mockOpenAI.chatCompletion(any()) } throws OpenAIHttpException()
+        coEvery { llmFactory.getModel(ModelName.Deepseek) } returns openAI
+        coEvery { openAI.callModel(promptTemplate) } throws OpenAIHttpException()
 
         // Act
-        val result = helper.callDeepSeek(promptTemplate)
+        val result = helper.callModel(promptTemplate, ModelName.Deepseek)
 
         // Assert
         expectThat(result).isA<ResultWrapper.Failure<CallLargeLanguageModelError>>().and {
@@ -194,15 +212,16 @@ class LargeLanguageApiHelperTest {
     }
 
     @Test
-    fun `test callDeepSeek with OpenAIServerException`(): Unit = runBlocking {
+    fun `test callModel with OpenAIServerException`(): Unit = runBlocking {
         // Arrange
-        val input = "My query string"
-        val promptTemplate = "Convert this query to SQL: $input"
+        val query = "My query string"
+        val promptTemplate = "Convert this query to SQL: $query"
 
-        coEvery { mockOpenAI.chatCompletion(any()) } throws OpenAIServerException()
+        coEvery { llmFactory.getModel(ModelName.Deepseek) } returns openAI
+        coEvery { openAI.callModel(promptTemplate) } throws OpenAIServerException()
 
         // Act
-        val result = helper.callDeepSeek(promptTemplate)
+        val result = helper.callModel(promptTemplate, ModelName.Deepseek)
 
         // Assert
         expectThat(result).isA<ResultWrapper.Failure<CallLargeLanguageModelError>>().and {
@@ -211,16 +230,16 @@ class LargeLanguageApiHelperTest {
     }
 
     @Test
-    fun `test callDeepSeek with OpenAIIOException`(): Unit = runBlocking {
+    fun `test callModel with OpenAIIOException`(): Unit = runBlocking {
         // Arrange
-        val input = "My query string"
-        val promptTemplate = "Convert this query to SQL: $input"
+        val query = "My query string"
+        val promptTemplate = "Convert this query to SQL: $query"
 
-        val mockException: OpenAIIOException = mockk()
-        coEvery { mockOpenAI.chatCompletion(any()) } throws mockException
+        coEvery { llmFactory.getModel(ModelName.Deepseek) } returns openAI
+        coEvery { openAI.callModel(promptTemplate) } throws OpenAITimeoutException(Throwable())
 
         // Act
-        val result = helper.callDeepSeek(promptTemplate)
+        val result = helper.callModel(promptTemplate, ModelName.Deepseek)
 
         // Assert
         expectThat(result).isA<ResultWrapper.Failure<CallLargeLanguageModelError>>().and {
@@ -229,10 +248,10 @@ class LargeLanguageApiHelperTest {
     }
 
     @Test
-    fun `test callDeepSeek with unexpected result`(): Unit = runBlocking {
+    fun `test callModel with unexpected result`(): Unit = runBlocking {
         // Arrange
-        val input = "My query string"
-        val promptTemplate = "Convert this query to SQL: $input"
+        val query = "My query string"
+        val promptTemplate = "Convert this query to SQL: $query"
         val chatCompletion =
             ChatCompletion(
                 id = "1",
@@ -251,10 +270,11 @@ class LargeLanguageApiHelperTest {
                     ),
             )
 
-        coEvery { mockOpenAI.chatCompletion(any()) } returns chatCompletion
+        coEvery { llmFactory.getModel(ModelName.Deepseek) } returns openAI
+        coEvery { openAI.callModel(promptTemplate) } returns chatCompletion
 
         // Act
-        val result = helper.callDeepSeek(promptTemplate)
+        val result = helper.callModel(promptTemplate, ModelName.Deepseek)
 
         // Assert
         expectThat(result).isA<ResultWrapper.Failure<CallLargeLanguageModelError>>().and {

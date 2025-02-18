@@ -10,8 +10,10 @@ import com.aallam.openai.client.OpenAI
 import com.chess.puzzle.text2sql.web.config.FilePaths
 import com.chess.puzzle.text2sql.web.config.SentenceTransformerEndpoints
 import com.chess.puzzle.text2sql.web.domain.input.GenericRequest
+import com.chess.puzzle.text2sql.web.domain.input.LlmRequest
 import com.chess.puzzle.text2sql.web.domain.input.Text2SqlRequest
 import com.chess.puzzle.text2sql.web.domain.model.Demonstration
+import com.chess.puzzle.text2sql.web.domain.model.ModelName
 import com.chess.puzzle.text2sql.web.domain.model.ModelVariant
 import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
 import com.chess.puzzle.text2sql.web.entities.*
@@ -24,6 +26,8 @@ import com.chess.puzzle.text2sql.web.service.Text2SQLService
 import com.chess.puzzle.text2sql.web.service.helper.LargeLanguageApiHelper
 import com.chess.puzzle.text2sql.web.service.helper.PreprocessingHelper
 import com.chess.puzzle.text2sql.web.service.helper.SentenceTransformerHelper
+import com.chess.puzzle.text2sql.web.service.llm.LargeLanguageModel
+import com.chess.puzzle.text2sql.web.service.llm.LargeLanguageModelFactory
 import com.chess.puzzle.text2sql.web.validator.SqlValidator
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.ktor.client.*
@@ -68,7 +72,9 @@ class DebuggingControllerIntegrationTest {
     private lateinit var sentenceTransformerHelper: SentenceTransformerHelper
 
     private val mockOpenAI: OpenAI = mockk()
-    private val largeLanguageApiHelper = LargeLanguageApiHelper(mockOpenAI)
+    private val largeLanguageModel: LargeLanguageModel = mockk()
+    private val largeLanguageModelFactory: LargeLanguageModelFactory = mockk()
+    private val largeLanguageApiHelper = LargeLanguageApiHelper(largeLanguageModelFactory)
 
     @Test
     fun `test hello endpoint`() {
@@ -414,8 +420,9 @@ class DebuggingControllerIntegrationTest {
             ResultWrapper.Success(demonstrations)
         coEvery { preprocessingHelper.processPrompt(query, promptTemplate, demonstrations) } returns
             ResultWrapper.Success(processedPrompt)
-        coEvery { largeLanguageApiHelperMock.callDeepSeek(processedPrompt) } returns
-            ResultWrapper.Success(sql)
+        coEvery {
+            largeLanguageApiHelperMock.callModel(processedPrompt, ModelName.Deepseek)
+        } returns ResultWrapper.Success(sql)
         val controller =
             DebuggingController(
                 text2SQLService,
@@ -549,8 +556,9 @@ class DebuggingControllerIntegrationTest {
             ResultWrapper.Success(demonstrations)
         coEvery { preprocessingHelper.processPrompt(query, promptTemplate, demonstrations) } returns
             ResultWrapper.Success(processedPrompt)
-        coEvery { largeLanguageApiHelperMock.callDeepSeek(processedPrompt) } returns
-            ResultWrapper.Failure(error)
+        coEvery {
+            largeLanguageApiHelperMock.callModel(processedPrompt, ModelName.Deepseek)
+        } returns ResultWrapper.Failure(error)
         val controller =
             DebuggingController(
                 text2SQLService,
@@ -591,7 +599,9 @@ class DebuggingControllerIntegrationTest {
                     ),
             )
 
-        coEvery { mockOpenAI.chatCompletion(any()) } returns chatCompletion
+        coEvery { largeLanguageModelFactory.getModel(ModelName.Deepseek) } returns
+            largeLanguageModel
+        coEvery { largeLanguageModel.callModel(promptTemplate) } returns chatCompletion
         val controller =
             DebuggingController(
                 text2SQLService,
@@ -600,8 +610,8 @@ class DebuggingControllerIntegrationTest {
                 largeLanguageApiHelper,
             )
 
-        val genericRequest = GenericRequest(promptTemplate)
-        val response = controller.llm(genericRequest)
+        val llmRequest = LlmRequest(promptTemplate)
+        val response = controller.llm(llmRequest)
 
         val expectedResponse =
             objectMapper.writeValueAsString(mapOf("status" to "success", "data" to query))
@@ -614,7 +624,10 @@ class DebuggingControllerIntegrationTest {
         val input = "My query string"
         val promptTemplate = "Convert this query to SQL: $input"
 
-        coEvery { mockOpenAI.chatCompletion(any()) } throws RateLimitException(1, OpenAIError())
+        coEvery { largeLanguageModelFactory.getModel(ModelName.Deepseek) } returns
+            largeLanguageModel
+        coEvery { largeLanguageModel.callModel(promptTemplate) } throws
+            RateLimitException(1, OpenAIError())
         val controller =
             DebuggingController(
                 text2SQLService,
@@ -623,8 +636,8 @@ class DebuggingControllerIntegrationTest {
                 largeLanguageApiHelper,
             )
 
-        val genericRequest = GenericRequest(promptTemplate)
-        val response = controller.llm(genericRequest)
+        val llmRequest = LlmRequest(promptTemplate)
+        val response = controller.llm(llmRequest)
 
         val error = CallLargeLanguageModelError.RateLimitError
         val expectedResponse =
@@ -638,7 +651,10 @@ class DebuggingControllerIntegrationTest {
         val input = "My query string"
         val promptTemplate = "Convert this query to SQL: $input"
 
-        coEvery { mockOpenAI.chatCompletion(any()) } throws PermissionException(1, OpenAIError())
+        coEvery { largeLanguageModelFactory.getModel(ModelName.Deepseek) } returns
+            largeLanguageModel
+        coEvery { largeLanguageModel.callModel(promptTemplate) } throws
+            PermissionException(1, OpenAIError())
         val controller =
             DebuggingController(
                 text2SQLService,
@@ -647,8 +663,8 @@ class DebuggingControllerIntegrationTest {
                 largeLanguageApiHelper,
             )
 
-        val genericRequest = GenericRequest(promptTemplate)
-        val response = controller.llm(genericRequest)
+        val llmRequest = LlmRequest(promptTemplate)
+        val response = controller.llm(llmRequest)
 
         val error = CallLargeLanguageModelError.PermissionError
         val expectedResponse =
@@ -662,7 +678,10 @@ class DebuggingControllerIntegrationTest {
         val input = "My query string"
         val promptTemplate = "Convert this query to SQL: $input"
 
-        coEvery { mockOpenAI.chatCompletion(any()) } throws UnknownAPIException(402, OpenAIError())
+        coEvery { largeLanguageModelFactory.getModel(ModelName.Deepseek) } returns
+            largeLanguageModel
+        coEvery { largeLanguageModel.callModel(promptTemplate) } throws
+            UnknownAPIException(402, OpenAIError())
         val controller =
             DebuggingController(
                 text2SQLService,
@@ -671,8 +690,8 @@ class DebuggingControllerIntegrationTest {
                 largeLanguageApiHelper,
             )
 
-        val genericRequest = GenericRequest(promptTemplate)
-        val response = controller.llm(genericRequest)
+        val llmRequest = LlmRequest(promptTemplate)
+        val response = controller.llm(llmRequest)
 
         val error = CallLargeLanguageModelError.InsufficientBalanceError
         val expectedResponse =
@@ -686,7 +705,10 @@ class DebuggingControllerIntegrationTest {
         val input = "My query string"
         val promptTemplate = "Convert this query to SQL: $input"
 
-        coEvery { mockOpenAI.chatCompletion(any()) } throws UnknownAPIException(1, OpenAIError())
+        coEvery { largeLanguageModelFactory.getModel(ModelName.Deepseek) } returns
+            largeLanguageModel
+        coEvery { largeLanguageModel.callModel(promptTemplate) } throws
+            UnknownAPIException(1, OpenAIError())
         val controller =
             DebuggingController(
                 text2SQLService,
@@ -695,8 +717,8 @@ class DebuggingControllerIntegrationTest {
                 largeLanguageApiHelper,
             )
 
-        val genericRequest = GenericRequest(promptTemplate)
-        val response = controller.llm(genericRequest)
+        val llmRequest = LlmRequest(promptTemplate)
+        val response = controller.llm(llmRequest)
 
         val error = CallLargeLanguageModelError.UnknownError(1, "no message")
         val expectedResponse =
@@ -727,7 +749,9 @@ class DebuggingControllerIntegrationTest {
                     ),
             )
 
-        coEvery { mockOpenAI.chatCompletion(any()) } returns chatCompletion
+        coEvery { largeLanguageModelFactory.getModel(ModelName.Deepseek) } returns
+            largeLanguageModel
+        coEvery { largeLanguageModel.callModel(promptTemplate) } returns chatCompletion
         val controller =
             DebuggingController(
                 text2SQLService,
@@ -736,8 +760,8 @@ class DebuggingControllerIntegrationTest {
                 largeLanguageApiHelper,
             )
 
-        val genericRequest = GenericRequest(promptTemplate)
-        val response = controller.llm(genericRequest)
+        val llmRequest = LlmRequest(promptTemplate)
+        val response = controller.llm(llmRequest)
 
         val error = CallLargeLanguageModelError.UnexpectedResult
         val expectedResponse =

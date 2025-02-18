@@ -1,11 +1,7 @@
 package com.chess.puzzle.text2sql.web.controllers
 
 import com.chess.puzzle.text2sql.web.config.FilePaths
-import com.chess.puzzle.text2sql.web.domain.model.BenchmarkEntry
-import com.chess.puzzle.text2sql.web.domain.model.BenchmarkResult
-import com.chess.puzzle.text2sql.web.domain.model.ModelVariant
-import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
-import com.chess.puzzle.text2sql.web.domain.model.SqlResult
+import com.chess.puzzle.text2sql.web.domain.model.*
 import com.chess.puzzle.text2sql.web.error.CallLargeLanguageModelError
 import com.chess.puzzle.text2sql.web.error.GetBenchmarkEntriesError
 import com.chess.puzzle.text2sql.web.service.BenchmarkService
@@ -86,12 +82,15 @@ class BenchmarkingControllerIntegrationTest {
         for ((index, benchmarkEntry) in benchmarkEntries.withIndex()) {
             val text = benchmarkEntry.text
             val result = benchmarkSuccessResults[index]
-            coEvery { text2SQLService.convertToSQL(text, ModelVariant.Full) } returns
-                ResultWrapper.Success(result.full.sql)
-            coEvery { text2SQLService.convertToSQL(text, ModelVariant.Partial) } returns
-                ResultWrapper.Success(result.partial.sql)
-            coEvery { text2SQLService.convertToSQL(text, ModelVariant.Baseline) } returns
-                ResultWrapper.Success(result.baseline.sql)
+            coEvery {
+                text2SQLService.convertToSQL(text, ModelName.Deepseek, ModelVariant.Full)
+            } returns ResultWrapper.Success(result.full.sql)
+            coEvery {
+                text2SQLService.convertToSQL(text, ModelName.Deepseek, ModelVariant.Partial)
+            } returns ResultWrapper.Success(result.partial.sql)
+            coEvery {
+                text2SQLService.convertToSQL(text, ModelName.Deepseek, ModelVariant.Baseline)
+            } returns ResultWrapper.Success(result.baseline.sql)
         }
 
         val deferredResult = benchmarkingController.benchmark()
@@ -110,12 +109,15 @@ class BenchmarkingControllerIntegrationTest {
     fun `test benchmark failure`(): Unit = runBlocking {
         for (benchmarkEntry in benchmarkEntries) {
             val text = benchmarkEntry.text
-            coEvery { text2SQLService.convertToSQL(text, ModelVariant.Full) } returns
-                ResultWrapper.Failure(CallLargeLanguageModelError.HttpError)
-            coEvery { text2SQLService.convertToSQL(text, ModelVariant.Partial) } returns
-                ResultWrapper.Failure(CallLargeLanguageModelError.IOException)
-            coEvery { text2SQLService.convertToSQL(text, ModelVariant.Baseline) } returns
-                ResultWrapper.Failure(CallLargeLanguageModelError.UnknownError(1, ""))
+            coEvery {
+                text2SQLService.convertToSQL(text, ModelName.Deepseek, ModelVariant.Full)
+            } returns ResultWrapper.Failure(CallLargeLanguageModelError.HttpError)
+            coEvery {
+                text2SQLService.convertToSQL(text, ModelName.Deepseek, ModelVariant.Partial)
+            } returns ResultWrapper.Failure(CallLargeLanguageModelError.IOException)
+            coEvery {
+                text2SQLService.convertToSQL(text, ModelName.Deepseek, ModelVariant.Baseline)
+            } returns ResultWrapper.Failure(CallLargeLanguageModelError.UnknownError(1, ""))
         }
 
         val deferredResult = benchmarkingController.benchmark()

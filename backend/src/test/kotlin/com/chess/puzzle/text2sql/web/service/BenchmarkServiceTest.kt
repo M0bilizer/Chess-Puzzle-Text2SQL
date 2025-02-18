@@ -1,10 +1,6 @@
 package com.chess.puzzle.text2sql.web.service
 
-import com.chess.puzzle.text2sql.web.domain.model.BenchmarkEntry
-import com.chess.puzzle.text2sql.web.domain.model.BenchmarkResult
-import com.chess.puzzle.text2sql.web.domain.model.ModelVariant
-import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
-import com.chess.puzzle.text2sql.web.domain.model.SqlResult
+import com.chess.puzzle.text2sql.web.domain.model.*
 import com.chess.puzzle.text2sql.web.error.CallLargeLanguageModelError
 import com.chess.puzzle.text2sql.web.error.GetSimilarDemonstrationError
 import com.chess.puzzle.text2sql.web.error.GetTextFileError
@@ -36,12 +32,15 @@ class BenchmarkServiceTest {
         val partialSql = "SELECT * FROM puzzles WHERE rating > 1500"
         val baselineSql = "SELECT * FROM puzzles WHERE rating > 1500"
 
-        coEvery { text2SQLService.convertToSQL(any(), ModelVariant.Full) } returns
-            ResultWrapper.Success(fullSql)
-        coEvery { text2SQLService.convertToSQL(any(), ModelVariant.Partial) } returns
-            ResultWrapper.Success(partialSql)
-        coEvery { text2SQLService.convertToSQL(any(), ModelVariant.Baseline) } returns
-            ResultWrapper.Success(baselineSql)
+        coEvery {
+            text2SQLService.convertToSQL(any(), ModelName.Deepseek, ModelVariant.Full)
+        } returns ResultWrapper.Success(fullSql)
+        coEvery {
+            text2SQLService.convertToSQL(any(), ModelName.Deepseek, ModelVariant.Partial)
+        } returns ResultWrapper.Success(partialSql)
+        coEvery {
+            text2SQLService.convertToSQL(any(), ModelName.Deepseek, ModelVariant.Baseline)
+        } returns ResultWrapper.Success(baselineSql)
 
         // Act
         val result = benchmarkService.getBenchmark(benchmarkEntries)
@@ -76,12 +75,15 @@ class BenchmarkServiceTest {
 
         val error = GetSimilarDemonstrationError.NetworkError
 
-        coEvery { text2SQLService.convertToSQL(any(), ModelVariant.Full) } returns
-            ResultWrapper.Failure(error)
-        coEvery { text2SQLService.convertToSQL(any(), ModelVariant.Partial) } returns
-            ResultWrapper.Success("SELECT * FROM puzzles WHERE rating > 1500")
-        coEvery { text2SQLService.convertToSQL(any(), ModelVariant.Baseline) } returns
-            ResultWrapper.Success("SELECT * FROM puzzles WHERE rating > 1500")
+        coEvery {
+            text2SQLService.convertToSQL(any(), ModelName.Deepseek, ModelVariant.Full)
+        } returns ResultWrapper.Failure(error)
+        coEvery {
+            text2SQLService.convertToSQL(any(), ModelName.Deepseek, ModelVariant.Partial)
+        } returns ResultWrapper.Success("SELECT * FROM puzzles WHERE rating > 1500")
+        coEvery {
+            text2SQLService.convertToSQL(any(), ModelName.Deepseek, ModelVariant.Baseline)
+        } returns ResultWrapper.Success("SELECT * FROM puzzles WHERE rating > 1500")
 
         // Act
         val result = benchmarkService.getBenchmark(benchmarkEntries)
@@ -120,12 +122,15 @@ class BenchmarkServiceTest {
 
         val error = CallLargeLanguageModelError.RateLimitError
 
-        coEvery { text2SQLService.convertToSQL(any(), ModelVariant.Full) } returns
-            ResultWrapper.Success("SELECT * FROM puzzles WHERE rating > 1500")
-        coEvery { text2SQLService.convertToSQL(any(), ModelVariant.Partial) } returns
-            ResultWrapper.Failure(error)
-        coEvery { text2SQLService.convertToSQL(any(), ModelVariant.Baseline) } returns
-            ResultWrapper.Success("SELECT * FROM puzzles WHERE rating > 1500")
+        coEvery {
+            text2SQLService.convertToSQL(any(), ModelName.Deepseek, ModelVariant.Full)
+        } returns ResultWrapper.Success("SELECT * FROM puzzles WHERE rating > 1500")
+        coEvery {
+            text2SQLService.convertToSQL(any(), ModelName.Deepseek, ModelVariant.Partial)
+        } returns ResultWrapper.Failure(error)
+        coEvery {
+            text2SQLService.convertToSQL(any(), ModelName.Deepseek, ModelVariant.Baseline)
+        } returns ResultWrapper.Success("SELECT * FROM puzzles WHERE rating > 1500")
 
         // Act
         val result = benchmarkService.getBenchmark(benchmarkEntries)
@@ -164,12 +169,15 @@ class BenchmarkServiceTest {
 
         val error = GetTextFileError.IOException(IOException())
 
-        coEvery { text2SQLService.convertToSQL(any(), ModelVariant.Full) } returns
-            ResultWrapper.Success("SELECT * FROM puzzles WHERE rating > 1500")
-        coEvery { text2SQLService.convertToSQL(any(), ModelVariant.Partial) } returns
-            ResultWrapper.Success("SELECT * FROM puzzles WHERE rating > 1500")
-        coEvery { text2SQLService.convertToSQL(any(), ModelVariant.Baseline) } returns
-            ResultWrapper.Failure(error)
+        coEvery {
+            text2SQLService.convertToSQL(any(), ModelName.Deepseek, ModelVariant.Full)
+        } returns ResultWrapper.Success("SELECT * FROM puzzles WHERE rating > 1500")
+        coEvery {
+            text2SQLService.convertToSQL(any(), ModelName.Deepseek, ModelVariant.Partial)
+        } returns ResultWrapper.Success("SELECT * FROM puzzles WHERE rating > 1500")
+        coEvery {
+            text2SQLService.convertToSQL(any(), ModelName.Deepseek, ModelVariant.Baseline)
+        } returns ResultWrapper.Failure(error)
 
         // Act
         val result = benchmarkService.getBenchmark(benchmarkEntries)
