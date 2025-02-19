@@ -1,4 +1,4 @@
-import { KOTLIN_SPRING_URL } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 import { type RequestHandler } from '@sveltejs/kit';
 import {
 	BackendFailure,
@@ -9,6 +9,8 @@ import {
 	UnknownError
 } from '$lib/utils/serverUtils';
 import type { ModelEnum } from '$lib/enums/modelEnum';
+
+const KOTLIN_SPRING_URL = env.KOTLIN_SPRING_URL
 
 export const POST: RequestHandler = async ({ request }) => {
 	const { query, model } = await request.json();
@@ -28,6 +30,7 @@ async function _callBackend(query: string, model: ModelEnum): Promise<Result> {
 			body: JSON.stringify({ query, model })
 		});
 	} catch (error: unknown) {
+		console.error(`Error when calling ${KOTLIN_SPRING_URL}: ${error}`);
 		if (error instanceof Error) {
 			return new ConnectionFailure();
 		} else {
