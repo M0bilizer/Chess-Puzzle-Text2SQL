@@ -8,8 +8,9 @@ COPY package.json ./
 RUN bun install --production
 
 COPY build ./build
-
 COPY server.js ./
+
+RUN apk add curl
 
 EXPOSE 3000
 
