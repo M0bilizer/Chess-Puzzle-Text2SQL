@@ -1,0 +1,33 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+[data-theme='catppuccin'] {
+	background-image: radial-gradient(at 20% 10%, rgba(234, 118, 203, 0.075) 0px, transparent 40%),
+		radial-gradient(at 75% 10%, rgba(114, 135, 253, 0.075) 0px, transparent 50%);
+}
+
+[data-theme='pine'] {
+	background-image: radial-gradient(at 20% 10%, rgba(224, 176, 67, 0.075) 0px, transparent 40%),
+		radial-gradient(at 75% 10%, rgba(161, 129, 74, 0.075) 0px, transparent 50%);
+}
+
+::selection {
+	@apply bg-primary-500/30;
+}
+
+html {
+	display: flex; /* Make  <html> of type flex */
+	flex-direction: column;
+	min-height: 100%; /* Force <html> to fill the whole page */
+}
+body {
+	flex-grow: 1; /* Force <body> to fill the whole page */
+	flex-direction: column;
+	display: flex; /* Make  <body> of type flex */
+}
+#svelte-init {
+	flex-grow: 1; /* Force <div>  to fill the whole page */
+	display: flex; /* Make  <div>  of type flex */
+	flex-direction: column; /* Force <div>  to be vertical */
+}

@@ -30,11 +30,13 @@ class WebConfig : WebMvcConfigurer {
     override fun addCorsMappings(registry: CorsRegistry) {
         registry
             .addMapping("/**")
-            // http://localhost:3000 correspond to the frontend
+            // http://localhost:3000 correspond to the OLD frontend
+            // http://localhost:5173 correspond to the NEW frontend
             // http://localhost:8000 correspond to the fastapi
             .allowedOrigins(
                 "http://localhost:3000",
                 "http://localhost:8000",
+                "http://localhost:5173",
                 "http://frontend",
                 "http://fastapi",
             )
