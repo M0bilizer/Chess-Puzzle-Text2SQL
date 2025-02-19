@@ -4,13 +4,16 @@ import {
 	BackendFailure,
 	ConfigurationError,
 	ConnectionFailure,
+	ImplementationError,
 	type Result,
 	Success,
 	UnknownError
 } from '$lib/utils/serverUtils';
 import type { ModelEnum } from '$lib/enums/modelEnum';
+import type { Puzzle } from '$lib/types/puzzle';
+import type { SearchMetadata } from '$lib/types/SearchMetadata';
 
-const KOTLIN_SPRING_URL = env.KOTLIN_SPRING_URL
+const KOTLIN_SPRING_URL = env.KOTLIN_SPRING_URL;
 
 export const POST: RequestHandler = async ({ request }) => {
 	const { query, model } = await request.json();
@@ -38,12 +41,27 @@ async function _callBackend(query: string, model: ModelEnum): Promise<Result> {
 		}
 	}
 
+	const BAD_REQUEST = 400;
+	if (res.status == BAD_REQUEST) {
+		return new ImplementationError();
+	}
+
 	if (!res.ok) {
 		return new ConnectionFailure();
 	}
 
-	//TODO
-	const json = await res.json();
+	type success = {
+		status: 'success';
+		data: Puzzle[];
+		metadata: SearchMetadata;
+	};
+
+	type failure = {
+		status: 'failure';
+		message: string;
+	};
+
+	const json: success | failure = await res.json();
 	if (json.status !== 'success') {
 		return new BackendFailure(json.message || 'Unexpected error from backend');
 	}

@@ -3,6 +3,7 @@ export enum SearchResultEnum {
 	BackendError = 'backendError',
 	ConnectionError = 'connectionError',
 	ConfigurationError = 'configurationError',
+	ImplementationError = 'implementationError',
 	PostError = 'postError',
 	UnknownServerError = 'unknownServerError',
 	UnknownServerStatusError = 'unknownServerStatusError',
@@ -12,6 +13,7 @@ export enum SearchResultEnum {
 const standardErrors = new Set<SearchResultEnum>([
 	SearchResultEnum.ConnectionError,
 	SearchResultEnum.ConfigurationError,
+	SearchResultEnum.ImplementationError,
 	SearchResultEnum.PostError,
 	SearchResultEnum.UnknownServerError
 ]);

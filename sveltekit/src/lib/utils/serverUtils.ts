@@ -68,3 +68,15 @@ export class ConfigurationError implements Result {
 		return json({ status: SearchResultEnum.ConfigurationError, message: this.message });
 	}
 }
+
+export class ImplementationError implements Result {
+	public readonly message: 'Implementation error';
+
+	constructor() {
+		this.message = 'Implementation error';
+	}
+
+	getJson() {
+		return json({ status: SearchResultEnum.ImplementationError, message: this.message });
+	}
+}
