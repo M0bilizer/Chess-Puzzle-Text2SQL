@@ -1,2 +1,2 @@
 bun run build
-docker build -t sveltekit-typescript .
+docker build -t typescript-sveltekit .
