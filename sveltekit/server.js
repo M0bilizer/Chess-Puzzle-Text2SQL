@@ -7,6 +7,8 @@ const app = express();
 app.use(handler);
 
 const PORT = process.env.PORT || 3000;
+const KOTLIN_SPRING_URL = process.env.KOTLIN_SPRING_URL
 app.listen(PORT, () => {
 	console.log(`Server is running on http://localhost:${PORT}`);
+	console.log(`API calls is sent to ${KOTLIN_SPRING_URL}`)
 });
