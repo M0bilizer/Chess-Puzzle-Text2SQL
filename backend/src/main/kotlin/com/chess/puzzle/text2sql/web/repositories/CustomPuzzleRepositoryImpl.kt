@@ -41,8 +41,10 @@ class CustomPuzzleRepositoryImpl(
     @Transactional
     @Suppress("UNCHECKED_CAST")
     override fun executeSqlQuery(sqlCommand: String): List<Puzzle> {
+        val cleaned = sqlCommand.substringBefore(" LIMIT")
+        val protected = "$cleaned LIMIT 100"
         return try {
-            entityManager.createNativeQuery(sqlCommand, Puzzle::class.java).resultList
+            entityManager.createNativeQuery(protected, Puzzle::class.java).resultList
                 as List<Puzzle>
         } catch (ex: Exception) {
             throw RuntimeException("Oops")
