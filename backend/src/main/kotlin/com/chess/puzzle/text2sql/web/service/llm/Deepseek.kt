@@ -1,30 +1,40 @@
 package com.chess.puzzle.text2sql.web.service.llm
 
-import com.aallam.openai.api.chat.ChatCompletion
-import com.aallam.openai.api.chat.ChatCompletionRequest
-import com.aallam.openai.api.chat.ChatMessage
-import com.aallam.openai.api.chat.ChatRole
-import com.aallam.openai.api.model.ModelId
-import com.aallam.openai.client.OpenAI
+import com.chess.puzzle.text2sql.web.domain.model.llm.ChatCompletionRequest
+import com.chess.puzzle.text2sql.web.domain.model.llm.Message
+import com.chess.puzzle.text2sql.web.domain.model.llm.OpenAiClient
+import io.ktor.client.request.header
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.client.statement.HttpResponse
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Component
 
 @Component
-class Deepseek(@Qualifier("deepSeekClient") private val client: OpenAI) : LargeLanguageModel {
-    override suspend fun callModel(query: String): ChatCompletion {
-        val chatCompletionRequest =
+class Deepseek(@Qualifier("deepSeekClient") private val client: OpenAiClient) : LargeLanguageModel {
+    override suspend fun callModel(query: String): HttpResponse {
+        val (client, apiKey, baseUrl) = client
+
+        val requestBody =
             ChatCompletionRequest(
-                model = ModelId("deepseek-chat"),
+                model = "deepseek-chat",
                 messages =
                     listOf(
-                        ChatMessage(
-                            role = ChatRole.System,
-                            content = "You are a helpful assistant",
-                        ),
-                        ChatMessage(role = ChatRole.User, content = query),
+                        Message(role = "system", content = "You are a helpful assistant"),
+                        Message(role = "user", content = query),
                     ),
-                temperature = 0.0,
+                stream = false,
             )
-        return client.chatCompletion(chatCompletionRequest)
+
+        val response: HttpResponse =
+            client.post(baseUrl) {
+                contentType(ContentType.Application.Json)
+                header("Authorization", "Bearer $apiKey")
+                setBody(requestBody)
+            }
+
+        return response
     }
 }

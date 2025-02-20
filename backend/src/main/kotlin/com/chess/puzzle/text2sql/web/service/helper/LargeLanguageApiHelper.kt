@@ -1,22 +1,17 @@
 package com.chess.puzzle.text2sql.web.service.helper
 
-import com.aallam.openai.api.chat.ChatCompletion
-import com.aallam.openai.api.chat.TextContent
-import com.aallam.openai.api.exception.AuthenticationException
-import com.aallam.openai.api.exception.InvalidRequestException
-import com.aallam.openai.api.exception.OpenAIAPIException
-import com.aallam.openai.api.exception.OpenAIException
-import com.aallam.openai.api.exception.OpenAIHttpException
-import com.aallam.openai.api.exception.OpenAIIOException
-import com.aallam.openai.api.exception.OpenAIServerException
-import com.aallam.openai.api.exception.PermissionException
-import com.aallam.openai.api.exception.RateLimitException
-import com.aallam.openai.api.exception.UnknownAPIException
 import com.chess.puzzle.text2sql.web.domain.model.ModelName
 import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
+import com.chess.puzzle.text2sql.web.domain.model.llm.ChatCompletionResponse
 import com.chess.puzzle.text2sql.web.error.CallLargeLanguageModelError
 import com.chess.puzzle.text2sql.web.service.llm.LargeLanguageModelFactory
 import io.github.oshai.kotlinlogging.KotlinLogging
+import io.ktor.client.call.body
+import io.ktor.client.plugins.ServerResponseException
+import io.ktor.client.statement.HttpResponse
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.isSuccess
+import io.ktor.utils.io.errors.IOException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -41,32 +36,39 @@ class LargeLanguageApiHelper(
         modelName: ModelName,
     ): ResultWrapper<String, CallLargeLanguageModelError> {
         return try {
-            val chatCompletion = largeLanguageModelFactory.getModel(modelName).callModel(query)
-            processChatCompletionResponse(query, chatCompletion)
-        } catch (e: OpenAIException) {
-            handleOpenAIException(e)
+            val response = largeLanguageModelFactory.getModel(modelName).callModel(query)
+            if (!response.status.isSuccess()) {
+                handleUnsuccessfulResponse(response)
+            }
+            val chatCompletion = response.body<ChatCompletionResponse>()
+            val textResponse = chatCompletion.choices.first().message.content
+            val sql = stripUnnecessary(textResponse)
+            ResultWrapper.Success(sql)
+        } catch (e: Exception) {
+            handleHttpException(e)
         }
     }
 
-    /**
-     * Processes the [ChatCompletion] response and extracts the SQL query.
-     *
-     * @param query The original query sent to the API.
-     * @param chatCompletion The [ChatCompletion] response from the API.
-     * @return A [ResultWrapper] containing the SQL query or an error.
-     */
-    fun processChatCompletionResponse(
-        query: String,
-        chatCompletion: ChatCompletion,
-    ): ResultWrapper<String, CallLargeLanguageModelError> {
-        return when (val response = chatCompletion.choices.firstOrNull()?.message?.messageContent) {
-            is TextContent -> {
-                val sql = stripUnnecessary(response.content)
-                ResultWrapper.Success(sql)
-            }
-            else -> {
-                ResultWrapper.Failure(CallLargeLanguageModelError.UnexpectedResult)
-            }
+    fun handleUnsuccessfulResponse(
+        response: HttpResponse
+    ): ResultWrapper.Failure<CallLargeLanguageModelError> {
+        return when (response.status) {
+            HttpStatusCode.TooManyRequests ->
+                ResultWrapper.Failure(CallLargeLanguageModelError.RateLimitError)
+            HttpStatusCode.BadRequest ->
+                ResultWrapper.Failure(CallLargeLanguageModelError.InvalidRequestError)
+            HttpStatusCode.Unauthorized ->
+                ResultWrapper.Failure(CallLargeLanguageModelError.AuthenticationError)
+            HttpStatusCode.Forbidden ->
+                ResultWrapper.Failure(CallLargeLanguageModelError.PermissionError)
+            HttpStatusCode.PaymentRequired ->
+                ResultWrapper.Failure(CallLargeLanguageModelError.InsufficientBalanceError)
+            HttpStatusCode.ServiceUnavailable ->
+                ResultWrapper.Failure(CallLargeLanguageModelError.ServerOverload)
+            else ->
+                ResultWrapper.Failure(
+                    CallLargeLanguageModelError.UnknownStatusError(response.status.value)
+                )
         }
     }
 
@@ -74,43 +76,18 @@ class LargeLanguageApiHelper(
      * Handles exceptions thrown by the OpenAI API and returns the appropriate
      * [CallLargeLanguageModelError].
      *
-     * @param e The [OpenAIException] to handle.
+     * @param e The [Exception] to handle.
      * @return A [ResultWrapper.Failure] containing the corresponding [CallLargeLanguageModelError].
      */
-    fun handleOpenAIException(
-        e: OpenAIException
-    ): ResultWrapper.Failure<CallLargeLanguageModelError> {
+    fun handleHttpException(e: Exception): ResultWrapper.Failure<CallLargeLanguageModelError> {
         return when (e) {
-            is OpenAIAPIException ->
-                when (e) {
-                    is RateLimitException ->
-                        ResultWrapper.Failure(CallLargeLanguageModelError.RateLimitError)
-                    is InvalidRequestException ->
-                        ResultWrapper.Failure(CallLargeLanguageModelError.InvalidRequestError)
-                    is AuthenticationException ->
-                        ResultWrapper.Failure(CallLargeLanguageModelError.AuthenticationError)
-                    is PermissionException ->
-                        ResultWrapper.Failure(CallLargeLanguageModelError.PermissionError)
-                    is UnknownAPIException ->
-                        when (e.statusCode) {
-                            402 ->
-                                ResultWrapper.Failure(
-                                    CallLargeLanguageModelError.InsufficientBalanceError
-                                )
-                            503 -> ResultWrapper.Failure(CallLargeLanguageModelError.ServerOverload)
-                            else ->
-                                ResultWrapper.Failure(
-                                    CallLargeLanguageModelError.UnknownError(
-                                        e.statusCode,
-                                        e.message ?: "no message",
-                                    )
-                                )
-                        }
-                }
-            is OpenAIHttpException -> ResultWrapper.Failure(CallLargeLanguageModelError.HttpError)
-            is OpenAIServerException ->
+            is ServerResponseException ->
                 ResultWrapper.Failure(CallLargeLanguageModelError.ServerError)
-            is OpenAIIOException -> ResultWrapper.Failure(CallLargeLanguageModelError.IOException)
+            is IOException -> ResultWrapper.Failure(CallLargeLanguageModelError.IOException)
+            else ->
+                ResultWrapper.Failure(
+                    CallLargeLanguageModelError.UnknownError(-1, e.message ?: "no message")
+                )
         }
     }
 

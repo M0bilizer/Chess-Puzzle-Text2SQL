@@ -1,7 +1,7 @@
 package com.chess.puzzle.text2sql.web.service.llm
 
-import com.aallam.openai.api.chat.ChatCompletion
+import io.ktor.client.statement.HttpResponse
 
 interface LargeLanguageModel {
-    suspend fun callModel(query: String): ChatCompletion
+    suspend fun callModel(query: String): HttpResponse
 }

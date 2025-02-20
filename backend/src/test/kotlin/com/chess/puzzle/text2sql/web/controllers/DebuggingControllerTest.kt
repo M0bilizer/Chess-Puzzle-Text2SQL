@@ -7,7 +7,7 @@ import com.chess.puzzle.text2sql.web.domain.model.Demonstration
 import com.chess.puzzle.text2sql.web.domain.model.ModelName
 import com.chess.puzzle.text2sql.web.domain.model.ModelVariant
 import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
-import com.chess.puzzle.text2sql.web.entities.*
+import com.chess.puzzle.text2sql.web.entities.Puzzle
 import com.chess.puzzle.text2sql.web.error.CallLargeLanguageModelError
 import com.chess.puzzle.text2sql.web.error.GetRandomPuzzlesError
 import com.chess.puzzle.text2sql.web.error.GetSimilarDemonstrationError

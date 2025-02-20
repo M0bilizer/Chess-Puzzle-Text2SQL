@@ -1,6 +1,11 @@
 package com.chess.puzzle.text2sql.web.service
 
-import com.chess.puzzle.text2sql.web.domain.model.*
+import com.chess.puzzle.text2sql.web.domain.model.BenchmarkEntry
+import com.chess.puzzle.text2sql.web.domain.model.BenchmarkResult
+import com.chess.puzzle.text2sql.web.domain.model.ModelName
+import com.chess.puzzle.text2sql.web.domain.model.ModelVariant
+import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
+import com.chess.puzzle.text2sql.web.domain.model.SqlResult
 import com.chess.puzzle.text2sql.web.error.CallLargeLanguageModelError
 import com.chess.puzzle.text2sql.web.error.GetSimilarDemonstrationError
 import com.chess.puzzle.text2sql.web.error.GetTextFileError

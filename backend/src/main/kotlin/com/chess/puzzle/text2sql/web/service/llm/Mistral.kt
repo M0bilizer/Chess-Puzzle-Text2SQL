@@ -1,31 +1,27 @@
 package com.chess.puzzle.text2sql.web.service.llm
 
-import com.aallam.openai.api.chat.ChatCompletion
-import com.aallam.openai.api.exception.OpenAIHttpException
-import com.aallam.openai.api.exception.OpenAIIOException
-import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
-import io.ktor.http.*
-import kotlinx.serialization.Serializable
+import com.chess.puzzle.text2sql.web.domain.model.llm.ChatCompletionRequest
+import com.chess.puzzle.text2sql.web.domain.model.llm.Message
+import com.chess.puzzle.text2sql.web.domain.model.llm.OpenAiClient
+import io.ktor.client.request.header
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.client.statement.HttpResponse
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Component
 
-data class CustomMistralClient(val client: HttpClient, val apiKey: String, val baseUrl: String)
-
-@Serializable private data class Message(val role: String, val content: String)
-
-@Serializable private data class RequestBody(val model: String, val messages: List<Message>)
-
 @Component
-class Mistral(private val mistralClient: CustomMistralClient) : LargeLanguageModel {
-    override suspend fun callModel(query: String): ChatCompletion {
-        val (client, apiKey, baseUrl) = mistralClient
+class Mistral(@Qualifier("mistralClient") private val client: OpenAiClient) : LargeLanguageModel {
+    override suspend fun callModel(query: String): HttpResponse {
+        val (client, apiKey, baseUrl) = client
 
         val requestBody =
-            RequestBody(
+            ChatCompletionRequest(
                 model = "mistral-small-latest",
                 messages = listOf(Message(role = "user", content = query)),
+                stream = false,
             )
 
         val response: HttpResponse =
@@ -35,6 +31,6 @@ class Mistral(private val mistralClient: CustomMistralClient) : LargeLanguageMod
                 setBody(requestBody)
             }
 
-        return response.body<ChatCompletion>()
+        return response
     }
 }

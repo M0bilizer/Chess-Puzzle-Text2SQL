@@ -73,6 +73,15 @@ sealed class CallLargeLanguageModelError : SystemError {
     }
 
     /**
+     * Represents an unknown status code error.
+     *
+     * @property statusCode The unknown HTTP status code associated with the error.
+     */
+    data class UnknownStatusError(val statusCode: Int) : CallLargeLanguageModelError() {
+        override val message: String = "Unknown status error: $statusCode"
+    }
+
+    /**
      * Represents an unknown error with a status code and error message.
      *
      * @property statusCode The HTTP status code associated with the error.
