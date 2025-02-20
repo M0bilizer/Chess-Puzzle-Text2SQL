@@ -37,11 +37,6 @@ sealed class CallLargeLanguageModelError : SystemError {
         override val message: String = "Invalid Request error from LLM API"
     }
 
-    /** Represents an HTTP error from the LLM API. */
-    data object HttpError : CallLargeLanguageModelError() {
-        override val message: String = "HTTP error from LLM API"
-    }
-
     /** Represents an authentication failure with the LLM API. */
     data object AuthenticationError : CallLargeLanguageModelError() {
         override val message: String = "Authentication failure with LLM API"
@@ -55,6 +50,11 @@ sealed class CallLargeLanguageModelError : SystemError {
     /** Represents an insufficient balance error for the LLM API. */
     data object InsufficientBalanceError : CallLargeLanguageModelError() {
         override val message: String = "Insufficient Balance for LLM API"
+    }
+
+    /** Represents an insufficient balance error for the LLM API. */
+    data object TimeoutError : CallLargeLanguageModelError() {
+        override val message: String = "Timeout with LLM API"
     }
 
     /** Represents a server error from the LLM API. */

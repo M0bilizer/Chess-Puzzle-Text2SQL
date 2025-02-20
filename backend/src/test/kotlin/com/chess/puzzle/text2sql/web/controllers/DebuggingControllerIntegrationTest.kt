@@ -1,12 +1,5 @@
 package com.chess.puzzle.text2sql.web.controllers
 
-import com.aallam.openai.api.chat.*
-import com.aallam.openai.api.exception.OpenAIError
-import com.aallam.openai.api.exception.PermissionException
-import com.aallam.openai.api.exception.RateLimitException
-import com.aallam.openai.api.exception.UnknownAPIException
-import com.aallam.openai.api.model.ModelId
-import com.aallam.openai.client.OpenAI
 import com.chess.puzzle.text2sql.web.config.FilePaths
 import com.chess.puzzle.text2sql.web.config.SentenceTransformerEndpoints
 import com.chess.puzzle.text2sql.web.domain.input.GenericRequest
@@ -16,8 +9,17 @@ import com.chess.puzzle.text2sql.web.domain.model.Demonstration
 import com.chess.puzzle.text2sql.web.domain.model.ModelName
 import com.chess.puzzle.text2sql.web.domain.model.ModelVariant
 import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
-import com.chess.puzzle.text2sql.web.entities.*
-import com.chess.puzzle.text2sql.web.error.*
+import com.chess.puzzle.text2sql.web.domain.model.llm.ChatCompletionResponse
+import com.chess.puzzle.text2sql.web.domain.model.llm.Choice
+import com.chess.puzzle.text2sql.web.domain.model.llm.Message
+import com.chess.puzzle.text2sql.web.domain.model.llm.Usage
+import com.chess.puzzle.text2sql.web.entities.Puzzle
+import com.chess.puzzle.text2sql.web.error.CallLargeLanguageModelError
+import com.chess.puzzle.text2sql.web.error.GetRandomPuzzlesError
+import com.chess.puzzle.text2sql.web.error.GetSimilarDemonstrationError
+import com.chess.puzzle.text2sql.web.error.GetTextFileError
+import com.chess.puzzle.text2sql.web.error.ProcessPromptError
+import com.chess.puzzle.text2sql.web.error.ProcessQueryError
 import com.chess.puzzle.text2sql.web.integration.FastApiResponse
 import com.chess.puzzle.text2sql.web.repositories.PuzzleRepository
 import com.chess.puzzle.text2sql.web.service.FileLoaderService
@@ -30,11 +32,19 @@ import com.chess.puzzle.text2sql.web.service.llm.LargeLanguageModel
 import com.chess.puzzle.text2sql.web.service.llm.LargeLanguageModelFactory
 import com.chess.puzzle.text2sql.web.validator.SqlValidator
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.ktor.client.*
-import io.ktor.client.engine.mock.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.engine.mock.MockEngine
+import io.ktor.client.engine.mock.respond
+import io.ktor.client.engine.mock.respondError
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.statement.HttpResponse
+import io.ktor.http.ContentType
+import io.ktor.http.HttpMethod
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.headersOf
+import io.ktor.http.isSuccess
+import io.ktor.serialization.kotlinx.json.json
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -71,7 +81,6 @@ class DebuggingControllerIntegrationTest {
 
     private lateinit var sentenceTransformerHelper: SentenceTransformerHelper
 
-    private val mockOpenAI: OpenAI = mockk()
     private val largeLanguageModel: LargeLanguageModel = mockk()
     private val largeLanguageModelFactory: LargeLanguageModelFactory = mockk()
     private val largeLanguageApiHelper = LargeLanguageApiHelper(largeLanguageModelFactory)
@@ -582,26 +591,28 @@ class DebuggingControllerIntegrationTest {
         val query = "SELECT * FROM users"
         val promptTemplate = "Convert this query to SQL: $input"
         val chatCompletion =
-            ChatCompletion(
+            ChatCompletionResponse(
                 id = "1",
+                `object` = "chat.completion",
                 created = 1L,
-                model = ModelId("deepseek-chat"),
+                model = "deepseek-chat",
                 choices =
                     listOf(
-                        ChatChoice(
+                        Choice(
                             index = 0,
-                            message =
-                                ChatMessage(
-                                    role = ChatRole.System,
-                                    messageContent = TextContent(query),
-                                ),
+                            message = Message(role = "system", content = query),
+                            finishReason = "stop",
                         )
                     ),
+                usage = Usage(promptTokens = 10, completionTokens = 10, totalTokens = 20),
             )
 
+        val httpResponse: HttpResponse = mockk()
+        coEvery { httpResponse.status } returns HttpStatusCode.OK
+        coEvery { httpResponse.body<ChatCompletionResponse>() } returns chatCompletion
         coEvery { largeLanguageModelFactory.getModel(ModelName.Deepseek) } returns
             largeLanguageModel
-        coEvery { largeLanguageModel.callModel(promptTemplate) } returns chatCompletion
+        coEvery { largeLanguageModel.callModel(promptTemplate) } returns httpResponse
         val controller =
             DebuggingController(
                 text2SQLService,
@@ -624,10 +635,12 @@ class DebuggingControllerIntegrationTest {
         val input = "My query string"
         val promptTemplate = "Convert this query to SQL: $input"
 
+        val httpResponse: HttpResponse = mockk()
+        coEvery { httpResponse.status.isSuccess() } returns false
+        coEvery { httpResponse.status } returns HttpStatusCode.TooManyRequests
         coEvery { largeLanguageModelFactory.getModel(ModelName.Deepseek) } returns
             largeLanguageModel
-        coEvery { largeLanguageModel.callModel(promptTemplate) } throws
-            RateLimitException(1, OpenAIError())
+        coEvery { largeLanguageModel.callModel(promptTemplate) } returns httpResponse
         val controller =
             DebuggingController(
                 text2SQLService,
@@ -651,10 +664,12 @@ class DebuggingControllerIntegrationTest {
         val input = "My query string"
         val promptTemplate = "Convert this query to SQL: $input"
 
+        val httpResponse: HttpResponse = mockk()
+        coEvery { httpResponse.status.isSuccess() } returns false
+        coEvery { httpResponse.status } returns HttpStatusCode.Forbidden
         coEvery { largeLanguageModelFactory.getModel(ModelName.Deepseek) } returns
             largeLanguageModel
-        coEvery { largeLanguageModel.callModel(promptTemplate) } throws
-            PermissionException(1, OpenAIError())
+        coEvery { largeLanguageModel.callModel(promptTemplate) } returns httpResponse
         val controller =
             DebuggingController(
                 text2SQLService,
@@ -674,14 +689,16 @@ class DebuggingControllerIntegrationTest {
     }
 
     @Test
-    fun `test llm endpoint failure UnknownAPIException 402`(): Unit = runBlocking {
+    fun `test llm endpoint failure Insufficient Balance`(): Unit = runBlocking {
         val input = "My query string"
         val promptTemplate = "Convert this query to SQL: $input"
 
+        val httpResponse: HttpResponse = mockk()
+        coEvery { httpResponse.status.isSuccess() } returns false
+        coEvery { httpResponse.status } returns HttpStatusCode.PaymentRequired
         coEvery { largeLanguageModelFactory.getModel(ModelName.Deepseek) } returns
             largeLanguageModel
-        coEvery { largeLanguageModel.callModel(promptTemplate) } throws
-            UnknownAPIException(402, OpenAIError())
+        coEvery { largeLanguageModel.callModel(promptTemplate) } returns httpResponse
         val controller =
             DebuggingController(
                 text2SQLService,
@@ -701,14 +718,15 @@ class DebuggingControllerIntegrationTest {
     }
 
     @Test
-    fun `test llm endpoint failure UnknownAPIException unknown`(): Unit = runBlocking {
+    fun `test llm endpoint failure Up unknown`(): Unit = runBlocking {
         val input = "My query string"
         val promptTemplate = "Convert this query to SQL: $input"
 
+        val httpResponse: HttpResponse = mockk()
+        coEvery { httpResponse.status } returns HttpStatusCode.TooEarly
         coEvery { largeLanguageModelFactory.getModel(ModelName.Deepseek) } returns
             largeLanguageModel
-        coEvery { largeLanguageModel.callModel(promptTemplate) } throws
-            UnknownAPIException(1, OpenAIError())
+        coEvery { largeLanguageModel.callModel(promptTemplate) } returns httpResponse
         val controller =
             DebuggingController(
                 text2SQLService,
@@ -720,50 +738,7 @@ class DebuggingControllerIntegrationTest {
         val llmRequest = LlmRequest(promptTemplate)
         val response = controller.llm(llmRequest)
 
-        val error = CallLargeLanguageModelError.UnknownError(1, "no message")
-        val expectedResponse =
-            objectMapper.writeValueAsString(mapOf("status" to "failure", "data" to error.message))
-        expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
-    }
-
-    @Test
-    fun `test llm endpoint failure Unexpected result`(): Unit = runBlocking {
-        val input = "My query string"
-        val promptTemplate = "Convert this query to SQL: $input"
-        val chatCompletion =
-            ChatCompletion(
-                id = "1",
-                created = 1L,
-                model = ModelId("deepseek-chat"),
-                choices =
-                    listOf(
-                        ChatChoice(
-                            index = 0,
-                            message =
-                                ChatMessage(
-                                    role = ChatRole.System,
-                                    messageContent = mockk(), // Mocking an unexpected content type
-                                ),
-                        )
-                    ),
-            )
-
-        coEvery { largeLanguageModelFactory.getModel(ModelName.Deepseek) } returns
-            largeLanguageModel
-        coEvery { largeLanguageModel.callModel(promptTemplate) } returns chatCompletion
-        val controller =
-            DebuggingController(
-                text2SQLService,
-                puzzleService,
-                sentenceTransformerHelperMock,
-                largeLanguageApiHelper,
-            )
-
-        val llmRequest = LlmRequest(promptTemplate)
-        val response = controller.llm(llmRequest)
-
-        val error = CallLargeLanguageModelError.UnexpectedResult
+        val error = CallLargeLanguageModelError.UnknownStatusError(425)
         val expectedResponse =
             objectMapper.writeValueAsString(mapOf("status" to "failure", "data" to error.message))
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)

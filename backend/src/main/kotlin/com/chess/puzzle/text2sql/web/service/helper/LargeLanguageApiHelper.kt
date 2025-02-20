@@ -7,6 +7,7 @@ import com.chess.puzzle.text2sql.web.error.CallLargeLanguageModelError
 import com.chess.puzzle.text2sql.web.service.llm.LargeLanguageModelFactory
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.client.call.body
+import io.ktor.client.plugins.HttpRequestTimeoutException
 import io.ktor.client.plugins.ServerResponseException
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpStatusCode
@@ -35,18 +36,19 @@ class LargeLanguageApiHelper(
         query: String,
         modelName: ModelName,
     ): ResultWrapper<String, CallLargeLanguageModelError> {
-        return try {
-            val response = largeLanguageModelFactory.getModel(modelName).callModel(query)
-            if (!response.status.isSuccess()) {
-                handleUnsuccessfulResponse(response)
-            }
-            val chatCompletion = response.body<ChatCompletionResponse>()
-            val textResponse = chatCompletion.choices.first().message.content
-            val sql = stripUnnecessary(textResponse)
-            ResultWrapper.Success(sql)
+        val response: HttpResponse
+        try {
+            response = largeLanguageModelFactory.getModel(modelName).callModel(query)
         } catch (e: Exception) {
-            handleHttpException(e)
+            return handleHttpException(e)
         }
+        if (!response.status.isSuccess()) {
+            return handleUnsuccessfulResponse(response)
+        }
+        val chatCompletion = response.body<ChatCompletionResponse>()
+        val textResponse = chatCompletion.choices.first().message.content
+        val sql = stripUnnecessary(textResponse)
+        return ResultWrapper.Success(sql)
     }
 
     fun handleUnsuccessfulResponse(
@@ -81,6 +83,8 @@ class LargeLanguageApiHelper(
      */
     fun handleHttpException(e: Exception): ResultWrapper.Failure<CallLargeLanguageModelError> {
         return when (e) {
+            is HttpRequestTimeoutException ->
+                ResultWrapper.Failure(CallLargeLanguageModelError.TimeoutError)
             is ServerResponseException ->
                 ResultWrapper.Failure(CallLargeLanguageModelError.ServerError)
             is IOException -> ResultWrapper.Failure(CallLargeLanguageModelError.IOException)

@@ -116,7 +116,7 @@ class BenchmarkingControllerIntegrationTest {
             val text = benchmarkEntry.text
             coEvery {
                 text2SQLService.convertToSQL(text, ModelName.Deepseek, ModelVariant.Full)
-            } returns ResultWrapper.Failure(CallLargeLanguageModelError.HttpError)
+            } returns ResultWrapper.Failure(CallLargeLanguageModelError.TimeoutError)
             coEvery {
                 text2SQLService.convertToSQL(text, ModelName.Deepseek, ModelVariant.Partial)
             } returns ResultWrapper.Failure(CallLargeLanguageModelError.IOException)
