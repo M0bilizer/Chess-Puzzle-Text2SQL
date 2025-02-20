@@ -1,11 +1,13 @@
 package com.chess.puzzle.text2sql.web.controllers
 
-import com.chess.puzzle.text2sql.web.entities.ModelName.Full
+import com.chess.puzzle.text2sql.web.domain.input.QueryPuzzleInput
+import com.chess.puzzle.text2sql.web.domain.input.QueryPuzzleRequest
+import com.chess.puzzle.text2sql.web.domain.model.ModelVariant.Full
+import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
 import com.chess.puzzle.text2sql.web.entities.Puzzle
-import com.chess.puzzle.text2sql.web.entities.QueryRequest
-import com.chess.puzzle.text2sql.web.entities.ResultWrapper
 import com.chess.puzzle.text2sql.web.service.PuzzleService
 import com.chess.puzzle.text2sql.web.service.Text2SQLService
+import com.chess.puzzle.text2sql.web.utility.ResponseUtils.badRequest
 import com.chess.puzzle.text2sql.web.utility.ResponseUtils.failure
 import com.chess.puzzle.text2sql.web.utility.ResponseUtils.success
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -39,17 +41,22 @@ class Text2SqlController(
      * Converts a natural language query into an SQL query and processes it to retrieve puzzle
      * results.
      *
-     * @param input The [QueryRequest] containing the natural language query.
+     * @param request The [QueryPuzzleRequest] containing the natural language query.
      * @return A [ResponseEntity] containing the puzzle results if successful, or an error message
      *   if the process fails.
      */
     @PostMapping("/api/queryPuzzle")
-    suspend fun queryPuzzle(@RequestBody input: QueryRequest): ResponseEntity<String> {
-        logger.info { "Received POST on /api/queryPuzzle { input = $input }" }
-        val query = input.query
+    suspend fun queryPuzzle(@RequestBody request: QueryPuzzleRequest): ResponseEntity<String> {
+        logger.info { "Received POST on /api/queryPuzzle { request = $request }" }
+        val input: QueryPuzzleInput
         val sql: String
         val puzzles: List<Puzzle>
-        when (val result = text2SQLService.convertToSQL(query, Full)) {
+        when (val result = request.toInput()) {
+            is ResultWrapper.Success -> input = result.data
+            is ResultWrapper.Failure -> return badRequest(result.error)
+        }
+        val (query, model) = input
+        when (val result = text2SQLService.convertToSQL(query, model, Full)) {
             is ResultWrapper.Success -> sql = result.data
             is ResultWrapper.Failure -> return failure(result.error)
         }

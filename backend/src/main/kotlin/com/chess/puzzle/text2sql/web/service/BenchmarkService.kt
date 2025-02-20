@@ -1,13 +1,16 @@
 package com.chess.puzzle.text2sql.web.service
 
 import ch.qos.logback.classic.Level
-import com.chess.puzzle.text2sql.web.entities.BenchmarkEntry
-import com.chess.puzzle.text2sql.web.entities.BenchmarkResult
-import com.chess.puzzle.text2sql.web.entities.ModelName
-import com.chess.puzzle.text2sql.web.entities.ModelName.*
-import com.chess.puzzle.text2sql.web.entities.ResultWrapper
-import com.chess.puzzle.text2sql.web.entities.helper.CustomError
-import com.chess.puzzle.text2sql.web.entities.helper.SqlResult
+import com.chess.puzzle.text2sql.web.domain.model.BenchmarkEntry
+import com.chess.puzzle.text2sql.web.domain.model.BenchmarkResult
+import com.chess.puzzle.text2sql.web.domain.model.ModelName
+import com.chess.puzzle.text2sql.web.domain.model.ModelVariant
+import com.chess.puzzle.text2sql.web.domain.model.ModelVariant.Baseline
+import com.chess.puzzle.text2sql.web.domain.model.ModelVariant.Full
+import com.chess.puzzle.text2sql.web.domain.model.ModelVariant.Partial
+import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
+import com.chess.puzzle.text2sql.web.domain.model.SqlResult
+import com.chess.puzzle.text2sql.web.error.SystemError
 import com.chess.puzzle.text2sql.web.utility.withLogLevel
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
@@ -30,7 +33,7 @@ class BenchmarkService(@Autowired private val text2SQLService: Text2SQLService) 
      */
     suspend fun getBenchmark(
         benchmarkEntries: List<BenchmarkEntry>
-    ): ResultWrapper<List<BenchmarkResult>, CustomError> {
+    ): ResultWrapper<List<BenchmarkResult>, SystemError> {
         val benchmarkResultList = mutableListOf<BenchmarkResult>()
         logger.info { "== Starting Benchmark ==" }
 
@@ -72,21 +75,25 @@ class BenchmarkService(@Autowired private val text2SQLService: Text2SQLService) 
      * 'ERROR' for the 'sql' field.
      *
      * @param text The text to convert to SQL.
-     * @param modelName The model to use for the conversion ([Full], [Partial], [Baseline]).
+     * @param modelVariant The model to use for the conversion ([Full], [Partial], [Baseline]).
      * @return An [SqlResult] object containing the SQL result or an 'ERROR' SQL.
      */
-    private suspend fun getSqlResult(text: String, modelName: ModelName): SqlResult {
-        val result: ResultWrapper<String, CustomError> =
+    private suspend fun getSqlResult(text: String, modelVariant: ModelVariant): SqlResult {
+        val result: ResultWrapper<String, SystemError> =
             withLogLevel(Level.OFF) {
-                return@withLogLevel text2SQLService.convertToSQL(text, modelName)
+                return@withLogLevel text2SQLService.convertToSQL(
+                    text,
+                    ModelName.Deepseek,
+                    modelVariant,
+                )
             }
         return when (result) {
             is ResultWrapper.Success -> {
-                logger.info { "  $modelName - ok!" }
+                logger.info { "  $modelVariant - ok!" }
                 SqlResult(sql = result.data, status = "")
             }
             is ResultWrapper.Failure -> {
-                logger.info { "  $modelName - Error: ${result.error.message}" }
+                logger.info { "  $modelVariant - Error: ${result.error.message}" }
                 SqlResult(sql = "ERROR", status = "0")
             }
         }

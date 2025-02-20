@@ -1,9 +1,7 @@
 package com.chess.puzzle.text2sql.web.service
 
-import com.chess.puzzle.text2sql.web.entities.ResultWrapper
-import com.chess.puzzle.text2sql.web.entities.helper.WriteToFileError
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.SerializationFeature
+import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
+import com.chess.puzzle.text2sql.web.error.WriteToFileError
 import java.io.File
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
@@ -11,9 +9,7 @@ import strikt.assertions.isA
 import strikt.assertions.isEqualTo
 
 class JsonWriterServiceTest {
-
     private val jsonWriterService = JsonWriterService()
-    private val objectMapper = ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT)
 
     @Test
     fun `writeToFile should return Success if writing is successful`() {

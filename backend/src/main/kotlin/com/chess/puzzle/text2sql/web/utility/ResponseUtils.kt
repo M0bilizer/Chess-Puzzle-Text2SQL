@@ -1,7 +1,9 @@
 package com.chess.puzzle.text2sql.web.utility
 
-import com.chess.puzzle.text2sql.web.entities.helper.CustomError
+import com.chess.puzzle.text2sql.web.error.ClientError
+import com.chess.puzzle.text2sql.web.error.SystemError
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 
@@ -52,13 +54,20 @@ object ResponseUtils {
      * [jacksonObjectMapper]. Note that the "status" field is different from the HTTP response
      * status.
      *
-     * @param customError The custom error containing the error message to include in the response.
+     * @param systemError The custom error containing the error message to include in the response.
      * @return A [ResponseEntity] containing the JSON response string.
      */
-    fun failure(customError: CustomError): ResponseEntity<String> {
-        val response = mapOf("status" to "failure", "data" to customError.message)
+    fun failure(systemError: SystemError): ResponseEntity<String> {
+        val response = mapOf("status" to "failure", "data" to systemError.message)
         return ResponseEntity.ok()
             .contentType(MediaType.APPLICATION_JSON)
             .body(objectMapper.writeValueAsString(response))
+    }
+
+    fun badRequest(clientErrors: List<ClientError>): ResponseEntity<String> {
+        val message = clientErrors.associate { it.field to it.message }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(objectMapper.writeValueAsString(message))
     }
 }

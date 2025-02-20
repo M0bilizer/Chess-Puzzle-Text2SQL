@@ -1,6 +1,7 @@
 package com.chess.puzzle.text2sql.web.utility
 
-import com.chess.puzzle.text2sql.web.entities.helper.ProcessQueryError
+import com.chess.puzzle.text2sql.web.error.ClientError
+import com.chess.puzzle.text2sql.web.error.ProcessQueryError
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.junit.jupiter.api.Test
@@ -47,6 +48,50 @@ class ResponseUtilsTest {
                         )
                     get("status") { jsonResponse["status"] }.isEqualTo("failure")
                     get("data") { jsonResponse["data"] }.isEqualTo(data.message)
+                }
+        }
+    }
+
+    @Test
+    fun `badRequest should return a ResponseEntity with status error and provided data`() {
+        val errors = listOf(ClientError.InvalidModelVariant)
+        val responseEntity = ResponseUtils.badRequest(errors)
+
+        expectThat(responseEntity) {
+            get { statusCode }.isEqualTo(HttpStatus.BAD_REQUEST)
+            get { body }
+                .isNotNull()
+                .and {
+                    val jsonResponse =
+                        objectMapper.readValue(
+                            responseEntity.body,
+                            object : TypeReference<Map<String, Any>>() {},
+                        )
+                    for (error in errors) {
+                        get(error.field) { jsonResponse[error.field] }.isEqualTo(error.message)
+                    }
+                }
+        }
+    }
+
+    @Test
+    fun `badRequest should return a ResponseEntity with many error`() {
+        val errors = listOf(ClientError.InvalidModelVariant, ClientError.MissingQuery)
+        val responseEntity = ResponseUtils.badRequest(errors)
+
+        expectThat(responseEntity) {
+            get { statusCode }.isEqualTo(HttpStatus.BAD_REQUEST)
+            get { body }
+                .isNotNull()
+                .and {
+                    val jsonResponse =
+                        objectMapper.readValue(
+                            responseEntity.body,
+                            object : TypeReference<Map<String, Any>>() {},
+                        )
+                    for (error in errors) {
+                        get(error.field) { jsonResponse[error.field] }.isEqualTo(error.message)
+                    }
                 }
         }
     }

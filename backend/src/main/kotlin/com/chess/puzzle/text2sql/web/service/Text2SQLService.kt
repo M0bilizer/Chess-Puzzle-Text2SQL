@@ -1,11 +1,14 @@
 package com.chess.puzzle.text2sql.web.service
 
 import com.chess.puzzle.text2sql.web.config.FilePaths
-import com.chess.puzzle.text2sql.web.entities.Demonstration
-import com.chess.puzzle.text2sql.web.entities.ModelName
-import com.chess.puzzle.text2sql.web.entities.ModelName.*
-import com.chess.puzzle.text2sql.web.entities.ResultWrapper
-import com.chess.puzzle.text2sql.web.entities.helper.CustomError
+import com.chess.puzzle.text2sql.web.domain.model.Demonstration
+import com.chess.puzzle.text2sql.web.domain.model.ModelName
+import com.chess.puzzle.text2sql.web.domain.model.ModelVariant
+import com.chess.puzzle.text2sql.web.domain.model.ModelVariant.Baseline
+import com.chess.puzzle.text2sql.web.domain.model.ModelVariant.Full
+import com.chess.puzzle.text2sql.web.domain.model.ModelVariant.Partial
+import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
+import com.chess.puzzle.text2sql.web.error.SystemError
 import com.chess.puzzle.text2sql.web.service.helper.LargeLanguageApiHelper
 import com.chess.puzzle.text2sql.web.service.helper.PreprocessingHelper
 import com.chess.puzzle.text2sql.web.service.helper.SentenceTransformerHelper
@@ -45,17 +48,18 @@ class Text2SQLService(
      * Converts a natural language query into an SQL query based on the specified model.
      *
      * @param query The natural language query to convert.
-     * @param modelName The model to use for the conversion (Full, Partial, or Baseline).
+     * @param modelVariant The model to use for the conversion (Full, Partial, or Baseline).
      * @return A [ResultWrapper] containing the SQL query or an error.
      */
     suspend fun convertToSQL(
         query: String,
         modelName: ModelName,
-    ): ResultWrapper<String, CustomError> {
-        return when (modelName) {
-            Full -> full(query)
-            Partial -> partial(query)
-            Baseline -> baseline(query)
+        modelVariant: ModelVariant,
+    ): ResultWrapper<String, SystemError> {
+        return when (modelVariant) {
+            Full -> full(query, modelName)
+            Partial -> partial(query, modelName)
+            Baseline -> baseline(query, modelName)
         }
     }
 
@@ -71,7 +75,10 @@ class Text2SQLService(
      * @param query The natural language query to convert.
      * @return A [ResultWrapper] containing the SQL query or an error.
      */
-    private suspend fun full(query: String): ResultWrapper<String, CustomError> {
+    private suspend fun full(
+        query: String,
+        modelName: ModelName,
+    ): ResultWrapper<String, SystemError> {
         val promptTemplate: String
         val demonstrations: List<Demonstration>
         val processedPrompt: String
@@ -90,7 +97,7 @@ class Text2SQLService(
             is ResultWrapper.Success -> processedPrompt = result.data
             is ResultWrapper.Failure -> return ResultWrapper.Failure(result.error)
         }
-        when (val result = largeLanguageApiHelper.callDeepSeek(processedPrompt)) {
+        when (val result = largeLanguageApiHelper.callModel(processedPrompt, modelName)) {
             is ResultWrapper.Success -> sql = result.data
             is ResultWrapper.Failure -> return ResultWrapper.Failure(result.error)
         }
@@ -109,7 +116,10 @@ class Text2SQLService(
      * @param query The natural language query to convert.
      * @return A [ResultWrapper] containing the SQL query or an error.
      */
-    private suspend fun partial(query: String): ResultWrapper<String, CustomError> {
+    private suspend fun partial(
+        query: String,
+        modelName: ModelName,
+    ): ResultWrapper<String, SystemError> {
         val promptTemplate: String
         val demonstrations: List<Demonstration>
         val processedPrompt: String
@@ -128,7 +138,7 @@ class Text2SQLService(
             is ResultWrapper.Success -> processedPrompt = result.data
             is ResultWrapper.Failure -> return ResultWrapper.Failure(result.error)
         }
-        when (val result = largeLanguageApiHelper.callDeepSeek(processedPrompt)) {
+        when (val result = largeLanguageApiHelper.callModel(processedPrompt, modelName)) {
             is ResultWrapper.Success -> sql = result.data
             is ResultWrapper.Failure -> return ResultWrapper.Failure(result.error)
         }
@@ -146,7 +156,10 @@ class Text2SQLService(
      * @param query The natural language query to convert.
      * @return A [ResultWrapper] containing the SQL query or an error.
      */
-    private suspend fun baseline(query: String): ResultWrapper<String, CustomError> {
+    private suspend fun baseline(
+        query: String,
+        modelName: ModelName,
+    ): ResultWrapper<String, SystemError> {
         val promptTemplate: String
         val processedPrompt: String
         val sql: String
@@ -158,7 +171,7 @@ class Text2SQLService(
             is ResultWrapper.Success -> processedPrompt = result.data
             is ResultWrapper.Failure -> return ResultWrapper.Failure(result.error)
         }
-        when (val result = largeLanguageApiHelper.callDeepSeek(processedPrompt)) {
+        when (val result = largeLanguageApiHelper.callModel(processedPrompt, modelName)) {
             is ResultWrapper.Success -> sql = result.data
             is ResultWrapper.Failure -> return ResultWrapper.Failure(result.error)
         }

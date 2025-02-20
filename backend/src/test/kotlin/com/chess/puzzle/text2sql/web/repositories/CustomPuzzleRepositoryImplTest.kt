@@ -20,6 +20,7 @@ class CustomPuzzleRepositoryImplTest {
     fun `executeSqlQuery should return a list of Puzzle entities`() {
         // Arrange
         val sqlCommand = "SELECT * FROM Puzzle"
+        val protected = "SELECT * FROM Puzzle LIMIT 100"
         val mockQuery = mockk<Query>()
         val mockPuzzleList =
             listOf(
@@ -52,7 +53,7 @@ class CustomPuzzleRepositoryImplTest {
             )
 
         // Mock the EntityManager.createNativeQuery method
-        every { mockEntityManager.createNativeQuery(sqlCommand, Puzzle::class.java) } returns
+        every { mockEntityManager.createNativeQuery(protected, Puzzle::class.java) } returns
             mockQuery
 
         // Mock the Query.resultList method
@@ -65,22 +66,23 @@ class CustomPuzzleRepositoryImplTest {
         expectThat(result).isEqualTo(mockPuzzleList)
 
         // Verify that the EntityManager.createNativeQuery method was called
-        verify(exactly = 1) { mockEntityManager.createNativeQuery(sqlCommand, Puzzle::class.java) }
+        verify(exactly = 1) { mockEntityManager.createNativeQuery(protected, Puzzle::class.java) }
     }
 
     @Test
     fun `executeSqlQuery should throw RuntimeException for invalid SQL`() {
         // Arrange
         val sqlCommand = "INVALID SQL COMMAND"
+        val protected = "INVALID SQL COMMAND LIMIT 100"
 
         // Mock the EntityManager.createNativeQuery method to throw an exception
-        every { mockEntityManager.createNativeQuery(sqlCommand, Puzzle::class.java) } throws
-            Exception("Invalid SQL")
+        every { mockEntityManager.createNativeQuery(protected, Puzzle::class.java) } throws
+            RuntimeException("Invalid SQL")
 
         // Act & Assert
         expectThrows<RuntimeException> { customPuzzleRepository.executeSqlQuery(sqlCommand) }
 
         // Verify that the EntityManager.createNativeQuery method was called
-        verify(exactly = 1) { mockEntityManager.createNativeQuery(sqlCommand, Puzzle::class.java) }
+        verify(exactly = 1) { mockEntityManager.createNativeQuery(protected, Puzzle::class.java) }
     }
 }

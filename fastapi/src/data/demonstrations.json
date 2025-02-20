@@ -10,7 +10,7 @@
     },
     {
       "text": "challenging",
-      "sql": "SELECT * FROM t_puzzle WHERE rating > 1900 OR themes LIKE '%master%'"
+      "sql": "SELECT * FROM t_puzzle WHERE rating > 1900"
     },
     {
       "text": "Can you suggest a short challenge?",
@@ -26,11 +26,11 @@
     },
     {
       "text": "I want to improve my tactical skills.",
-      "sql": "SELECT * FROM t_puzzle WHERE themes LIKE '%crushing%'"
+      "sql": "SELECT * FROM t_puzzle WHERE LENGTH(themes) - LENGTH(REPLACE(themes, ' ', '')) + 1 >= 7"
     },
     {
       "text": "I prefer open positions",
-      "sql": "SELECT * FROM t_puzzle WHERE opening_tags LIKE '%Italian%' OR opening_tags LIKE '%Ruy_Lopez%' OR opening_tags LIKE '%Scotch%'"
+        "sql": "SELECT * FROM t_puzzle WHERE opening_tags LIKE '%Sicilian_Defense%' OR opening_tags LIKE '%Kings_Gambit%' OR opening_tags LIKE '%Danish_Gambit%' OR opening_tags LIKE '%Dragon_Variation%' OR opening_tags LIKE '%Najdorf_Variation%' OR opening_tags LIKE '%Grünfeld_Defense%' OR opening_tags LIKE '%Benko_Gambit%' OR opening_tags LIKE '%Two_Knights_Defense%' OR opening_tags LIKE '%Scotch_Game%' OR opening_tags LIKE '%French_Defense_Winawer_Variation%'"
     },
     {
       "text": "I want to find a way to counter the Italian opening effectively.",
@@ -51,11 +51,11 @@
     },
     {
       "text": "Find me a puzzle with a beautiful mate.",
-      "sql": "SELECT * FROM t_puzzle WHERE themes LIKE '%Mate%'"
+      "sql": "SELECT * FROM t_puzzle WHERE themes LIKE '%anastasiaMate%' OR themes LIKE '%arabianMate%' OR themes LIKE '%backRankMate%' OR themes LIKE '%bodenMate%' OR themes LIKE '%doubleBishopMate%' OR themes LIKE '%dovetailMate%' OR themes LIKE '%hookMate%' OR themes LIKE '%smotheredMate%';"
     },
     {
       "text": "Give me a difficult puzzle that involves a knight sacrifice.",
-      "sql": "SELECT * FROM t_puzzle WHERE themes LIKE '%sacrifice%' AND themes LIKE '%knightEndgame%'"
+      "sql": "SELECT * FROM t_puzzle WHERE themes LIKE '%sacrifice%' AND themes LIKE '%knight%'"
     },
     {
       "text": "Give me a puzzle with a kingside attack.",
@@ -63,7 +63,7 @@
     },
     {
       "text": "I want to improve my positional play.",
-      "sql": "SELECT * FROM t_puzzle WHERE themes LIKE '%quietMove%'"
+      "sql": "SELECT * FROM t_puzzle WHERE themes LIKE '%quietMove%' AND (opening_tags LIKE '%Queens_Gambit%' OR opening_tags LIKE '%Ruy_Lopez%' OR opening_tags LIKE '%Caro-Kann%' OR opening_tags LIKE '%English_Opening%' OR opening_tags LIKE '%Slav_Defense%' OR opening_tags LIKE '%Catalan_Opening%' OR opening_tags LIKE '%Nimzo-Indian_Defense%' OR opening_tags LIKE '%Queens_Indian_Defense%' OR opening_tags LIKE '%Bogo-Indian_Defense%' OR opening_tags LIKE '%Colle_System%')"
     },
     {
       "text": "I love quiet positions.",
@@ -92,7 +92,7 @@
     },
     {
       "text": "Give me a puzzle that requires a clever knight sacrifice.",
-      "sql": "SELECT * FROM t_puzzle WHERE themes LIKE '%sacrifice%' AND themes LIKE '%knightEndgame%'"
+      "sql": "SELECT * FROM t_puzzle WHERE themes LIKE '%sacrifice%' AND themes LIKE '%knight%'"
     },
     {
       "text": "I need a puzzle about a variation of the Ruy Lopez opening.",
@@ -104,7 +104,7 @@
     },
     {
       "text": "I get bored with slow and positional games.",
-      "sql": "SELECT * FROM t_puzzle WHERE opening_tags LIKE '%Italian%' OR opening_tags LIKE '%Ruy_Lopez%' OR opening_tags LIKE '%Scotch%'"
+      "sql": "SELECT * FROM t_puzzle WHERE opening_tags LIKE '%Sicilian_Defense%' OR opening_tags LIKE '%Kings_Gambit%' OR opening_tags LIKE '%Danish_Gambit%' OR opening_tags LIKE '%Dragon_Variation%' OR opening_tags LIKE '%Najdorf_Variation%' OR opening_tags LIKE '%Grünfeld_Defense%' OR opening_tags LIKE '%Benko_Gambit%' OR opening_tags LIKE '%Two_Knights_Defense%' OR opening_tags LIKE '%Scotch_Game%' OR opening_tags LIKE '%French_Defense_Winawer_Variation%'"
     },
     {
       "text": "I want to improve my skills against players who specialize in endgames.",

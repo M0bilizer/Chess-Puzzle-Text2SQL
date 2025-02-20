@@ -1,9 +1,9 @@
 package com.chess.puzzle.text2sql.web.service
 
-import com.chess.puzzle.text2sql.web.entities.BenchmarkEntry
-import com.chess.puzzle.text2sql.web.entities.ResultWrapper
-import com.chess.puzzle.text2sql.web.entities.helper.GetBenchmarkEntriesError
-import com.chess.puzzle.text2sql.web.entities.helper.GetTextFileError
+import com.chess.puzzle.text2sql.web.domain.model.BenchmarkEntry
+import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
+import com.chess.puzzle.text2sql.web.error.GetBenchmarkEntriesError
+import com.chess.puzzle.text2sql.web.error.GetTextFileError
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import java.io.InputStream

@@ -16,7 +16,7 @@ plugins {
 }
 
 group = "com.chess.puzzle.text2sql"
-version = "1.1"
+version = "1"
 
 repositories {
     mavenCentral()
@@ -68,15 +68,6 @@ configurations.matching { it.name.startsWith("dokka") }.configureEach {
     }
 }
 
-tasks.register<Exec>("runPythonScript") {
-    // Path to the Python executable in the virtual environment
-    val pythonExecutable = "$projectDir/src/main/python/venv/bin/python" // For macOS/Linux
-    // val pythonExecutable = "${projectDir}/src/main/python/venv/Scripts/python.exe" // For Windows
-
-    // Specify the updated script to run
-    commandLine(pythonExecutable, "$projectDir/src/main/python/process_demonstration_similarity.py")
-}
-
 //tasks.test {
 //    enabled = false
 //}
@@ -92,8 +83,8 @@ dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.12")
     implementation("io.ktor:ktor-client-content-negotiation:2.3.12")
     implementation("com.google.code.gson:gson:2.10.1")
-    implementation("com.aallam.openai:openai-client:3.8.2")
     implementation("com.github.jsqlparser:jsqlparser:5.0")
+    implementation("io.github.cdimascio:dotenv-kotlin:6.4.1")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
     runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.9.0")

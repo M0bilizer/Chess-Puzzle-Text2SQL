@@ -1,10 +1,17 @@
 package com.chess.puzzle.text2sql.web.controllers
 
-import com.chess.puzzle.text2sql.web.entities.*
-import com.chess.puzzle.text2sql.web.entities.helper.CallDeepSeekError
-import com.chess.puzzle.text2sql.web.entities.helper.GetRandomPuzzlesError
-import com.chess.puzzle.text2sql.web.entities.helper.GetSimilarDemonstrationError
-import com.chess.puzzle.text2sql.web.entities.helper.ProcessQueryError
+import com.chess.puzzle.text2sql.web.domain.input.GenericRequest
+import com.chess.puzzle.text2sql.web.domain.input.LlmRequest
+import com.chess.puzzle.text2sql.web.domain.input.Text2SqlRequest
+import com.chess.puzzle.text2sql.web.domain.model.Demonstration
+import com.chess.puzzle.text2sql.web.domain.model.ModelName
+import com.chess.puzzle.text2sql.web.domain.model.ModelVariant
+import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
+import com.chess.puzzle.text2sql.web.entities.Puzzle
+import com.chess.puzzle.text2sql.web.error.CallLargeLanguageModelError
+import com.chess.puzzle.text2sql.web.error.GetRandomPuzzlesError
+import com.chess.puzzle.text2sql.web.error.GetSimilarDemonstrationError
+import com.chess.puzzle.text2sql.web.error.ProcessQueryError
 import com.chess.puzzle.text2sql.web.service.PuzzleService
 import com.chess.puzzle.text2sql.web.service.Text2SQLService
 import com.chess.puzzle.text2sql.web.service.helper.LargeLanguageApiHelper
@@ -76,7 +83,7 @@ class DebuggingControllerTest {
 
     @Test
     fun `test sql endpoint success`() {
-        val queryRequest = QueryRequest(query = "SELECT * FROM puzzles")
+        val genericRequest = GenericRequest(query = "SELECT * FROM puzzles")
         val puzzles =
             listOf(
                 Puzzle(
@@ -95,11 +102,11 @@ class DebuggingControllerTest {
             )
 
         val puzzleService: PuzzleService = mockk {
-            coEvery { processQuery(queryRequest.query) } returns ResultWrapper.Success(puzzles)
+            coEvery { processQuery(genericRequest.query) } returns ResultWrapper.Success(puzzles)
         }
 
         val response =
-            DebuggingController(mockk(), puzzleService, mockk(), mockk()).sql(queryRequest)
+            DebuggingController(mockk(), puzzleService, mockk(), mockk()).sql(genericRequest)
         val expectedResponse =
             objectMapper.writeValueAsString(mapOf("status" to "success", "data" to puzzles))
 
@@ -109,14 +116,14 @@ class DebuggingControllerTest {
 
     @Test
     fun `test sql endpoint failure`() {
-        val queryRequest = QueryRequest(query = "SELECT * FROM puzzles")
+        val genericRequest = GenericRequest(query = "SELECT * FROM puzzles")
         val error = ProcessQueryError.HibernateError
         val puzzleService: PuzzleService = mockk {
-            coEvery { processQuery(queryRequest.query) } returns ResultWrapper.Failure(error)
+            coEvery { processQuery(genericRequest.query) } returns ResultWrapper.Failure(error)
         }
 
         val response =
-            DebuggingController(mockk(), puzzleService, mockk(), mockk()).sql(queryRequest)
+            DebuggingController(mockk(), puzzleService, mockk(), mockk()).sql(genericRequest)
         val expectedResponse =
             objectMapper.writeValueAsString(mapOf("status" to "failure", "data" to error.message))
 
@@ -126,7 +133,7 @@ class DebuggingControllerTest {
 
     @Test
     fun `test sentenceTransformer endpoint success`(): Unit = runBlocking {
-        val queryRequest = QueryRequest(query = "some query")
+        val genericRequest = GenericRequest(query = "some query")
         val similarDemonstrations =
             listOf(
                 Demonstration(
@@ -137,13 +144,13 @@ class DebuggingControllerTest {
             )
 
         val sentenceTransformerHelper: SentenceTransformerHelper = mockk {
-            coEvery { getSimilarDemonstration(queryRequest.query) } returns
+            coEvery { getSimilarDemonstration(genericRequest.query) } returns
                 ResultWrapper.Success(similarDemonstrations)
         }
 
         val response =
             DebuggingController(mockk(), mockk(), sentenceTransformerHelper, mockk())
-                .sentenceTransformer(queryRequest)
+                .sentenceTransformer(genericRequest)
         val expectedResponse =
             objectMapper.writeValueAsString(
                 mapOf("status" to "success", "data" to similarDemonstrations)
@@ -155,16 +162,16 @@ class DebuggingControllerTest {
 
     @Test
     fun `test sentenceTransformer endpoint failure`(): Unit = runBlocking {
-        val queryRequest = QueryRequest(query = "some query")
+        val genericRequest = GenericRequest(query = "some query")
         val error = GetSimilarDemonstrationError.NetworkError
         val sentenceTransformerHelper: SentenceTransformerHelper = mockk {
-            coEvery { getSimilarDemonstration(queryRequest.query) } returns
+            coEvery { getSimilarDemonstration(genericRequest.query) } returns
                 ResultWrapper.Failure(error)
         }
 
         val response =
             DebuggingController(mockk(), mockk(), sentenceTransformerHelper, mockk())
-                .sentenceTransformer(queryRequest)
+                .sentenceTransformer(genericRequest)
         val expectedResponse =
             objectMapper.writeValueAsString(mapOf("status" to "failure", "data" to error.message))
 
@@ -174,16 +181,81 @@ class DebuggingControllerTest {
 
     @Test
     fun `test text2sql endpoint success`(): Unit = runBlocking {
-        val queryRequest = QueryRequest(query = "some natural language query")
+        val query = "some natural language query"
+        val text2SqlRequest = Text2SqlRequest(query)
         val sqlQuery = "SELECT * FROM puzzles"
 
         val text2SQLService: Text2SQLService = mockk {
-            coEvery { convertToSQL(queryRequest.query, ModelName.Full) } returns
+            coEvery { convertToSQL(query, ModelName.Deepseek, ModelVariant.Full) } returns
                 ResultWrapper.Success(sqlQuery)
         }
 
         val response =
-            DebuggingController(text2SQLService, mockk(), mockk(), mockk()).text2sql(queryRequest)
+            DebuggingController(text2SQLService, mockk(), mockk(), mockk())
+                .text2sql(text2SqlRequest)
+        val expectedResponse =
+            objectMapper.writeValueAsString(mapOf("status" to "success", "data" to sqlQuery))
+
+        expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
+        expectThat(response.body).isEqualTo(expectedResponse)
+    }
+
+    @Test
+    fun `test text2sql endpoint success with full`(): Unit = runBlocking {
+        val query = "some natural language query"
+        val text2SqlRequest = Text2SqlRequest(query, modelVariant = "full")
+        val sqlQuery = "SELECT * FROM puzzles"
+
+        val text2SQLService: Text2SQLService = mockk {
+            coEvery { convertToSQL(query, ModelName.Deepseek, ModelVariant.Full) } returns
+                ResultWrapper.Success(sqlQuery)
+        }
+
+        val response =
+            DebuggingController(text2SQLService, mockk(), mockk(), mockk())
+                .text2sql(text2SqlRequest)
+        val expectedResponse =
+            objectMapper.writeValueAsString(mapOf("status" to "success", "data" to sqlQuery))
+
+        expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
+        expectThat(response.body).isEqualTo(expectedResponse)
+    }
+
+    @Test
+    fun `test text2sql endpoint success with partial`(): Unit = runBlocking {
+        val query = "some natural language query"
+        val text2SqlRequest = Text2SqlRequest(query, modelVariant = "partial")
+        val sqlQuery = "SELECT * FROM puzzles"
+
+        val text2SQLService: Text2SQLService = mockk {
+            coEvery { convertToSQL(query, ModelName.Deepseek, ModelVariant.Partial) } returns
+                ResultWrapper.Success(sqlQuery)
+        }
+
+        val response =
+            DebuggingController(text2SQLService, mockk(), mockk(), mockk())
+                .text2sql(text2SqlRequest)
+        val expectedResponse =
+            objectMapper.writeValueAsString(mapOf("status" to "success", "data" to sqlQuery))
+
+        expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
+        expectThat(response.body).isEqualTo(expectedResponse)
+    }
+
+    @Test
+    fun `test text2sql endpoint success with baseline`(): Unit = runBlocking {
+        val query = "some natural language query"
+        val text2SqlRequest = Text2SqlRequest(query, modelVariant = "baseline")
+        val sqlQuery = "SELECT * FROM puzzles"
+
+        val text2SQLService: Text2SQLService = mockk {
+            coEvery { convertToSQL(query, ModelName.Deepseek, ModelVariant.Baseline) } returns
+                ResultWrapper.Success(sqlQuery)
+        }
+
+        val response =
+            DebuggingController(text2SQLService, mockk(), mockk(), mockk())
+                .text2sql(text2SqlRequest)
         val expectedResponse =
             objectMapper.writeValueAsString(mapOf("status" to "success", "data" to sqlQuery))
 
@@ -193,15 +265,17 @@ class DebuggingControllerTest {
 
     @Test
     fun `test text2sql endpoint failure`(): Unit = runBlocking {
-        val queryRequest = QueryRequest(query = "some natural language query")
-        val error = CallDeepSeekError.ServerError
+        val query = "some natural language query"
+        val text2SqlRequest = Text2SqlRequest(query)
+        val error = CallLargeLanguageModelError.ServerError
         val text2SQLService: Text2SQLService = mockk {
-            coEvery { convertToSQL(queryRequest.query, ModelName.Full) } returns
+            coEvery { convertToSQL(query, ModelName.Deepseek, ModelVariant.Full) } returns
                 ResultWrapper.Failure(error)
         }
 
         val response =
-            DebuggingController(text2SQLService, mockk(), mockk(), mockk()).text2sql(queryRequest)
+            DebuggingController(text2SQLService, mockk(), mockk(), mockk())
+                .text2sql(text2SqlRequest)
         val expectedResponse =
             objectMapper.writeValueAsString(mapOf("status" to "failure", "data" to error.message))
 
@@ -211,15 +285,17 @@ class DebuggingControllerTest {
 
     @Test
     fun `test llm endpoint success`(): Unit = runBlocking {
-        val queryRequest = QueryRequest(query = "some prompt")
+        val query = "some prompt"
+        val llmRequest = LlmRequest(query)
         val llmResponse = "LLM response"
 
         val largeLanguageApiHelper: LargeLanguageApiHelper = mockk {
-            coEvery { callDeepSeek(queryRequest.query) } returns ResultWrapper.Success(llmResponse)
+            coEvery { callModel(query, ModelName.Deepseek) } returns
+                ResultWrapper.Success(llmResponse)
         }
 
         val response =
-            DebuggingController(mockk(), mockk(), mockk(), largeLanguageApiHelper).llm(queryRequest)
+            DebuggingController(mockk(), mockk(), mockk(), largeLanguageApiHelper).llm(llmRequest)
         val expectedResponse =
             objectMapper.writeValueAsString(mapOf("status" to "success", "data" to llmResponse))
 
@@ -229,14 +305,15 @@ class DebuggingControllerTest {
 
     @Test
     fun `test llm endpoint failure`(): Unit = runBlocking {
-        val queryRequest = QueryRequest(query = "some prompt")
-        val error = CallDeepSeekError.InsufficientBalanceError
+        val query = "some prompt"
+        val llmRequest = LlmRequest(query)
+        val error = CallLargeLanguageModelError.InsufficientBalanceError
         val largeLanguageApiHelper: LargeLanguageApiHelper = mockk {
-            coEvery { callDeepSeek(queryRequest.query) } returns ResultWrapper.Failure(error)
+            coEvery { callModel(query, ModelName.Deepseek) } returns ResultWrapper.Failure(error)
         }
 
         val response =
-            DebuggingController(mockk(), mockk(), mockk(), largeLanguageApiHelper).llm(queryRequest)
+            DebuggingController(mockk(), mockk(), mockk(), largeLanguageApiHelper).llm(llmRequest)
         val expectedResponse =
             objectMapper.writeValueAsString(mapOf("status" to "failure", "data" to error.message))
 

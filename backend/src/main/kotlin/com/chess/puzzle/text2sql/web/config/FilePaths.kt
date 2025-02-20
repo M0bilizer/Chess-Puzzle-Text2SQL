@@ -1,6 +1,6 @@
 package com.chess.puzzle.text2sql.web.config
 
-import com.chess.puzzle.text2sql.web.entities.ModelName
+import com.chess.puzzle.text2sql.web.domain.model.ModelVariant
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 
@@ -29,14 +29,14 @@ data class FilePaths(
      * name. If the model name is `Full` or `Partial`, it returns the `promptTemplateMdPath`. If the
      * model name is `Baseline`, it returns the `baselinePromptTemplateMdPath`.
      *
-     * @param modelName The name of the model for which to retrieve the prompt template.
+     * @param modelVariant The name of the model for which to retrieve the prompt template.
      * @return The file path to the appropriate prompt template.
      */
-    fun getPromptTemplate(modelName: ModelName): String {
-        return when (modelName) {
-            ModelName.Full -> promptTemplateMdPath
-            ModelName.Partial -> promptTemplateMdPath
-            ModelName.Baseline -> baselinePromptTemplateMdPath
+    fun getPromptTemplate(modelVariant: ModelVariant): String {
+        return when (modelVariant) {
+            ModelVariant.Full -> promptTemplateMdPath
+            ModelVariant.Partial -> promptTemplateMdPath
+            ModelVariant.Baseline -> baselinePromptTemplateMdPath
         }
     }
 }

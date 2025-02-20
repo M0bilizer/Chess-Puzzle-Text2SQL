@@ -1,74 +1,84 @@
-package com.chess.puzzle.text2sql.web.entities.helper
+package com.chess.puzzle.text2sql.web.error
 
 /**
- * Interface representing a custom error with a message.
+ * Interface representing a system error with a message. A system error is when the application is
+ * not able to process the client's request.
  *
  * This interface is implemented by various error classes to provide a consistent way to retrieve
  * error messages.
  */
-interface CustomError {
+interface SystemError {
     /** The error message associated with the error. */
     val message: String
 }
 
 /** A sealed class representing generic errors. */
-sealed class GenericError : CustomError {
+sealed class GenericError : SystemError {
     /** Represents a generic error with a default message. */
     data object Error : GenericError() {
         override val message: String = "Generic Error"
     }
 }
 
-/** A sealed class representing errors related to calling the DeepSeek API. */
-sealed class CallDeepSeekError : CustomError {
-    /** Represents an unexpected result from the DeepSeek API. */
-    data object UnexpectedResult : CallDeepSeekError() {
-        override val message: String = "Unexpected result from DeepSeek API"
+/** A sealed class representing errors related to calling the LLM API. */
+sealed class CallLargeLanguageModelError : SystemError {
+    /** Represents an unexpected result from the LLM API. */
+    data object UnexpectedResult : CallLargeLanguageModelError() {
+        override val message: String = "Unexpected result from LLM API"
     }
 
-    /** Represents a permission error from the DeepSeek API. */
-    data object PermissionError : CallDeepSeekError() {
-        override val message: String = "Permission error from DeepSeek API"
+    /** Represents a permission error from the LLM API. */
+    data object PermissionError : CallLargeLanguageModelError() {
+        override val message: String = "Permission error from LLM API"
     }
 
-    /** Represents an invalid request error from the DeepSeek API. */
-    data object InvalidRequestError : CallDeepSeekError() {
-        override val message: String = "Invalid Request error from DeepSeek API"
+    /** Represents an invalid request error from the LLM API. */
+    data object InvalidRequestError : CallLargeLanguageModelError() {
+        override val message: String = "Invalid Request error from LLM API"
     }
 
-    /** Represents an HTTP error from the DeepSeek API. */
-    data object HttpError : CallDeepSeekError() {
-        override val message: String = "HTTP error from DeepSeek API"
+    /** Represents an authentication failure with the LLM API. */
+    data object AuthenticationError : CallLargeLanguageModelError() {
+        override val message: String = "Authentication failure with LLM API"
     }
 
-    /** Represents an authentication failure with the DeepSeek API. */
-    data object AuthenticationError : CallDeepSeekError() {
-        override val message: String = "Authentication failure with DeepSeek API"
+    /** Represents an IO exception when interacting with the LLM API. */
+    data object IOException : CallLargeLanguageModelError() {
+        override val message: String = "IO Exception with LLM API"
     }
 
-    /** Represents an IO exception when interacting with the DeepSeek API. */
-    data object IOException : CallDeepSeekError() {
-        override val message: String = "IO Exception with DeepSeek API"
+    /** Represents an insufficient balance error for the LLM API. */
+    data object InsufficientBalanceError : CallLargeLanguageModelError() {
+        override val message: String = "Insufficient Balance for LLM API"
     }
 
-    /** Represents an insufficient balance error for the DeepSeek API. */
-    data object InsufficientBalanceError : CallDeepSeekError() {
-        override val message: String = "Insufficient Balance for DeepSeek API"
+    /** Represents an insufficient balance error for the LLM API. */
+    data object TimeoutError : CallLargeLanguageModelError() {
+        override val message: String = "Timeout with LLM API"
     }
 
-    /** Represents a server error from the DeepSeek API. */
-    data object ServerError : CallDeepSeekError() {
-        override val message: String = "Server error from DeepSeek API"
+    /** Represents a server error from the LLM API. */
+    data object ServerError : CallLargeLanguageModelError() {
+        override val message: String = "Server error from LLM API"
     }
 
-    /** Represents a rate limit error from the DeepSeek API. */
-    data object RateLimitError : CallDeepSeekError() {
-        override val message: String = "Rate limit error from DeepSeek API"
+    /** Represents a rate limit error from the LLM API. */
+    data object RateLimitError : CallLargeLanguageModelError() {
+        override val message: String = "Rate limit error from LLM API"
     }
 
-    /** Represents an error when the DeepSeek server is overloaded. */
-    data object ServerOverload : CallDeepSeekError() {
-        override val message: String = "DeepSeek Server is overloaded"
+    /** Represents an error when the LLM server is overloaded. */
+    data object ServerOverload : CallLargeLanguageModelError() {
+        override val message: String = "LLM Server is overloaded"
+    }
+
+    /**
+     * Represents an unknown status code error.
+     *
+     * @property statusCode The unknown HTTP status code associated with the error.
+     */
+    data class UnknownStatusError(val statusCode: Int) : CallLargeLanguageModelError() {
+        override val message: String = "Unknown status error: $statusCode"
     }
 
     /**
@@ -77,7 +87,8 @@ sealed class CallDeepSeekError : CustomError {
      * @property statusCode The HTTP status code associated with the error.
      * @property errorMessage The error message returned by the API.
      */
-    data class UnknownError(val statusCode: Int, val errorMessage: String) : CallDeepSeekError() {
+    data class UnknownError(val statusCode: Int, val errorMessage: String) :
+        CallLargeLanguageModelError() {
         override val message: String = "Unknown error: $statusCode - $errorMessage"
     }
 }
@@ -86,7 +97,7 @@ sealed class CallDeepSeekError : CustomError {
  * A sealed class representing errors related to getting similar demonstrations from the Sentence
  * Transformer microservice.
  */
-sealed class GetSimilarDemonstrationError : CustomError {
+sealed class GetSimilarDemonstrationError : SystemError {
     /** Represents a network error when interacting with the Sentence Transformer microservice. */
     data object NetworkError : GetSimilarDemonstrationError() {
         override val message: String = "Network error with Sentence Transformer Microservice"
@@ -99,7 +110,7 @@ sealed class GetSimilarDemonstrationError : CustomError {
 }
 
 /** A sealed class representing errors related to retrieving random puzzles. */
-sealed class GetRandomPuzzlesError : CustomError {
+sealed class GetRandomPuzzlesError : SystemError {
     /**
      * Represents an error caused by a throwable when retrieving random puzzles.
      *
@@ -111,7 +122,7 @@ sealed class GetRandomPuzzlesError : CustomError {
 }
 
 /** A sealed class representing errors related to processing prompts. */
-sealed class ProcessPromptError : CustomError {
+sealed class ProcessPromptError : SystemError {
     /** Represents an error when there are insufficient demonstrations to process the prompt. */
     data object InsufficientDemonstrationsError : ProcessPromptError() {
         override val message: String = "Not enough Demonstrations when processing prompt"
@@ -129,7 +140,7 @@ sealed class ProcessPromptError : CustomError {
 }
 
 /** A sealed class representing errors related to processing SQL queries. */
-sealed class ProcessQueryError : CustomError {
+sealed class ProcessQueryError : SystemError {
     /**
      * Represents a validation error when processing a query.
      *
@@ -148,7 +159,7 @@ sealed class ProcessQueryError : CustomError {
 }
 
 /** A sealed class representing errors related to writing to a file. */
-sealed class WriteToFileError : CustomError {
+sealed class WriteToFileError : SystemError {
     /**
      * Represents an error caused by an exception when writing to a file.
      *
@@ -160,7 +171,7 @@ sealed class WriteToFileError : CustomError {
 }
 
 /** A sealed class representing errors related to retrieving benchmark entries. */
-sealed class GetBenchmarkEntriesError : CustomError {
+sealed class GetBenchmarkEntriesError : SystemError {
     /**
      * Represents an IO exception when retrieving benchmark entries.
      *
@@ -177,7 +188,7 @@ sealed class GetBenchmarkEntriesError : CustomError {
 }
 
 /** A sealed class representing errors related to retrieving text files. */
-sealed class GetTextFileError : CustomError {
+sealed class GetTextFileError : SystemError {
     /**
      * Represents an IO exception when retrieving a text file.
      *

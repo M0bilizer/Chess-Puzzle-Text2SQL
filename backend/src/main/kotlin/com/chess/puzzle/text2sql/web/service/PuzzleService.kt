@@ -1,12 +1,12 @@
 package com.chess.puzzle.text2sql.web.service
 
+import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
 import com.chess.puzzle.text2sql.web.entities.Puzzle
-import com.chess.puzzle.text2sql.web.entities.ResultWrapper
-import com.chess.puzzle.text2sql.web.entities.helper.GetRandomPuzzlesError
-import com.chess.puzzle.text2sql.web.entities.helper.GetRandomPuzzlesError.Throwable
-import com.chess.puzzle.text2sql.web.entities.helper.ProcessQueryError
-import com.chess.puzzle.text2sql.web.entities.helper.ProcessQueryError.HibernateError
-import com.chess.puzzle.text2sql.web.entities.helper.ProcessQueryError.ValidationError
+import com.chess.puzzle.text2sql.web.error.GetRandomPuzzlesError
+import com.chess.puzzle.text2sql.web.error.GetRandomPuzzlesError.Throwable
+import com.chess.puzzle.text2sql.web.error.ProcessQueryError
+import com.chess.puzzle.text2sql.web.error.ProcessQueryError.HibernateError
+import com.chess.puzzle.text2sql.web.error.ProcessQueryError.ValidationError
 import com.chess.puzzle.text2sql.web.repositories.PuzzleRepository
 import com.chess.puzzle.text2sql.web.validator.SqlValidator
 import io.github.oshai.kotlinlogging.KotlinLogging

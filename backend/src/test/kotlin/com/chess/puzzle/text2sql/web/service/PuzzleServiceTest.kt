@@ -1,7 +1,7 @@
+import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
 import com.chess.puzzle.text2sql.web.entities.Puzzle
-import com.chess.puzzle.text2sql.web.entities.ResultWrapper
-import com.chess.puzzle.text2sql.web.entities.helper.GetRandomPuzzlesError
-import com.chess.puzzle.text2sql.web.entities.helper.ProcessQueryError
+import com.chess.puzzle.text2sql.web.error.GetRandomPuzzlesError
+import com.chess.puzzle.text2sql.web.error.ProcessQueryError
 import com.chess.puzzle.text2sql.web.repositories.PuzzleRepository
 import com.chess.puzzle.text2sql.web.service.PuzzleService
 import com.chess.puzzle.text2sql.web.validator.SqlValidator

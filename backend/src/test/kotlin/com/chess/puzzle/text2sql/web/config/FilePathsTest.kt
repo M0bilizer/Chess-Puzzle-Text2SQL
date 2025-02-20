@@ -1,9 +1,10 @@
 package com.chess.puzzle.text2sql.web.config
 
-import com.chess.puzzle.text2sql.web.entities.ModelName
+import com.chess.puzzle.text2sql.web.domain.model.ModelVariant
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.TestPropertySource
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
@@ -17,6 +18,7 @@ import strikt.assertions.isEqualTo
             "baselinePromptTemplate.md.path=path/to/baselinePromptTemplate.md",
         ]
 )
+@ActiveProfiles("test")
 class FilePathsTest {
 
     @Autowired private lateinit var filePaths: FilePaths
@@ -34,7 +36,7 @@ class FilePathsTest {
     @Test
     fun `test getPromptTemplate with Full model`() {
         // Act
-        val result = filePaths.getPromptTemplate(ModelName.Full)
+        val result = filePaths.getPromptTemplate(ModelVariant.Full)
 
         // Assert
         expectThat(result) { isEqualTo("path/to/promptTemplate.md") }
@@ -43,7 +45,7 @@ class FilePathsTest {
     @Test
     fun `test getPromptTemplate with Partial model`() {
         // Act
-        val result = filePaths.getPromptTemplate(ModelName.Partial)
+        val result = filePaths.getPromptTemplate(ModelVariant.Partial)
 
         // Assert
         expectThat(result) { isEqualTo("path/to/promptTemplate.md") }
@@ -52,7 +54,7 @@ class FilePathsTest {
     @Test
     fun `test getPromptTemplate with Baseline model`() {
         // Act
-        val result = filePaths.getPromptTemplate(ModelName.Baseline)
+        val result = filePaths.getPromptTemplate(ModelVariant.Baseline)
 
         // Assert
         expectThat(result) { isEqualTo("path/to/baselinePromptTemplate.md") }

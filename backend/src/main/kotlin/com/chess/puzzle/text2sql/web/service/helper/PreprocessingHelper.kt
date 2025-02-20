@@ -1,11 +1,11 @@
 package com.chess.puzzle.text2sql.web.service.helper
 
-import com.chess.puzzle.text2sql.web.entities.Demonstration
-import com.chess.puzzle.text2sql.web.entities.ResultWrapper
-import com.chess.puzzle.text2sql.web.entities.helper.ProcessPromptError
-import com.chess.puzzle.text2sql.web.entities.helper.ProcessPromptError.InsufficientDemonstrationsError
-import com.chess.puzzle.text2sql.web.entities.helper.ProcessPromptError.InvalidDemonstrationError
-import com.chess.puzzle.text2sql.web.entities.helper.ProcessPromptError.MissingPlaceholderError
+import com.chess.puzzle.text2sql.web.domain.model.Demonstration
+import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
+import com.chess.puzzle.text2sql.web.error.ProcessPromptError
+import com.chess.puzzle.text2sql.web.error.ProcessPromptError.InsufficientDemonstrationsError
+import com.chess.puzzle.text2sql.web.error.ProcessPromptError.InvalidDemonstrationError
+import com.chess.puzzle.text2sql.web.error.ProcessPromptError.MissingPlaceholderError
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Service
 

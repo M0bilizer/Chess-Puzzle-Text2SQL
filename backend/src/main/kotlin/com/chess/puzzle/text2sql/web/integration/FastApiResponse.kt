@@ -1,5 +1,6 @@
-package com.chess.puzzle.text2sql.web.entities
+package com.chess.puzzle.text2sql.web.integration
 
+import com.chess.puzzle.text2sql.web.domain.model.Demonstration
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

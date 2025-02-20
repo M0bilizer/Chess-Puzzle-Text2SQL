@@ -1,4 +1,4 @@
-package com.chess.puzzle.text2sql.web.entities
+package com.chess.puzzle.text2sql.web.domain.input
 
 import kotlinx.serialization.Serializable
 
@@ -11,7 +11,7 @@ import kotlinx.serialization.Serializable
  * @see [com.chess.puzzle.text2sql.web.controllers.Text2SqlController]
  */
 @Serializable
-data class QueryRequest(
+data class GenericRequest(
     /**
      * The user's query for Text2SQL.
      *

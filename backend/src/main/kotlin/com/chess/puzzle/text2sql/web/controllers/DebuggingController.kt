@@ -1,12 +1,16 @@
 package com.chess.puzzle.text2sql.web.controllers
 
-import com.chess.puzzle.text2sql.web.entities.ModelName.Full
-import com.chess.puzzle.text2sql.web.entities.QueryRequest
-import com.chess.puzzle.text2sql.web.entities.ResultWrapper
+import com.chess.puzzle.text2sql.web.domain.input.GenericRequest
+import com.chess.puzzle.text2sql.web.domain.input.LlmInput
+import com.chess.puzzle.text2sql.web.domain.input.LlmRequest
+import com.chess.puzzle.text2sql.web.domain.input.Text2SqlInput
+import com.chess.puzzle.text2sql.web.domain.input.Text2SqlRequest
+import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
 import com.chess.puzzle.text2sql.web.service.PuzzleService
 import com.chess.puzzle.text2sql.web.service.Text2SQLService
 import com.chess.puzzle.text2sql.web.service.helper.LargeLanguageApiHelper
 import com.chess.puzzle.text2sql.web.service.helper.SentenceTransformerHelper
+import com.chess.puzzle.text2sql.web.utility.ResponseUtils.badRequest
 import com.chess.puzzle.text2sql.web.utility.ResponseUtils.failure
 import com.chess.puzzle.text2sql.web.utility.ResponseUtils.success
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -72,12 +76,12 @@ class DebuggingController(
      *
      * Processes the input query as SQL and retrieves puzzle results.
      *
-     * @param input The [QueryRequest] containing the SQL query.
+     * @param input The [GenericRequest] containing the SQL query.
      * @return A [ResponseEntity] containing the puzzle results if successful, or an error message
      *   if the process fails.
      */
     @PostMapping("/api/debug/sql")
-    fun sql(@RequestBody input: QueryRequest): ResponseEntity<String> {
+    fun sql(@RequestBody input: GenericRequest): ResponseEntity<String> {
         logger.info { "Received POST on /api/debug/sql { input = $input }" }
         val sqlCommand = input.query
         return when (val result = puzzleService.processQuery(sqlCommand)) {
@@ -92,12 +96,12 @@ class DebuggingController(
      *
      * Retrieves similar demonstrations for the input query.
      *
-     * @param input The [QueryRequest] containing the query.
+     * @param input The [GenericRequest] containing the query.
      * @return A [ResponseEntity] containing the similar demonstrations if successful, or an error
      *   message if the process fails.
      */
     @PostMapping("/api/debug/sentenceTransformer")
-    suspend fun sentenceTransformer(@RequestBody input: QueryRequest): ResponseEntity<String> {
+    suspend fun sentenceTransformer(@RequestBody input: GenericRequest): ResponseEntity<String> {
         logger.info { "Received POST on /api/debug/sentenceTransformer { input = $input }" }
         val request = input.query
         return when (val result = sentenceTransformerHelper.getSimilarDemonstration(request)) {
@@ -111,15 +115,20 @@ class DebuggingController(
      *
      * Converts the input query into an SQL query.
      *
-     * @param input The [QueryRequest] containing the natural language query.
+     * @param request The [Text2SqlRequest] containing the natural language query.
      * @return A [ResponseEntity] containing the generated SQL query if successful, or an error
      *   message if the process fails.
      */
     @PostMapping("/api/debug/text2sql")
-    suspend fun text2sql(@RequestBody input: QueryRequest): ResponseEntity<String> {
-        logger.info { "Received POST on /api/debug/text2sql { input = $input }" }
-        val query = input.query
-        return when (val result = text2SQLService.convertToSQL(query, Full)) {
+    suspend fun text2sql(@RequestBody request: Text2SqlRequest): ResponseEntity<String> {
+        logger.info { "Received POST on /api/debug/text2sql { request = $request }" }
+        val input: Text2SqlInput
+        when (val result = request.toInput()) {
+            is ResultWrapper.Success -> input = result.data
+            is ResultWrapper.Failure -> return badRequest(result.error)
+        }
+        val (query, model, modelVariant) = input
+        return when (val result = text2SQLService.convertToSQL(query, model, modelVariant)) {
             is ResultWrapper.Success -> success(result.data)
             is ResultWrapper.Failure -> failure(result.error)
         }
@@ -130,15 +139,20 @@ class DebuggingController(
      *
      * Sends the input prompt to the LLM API.
      *
-     * @param input The [QueryRequest] containing the prompt.
+     * @param request The [LlmRequest] containing the prompt and model choice.
      * @return A [ResponseEntity] containing the LLM response if successful, or an error message if
      *   the process fails.
      */
     @PostMapping("/api/debug/llm")
-    suspend fun llm(@RequestBody input: QueryRequest): ResponseEntity<String> {
-        logger.info { "Received POST on /api/debug/llm { input = $input }" }
-        val prompt = input.query
-        return when (val result = largeLanguageApiHelper.callDeepSeek(prompt)) {
+    suspend fun llm(@RequestBody request: LlmRequest): ResponseEntity<String> {
+        logger.info { "Received POST on /api/debug/llm { request = $request }" }
+        val input: LlmInput
+        when (val result = request.toInput()) {
+            is ResultWrapper.Success -> input = result.data
+            is ResultWrapper.Failure -> return badRequest(result.error)
+        }
+        val (query, model) = input
+        return when (val result = largeLanguageApiHelper.callModel(query, model)) {
             is ResultWrapper.Success -> success(result.data)
             is ResultWrapper.Failure -> failure(result.error)
         }
