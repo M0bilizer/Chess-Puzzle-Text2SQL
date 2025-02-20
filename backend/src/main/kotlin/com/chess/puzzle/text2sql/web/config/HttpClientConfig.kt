@@ -1,18 +1,23 @@
 package com.chess.puzzle.text2sql.web.config
 
+import com.aallam.openai.api.http.Timeout
 import com.aallam.openai.api.logging.LogLevel
 import com.aallam.openai.api.logging.Logger
 import com.aallam.openai.client.LoggingConfig
 import com.aallam.openai.client.OpenAI
 import com.aallam.openai.client.OpenAIHost
+import com.chess.puzzle.text2sql.web.service.llm.CustomMistralClient
 import io.ktor.client.*
 import io.ktor.client.engine.okhttp.*
+import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.serialization.kotlinx.json.*
+import kotlinx.serialization.json.Json
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import kotlin.time.Duration
 
 /**
  * Configuration class for setting up HTTP client and OpenAI client.
@@ -64,17 +69,23 @@ class HttpClientConfig {
             host = OpenAIHost(deepSeekBaseUrl),
             logging =
                 LoggingConfig(logLevel = LogLevel.None, logger = Logger.Simple, sanitize = true),
+            timeout = Timeout(request = Duration.parse("5s"))
         )
     }
 
     @Bean
     @Qualifier("mistralClient")
-    fun mistralClient(): OpenAI {
-        return OpenAI(
-            token = mistralApiKey,
-            host = OpenAIHost(mistralBaseUrl),
-            logging =
-                LoggingConfig(logLevel = LogLevel.None, logger = Logger.Simple, sanitize = true),
+    fun mistralClient(): CustomMistralClient {
+        return CustomMistralClient(
+            client =
+                HttpClient(OkHttp) {
+                    install(ContentNegotiation) { json(Json { ignoreUnknownKeys = true }) }
+                    install(HttpTimeout) {
+                        requestTimeoutMillis = 5000
+                    }
+                },
+            apiKey = mistralApiKey,
+            baseUrl = mistralBaseUrl,
         )
     }
 }

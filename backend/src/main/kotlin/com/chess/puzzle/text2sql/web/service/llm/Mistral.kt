@@ -1,22 +1,40 @@
 package com.chess.puzzle.text2sql.web.service.llm
 
 import com.aallam.openai.api.chat.ChatCompletion
-import com.aallam.openai.api.chat.ChatCompletionRequest
-import com.aallam.openai.api.chat.ChatMessage
-import com.aallam.openai.api.chat.ChatRole
-import com.aallam.openai.api.model.ModelId
-import com.aallam.openai.client.OpenAI
-import org.springframework.beans.factory.annotation.Qualifier
+import com.aallam.openai.api.exception.OpenAIHttpException
+import com.aallam.openai.api.exception.OpenAIIOException
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
+import kotlinx.serialization.Serializable
 import org.springframework.stereotype.Component
 
+data class CustomMistralClient(val client: HttpClient, val apiKey: String, val baseUrl: String)
+
+@Serializable private data class Message(val role: String, val content: String)
+
+@Serializable private data class RequestBody(val model: String, val messages: List<Message>)
+
 @Component
-class Mistral(@Qualifier("mistralClient") private val client: OpenAI) : LargeLanguageModel {
+class Mistral(private val mistralClient: CustomMistralClient) : LargeLanguageModel {
     override suspend fun callModel(query: String): ChatCompletion {
-        val chatCompletionRequest =
-            ChatCompletionRequest(
-                model = ModelId("mistral-small-latest"),
-                messages = listOf(ChatMessage(role = ChatRole.User, content = query)),
+        val (client, apiKey, baseUrl) = mistralClient
+
+        val requestBody =
+            RequestBody(
+                model = "mistral-small-latest",
+                messages = listOf(Message(role = "user", content = query)),
             )
-        return client.chatCompletion(chatCompletionRequest)
+
+        val response: HttpResponse =
+            client.post(baseUrl) {
+                contentType(ContentType.Application.Json)
+                header("Authorization", "Bearer $apiKey")
+                setBody(requestBody)
+            }
+
+        return response.body<ChatCompletion>()
     }
 }
