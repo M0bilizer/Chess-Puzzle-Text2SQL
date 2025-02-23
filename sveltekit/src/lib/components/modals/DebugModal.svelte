@@ -21,7 +21,7 @@
 			if (search === undefined) return;
 			query = search.metadata.query;
 			model = search.metadata.model == null ? 'Local data' : search.metadata.model;
-			sql = search.metadata.sql == null ? 'Not applicable' : formatSql(sql);
+			sql = search.metadata.sql == null ? 'Not applicable' : formatSql(search.metadata.sql);
 		}
 	});
 

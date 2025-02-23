@@ -149,7 +149,7 @@ class DebuggingControllerIntegrationTest {
 
         val response = controller.db()
         val expectedResponse =
-            objectMapper.writeValueAsString(mapOf("status" to "failure", "data" to error.message))
+            objectMapper.writeValueAsString(mapOf("status" to "failure", "message" to error.message))
 
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
         expectThat(response.body).isEqualTo(expectedResponse)
@@ -216,7 +216,7 @@ class DebuggingControllerIntegrationTest {
 
         val response = controller.sql(genericRequest)
         val expectedResponse =
-            objectMapper.writeValueAsString(mapOf("status" to "failure", "data" to error.message))
+            objectMapper.writeValueAsString(mapOf("status" to "failure", "message" to error.message))
 
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
         expectThat(response.body).isEqualTo(expectedResponse)
@@ -241,7 +241,7 @@ class DebuggingControllerIntegrationTest {
 
         val response = controller.sql(genericRequest)
         val expectedResponse =
-            objectMapper.writeValueAsString(mapOf("status" to "failure", "data" to error.message))
+            objectMapper.writeValueAsString(mapOf("status" to "failure", "message" to error.message))
 
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
         expectThat(response.body).isEqualTo(expectedResponse)
@@ -266,7 +266,7 @@ class DebuggingControllerIntegrationTest {
 
         val response = controller.sql(genericRequest)
         val expectedResponse =
-            objectMapper.writeValueAsString(mapOf("status" to "failure", "data" to error.message))
+            objectMapper.writeValueAsString(mapOf("status" to "failure", "message" to error.message))
 
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
         expectThat(response.body).isEqualTo(expectedResponse)
@@ -355,7 +355,7 @@ class DebuggingControllerIntegrationTest {
 
         val error = GetSimilarDemonstrationError.NetworkError
         val expectedResponse =
-            objectMapper.writeValueAsString(mapOf("status" to "failure", "data" to error.message))
+            objectMapper.writeValueAsString(mapOf("status" to "failure", "message" to error.message))
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
         expectThat(response.body).isEqualTo(expectedResponse)
     }
@@ -401,7 +401,7 @@ class DebuggingControllerIntegrationTest {
 
         val error = GetSimilarDemonstrationError.InternalError
         val expectedResponse =
-            objectMapper.writeValueAsString(mapOf("status" to "failure", "data" to error.message))
+            objectMapper.writeValueAsString(mapOf("status" to "failure", "message" to error.message))
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
         expectThat(response.body).isEqualTo(expectedResponse)
     }
@@ -470,7 +470,7 @@ class DebuggingControllerIntegrationTest {
         val response = controller.text2sql(text2SqlRequest)
 
         val expectedResponse =
-            objectMapper.writeValueAsString(mapOf("status" to "failure", "data" to error.message))
+            objectMapper.writeValueAsString(mapOf("status" to "failure", "message" to error.message))
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
         expectThat(response.body).isEqualTo(expectedResponse)
     }
@@ -499,7 +499,7 @@ class DebuggingControllerIntegrationTest {
         val response = controller.text2sql(text2SqlRequest)
 
         val expectedResponse =
-            objectMapper.writeValueAsString(mapOf("status" to "failure", "data" to error.message))
+            objectMapper.writeValueAsString(mapOf("status" to "failure", "message" to error.message))
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
         expectThat(response.body).isEqualTo(expectedResponse)
     }
@@ -537,7 +537,7 @@ class DebuggingControllerIntegrationTest {
         val response = controller.text2sql(text2SqlRequest)
 
         val expectedResponse =
-            objectMapper.writeValueAsString(mapOf("status" to "failure", "data" to error.message))
+            objectMapper.writeValueAsString(mapOf("status" to "failure", "message" to error.message))
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
         expectThat(response.body).isEqualTo(expectedResponse)
     }
@@ -580,7 +580,7 @@ class DebuggingControllerIntegrationTest {
         val response = controller.text2sql(text2SqlRequest)
 
         val expectedResponse =
-            objectMapper.writeValueAsString(mapOf("status" to "failure", "data" to error.message))
+            objectMapper.writeValueAsString(mapOf("status" to "failure", "message" to error.message))
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
         expectThat(response.body).isEqualTo(expectedResponse)
     }
@@ -654,7 +654,7 @@ class DebuggingControllerIntegrationTest {
 
         val error = CallLargeLanguageModelError.RateLimitError
         val expectedResponse =
-            objectMapper.writeValueAsString(mapOf("status" to "failure", "data" to error.message))
+            objectMapper.writeValueAsString(mapOf("status" to "failure", "message" to error.message))
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
         expectThat(response.body).isEqualTo(expectedResponse)
     }
@@ -683,7 +683,7 @@ class DebuggingControllerIntegrationTest {
 
         val error = CallLargeLanguageModelError.PermissionError
         val expectedResponse =
-            objectMapper.writeValueAsString(mapOf("status" to "failure", "data" to error.message))
+            objectMapper.writeValueAsString(mapOf("status" to "failure", "message" to error.message))
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
         expectThat(response.body).isEqualTo(expectedResponse)
     }
@@ -712,7 +712,7 @@ class DebuggingControllerIntegrationTest {
 
         val error = CallLargeLanguageModelError.InsufficientBalanceError
         val expectedResponse =
-            objectMapper.writeValueAsString(mapOf("status" to "failure", "data" to error.message))
+            objectMapper.writeValueAsString(mapOf("status" to "failure", "message" to error.message))
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
         expectThat(response.body).isEqualTo(expectedResponse)
     }
@@ -740,7 +740,7 @@ class DebuggingControllerIntegrationTest {
 
         val error = CallLargeLanguageModelError.UnknownStatusError(425)
         val expectedResponse =
-            objectMapper.writeValueAsString(mapOf("status" to "failure", "data" to error.message))
+            objectMapper.writeValueAsString(mapOf("status" to "failure", "message" to error.message))
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
         expectThat(response.body).isEqualTo(expectedResponse)
     }

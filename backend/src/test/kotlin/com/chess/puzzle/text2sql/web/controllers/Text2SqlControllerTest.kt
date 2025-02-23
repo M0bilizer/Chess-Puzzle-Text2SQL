@@ -4,6 +4,7 @@ import com.chess.puzzle.text2sql.web.domain.input.QueryPuzzleRequest
 import com.chess.puzzle.text2sql.web.domain.model.ModelName
 import com.chess.puzzle.text2sql.web.domain.model.ModelVariant
 import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
+import com.chess.puzzle.text2sql.web.domain.model.SearchMetadata
 import com.chess.puzzle.text2sql.web.entities.Puzzle
 import com.chess.puzzle.text2sql.web.error.GetSimilarDemonstrationError
 import com.chess.puzzle.text2sql.web.error.ProcessQueryError
@@ -56,8 +57,9 @@ class Text2SqlControllerTest {
 
         val response: ResponseEntity<String> = controller.queryPuzzle(queryPuzzleRequest)
 
+        val expectedMetadata = SearchMetadata(query, ModelName.Deepseek, sqlQuery)
         val expectedResponse =
-            objectMapper.writeValueAsString(mapOf("status" to "success", "data" to puzzles))
+            objectMapper.writeValueAsString(mapOf("status" to "success", "data" to puzzles, "metadata" to expectedMetadata))
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
         expectThat(response.body).isEqualTo(expectedResponse)
     }
@@ -74,7 +76,7 @@ class Text2SqlControllerTest {
         val response: ResponseEntity<String> = controller.queryPuzzle(queryPuzzleRequest)
 
         val expectedResponse =
-            objectMapper.writeValueAsString(mapOf("status" to "failure", "data" to error.message))
+            objectMapper.writeValueAsString(mapOf("status" to "failure", "message" to error.message))
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
         expectThat(response.body).isEqualTo(expectedResponse)
     }
@@ -93,7 +95,7 @@ class Text2SqlControllerTest {
         val response: ResponseEntity<String> = controller.queryPuzzle(queryPuzzleRequest)
 
         val expectedResponse =
-            objectMapper.writeValueAsString(mapOf("status" to "failure", "data" to error.message))
+            objectMapper.writeValueAsString(mapOf("status" to "failure", "message" to error.message))
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
         expectThat(response.body).isEqualTo(expectedResponse)
     }

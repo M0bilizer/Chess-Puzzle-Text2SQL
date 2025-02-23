@@ -5,6 +5,7 @@ import {
 	ConfigurationError,
 	ConnectionFailure,
 	ImplementationError,
+	NoResultsFailure,
 	type Result,
 	Success,
 	UnknownError
@@ -64,6 +65,9 @@ async function _callBackend(query: string, model: ModelEnum): Promise<Result> {
 	const json: success | failure = await res.json();
 	if (json.status !== 'success') {
 		return new BackendFailure(json.message || 'Unexpected error from backend');
+	}
+	if (json.data.length === 0) {
+		return new NoResultsFailure();
 	}
 	return new Success(json.metadata, json.data);
 }

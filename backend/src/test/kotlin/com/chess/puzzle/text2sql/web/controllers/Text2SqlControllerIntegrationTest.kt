@@ -6,6 +6,7 @@ import com.chess.puzzle.text2sql.web.domain.model.Demonstration
 import com.chess.puzzle.text2sql.web.domain.model.ModelName
 import com.chess.puzzle.text2sql.web.domain.model.ModelVariant
 import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
+import com.chess.puzzle.text2sql.web.domain.model.SearchMetadata
 import com.chess.puzzle.text2sql.web.entities.Puzzle
 import com.chess.puzzle.text2sql.web.error.CallLargeLanguageModelError
 import com.chess.puzzle.text2sql.web.error.GetSimilarDemonstrationError
@@ -103,8 +104,9 @@ class Text2SqlControllerIntegrationTest {
 
         val response: ResponseEntity<String> = controller.queryPuzzle(queryPuzzleRequest)
 
+        val expectedMetadata = SearchMetadata(query, ModelName.Deepseek, sql)
         val expectedResponse =
-            objectMapper.writeValueAsString(mapOf("status" to "success", "data" to puzzles))
+            objectMapper.writeValueAsString(mapOf("status" to "success", "data" to puzzles, "metadata" to expectedMetadata))
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
         expectThat(response.body).isEqualTo(expectedResponse)
     }
@@ -145,7 +147,7 @@ class Text2SqlControllerIntegrationTest {
 
         val expectedResponse =
             objectMapper.writeValueAsString(
-                mapOf("status" to "failure", "data" to ProcessQueryError.HibernateError.message)
+                mapOf("status" to "failure", "message" to ProcessQueryError.HibernateError.message)
             )
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
         expectThat(response.body).isEqualTo(expectedResponse)
@@ -188,7 +190,7 @@ class Text2SqlControllerIntegrationTest {
             objectMapper.writeValueAsString(
                 mapOf(
                     "status" to "failure",
-                    "data" to
+                    "message" to
                         ProcessQueryError.ValidationError(isValid = true, isAllowed = false).message,
                 )
             )
@@ -233,7 +235,7 @@ class Text2SqlControllerIntegrationTest {
             objectMapper.writeValueAsString(
                 mapOf(
                     "status" to "failure",
-                    "data" to
+                    "message" to
                         ProcessQueryError.ValidationError(isValid = false, isAllowed = true).message,
                 )
             )
@@ -274,7 +276,7 @@ class Text2SqlControllerIntegrationTest {
             objectMapper.writeValueAsString(
                 mapOf(
                     "status" to "failure",
-                    "data" to CallLargeLanguageModelError.RateLimitError.message,
+                    "message" to CallLargeLanguageModelError.RateLimitError.message,
                 )
             )
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
@@ -309,7 +311,7 @@ class Text2SqlControllerIntegrationTest {
             objectMapper.writeValueAsString(
                 mapOf(
                     "status" to "failure",
-                    "data" to ProcessPromptError.MissingPlaceholderError.message,
+                    "message" to ProcessPromptError.MissingPlaceholderError.message,
                 )
             )
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
@@ -335,7 +337,7 @@ class Text2SqlControllerIntegrationTest {
             objectMapper.writeValueAsString(
                 mapOf(
                     "status" to "failure",
-                    "data" to GetSimilarDemonstrationError.NetworkError.message,
+                    "message" to GetSimilarDemonstrationError.NetworkError.message,
                 )
             )
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
@@ -356,7 +358,7 @@ class Text2SqlControllerIntegrationTest {
 
         val expectedResponse =
             objectMapper.writeValueAsString(
-                mapOf("status" to "failure", "data" to GetTextFileError.FileNotFoundError.message)
+                mapOf("status" to "failure", "message" to GetTextFileError.FileNotFoundError.message)
             )
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
         expectThat(response.body).isEqualTo(expectedResponse)

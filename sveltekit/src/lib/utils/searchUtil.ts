@@ -80,7 +80,7 @@ async function _handleResponse(
 		const data = _mapToInstance(json.data);
 		loadFirstGame(query, data);
 		addSearchResult(query, metadata, data);
-		if (model === ModelEnum.DeepSeek) toastInfo('Searched using alternative engine', 'root');
+		if (model !== ModelEnum.DeepSeek) toastInfo('Searched using alternative engine', 'root');
 		return json.status;
 	} else if (isStandardError(json.status)) {
 		toastFailure(json.message, 'modal', query);
