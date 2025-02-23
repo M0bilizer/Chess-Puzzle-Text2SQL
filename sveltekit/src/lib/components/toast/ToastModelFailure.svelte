@@ -4,14 +4,14 @@
 	import { searchPuzzles } from '$lib/utils/searchUtil';
 	import { ModelEnum } from '$lib/enums/modelEnum';
 	import { SearchResultEnum } from '$lib/enums/searchResultEnum';
-	import { searchModalState } from '$lib/stores/modalStore';
+	import { closeSearchModal, searchModalState } from '$lib/stores/modalStore';
 	import Fa6SolidTriangleExclamation from 'virtual:icons/fa6-solid/triangle-exclamation';
 
 	let { message, toastId, query } = $props();
 
 	async function handleSearchPuzzle() {
 		const result: SearchResultEnum = await searchPuzzles(query, ModelEnum.Mistral);
-		if (result === SearchResultEnum.Success) searchModalState.set({ open: false });
+		if (result === SearchResultEnum.Success) closeSearchModal()
 	}
 
 	function handleOnClick() {

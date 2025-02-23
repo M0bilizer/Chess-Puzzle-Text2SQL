@@ -21,7 +21,7 @@
 	async function handleSearch(event: Event) {
 		event.preventDefault();
 		const result: SearchResultEnum = await searchPuzzles(query, ModelEnum.DeepSeek);
-		if (result === SearchResultEnum.Success) searchModalState.set({ open: false });
+		if (result === SearchResultEnum.Success) closeSearchModal()
 	}
 </script>
 
