@@ -1,17 +1,12 @@
 package com.chess.puzzle.text2sql.web.domain.model
 
+import com.fasterxml.jackson.annotation.JsonValue
 import kotlinx.serialization.Serializable
 
-/**
- * Enum class representing the model variants used for benchmarking.
- * - [Full]: The full model with two features: finding similar demonstrations and schema masking.
- * - [Partial]: The partial model with one feature: finding similar demonstrations.
- * - [Baseline]: The baseline model with no additional feature.
- */
 @Serializable
-enum class ModelName {
-    Deepseek,
-    Mistral;
+enum class ModelName(@JsonValue val typeName: String) {
+    Deepseek("deepseek"),
+    Mistral("mistral");
 
     companion object {
         fun toEnum(value: String): ModelName? {

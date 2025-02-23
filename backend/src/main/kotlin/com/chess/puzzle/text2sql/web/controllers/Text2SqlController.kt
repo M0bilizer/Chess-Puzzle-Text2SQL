@@ -4,12 +4,13 @@ import com.chess.puzzle.text2sql.web.domain.input.QueryPuzzleInput
 import com.chess.puzzle.text2sql.web.domain.input.QueryPuzzleRequest
 import com.chess.puzzle.text2sql.web.domain.model.ModelVariant.Full
 import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
+import com.chess.puzzle.text2sql.web.domain.model.SearchMetadata
 import com.chess.puzzle.text2sql.web.entities.Puzzle
 import com.chess.puzzle.text2sql.web.service.PuzzleService
 import com.chess.puzzle.text2sql.web.service.Text2SQLService
 import com.chess.puzzle.text2sql.web.utility.ResponseUtils.badRequest
 import com.chess.puzzle.text2sql.web.utility.ResponseUtils.failure
-import com.chess.puzzle.text2sql.web.utility.ResponseUtils.success
+import com.chess.puzzle.text2sql.web.utility.ResponseUtils.successWithSearchMetadata
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
@@ -64,6 +65,7 @@ class Text2SqlController(
             is ResultWrapper.Success -> puzzles = result.data
             is ResultWrapper.Failure -> return failure(result.error)
         }
-        return success(puzzles)
+        val searchMetadata = SearchMetadata(query, input.modelName, sql)
+        return successWithSearchMetadata(puzzles, searchMetadata)
     }
 }

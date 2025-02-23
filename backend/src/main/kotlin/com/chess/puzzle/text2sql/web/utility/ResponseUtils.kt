@@ -1,5 +1,6 @@
 package com.chess.puzzle.text2sql.web.utility
 
+import com.chess.puzzle.text2sql.web.domain.model.SearchMetadata
 import com.chess.puzzle.text2sql.web.error.ClientError
 import com.chess.puzzle.text2sql.web.error.SystemError
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -41,6 +42,13 @@ object ResponseUtils {
      */
     fun <T> success(data: T): ResponseEntity<String> {
         val response = mapOf("status" to "success", "data" to data)
+        return ResponseEntity.ok()
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(objectMapper.writeValueAsString(response))
+    }
+
+    fun <T> successWithSearchMetadata(data: T, metadata: SearchMetadata): ResponseEntity<String> {
+        val response = mapOf("status" to "success", "data" to data, "metadata" to metadata)
         return ResponseEntity.ok()
             .contentType(MediaType.APPLICATION_JSON)
             .body(objectMapper.writeValueAsString(response))
