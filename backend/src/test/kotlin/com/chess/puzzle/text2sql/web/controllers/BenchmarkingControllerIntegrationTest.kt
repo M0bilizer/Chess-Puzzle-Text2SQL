@@ -161,7 +161,7 @@ class BenchmarkingControllerIntegrationTest {
             objectMapper.writeValueAsString(
                 mapOf(
                     "status" to "failure",
-                    "data" to GetBenchmarkEntriesError.FileNotFoundError.message,
+                    "message" to GetBenchmarkEntriesError.FileNotFoundError.message,
                 )
             )
         expectThat(result.statusCode).isEqualTo(HttpStatus.OK)

@@ -1,5 +1,7 @@
 package com.chess.puzzle.text2sql.web.utility
 
+import com.chess.puzzle.text2sql.web.domain.model.ModelName
+import com.chess.puzzle.text2sql.web.domain.model.SearchMetadata
 import com.chess.puzzle.text2sql.web.error.ClientError
 import com.chess.puzzle.text2sql.web.error.ProcessQueryError
 import com.fasterxml.jackson.core.type.TypeReference
@@ -32,6 +34,27 @@ class ResponseUtilsTest {
     }
 
     @Test
+    fun `successWithSearchMetadata should return a ResponseEntity with status success, provided data, and metadata`() {
+        val data = "Hello World"
+        val metadata = SearchMetadata("my query", ModelName.Deepseek, "my sql")
+        val responseEntity = ResponseUtils.successWithSearchMetadata(data, metadata)
+
+        expectThat(responseEntity) {
+            get { statusCode }.isEqualTo(HttpStatus.OK)
+            get { body }
+                .isNotNull()
+                .and {
+                    val jsonResponse = objectMapper.readValue(responseEntity.body, Map::class.java)
+                    get("status") { jsonResponse["status"] }.isEqualTo("success")
+                    get("data") { jsonResponse["data"] }.isEqualTo(data)
+
+                    val deserializedMetadata = objectMapper.convertValue(jsonResponse["metadata"], SearchMetadata::class.java)
+                    get("metadata") { deserializedMetadata }.isEqualTo(metadata)
+                }
+        }
+    }
+
+    @Test
     fun `error should return a ResponseEntity with status error and provided data`() {
         val data = ProcessQueryError.HibernateError
         val responseEntity = ResponseUtils.failure(data)
@@ -47,7 +70,7 @@ class ResponseUtilsTest {
                             object : TypeReference<Map<String, Any>>() {},
                         )
                     get("status") { jsonResponse["status"] }.isEqualTo("failure")
-                    get("data") { jsonResponse["data"] }.isEqualTo(data.message)
+                    get("message") { jsonResponse["message"] }.isEqualTo(data.message)
                 }
         }
     }

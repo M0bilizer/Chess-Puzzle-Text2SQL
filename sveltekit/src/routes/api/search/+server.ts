@@ -4,7 +4,8 @@ import {
 	BackendFailure,
 	ConfigurationError,
 	ConnectionFailure,
-	ImplementationError, NoResultsFailure,
+	ImplementationError,
+	NoResultsFailure,
 	type Result,
 	Success,
 	UnknownError
