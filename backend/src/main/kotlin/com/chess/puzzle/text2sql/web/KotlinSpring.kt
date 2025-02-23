@@ -43,6 +43,16 @@ class KotlinSpring {
     }
 }
 
+fun loadEnvIfExists() {
+    try {
+        val dotenv = dotenv()
+        dotenv.entries().forEach { entry -> System.setProperty(entry.key, entry.value) }
+        println("Loaded .env file")
+    } catch (_: Exception) {
+        println(".env file does not exist. Skipping loading environment variables from .env file.")
+    }
+}
+
 /**
  * The main function that starts the Spring Boot application.
  *
@@ -52,9 +62,6 @@ class KotlinSpring {
  * @param args Command-line arguments passed to the application.
  */
 fun main(args: Array<String>) {
-
-    val dotenv = dotenv()
-    dotenv.entries().forEach { entry -> System.setProperty(entry.key, entry.value) }
-
+    loadEnvIfExists()
     runApplication<KotlinSpring>(*args)
 }
