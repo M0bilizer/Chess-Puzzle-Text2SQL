@@ -66,7 +66,7 @@ object ResponseUtils {
      * @return A [ResponseEntity] containing the JSON response string.
      */
     fun failure(systemError: SystemError): ResponseEntity<String> {
-        val response = mapOf("status" to "failure", "data" to systemError.message)
+        val response = mapOf("status" to "failure", "message" to systemError.message)
         return ResponseEntity.ok()
             .contentType(MediaType.APPLICATION_JSON)
             .body(objectMapper.writeValueAsString(response))

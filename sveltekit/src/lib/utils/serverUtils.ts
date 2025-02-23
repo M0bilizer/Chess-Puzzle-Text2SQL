@@ -21,6 +21,18 @@ export class Success implements Result {
 	}
 }
 
+export class NoResultsFailure implements Result {
+	public readonly message: 'No results found';
+
+	constructor() {
+		this.message = 'No results found';
+	}
+
+	getJson() {
+		return json({ status: SearchResultEnum.NoResultsError, message: this.message });
+	}
+}
+
 export class BackendFailure implements Result {
 	public readonly message: string | null;
 

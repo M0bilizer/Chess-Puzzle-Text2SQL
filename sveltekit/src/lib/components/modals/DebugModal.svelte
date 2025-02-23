@@ -19,7 +19,6 @@
 		if (state.query !== '') {
 			const search = get(searches).get(state.query);
 			if (search === undefined) return;
-			console.log(search.metadata.model);
 			query = search.metadata.query;
 			model = search.metadata.model == null ? 'Local data' : search.metadata.model;
 			sql = search.metadata.sql == null ? 'Not applicable' : formatSql(search.metadata.sql);
