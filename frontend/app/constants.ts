@@ -1,1 +1,0 @@
-export const KOTLIN_SPRING_URL = process.env.NEXT_PUBLIC_KOTLIN_SPRING_URL || ""
