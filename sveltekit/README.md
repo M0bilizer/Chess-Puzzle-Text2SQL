@@ -1,38 +1,103 @@
-# sv
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+# Sveltekit Frontend
 
-## Creating a project
+This is a Sveltekit application developed to serve the frontend and allow users to play chess puzzles.
 
-If you're seeing this, you've probably already done this step. Congrats!
 
-```bash
-# create a new project in the current directory
-npx sv create
+----
+## Prerequisite
 
-# create a new project in my-app
-npx sv create my-app
+This project uses `bun`, an extremely fast Javascript package and project manager.
+These are the system requirement
+
+- Node.js 22: Ensure Node.js 22 is installed on your system.
+- Docker (optional): If you want to run the application in a Docker container.
+
+---
+## Installation
+
+1. If you don’t have `bun` installed, you can install it using `npm`:
+```commandline
+npm install -g bun
 ```
 
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+4. Install Dependencies
+```commandline
+bun install
 ```
 
-## Building
+---
+## Running the application
 
-To create a production version of your app:
+### Locally
 
-```bash
-npm run build
+- Development
+
+Run the Sveltekit application in development:
+```commandline
+bun dev
+```
+The application will be available at http://localhost:5173.
+
+
+- Production
+
+Preview the Sveltekit application in production by building:
+```commandline
+bun run build
+```
+then run
+```commandline
+bun run preview
+```
+The application will be available at http://localhost:4173.
+
+
+
+### Using Docker
+
+If you prefer to run the application in a Docker container, follow these steps:
+
+1. Build the Docker Image:
+```commandline
+docker build -t my-sveltekit-app .
 ```
 
-You can preview the production build with `npm run preview`.
+2. Run the Docker Container:
+```commandline
+docker run -p 5173:5173 my-sveltekit-app
+```
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+The application will be available at http://localhost:5173.
+
+---
+## Other useful commands
+
+- Lint the project using `prettier`:
+```commandline
+bun format
+```
+
+- Build the docker image with *typescript-sveltekit* as it's name:
+```commandline
+bash build.sh
+```
+
+---
+## Packages Used
+
+| Packages                    | Description / Purpose                              |
+|-----------------------------|----------------------------------------------------|
+| Sveltekit                   | Framework                                          |
+| bun                         | Package Manager                                    |
+| @skeletonlabs/skeleton@next | UI Components                                      |
+| @zerodevx/svelte-toast      | Custom Svelte Toast                                |
+| svelte-chess                | Chess component                                    |
+| svelte-chessground          | Static Chess component                             |
+| unplugin-icons              | Icon components                                    |
+| @iconify-json/fa6-solid     | FontAwesome 6 Solid Icons (through unplugin-icons) |
+| Express                     | Node.js server                                     | 
+| tailwind                    | css classes                                        |
+| prettier                    | Code formatter                                     |
+| eslint                      | Linter                                             |
+
