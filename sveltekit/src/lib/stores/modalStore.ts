@@ -2,14 +2,20 @@ import { writable } from 'svelte/store';
 import { toast } from '@zerodevx/svelte-toast';
 
 export const congratulationModalState = writable({ open: false });
-export const searchModalState = writable({ open: false });
+const _searchModalState = writable({ open: false });
 
-export function closeSearchModal() {
+function _closeSearchModal() {
 	toast.pop({ target: 'modal' });
-	searchModalState.set({ open: false });
+	_searchModalState.set({ open: false });
 }
 
-export function openSearchModal() {
+function _openSearchModal() {
 	toast.pop({ target: 'root' });
-	searchModalState.set({ open: true });
+	_searchModalState.set({ open: true });
 }
+
+export const searchModalState = {
+	subscribe: _searchModalState.subscribe,
+	close: _closeSearchModal,
+	open: _openSearchModal
+};

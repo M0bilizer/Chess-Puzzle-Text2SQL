@@ -6,7 +6,7 @@
 	import Fa6SolidMagnifyingGlass from 'virtual:icons/fa6-solid/magnifying-glass';
 	import { isLoading } from '$lib/stores/isLoading';
 	import { searchPuzzles } from '$lib/utils/searchUtil';
-	import { closeSearchModal, searchModalState } from '$lib/stores/modalStore';
+	import { searchModalState } from '$lib/stores/modalStore';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import { SearchResultEnum } from '$lib/enums/searchResultEnum';
 	import { ModelEnum } from '$lib/enums/modelEnum';
@@ -21,7 +21,7 @@
 	async function handleSearch(event: Event) {
 		event.preventDefault();
 		const result: SearchResultEnum = await searchPuzzles(query, ModelEnum.DeepSeek);
-		if (result === SearchResultEnum.Success) closeSearchModal()
+		if (result === SearchResultEnum.Success) searchModalState.close();
 	}
 </script>
 
@@ -31,7 +31,7 @@
 	backdropBackground="bg-tertiary-500/25"
 	backdropClasses="backdrop-blur-sm"
 	closeOnInteractOutside={false}
-	onInteractOutside={() => closeSearchModal()}
+	onInteractOutside={() => searchModalState.close()}
 >
 	{#snippet content()}
 		<div>

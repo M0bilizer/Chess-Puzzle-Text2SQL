@@ -3,13 +3,13 @@
 	import Fa6SolidXmark from 'virtual:icons/fa6-solid/xmark';
 	import Fa6SolidTriangleExclamation from 'virtual:icons/fa6-solid/triangle-exclamation';
 	import { loadRandomPuzzle } from '$lib/utils/searchUtil.ts';
-	import { closeSearchModal } from '$lib/stores/modalStore';
+	import { searchModalState } from '$lib/stores/modalStore';
 
 	let { message, toastId, query } = $props();
 
 	function handleLoadRandomPuzzle() {
 		loadRandomPuzzle(query);
-		closeSearchModal();
+		searchModalState.close();
 		toast.pop(toastId);
 	}
 
