@@ -9,7 +9,7 @@
 >
 	<h4 class="h4">Recent {$searches.size === 1 ? 'Search' : 'Searches'}</h4>
 	<hr class="hr" />
-	<div class="overflow-auto">
+	<div class="grid grid-cols-1 overflow-auto">
 		{#if $searches.size}
 			<div class="flex flex-col gap-2">
 				{#each [...$searches.keys()] as key}

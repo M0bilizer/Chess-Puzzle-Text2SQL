@@ -1,10 +1,10 @@
 <script lang="ts">
 	import Fa6SolidMagnifyingGlass from 'virtual:icons/fa6-solid/magnifying-glass';
 
-	import { openSearchModal } from '$lib/stores/modalStore';
+	import { searchModalState } from '$lib/stores/modalStore';
 
 	function handleOnClick() {
-		openSearchModal();
+		searchModalState.open();
 	}
 </script>
 

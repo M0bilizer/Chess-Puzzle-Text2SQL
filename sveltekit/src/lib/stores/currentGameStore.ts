@@ -91,7 +91,7 @@ export function skipCurrentGame() {
 			game: {
 				...state.game,
 				fen: fen,
-				moveIndex: state.game.moves.length - 1,
+				moveIndex: state.game.moves.length,
 				hasWon: true
 			}
 		};
