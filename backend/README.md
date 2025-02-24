@@ -45,13 +45,12 @@ Run the Kotlin Spring using `gradle`:
 ```commandline
 docker build -t spring-kotlin-app .
 ```
-*Note*, you may need to edit the `Dockerfile` if the jar name does not match with the built jar.
 
 2. Run the Docker Container:
 ```commandline
 docker run -p 8080:8080 spring-kotlin-app
 ```
-*Note*, the application will need access to the database, edit the configuration file (see below)
+*Note*, the application will need access to the database, add the environmental variable through docker (see below)
 The application will start and be available at http://localhost:8080.
 
 ---
@@ -59,14 +58,22 @@ The application will start and be available at http://localhost:8080.
 ## Configuration
 
 - **Application Properties**
-  Configuration can be found at `src/main/resources/application.properties`
+  Environment Variable example can be found at `.env-sample`
 
-spring.datasource.url -> Database's URL
-spring.datasource.username -> Username for Database
-spring.datasource.password -> Password for Database
-api_key -> API Key for LLM
-base_url -> URL for LLM (DeepSeek is the only one supported, see their docs for their url)
-sentence_transformer_url -> Address of the Sentence Transformer Microservice
+  If you are using docker, you will have to inject the variable by add the `-e` flag
+  For example:
+```commandline
+docker run -p 8080:8080 -e DB_URL=<my-DB-URL> -e DB_USERNAME=<my-DB-USERNAME> -e ... spring-kotlin-app
+```
+
+DB_URL -> Database's URL
+DB_USERNAME -> Username for Database
+DB_PASSWORD -> Password for Database
+DEEPSEEK_API_KEY -> API Key for Deepseek
+DEEPSEEK_BASE_URL -> Baseurl for Deepseek
+MISTRAL_API_KEY -> API Key for Mistral
+MISTRAL_BASE_URL -> Baseurl for Mistral
+SENTENCE_TRANSFORMER_URL -> Sentence Transformer Microservice's URL
 
 ## Project Structure
 
@@ -78,7 +85,7 @@ src/
 │   └── resources/                         # Configuration files, static resources, etc.
 ├── test/
 │   └── kotlin/                            # Test code
-build.gradle.kts                           # Gradle build file (or pom.xml for Maven)
+build.gradle.kts                           # Gradle build file
 ```
 
 ---
@@ -87,10 +94,9 @@ build.gradle.kts                           # Gradle build file (or pom.xml for M
 
 | Gradle Dependency                                        | Description / Purpose             |
 |----------------------------------------------------------|-----------------------------------|
-| io.ktor:ktor-client-core (Must be 2.3.12)                | Http Client                       |
-| io.ktor:ktor-serialization-kotlinx-json (Must be 2.3.12) | Preferred JSON Parsing            |
+| io.ktor:ktor-client-core                                 | Http Client                       |
+| io.ktor:ktor-serialization-kotlinx-json                  | Preferred JSON Parsing            |
 | com.google.code.gson:gson                                | Alternative JSON Parsing          |
-| com.aallam.openai:openai-client                          | Communicating with DeepSeek       |
 | com.github.jsqlparser:jsqlparser                         | Checking SQL Statement            |
 | io.github.oshai:kotlin-logging-jvm                       | Logging                           |
 | io.strikt:strikt-core                                    | Assertion                         |
