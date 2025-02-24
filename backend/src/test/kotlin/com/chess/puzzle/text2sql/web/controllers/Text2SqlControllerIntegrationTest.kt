@@ -106,7 +106,9 @@ class Text2SqlControllerIntegrationTest {
 
         val expectedMetadata = SearchMetadata(query, ModelName.Deepseek, sql)
         val expectedResponse =
-            objectMapper.writeValueAsString(mapOf("status" to "success", "data" to puzzles, "metadata" to expectedMetadata))
+            objectMapper.writeValueAsString(
+                mapOf("status" to "success", "data" to puzzles, "metadata" to expectedMetadata)
+            )
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
         expectThat(response.body).isEqualTo(expectedResponse)
     }
@@ -358,7 +360,10 @@ class Text2SqlControllerIntegrationTest {
 
         val expectedResponse =
             objectMapper.writeValueAsString(
-                mapOf("status" to "failure", "message" to GetTextFileError.FileNotFoundError.message)
+                mapOf(
+                    "status" to "failure",
+                    "message" to GetTextFileError.FileNotFoundError.message,
+                )
             )
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
         expectThat(response.body).isEqualTo(expectedResponse)

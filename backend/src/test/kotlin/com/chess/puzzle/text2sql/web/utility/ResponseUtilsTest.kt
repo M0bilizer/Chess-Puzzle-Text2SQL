@@ -48,7 +48,11 @@ class ResponseUtilsTest {
                     get("status") { jsonResponse["status"] }.isEqualTo("success")
                     get("data") { jsonResponse["data"] }.isEqualTo(data)
 
-                    val deserializedMetadata = objectMapper.convertValue(jsonResponse["metadata"], SearchMetadata::class.java)
+                    val deserializedMetadata =
+                        objectMapper.convertValue(
+                            jsonResponse["metadata"],
+                            SearchMetadata::class.java,
+                        )
                     get("metadata") { deserializedMetadata }.isEqualTo(metadata)
                 }
         }
