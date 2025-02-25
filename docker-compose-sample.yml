@@ -7,7 +7,7 @@ services:
     networks:
       - app-network
     environment:
-      - KOTLIN_SPRING_URL=
+      - KOTLIN_SPRING_URL=http://backend:8080/api
   backend:
     image: kotlin-spring:latest
     container_name: web_backend
@@ -20,11 +20,18 @@ services:
       - DB_USERNAME=
       - DB_PASSWORD=
       - DEEPSEEK_API_KEY=
-      - DEEPSEEK_BASE_URL=
+      - DEEPSEEK_BASE_URL=https://api.deepseek.com/chat/completions
       - MISTRAL_API_KEY=
-      - MISTRAL_BASE_URL=
-      - SENTENCE_TRANSFORMER_URL=
+      - MISTRAL_BASE_URL=https://api.mistral.ai/v1/chat/completions
+      - SENTENCE_TRANSFORMER_URL=http://microservice:8000/api/similarity
 
+  microservice:
+    image: python-fastapi:latest
+    container_name: web_microservice
+    ports:
+      - "8000:8000"
+    networks:
+      - app-network
 
   nginx:
     image: web-nginx:latest
@@ -34,13 +41,6 @@ services:
     networks:
       - app-network
     
-  fastapi:
-    image: python-fastapi:latest
-    container_name: web_fastapi
-    ports:
-      - "8000:8000"
-    networks:
-      - app-network
 networks:
   app-network:
     driver: bridge
