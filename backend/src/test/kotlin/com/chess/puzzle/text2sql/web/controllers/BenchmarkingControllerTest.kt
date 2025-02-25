@@ -99,7 +99,9 @@ class BenchmarkingControllerTest {
         val result = deferredResult.result as ResponseEntity<String>
 
         val expected =
-            objectMapper.writeValueAsString(mapOf("status" to "failure", "message" to error.message))
+            objectMapper.writeValueAsString(
+                mapOf("status" to "failure", "message" to error.message)
+            )
         expectThat(result.statusCode).isEqualTo(HttpStatus.OK)
         expectThat(result.body).isEqualTo(expected)
     }
@@ -119,7 +121,9 @@ class BenchmarkingControllerTest {
         val result = deferredResult.result as ResponseEntity<String>
 
         val expected =
-            objectMapper.writeValueAsString(mapOf("status" to "failure", "message" to error.message))
+            objectMapper.writeValueAsString(
+                mapOf("status" to "failure", "message" to error.message)
+            )
         expectThat(result.statusCode).isEqualTo(HttpStatus.OK)
         expectThat(result.body).isEqualTo(expected)
     }
@@ -142,7 +146,9 @@ class BenchmarkingControllerTest {
         val result = deferredResult.result as ResponseEntity<String>
 
         val expected =
-            objectMapper.writeValueAsString(mapOf("status" to "failure", "message" to error.message))
+            objectMapper.writeValueAsString(
+                mapOf("status" to "failure", "message" to error.message)
+            )
         expectThat(result.statusCode).isEqualTo(HttpStatus.OK)
         expectThat(result.body).isEqualTo(expected)
     }

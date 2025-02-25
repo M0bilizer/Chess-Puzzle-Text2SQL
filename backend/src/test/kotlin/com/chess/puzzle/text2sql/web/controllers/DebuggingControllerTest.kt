@@ -75,7 +75,9 @@ class DebuggingControllerTest {
 
         val response = DebuggingController(mockk(), puzzleService, mockk(), mockk()).db()
         val expectedResponse =
-            objectMapper.writeValueAsString(mapOf("status" to "failure", "message" to error.message))
+            objectMapper.writeValueAsString(
+                mapOf("status" to "failure", "message" to error.message)
+            )
 
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
         expectThat(response.body).isEqualTo(expectedResponse)
@@ -125,7 +127,9 @@ class DebuggingControllerTest {
         val response =
             DebuggingController(mockk(), puzzleService, mockk(), mockk()).sql(genericRequest)
         val expectedResponse =
-            objectMapper.writeValueAsString(mapOf("status" to "failure", "message" to error.message))
+            objectMapper.writeValueAsString(
+                mapOf("status" to "failure", "message" to error.message)
+            )
 
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
         expectThat(response.body).isEqualTo(expectedResponse)
@@ -173,7 +177,9 @@ class DebuggingControllerTest {
             DebuggingController(mockk(), mockk(), sentenceTransformerHelper, mockk())
                 .sentenceTransformer(genericRequest)
         val expectedResponse =
-            objectMapper.writeValueAsString(mapOf("status" to "failure", "message" to error.message))
+            objectMapper.writeValueAsString(
+                mapOf("status" to "failure", "message" to error.message)
+            )
 
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
         expectThat(response.body).isEqualTo(expectedResponse)
@@ -277,7 +283,9 @@ class DebuggingControllerTest {
             DebuggingController(text2SQLService, mockk(), mockk(), mockk())
                 .text2sql(text2SqlRequest)
         val expectedResponse =
-            objectMapper.writeValueAsString(mapOf("status" to "failure", "message" to error.message))
+            objectMapper.writeValueAsString(
+                mapOf("status" to "failure", "message" to error.message)
+            )
 
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
         expectThat(response.body).isEqualTo(expectedResponse)
@@ -315,7 +323,9 @@ class DebuggingControllerTest {
         val response =
             DebuggingController(mockk(), mockk(), mockk(), largeLanguageApiHelper).llm(llmRequest)
         val expectedResponse =
-            objectMapper.writeValueAsString(mapOf("status" to "failure", "message" to error.message))
+            objectMapper.writeValueAsString(
+                mapOf("status" to "failure", "message" to error.message)
+            )
 
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
         expectThat(response.body).isEqualTo(expectedResponse)

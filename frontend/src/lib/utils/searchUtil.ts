@@ -22,7 +22,7 @@ export async function searchPuzzles(query: string, model: ModelEnum): Promise<Se
 		result = SearchResultEnum.Success;
 	} else {
 		try {
-			const response = await fetch('/api/search', {
+			const response = await fetch('/search', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'

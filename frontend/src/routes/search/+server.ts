@@ -15,6 +15,7 @@ import type { Puzzle } from '$lib/types/puzzle';
 import type { SearchMetadata } from '$lib/types/SearchMetadata';
 
 const KOTLIN_SPRING_URL = env.KOTLIN_SPRING_URL;
+const API = `${KOTLIN_SPRING_URL}/queryPuzzle`;
 
 export const POST: RequestHandler = async ({ request }) => {
 	const { query, model } = await request.json();
@@ -28,13 +29,14 @@ async function _callBackend(query: string, model: ModelEnum): Promise<Result> {
 	}
 	let res: Response;
 	try {
-		res = await fetch(`${KOTLIN_SPRING_URL}/queryPuzzle`, {
+		console.log(`fetching ${API} with query: ${query}, model: ${model}`);
+		res = await fetch(`${API}`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ query, model })
 		});
 	} catch (error: unknown) {
-		console.error(`Error when calling ${KOTLIN_SPRING_URL}: ${error}`);
+		console.error(`└-> Error when calling ${API}: ${error}`);
 		if (error instanceof Error) {
 			return new ConnectionFailure();
 		} else {

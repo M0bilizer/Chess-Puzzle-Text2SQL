@@ -1,2 +1,0 @@
-lint-staged
-git-format-staged --formatter 'biome check --files-ignore-unknown=true --no-errors-on-unmatched \"{}\"' .

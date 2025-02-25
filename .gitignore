@@ -133,4 +133,4 @@ fabric.properties
 .history
 .ionide
 
-# End of https://www.toptal.com/developers/gitignore/api/intellij,visualstudiocode
+docker-compose.yml

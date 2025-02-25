@@ -1,17 +1,30 @@
-FROM node:22-alpine AS builder
+# Builder Stage
+FROM oven/bun:alpine AS builder
 
 WORKDIR /app
 
-COPY package.json pnpm-lock.yaml ./
-
-RUN npm install -g pnpm && pnpm install --prod
-
-COPY .next .next
-COPY public public
-COPY styles styles
+COPY bun.lockb ./
 COPY package.json ./
 
-RUN apk add curl
+RUN bun install
+
+COPY . .
+
+RUN bun run build
+
+FROM oven/bun:alpine
+
+WORKDIR /app
+
+COPY --from=builder /app/build ./build
+COPY --from=builder /app/server.js ./server.js
+COPY bun.lockb ./
+COPY package.json ./
+
+RUN bun install
+
+RUN apk add --no-cache curl
 
 EXPOSE 3000
-CMD ["pnpm", "start"]
+
+CMD ["node", "server.js"]
