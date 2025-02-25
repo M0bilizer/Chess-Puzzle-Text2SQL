@@ -13,8 +13,10 @@
 	}
 
 	currentGame.subscribe((state) => {
-		puzzleId = state.list[state.index].puzzle.puzzleId;
-		disabled = state.game.hasWon;
+		if (state.query != '') {
+			puzzleId = state.list[state.index].puzzle.puzzleId;
+			disabled = state.game.hasWon;
+		}
 	});
 </script>
 

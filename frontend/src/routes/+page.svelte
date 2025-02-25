@@ -45,15 +45,15 @@
 	<aside>
 		<div class="tablet flex flex-col gap-2">
 			<QueryDisplay />
-			{#if $currentGame.list.length}
-				<RecentSearches />
-			{/if}
+			<RecentSearches />
 		</div>
 		<div class="mobile flex max-w-full flex-col gap-2">
 			{#if $currentGame.list.length}
 				<JumpBar />
 				<MobileNextButton />
 				<MobileInfoCard />
+			{:else}
+				<RecentSearches />
 			{/if}
 		</div>
 	</aside>
