@@ -134,3 +134,4 @@ fabric.properties
 .ionide
 
 docker-compose.yml
+.idea/
