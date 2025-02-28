@@ -13,6 +13,7 @@ import com.chess.puzzle.text2sql.web.service.BenchmarkService
 import com.chess.puzzle.text2sql.web.service.FileLoaderService
 import com.chess.puzzle.text2sql.web.service.JsonWriterService
 import com.chess.puzzle.text2sql.web.service.Text2SQLService
+import com.chess.puzzle.text2sql.web.utility.ResponseUtils
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -101,12 +102,10 @@ class BenchmarkingControllerIntegrationTest {
         val deferredResult = benchmarkingController.benchmark()
         val result = deferredResult.result as ResponseEntity<String>
 
-        val expected =
-            objectMapper.writeValueAsString(
-                mapOf("status" to "success", "data" to benchmarkSuccessResults)
-            )
+        val expected = ResponseUtils.success(benchmarkSuccessResults)
+
         expectThat(result.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(result.body).isEqualTo(expected)
+        expectThat(result.body).isEqualTo(expected.body)
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -128,12 +127,9 @@ class BenchmarkingControllerIntegrationTest {
         val deferredResult = benchmarkingController.benchmark()
         val result = deferredResult.result as ResponseEntity<String>
 
-        val expected =
-            objectMapper.writeValueAsString(
-                mapOf("status" to "success", "data" to benchmarkFailureResults)
-            )
+        val expected = ResponseUtils.success(benchmarkFailureResults)
         expectThat(result.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(result.body).isEqualTo(expected)
+        expectThat(result.body).isEqualTo(expected.body)
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -157,14 +153,8 @@ class BenchmarkingControllerIntegrationTest {
         val deferredResult = controllerWithInvalidPaths.benchmark()
         val result = deferredResult.result as ResponseEntity<String>
 
-        val expected =
-            objectMapper.writeValueAsString(
-                mapOf(
-                    "status" to "failure",
-                    "message" to GetBenchmarkEntriesError.FileNotFoundError.message,
-                )
-            )
+        val expected = ResponseUtils.failure(GetBenchmarkEntriesError.FileNotFoundError)
         expectThat(result.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(result.body).isEqualTo(expected)
+        expectThat(result.body).isEqualTo(expected.body)
     }
 }

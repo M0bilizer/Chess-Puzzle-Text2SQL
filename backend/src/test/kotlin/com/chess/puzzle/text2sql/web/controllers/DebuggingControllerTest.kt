@@ -18,6 +18,7 @@ import com.chess.puzzle.text2sql.web.service.PuzzleService
 import com.chess.puzzle.text2sql.web.service.Text2SQLService
 import com.chess.puzzle.text2sql.web.service.helper.LargeLanguageApiHelper
 import com.chess.puzzle.text2sql.web.service.helper.SentenceTransformerHelper
+import com.chess.puzzle.text2sql.web.utility.ResponseUtils
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.mockk.coEvery
 import io.mockk.every
@@ -74,10 +75,9 @@ class DebuggingControllerTest {
                     puzzleService = puzzleService,
                 )
                 .db()
-        val expectedResponse =
-            objectMapper.writeValueAsString(mapOf("status" to "success", "data" to puzzles))
+        val expectedResponse = ResponseUtils.success(puzzles)
 
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
@@ -99,13 +99,10 @@ class DebuggingControllerTest {
                     puzzleService = puzzleService,
                 )
                 .db()
-        val expectedResponse =
-            objectMapper.writeValueAsString(
-                mapOf("status" to "failure", "message" to error.message)
-            )
+        val expectedResponse = ResponseUtils.failure(error)
 
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
@@ -143,11 +140,10 @@ class DebuggingControllerTest {
                     puzzleService = puzzleService,
                 )
                 .sql(genericRequest)
-        val expectedResponse =
-            objectMapper.writeValueAsString(mapOf("status" to "success", "data" to puzzles))
+        val expectedResponse = ResponseUtils.success((puzzles))
 
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
@@ -169,13 +165,10 @@ class DebuggingControllerTest {
                     puzzleService = puzzleService,
                 )
                 .sql(genericRequest)
-        val expectedResponse =
-            objectMapper.writeValueAsString(
-                mapOf("status" to "failure", "message" to error.message)
-            )
+        val expectedResponse = ResponseUtils.failure(error)
 
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
@@ -206,13 +199,10 @@ class DebuggingControllerTest {
                     puzzleService = mockk(),
                 )
                 .sentenceTransformer(genericRequest)
-        val expectedResponse =
-            objectMapper.writeValueAsString(
-                mapOf("status" to "success", "data" to similarDemonstrations)
-            )
+        val expectedResponse = ResponseUtils.success(similarDemonstrations)
 
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
@@ -235,13 +225,10 @@ class DebuggingControllerTest {
                     puzzleService = mockk(),
                 )
                 .sentenceTransformer(genericRequest)
-        val expectedResponse =
-            objectMapper.writeValueAsString(
-                mapOf("status" to "failure", "message" to error.message)
-            )
+        val expectedResponse = ResponseUtils.failure(error)
 
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
@@ -284,11 +271,10 @@ class DebuggingControllerTest {
                 )
                 .promptTemplate(promptTemplateRequest)
 
-        val expectedResponse =
-            objectMapper.writeValueAsString(mapOf("status" to "success", "data" to processedPrompt))
+        val expectedResponse = ResponseUtils.success(processedPrompt)
 
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
@@ -330,13 +316,10 @@ class DebuggingControllerTest {
                 )
                 .promptTemplate(promptTemplateRequest)
 
-        val expectedResponse =
-            objectMapper.writeValueAsString(
-                mapOf("status" to "failure", "message" to error.message)
-            )
+        val expectedResponse = ResponseUtils.failure(error)
 
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
@@ -361,11 +344,10 @@ class DebuggingControllerTest {
                     puzzleService = mockk(),
                 )
                 .llm(llmRequest)
-        val expectedResponse =
-            objectMapper.writeValueAsString(mapOf("status" to "success", "data" to llmResponse))
+        val expectedResponse = ResponseUtils.success(llmResponse)
 
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
@@ -388,13 +370,10 @@ class DebuggingControllerTest {
                     puzzleService = mockk(),
                 )
                 .llm(llmRequest)
-        val expectedResponse =
-            objectMapper.writeValueAsString(
-                mapOf("status" to "failure", "message" to error.message)
-            )
+        val expectedResponse = ResponseUtils.failure(error)
 
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
@@ -419,11 +398,10 @@ class DebuggingControllerTest {
                     puzzleService = mockk(),
                 )
                 .text2sql(text2SqlRequest)
-        val expectedResponse =
-            objectMapper.writeValueAsString(mapOf("status" to "success", "data" to sqlQuery))
+        val expectedResponse = ResponseUtils.success(sqlQuery)
 
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
@@ -448,11 +426,10 @@ class DebuggingControllerTest {
                     puzzleService = mockk(),
                 )
                 .text2sql(text2SqlRequest)
-        val expectedResponse =
-            objectMapper.writeValueAsString(mapOf("status" to "success", "data" to sqlQuery))
+        val expectedResponse = ResponseUtils.success(sqlQuery)
 
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
@@ -477,11 +454,10 @@ class DebuggingControllerTest {
                     puzzleService = mockk(),
                 )
                 .text2sql(text2SqlRequest)
-        val expectedResponse =
-            objectMapper.writeValueAsString(mapOf("status" to "success", "data" to sqlQuery))
+        val expectedResponse = ResponseUtils.success(sqlQuery)
 
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
@@ -506,11 +482,10 @@ class DebuggingControllerTest {
                     puzzleService = mockk(),
                 )
                 .text2sql(text2SqlRequest)
-        val expectedResponse =
-            objectMapper.writeValueAsString(mapOf("status" to "success", "data" to sqlQuery))
+        val expectedResponse = ResponseUtils.success(sqlQuery)
 
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
@@ -534,12 +509,9 @@ class DebuggingControllerTest {
                     puzzleService = mockk(),
                 )
                 .text2sql(text2SqlRequest)
-        val expectedResponse =
-            objectMapper.writeValueAsString(
-                mapOf("status" to "failure", "message" to error.message)
-            )
+        val expectedResponse = ResponseUtils.failure(error)
 
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 }

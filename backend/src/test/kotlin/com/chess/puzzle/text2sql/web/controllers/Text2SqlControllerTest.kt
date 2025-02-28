@@ -10,6 +10,7 @@ import com.chess.puzzle.text2sql.web.error.GetSimilarDemonstrationError
 import com.chess.puzzle.text2sql.web.error.ProcessQueryError
 import com.chess.puzzle.text2sql.web.service.PuzzleService
 import com.chess.puzzle.text2sql.web.service.Text2SQLService
+import com.chess.puzzle.text2sql.web.utility.ResponseUtils
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -58,12 +59,10 @@ class Text2SqlControllerTest {
         val response: ResponseEntity<String> = controller.queryPuzzle(queryPuzzleRequest)
 
         val expectedMetadata = SearchMetadata(query, ModelName.Deepseek, sqlQuery)
-        val expectedResponse =
-            objectMapper.writeValueAsString(
-                mapOf("status" to "success", "data" to puzzles, "metadata" to expectedMetadata)
-            )
+        val expectedResponse = ResponseUtils.successWithSearchMetadata(puzzles, expectedMetadata)
+
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
@@ -77,12 +76,10 @@ class Text2SqlControllerTest {
 
         val response: ResponseEntity<String> = controller.queryPuzzle(queryPuzzleRequest)
 
-        val expectedResponse =
-            objectMapper.writeValueAsString(
-                mapOf("status" to "failure", "message" to error.message)
-            )
+        val expectedResponse = ResponseUtils.failure(error)
+
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
@@ -98,11 +95,9 @@ class Text2SqlControllerTest {
 
         val response: ResponseEntity<String> = controller.queryPuzzle(queryPuzzleRequest)
 
-        val expectedResponse =
-            objectMapper.writeValueAsString(
-                mapOf("status" to "failure", "message" to error.message)
-            )
+        val expectedResponse = ResponseUtils.failure(error)
+
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 }

@@ -31,6 +31,7 @@ import com.chess.puzzle.text2sql.web.service.helper.PreprocessingHelper
 import com.chess.puzzle.text2sql.web.service.helper.SentenceTransformerHelper
 import com.chess.puzzle.text2sql.web.service.llm.LargeLanguageModel
 import com.chess.puzzle.text2sql.web.service.llm.LargeLanguageModelFactory
+import com.chess.puzzle.text2sql.web.utility.ResponseUtils
 import com.chess.puzzle.text2sql.web.validator.SqlValidator
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.ktor.client.HttpClient
@@ -137,10 +138,9 @@ class DebuggingControllerIntegrationTest {
         coEvery { puzzleRepository.findRandomPuzzles(5) } returns puzzles
 
         val response = controller.db()
-        val expectedResponse =
-            objectMapper.writeValueAsString(mapOf("status" to "success", "data" to puzzles))
+        val expectedResponse = ResponseUtils.success(puzzles)
 
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
@@ -160,13 +160,10 @@ class DebuggingControllerIntegrationTest {
         coEvery { puzzleRepository.findRandomPuzzles(5) } throws Throwable()
 
         val response = controller.db()
-        val expectedResponse =
-            objectMapper.writeValueAsString(
-                mapOf("status" to "failure", "message" to error.message)
-            )
+        val expectedResponse = ResponseUtils.failure(error)
 
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
@@ -206,11 +203,10 @@ class DebuggingControllerIntegrationTest {
         coEvery { puzzleRepository.executeSqlQuery(query) } returns puzzles
 
         val response = controller.sql(genericRequest)
-        val expectedResponse =
-            objectMapper.writeValueAsString(mapOf("status" to "success", "data" to puzzles))
+        val expectedResponse = ResponseUtils.success(puzzles)
 
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
@@ -235,13 +231,10 @@ class DebuggingControllerIntegrationTest {
         coEvery { puzzleRepository.executeSqlQuery(query) } throws Throwable()
 
         val response = controller.sql(genericRequest)
-        val expectedResponse =
-            objectMapper.writeValueAsString(
-                mapOf("status" to "failure", "message" to error.message)
-            )
+        val expectedResponse = ResponseUtils.failure(error)
 
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
@@ -265,13 +258,10 @@ class DebuggingControllerIntegrationTest {
         coEvery { sqlValidator.isAllowed(query) } returns false
 
         val response = controller.sql(genericRequest)
-        val expectedResponse =
-            objectMapper.writeValueAsString(
-                mapOf("status" to "failure", "message" to error.message)
-            )
+        val expectedResponse = ResponseUtils.failure(error)
 
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
@@ -295,13 +285,10 @@ class DebuggingControllerIntegrationTest {
         coEvery { sqlValidator.isAllowed(query) } returns true
 
         val response = controller.sql(genericRequest)
-        val expectedResponse =
-            objectMapper.writeValueAsString(
-                mapOf("status" to "failure", "message" to error.message)
-            )
+        val expectedResponse = ResponseUtils.failure(error)
 
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
@@ -352,12 +339,10 @@ class DebuggingControllerIntegrationTest {
         val genericRequest = GenericRequest(query = "some query")
         val response = controller.sentenceTransformer(genericRequest)
 
-        val expectedResponse =
-            objectMapper.writeValueAsString(
-                mapOf("status" to "success", "data" to similarDemonstrations)
-            )
+        val expectedResponse = ResponseUtils.success(similarDemonstrations)
+
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
@@ -394,11 +379,10 @@ class DebuggingControllerIntegrationTest {
                 )
                 .promptTemplate(promptTemplateRequest)
 
-        val expectedResponse =
-            objectMapper.writeValueAsString(mapOf("status" to "success", "data" to processedPrompt))
+        val expectedResponse = ResponseUtils.success(processedPrompt)
 
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
@@ -423,11 +407,10 @@ class DebuggingControllerIntegrationTest {
                 )
                 .promptTemplate(promptTemplateRequest)
 
-        val expectedResponse =
-            objectMapper.writeValueAsString(mapOf("status" to "failure", "message" to error.message))
+        val expectedResponse = ResponseUtils.failure(error)
 
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
@@ -459,11 +442,10 @@ class DebuggingControllerIntegrationTest {
                     )
                     .promptTemplate(promptTemplateRequest)
 
-            val expectedResponse =
-                objectMapper.writeValueAsString(mapOf("status" to "failure", "message" to error.message))
+            val expectedResponse = ResponseUtils.failure(error)
 
             expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-            expectThat(response.body).isEqualTo(expectedResponse)
+            expectThat(response.body).isEqualTo(expectedResponse.body)
         }
 
     @Test
@@ -494,11 +476,10 @@ class DebuggingControllerIntegrationTest {
                 )
                 .promptTemplate(promptTemplateRequest)
 
-        val expectedResponse =
-            objectMapper.writeValueAsString(mapOf("status" to "failure", "message" to error.message))
+        val expectedResponse = ResponseUtils.failure(error)
 
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
@@ -533,12 +514,10 @@ class DebuggingControllerIntegrationTest {
         val response = controller.sentenceTransformer(genericRequest)
 
         val error = GetSimilarDemonstrationError.NetworkError
-        val expectedResponse =
-            objectMapper.writeValueAsString(
-                mapOf("status" to "failure", "message" to error.message)
-            )
+        val expectedResponse = ResponseUtils.failure(error)
+
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
@@ -584,12 +563,10 @@ class DebuggingControllerIntegrationTest {
         val response = controller.sentenceTransformer(genericRequest)
 
         val error = GetSimilarDemonstrationError.InternalError
-        val expectedResponse =
-            objectMapper.writeValueAsString(
-                mapOf("status" to "failure", "message" to error.message)
-            )
+        val expectedResponse = ResponseUtils.failure(error)
+
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
@@ -634,10 +611,10 @@ class DebuggingControllerIntegrationTest {
         val llmRequest = LlmRequest(promptTemplate)
         val response = controller.llm(llmRequest)
 
-        val expectedResponse =
-            objectMapper.writeValueAsString(mapOf("status" to "success", "data" to query))
+        val expectedResponse = ResponseUtils.success(query)
+
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
@@ -666,12 +643,10 @@ class DebuggingControllerIntegrationTest {
         val response = controller.llm(llmRequest)
 
         val error = CallLargeLanguageModelError.RateLimitError
-        val expectedResponse =
-            objectMapper.writeValueAsString(
-                mapOf("status" to "failure", "message" to error.message)
-            )
+        val expectedResponse = ResponseUtils.failure(error)
+
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
@@ -700,12 +675,10 @@ class DebuggingControllerIntegrationTest {
         val response = controller.llm(llmRequest)
 
         val error = CallLargeLanguageModelError.PermissionError
-        val expectedResponse =
-            objectMapper.writeValueAsString(
-                mapOf("status" to "failure", "message" to error.message)
-            )
+        val expectedResponse = ResponseUtils.failure(error)
+
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
@@ -734,12 +707,10 @@ class DebuggingControllerIntegrationTest {
         val response = controller.llm(llmRequest)
 
         val error = CallLargeLanguageModelError.InsufficientBalanceError
-        val expectedResponse =
-            objectMapper.writeValueAsString(
-                mapOf("status" to "failure", "message" to error.message)
-            )
+        val expectedResponse = ResponseUtils.failure(error)
+
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
@@ -767,12 +738,10 @@ class DebuggingControllerIntegrationTest {
         val response = controller.llm(llmRequest)
 
         val error = CallLargeLanguageModelError.UnknownStatusError(425)
-        val expectedResponse =
-            objectMapper.writeValueAsString(
-                mapOf("status" to "failure", "message" to error.message)
-            )
+        val expectedResponse = ResponseUtils.failure(error)
+
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
@@ -816,10 +785,9 @@ class DebuggingControllerIntegrationTest {
         val text2SqlRequest = Text2SqlRequest(query)
         val response = controller.text2sql(text2SqlRequest)
 
-        val expectedResponse =
-            objectMapper.writeValueAsString(mapOf("status" to "success", "data" to sql))
+        val expectedResponse = ResponseUtils.success(sql)
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
@@ -845,12 +813,10 @@ class DebuggingControllerIntegrationTest {
         val text2SqlRequest = Text2SqlRequest(query)
         val response = controller.text2sql(text2SqlRequest)
 
-        val expectedResponse =
-            objectMapper.writeValueAsString(
-                mapOf("status" to "failure", "message" to error.message)
-            )
+        val expectedResponse = ResponseUtils.failure(error)
+
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
@@ -879,12 +845,10 @@ class DebuggingControllerIntegrationTest {
         val text2SqlRequest = Text2SqlRequest(query)
         val response = controller.text2sql(text2SqlRequest)
 
-        val expectedResponse =
-            objectMapper.writeValueAsString(
-                mapOf("status" to "failure", "message" to error.message)
-            )
+        val expectedResponse = ResponseUtils.failure(error)
+
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
@@ -923,12 +887,10 @@ class DebuggingControllerIntegrationTest {
         val text2SqlRequest = Text2SqlRequest(query)
         val response = controller.text2sql(text2SqlRequest)
 
-        val expectedResponse =
-            objectMapper.writeValueAsString(
-                mapOf("status" to "failure", "message" to error.message)
-            )
+        val expectedResponse = ResponseUtils.failure(error)
+
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
@@ -972,11 +934,9 @@ class DebuggingControllerIntegrationTest {
         val text2SqlRequest = Text2SqlRequest(query)
         val response = controller.text2sql(text2SqlRequest)
 
-        val expectedResponse =
-            objectMapper.writeValueAsString(
-                mapOf("status" to "failure", "message" to error.message)
-            )
+        val expectedResponse = ResponseUtils.failure(error)
+
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 }
