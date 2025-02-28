@@ -1,14 +1,20 @@
 package com.chess.puzzle.text2sql.web.controllers
 
+import com.chess.puzzle.text2sql.web.config.FilePaths
 import com.chess.puzzle.text2sql.web.domain.input.GenericRequest
 import com.chess.puzzle.text2sql.web.domain.input.LlmInput
 import com.chess.puzzle.text2sql.web.domain.input.LlmRequest
+import com.chess.puzzle.text2sql.web.domain.input.PromptTemplateInput
+import com.chess.puzzle.text2sql.web.domain.input.PromptTemplateRequest
 import com.chess.puzzle.text2sql.web.domain.input.Text2SqlInput
 import com.chess.puzzle.text2sql.web.domain.input.Text2SqlRequest
+import com.chess.puzzle.text2sql.web.domain.model.Demonstration
 import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
+import com.chess.puzzle.text2sql.web.service.FileLoaderService
 import com.chess.puzzle.text2sql.web.service.PuzzleService
 import com.chess.puzzle.text2sql.web.service.Text2SQLService
 import com.chess.puzzle.text2sql.web.service.helper.LargeLanguageApiHelper
+import com.chess.puzzle.text2sql.web.service.helper.PreprocessingHelper
 import com.chess.puzzle.text2sql.web.service.helper.SentenceTransformerHelper
 import com.chess.puzzle.text2sql.web.utility.ResponseUtils.badRequest
 import com.chess.puzzle.text2sql.web.utility.ResponseUtils.failure
@@ -38,10 +44,13 @@ private val logger = KotlinLogging.logger {}
  */
 @RestController
 class DebuggingController(
+    @Autowired private val filePaths: FilePaths,
+    @Autowired private val fileLoaderService: FileLoaderService,
+    @Autowired private val sentenceTransformerHelper: SentenceTransformerHelper,
+    @Autowired private val preprocessingHelper: PreprocessingHelper,
+    @Autowired private val largeLanguageApiHelper: LargeLanguageApiHelper,
     @Autowired private val text2SQLService: Text2SQLService,
     @Autowired private val puzzleService: PuzzleService,
-    @Autowired private val sentenceTransformerHelper: SentenceTransformerHelper,
-    @Autowired private val largeLanguageApiHelper: LargeLanguageApiHelper,
 ) {
     /**
      * Debugging endpoint to serve as a health check.
@@ -111,24 +120,40 @@ class DebuggingController(
     }
 
     /**
-     * Debugging endpoint to perform text-to-SQL conversion without querying the database.
+     * Debugging endpoint to check if the prompt template is functioning correctly.
      *
-     * Converts the input query into an SQL query.
+     * Retrieves the prompt template for the input query.
      *
-     * @param request The [Text2SqlRequest] containing the natural language query.
-     * @return A [ResponseEntity] containing the generated SQL query if successful, or an error
+     * @param request The [GenericRequest] containing the query.
+     * @return A [ResponseEntity] containing the similar demonstrations if successful, or an error
      *   message if the process fails.
      */
-    @PostMapping("/api/debug/text2sql")
-    suspend fun text2sql(@RequestBody request: Text2SqlRequest): ResponseEntity<String> {
-        logger.info { "Received POST on /api/debug/text2sql { request = $request }" }
-        val input: Text2SqlInput
+    @PostMapping("/api/debug/promptTemplate")
+    suspend fun promptTemplate(
+        @RequestBody request: PromptTemplateRequest
+    ): ResponseEntity<String> {
+        logger.info { "Received POST on /api/debug/promptTemplate { request = $request }" }
+        val input: PromptTemplateInput
         when (val result = request.toInput()) {
             is ResultWrapper.Success -> input = result.data
             is ResultWrapper.Failure -> return badRequest(result.error)
         }
-        val (query, model, modelVariant) = input
-        return when (val result = text2SQLService.convertToSQL(query, model, modelVariant)) {
+        val (query, modelVariant) = input
+        val promptTemplate: String
+        val demonstrations: List<Demonstration>
+        when (
+            val result = fileLoaderService.getTextFile(filePaths.getPromptTemplate(modelVariant))
+        ) {
+            is ResultWrapper.Success -> promptTemplate = result.data
+            is ResultWrapper.Failure -> return failure(result.error)
+        }
+        when (val result = sentenceTransformerHelper.getSimilarDemonstration(query)) {
+            is ResultWrapper.Success -> demonstrations = result.data
+            is ResultWrapper.Failure -> return failure(result.error)
+        }
+        return when (
+            val result = preprocessingHelper.processPrompt(query, promptTemplate, demonstrations)
+        ) {
             is ResultWrapper.Success -> success(result.data)
             is ResultWrapper.Failure -> failure(result.error)
         }
@@ -153,6 +178,30 @@ class DebuggingController(
         }
         val (query, model) = input
         return when (val result = largeLanguageApiHelper.callModel(query, model)) {
+            is ResultWrapper.Success -> success(result.data)
+            is ResultWrapper.Failure -> failure(result.error)
+        }
+    }
+
+    /**
+     * Debugging endpoint to perform text-to-SQL conversion without querying the database.
+     *
+     * Converts the input query into an SQL query.
+     *
+     * @param request The [Text2SqlRequest] containing the natural language query.
+     * @return A [ResponseEntity] containing the generated SQL query if successful, or an error
+     *   message if the process fails.
+     */
+    @PostMapping("/api/debug/text2sql")
+    suspend fun text2sql(@RequestBody request: Text2SqlRequest): ResponseEntity<String> {
+        logger.info { "Received POST on /api/debug/text2sql { request = $request }" }
+        val input: Text2SqlInput
+        when (val result = request.toInput()) {
+            is ResultWrapper.Success -> input = result.data
+            is ResultWrapper.Failure -> return badRequest(result.error)
+        }
+        val (query, model, modelVariant) = input
+        return when (val result = text2SQLService.convertToSQL(query, model, modelVariant)) {
             is ResultWrapper.Success -> success(result.data)
             is ResultWrapper.Failure -> failure(result.error)
         }
