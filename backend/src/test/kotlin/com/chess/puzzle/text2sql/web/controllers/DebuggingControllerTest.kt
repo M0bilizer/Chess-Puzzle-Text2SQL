@@ -19,7 +19,6 @@ import com.chess.puzzle.text2sql.web.service.Text2SQLService
 import com.chess.puzzle.text2sql.web.service.helper.LargeLanguageApiHelper
 import com.chess.puzzle.text2sql.web.service.helper.SentenceTransformerHelper
 import com.chess.puzzle.text2sql.web.utility.ResponseUtils
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -30,8 +29,6 @@ import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 
 class DebuggingControllerTest {
-
-    private val objectMapper = ObjectMapper()
 
     @Test
     fun `test hello endpoint`() {

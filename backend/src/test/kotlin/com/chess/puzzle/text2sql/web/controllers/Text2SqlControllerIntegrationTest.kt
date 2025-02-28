@@ -22,7 +22,6 @@ import com.chess.puzzle.text2sql.web.service.helper.PreprocessingHelper
 import com.chess.puzzle.text2sql.web.service.helper.SentenceTransformerHelper
 import com.chess.puzzle.text2sql.web.utility.ResponseUtils
 import com.chess.puzzle.text2sql.web.validator.SqlValidator
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -34,8 +33,6 @@ import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 
 class Text2SqlControllerIntegrationTest {
-    private val objectMapper = ObjectMapper()
-
     private val puzzleRepository: PuzzleRepository = mockk()
     private val sqlValidator: SqlValidator = mockk()
     private val puzzleService = PuzzleService(puzzleRepository, sqlValidator)

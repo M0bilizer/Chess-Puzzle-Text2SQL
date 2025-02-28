@@ -14,7 +14,6 @@ import com.chess.puzzle.text2sql.web.service.FileLoaderService
 import com.chess.puzzle.text2sql.web.service.JsonWriterService
 import com.chess.puzzle.text2sql.web.service.Text2SQLService
 import com.chess.puzzle.text2sql.web.utility.ResponseUtils
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
@@ -27,8 +26,6 @@ import strikt.assertions.isEqualTo
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class BenchmarkingControllerIntegrationTest {
-    private val objectMapper = jacksonObjectMapper()
-
     private val text2SQLService: Text2SQLService = mockk()
     private val benchmarkService: BenchmarkService = BenchmarkService(text2SQLService)
 

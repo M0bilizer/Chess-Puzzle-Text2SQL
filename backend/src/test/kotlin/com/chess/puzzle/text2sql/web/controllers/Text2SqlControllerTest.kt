@@ -11,7 +11,6 @@ import com.chess.puzzle.text2sql.web.error.ProcessQueryError
 import com.chess.puzzle.text2sql.web.service.PuzzleService
 import com.chess.puzzle.text2sql.web.service.Text2SQLService
 import com.chess.puzzle.text2sql.web.utility.ResponseUtils
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
@@ -22,10 +21,8 @@ import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 
 class Text2SqlControllerTest {
-
     private val puzzleService: PuzzleService = mockk()
     private val text2SQLService: Text2SQLService = mockk()
-    private val objectMapper = ObjectMapper()
 
     private val controller = Text2SqlController(puzzleService, text2SQLService)
 

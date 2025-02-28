@@ -33,7 +33,6 @@ import com.chess.puzzle.text2sql.web.service.llm.LargeLanguageModel
 import com.chess.puzzle.text2sql.web.service.llm.LargeLanguageModelFactory
 import com.chess.puzzle.text2sql.web.utility.ResponseUtils
 import com.chess.puzzle.text2sql.web.validator.SqlValidator
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.mock.MockEngine
@@ -50,7 +49,6 @@ import io.ktor.serialization.kotlinx.json.json
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
-import java.io.IOException
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -58,11 +56,9 @@ import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
+import java.io.IOException
 
 class DebuggingControllerIntegrationTest {
-
-    private val objectMapper = ObjectMapper()
-
     private val puzzleRepository: PuzzleRepository = mockk()
     private val sqlValidator: SqlValidator = mockk()
     private val puzzleService = PuzzleService(puzzleRepository, sqlValidator)
