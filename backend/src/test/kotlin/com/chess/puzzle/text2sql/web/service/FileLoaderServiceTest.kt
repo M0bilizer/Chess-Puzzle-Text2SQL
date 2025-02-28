@@ -6,11 +6,11 @@ import com.chess.puzzle.text2sql.web.error.GetBenchmarkEntriesError
 import com.chess.puzzle.text2sql.web.error.GetTextFileError
 import io.mockk.every
 import io.mockk.mockk
-import java.io.IOException
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isA
 import strikt.assertions.isEqualTo
+import java.io.IOException
 
 class FileLoaderServiceTest {
 

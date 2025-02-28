@@ -20,8 +20,8 @@ import com.chess.puzzle.text2sql.web.service.Text2SQLService
 import com.chess.puzzle.text2sql.web.service.helper.LargeLanguageApiHelper
 import com.chess.puzzle.text2sql.web.service.helper.PreprocessingHelper
 import com.chess.puzzle.text2sql.web.service.helper.SentenceTransformerHelper
+import com.chess.puzzle.text2sql.web.utility.ResponseUtils
 import com.chess.puzzle.text2sql.web.validator.SqlValidator
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -33,8 +33,6 @@ import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 
 class Text2SqlControllerIntegrationTest {
-    private val objectMapper = ObjectMapper()
-
     private val puzzleRepository: PuzzleRepository = mockk()
     private val sqlValidator: SqlValidator = mockk()
     private val puzzleService = PuzzleService(puzzleRepository, sqlValidator)
@@ -105,12 +103,10 @@ class Text2SqlControllerIntegrationTest {
         val response: ResponseEntity<String> = controller.queryPuzzle(queryPuzzleRequest)
 
         val expectedMetadata = SearchMetadata(query, ModelName.Deepseek, sql)
-        val expectedResponse =
-            objectMapper.writeValueAsString(
-                mapOf("status" to "success", "data" to puzzles, "metadata" to expectedMetadata)
-            )
+        val expectedResponse = ResponseUtils.successWithSearchMetadata(puzzles, expectedMetadata)
+
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
@@ -147,12 +143,10 @@ class Text2SqlControllerIntegrationTest {
 
         val response: ResponseEntity<String> = controller.queryPuzzle(queryPuzzleRequest)
 
-        val expectedResponse =
-            objectMapper.writeValueAsString(
-                mapOf("status" to "failure", "message" to ProcessQueryError.HibernateError.message)
-            )
+        val expectedResponse = ResponseUtils.failure(ProcessQueryError.HibernateError)
+
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
@@ -189,15 +183,12 @@ class Text2SqlControllerIntegrationTest {
         val response: ResponseEntity<String> = controller.queryPuzzle(queryPuzzleRequest)
 
         val expectedResponse =
-            objectMapper.writeValueAsString(
-                mapOf(
-                    "status" to "failure",
-                    "message" to
-                        ProcessQueryError.ValidationError(isValid = true, isAllowed = false).message,
-                )
+            ResponseUtils.failure(
+                ProcessQueryError.ValidationError(isValid = true, isAllowed = false)
             )
+
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
@@ -234,15 +225,12 @@ class Text2SqlControllerIntegrationTest {
         val response: ResponseEntity<String> = controller.queryPuzzle(queryPuzzleRequest)
 
         val expectedResponse =
-            objectMapper.writeValueAsString(
-                mapOf(
-                    "status" to "failure",
-                    "message" to
-                        ProcessQueryError.ValidationError(isValid = false, isAllowed = true).message,
-                )
+            ResponseUtils.failure(
+                ProcessQueryError.ValidationError(isValid = false, isAllowed = true)
             )
+
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
@@ -274,15 +262,10 @@ class Text2SqlControllerIntegrationTest {
 
         val response: ResponseEntity<String> = controller.queryPuzzle(queryPuzzleRequest)
 
-        val expectedResponse =
-            objectMapper.writeValueAsString(
-                mapOf(
-                    "status" to "failure",
-                    "message" to CallLargeLanguageModelError.RateLimitError.message,
-                )
-            )
+        val expectedResponse = ResponseUtils.failure(CallLargeLanguageModelError.RateLimitError)
+
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
@@ -309,15 +292,10 @@ class Text2SqlControllerIntegrationTest {
 
         val response: ResponseEntity<String> = controller.queryPuzzle(queryPuzzleRequest)
 
-        val expectedResponse =
-            objectMapper.writeValueAsString(
-                mapOf(
-                    "status" to "failure",
-                    "message" to ProcessPromptError.MissingPlaceholderError.message,
-                )
-            )
+        val expectedResponse = ResponseUtils.failure(ProcessPromptError.MissingPlaceholderError)
+
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
@@ -335,15 +313,10 @@ class Text2SqlControllerIntegrationTest {
 
         val response: ResponseEntity<String> = controller.queryPuzzle(queryPuzzleRequest)
 
-        val expectedResponse =
-            objectMapper.writeValueAsString(
-                mapOf(
-                    "status" to "failure",
-                    "message" to GetSimilarDemonstrationError.NetworkError.message,
-                )
-            )
+        val expectedResponse = ResponseUtils.failure(GetSimilarDemonstrationError.NetworkError)
+
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
@@ -358,14 +331,9 @@ class Text2SqlControllerIntegrationTest {
 
         val response: ResponseEntity<String> = controller.queryPuzzle(queryPuzzleRequest)
 
-        val expectedResponse =
-            objectMapper.writeValueAsString(
-                mapOf(
-                    "status" to "failure",
-                    "message" to GetTextFileError.FileNotFoundError.message,
-                )
-            )
+        val expectedResponse = ResponseUtils.failure(GetTextFileError.FileNotFoundError)
+
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 }

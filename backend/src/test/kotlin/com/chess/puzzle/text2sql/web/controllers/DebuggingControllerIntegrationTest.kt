@@ -4,6 +4,7 @@ import com.chess.puzzle.text2sql.web.config.FilePaths
 import com.chess.puzzle.text2sql.web.config.SentenceTransformerEndpoints
 import com.chess.puzzle.text2sql.web.domain.input.GenericRequest
 import com.chess.puzzle.text2sql.web.domain.input.LlmRequest
+import com.chess.puzzle.text2sql.web.domain.input.PromptTemplateRequest
 import com.chess.puzzle.text2sql.web.domain.input.Text2SqlRequest
 import com.chess.puzzle.text2sql.web.domain.model.Demonstration
 import com.chess.puzzle.text2sql.web.domain.model.ModelName
@@ -30,8 +31,8 @@ import com.chess.puzzle.text2sql.web.service.helper.PreprocessingHelper
 import com.chess.puzzle.text2sql.web.service.helper.SentenceTransformerHelper
 import com.chess.puzzle.text2sql.web.service.llm.LargeLanguageModel
 import com.chess.puzzle.text2sql.web.service.llm.LargeLanguageModelFactory
+import com.chess.puzzle.text2sql.web.utility.ResponseUtils
 import com.chess.puzzle.text2sql.web.validator.SqlValidator
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.mock.MockEngine
@@ -48,7 +49,6 @@ import io.ktor.serialization.kotlinx.json.json
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
-import java.io.IOException
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -56,26 +56,26 @@ import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
+import java.io.IOException
 
 class DebuggingControllerIntegrationTest {
-
-    private val objectMapper = ObjectMapper()
-
     private val puzzleRepository: PuzzleRepository = mockk()
     private val sqlValidator: SqlValidator = mockk()
     private val puzzleService = PuzzleService(puzzleRepository, sqlValidator)
 
+    private val preprocessingHelper = PreprocessingHelper()
+
     private val filePaths: FilePaths = mockk()
     private val fileLoaderService: FileLoaderService = mockk()
     private val sentenceTransformerHelperMock: SentenceTransformerHelper = mockk()
-    private val preprocessingHelper: PreprocessingHelper = mockk()
+    private val preprocessingHelperMock: PreprocessingHelper = mockk()
     private val largeLanguageApiHelperMock: LargeLanguageApiHelper = mockk()
     private val text2SQLService =
         Text2SQLService(
             filePaths,
             fileLoaderService,
             sentenceTransformerHelperMock,
-            preprocessingHelper,
+            preprocessingHelperMock,
             largeLanguageApiHelperMock,
         )
 
@@ -89,10 +89,13 @@ class DebuggingControllerIntegrationTest {
     fun `test hello endpoint`() {
         val controller =
             DebuggingController(
-                text2SQLService,
-                puzzleService,
-                sentenceTransformerHelperMock,
-                largeLanguageApiHelperMock,
+                filePaths = filePaths,
+                fileLoaderService = fileLoaderService,
+                sentenceTransformerHelper = sentenceTransformerHelperMock,
+                preprocessingHelper = preprocessingHelperMock,
+                largeLanguageApiHelper = largeLanguageApiHelperMock,
+                text2SQLService = text2SQLService,
+                puzzleService = puzzleService,
             )
         val response = controller.hello()
         expectThat(response).isEqualTo("Hello from Spring Boot!")
@@ -102,10 +105,13 @@ class DebuggingControllerIntegrationTest {
     fun `test db endpoint success`() {
         val controller =
             DebuggingController(
-                text2SQLService,
-                puzzleService,
-                sentenceTransformerHelperMock,
-                largeLanguageApiHelperMock,
+                filePaths = filePaths,
+                fileLoaderService = fileLoaderService,
+                sentenceTransformerHelper = sentenceTransformerHelperMock,
+                preprocessingHelper = preprocessingHelperMock,
+                largeLanguageApiHelper = largeLanguageApiHelperMock,
+                text2SQLService = text2SQLService,
+                puzzleService = puzzleService,
             )
 
         val puzzles =
@@ -128,43 +134,45 @@ class DebuggingControllerIntegrationTest {
         coEvery { puzzleRepository.findRandomPuzzles(5) } returns puzzles
 
         val response = controller.db()
-        val expectedResponse =
-            objectMapper.writeValueAsString(mapOf("status" to "success", "data" to puzzles))
+        val expectedResponse = ResponseUtils.success(puzzles)
 
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
     fun `test db endpoint failure`() {
         val controller =
             DebuggingController(
-                text2SQLService,
-                puzzleService,
-                sentenceTransformerHelperMock,
-                largeLanguageApiHelperMock,
+                filePaths = filePaths,
+                fileLoaderService = fileLoaderService,
+                sentenceTransformerHelper = sentenceTransformerHelperMock,
+                preprocessingHelper = preprocessingHelperMock,
+                largeLanguageApiHelper = largeLanguageApiHelperMock,
+                text2SQLService = text2SQLService,
+                puzzleService = puzzleService,
             )
 
         val error = GetRandomPuzzlesError.Throwable(Throwable())
         coEvery { puzzleRepository.findRandomPuzzles(5) } throws Throwable()
 
         val response = controller.db()
-        val expectedResponse =
-            objectMapper.writeValueAsString(
-                mapOf("status" to "failure", "message" to error.message)
-            )
+        val expectedResponse = ResponseUtils.failure(error)
 
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
     fun `test sql endpoint success`() {
         val controller =
             DebuggingController(
-                text2SQLService,
-                puzzleService,
-                sentenceTransformerHelperMock,
-                largeLanguageApiHelperMock,
+                filePaths = filePaths,
+                fileLoaderService = fileLoaderService,
+                sentenceTransformerHelper = sentenceTransformerHelperMock,
+                preprocessingHelper = preprocessingHelperMock,
+                largeLanguageApiHelper = largeLanguageApiHelperMock,
+                text2SQLService = text2SQLService,
+                puzzleService = puzzleService,
             )
 
         val query = "SELECT * FROM puzzles"
@@ -191,21 +199,23 @@ class DebuggingControllerIntegrationTest {
         coEvery { puzzleRepository.executeSqlQuery(query) } returns puzzles
 
         val response = controller.sql(genericRequest)
-        val expectedResponse =
-            objectMapper.writeValueAsString(mapOf("status" to "success", "data" to puzzles))
+        val expectedResponse = ResponseUtils.success(puzzles)
 
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
     fun `test sql endpoint failure in executeSqlQuery`() {
         val controller =
             DebuggingController(
-                text2SQLService,
-                puzzleService,
-                sentenceTransformerHelperMock,
-                largeLanguageApiHelperMock,
+                filePaths = filePaths,
+                fileLoaderService = fileLoaderService,
+                sentenceTransformerHelper = sentenceTransformerHelperMock,
+                preprocessingHelper = preprocessingHelperMock,
+                largeLanguageApiHelper = largeLanguageApiHelperMock,
+                text2SQLService = text2SQLService,
+                puzzleService = puzzleService,
             )
 
         val query = "SELECT * FROM puzzles"
@@ -217,23 +227,23 @@ class DebuggingControllerIntegrationTest {
         coEvery { puzzleRepository.executeSqlQuery(query) } throws Throwable()
 
         val response = controller.sql(genericRequest)
-        val expectedResponse =
-            objectMapper.writeValueAsString(
-                mapOf("status" to "failure", "message" to error.message)
-            )
+        val expectedResponse = ResponseUtils.failure(error)
 
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
     fun `test sql endpoint failure in isAllowed`() {
         val controller =
             DebuggingController(
-                text2SQLService,
-                puzzleService,
-                sentenceTransformerHelperMock,
-                largeLanguageApiHelperMock,
+                filePaths = filePaths,
+                fileLoaderService = fileLoaderService,
+                sentenceTransformerHelper = sentenceTransformerHelperMock,
+                preprocessingHelper = preprocessingHelperMock,
+                largeLanguageApiHelper = largeLanguageApiHelperMock,
+                text2SQLService = text2SQLService,
+                puzzleService = puzzleService,
             )
 
         val query = "SELECT * FROM puzzles"
@@ -244,23 +254,23 @@ class DebuggingControllerIntegrationTest {
         coEvery { sqlValidator.isAllowed(query) } returns false
 
         val response = controller.sql(genericRequest)
-        val expectedResponse =
-            objectMapper.writeValueAsString(
-                mapOf("status" to "failure", "message" to error.message)
-            )
+        val expectedResponse = ResponseUtils.failure(error)
 
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
     fun `test sql endpoint failure in isValid`() {
         val controller =
             DebuggingController(
-                text2SQLService,
-                puzzleService,
-                sentenceTransformerHelperMock,
-                largeLanguageApiHelperMock,
+                filePaths = filePaths,
+                fileLoaderService = fileLoaderService,
+                sentenceTransformerHelper = sentenceTransformerHelperMock,
+                preprocessingHelper = preprocessingHelperMock,
+                largeLanguageApiHelper = largeLanguageApiHelperMock,
+                text2SQLService = text2SQLService,
+                puzzleService = puzzleService,
             )
 
         val query = "SELECT * FROM puzzles"
@@ -271,13 +281,10 @@ class DebuggingControllerIntegrationTest {
         coEvery { sqlValidator.isAllowed(query) } returns true
 
         val response = controller.sql(genericRequest)
-        val expectedResponse =
-            objectMapper.writeValueAsString(
-                mapOf("status" to "failure", "message" to error.message)
-            )
+        val expectedResponse = ResponseUtils.failure(error)
 
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
@@ -316,21 +323,159 @@ class DebuggingControllerIntegrationTest {
         sentenceTransformerHelper = SentenceTransformerHelper(mockEndpoints, client)
         val controller =
             DebuggingController(
-                text2SQLService,
-                puzzleService,
-                sentenceTransformerHelper,
-                largeLanguageApiHelper,
+                filePaths = filePaths,
+                fileLoaderService = fileLoaderService,
+                sentenceTransformerHelper = sentenceTransformerHelper,
+                preprocessingHelper = preprocessingHelperMock,
+                largeLanguageApiHelper = largeLanguageApiHelper,
+                text2SQLService = text2SQLService,
+                puzzleService = puzzleService,
             )
 
         val genericRequest = GenericRequest(query = "some query")
         val response = controller.sentenceTransformer(genericRequest)
 
-        val expectedResponse =
-            objectMapper.writeValueAsString(
-                mapOf("status" to "success", "data" to similarDemonstrations)
-            )
+        val expectedResponse = ResponseUtils.success(similarDemonstrations)
+
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
+    }
+
+    @Test
+    fun `test promptTemplate endpoint success`(): Unit = runBlocking {
+        val query = "some prompt"
+        val variant = ModelVariant.Full
+        val promptTemplateRequest = PromptTemplateRequest(query, variant.toString())
+        val filepath = "some/file/path"
+        val promptTemplate = "{{prompt}} {{text0}} {{sql0}} {{text1}} {{sql1}} {{text2}} {{sql2}}"
+        val demonstrations =
+            listOf(
+                Demonstration("myText0", "mySql0"),
+                Demonstration("myText1", "mySql1"),
+                Demonstration("myText2", "mySql2"),
+            )
+        val processedPrompt =
+            "$query ${demonstrations[0].text} ${demonstrations[0].sql} ${demonstrations[1].text} ${demonstrations[1].sql} ${demonstrations[2].text} ${demonstrations[2].sql}"
+
+        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns filepath
+        coEvery { fileLoaderService.getTextFile(filepath) } returns
+            ResultWrapper.Success(promptTemplate)
+        coEvery { sentenceTransformerHelperMock.getSimilarDemonstration(query) } returns
+            ResultWrapper.Success(demonstrations)
+
+        val response =
+            DebuggingController(
+                    filePaths = filePaths,
+                    fileLoaderService = fileLoaderService,
+                    sentenceTransformerHelper = sentenceTransformerHelperMock,
+                    preprocessingHelper = preprocessingHelper,
+                    largeLanguageApiHelper = largeLanguageApiHelperMock,
+                    text2SQLService = text2SQLService,
+                    puzzleService = puzzleService,
+                )
+                .promptTemplate(promptTemplateRequest)
+
+        val expectedResponse = ResponseUtils.success(processedPrompt)
+
+        expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
+    }
+
+    @Test
+    fun `test promptTemplate endpoint failure in fileloading`(): Unit = runBlocking {
+        val query = "some prompt"
+        val variant = ModelVariant.Full
+        val promptTemplateRequest = PromptTemplateRequest(query, variant.toString())
+        val filepath = "some/file/path"
+        val error = GetTextFileError.FileNotFoundError
+        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns filepath
+        coEvery { fileLoaderService.getTextFile(filepath) } returns ResultWrapper.Failure(error)
+
+        val response =
+            DebuggingController(
+                    filePaths = filePaths,
+                    fileLoaderService = fileLoaderService,
+                    sentenceTransformerHelper = sentenceTransformerHelperMock,
+                    preprocessingHelper = preprocessingHelper,
+                    largeLanguageApiHelper = largeLanguageApiHelperMock,
+                    text2SQLService = text2SQLService,
+                    puzzleService = puzzleService,
+                )
+                .promptTemplate(promptTemplateRequest)
+
+        val expectedResponse = ResponseUtils.failure(error)
+
+        expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
+    }
+
+    @Test
+    fun `test promptTemplate endpoint failure in getting similar demonstrations`(): Unit =
+        runBlocking {
+            val query = "some prompt"
+            val variant = ModelVariant.Full
+            val promptTemplateRequest = PromptTemplateRequest(query, variant.toString())
+            val filepath = "some/file/path"
+            val promptTemplate =
+                "{{prompt}} {{text0}} {{sql0}} {{text1}} {{sql1}} {{text2}} {{sql2}}"
+            val error = GetSimilarDemonstrationError.NetworkError
+
+            coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns filepath
+            coEvery { fileLoaderService.getTextFile(filepath) } returns
+                ResultWrapper.Success(promptTemplate)
+            coEvery { sentenceTransformerHelperMock.getSimilarDemonstration(query) } returns
+                ResultWrapper.Failure(error)
+
+            val response =
+                DebuggingController(
+                        filePaths = filePaths,
+                        fileLoaderService = fileLoaderService,
+                        sentenceTransformerHelper = sentenceTransformerHelperMock,
+                        preprocessingHelper = preprocessingHelper,
+                        largeLanguageApiHelper = largeLanguageApiHelperMock,
+                        text2SQLService = text2SQLService,
+                        puzzleService = puzzleService,
+                    )
+                    .promptTemplate(promptTemplateRequest)
+
+            val expectedResponse = ResponseUtils.failure(error)
+
+            expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
+            expectThat(response.body).isEqualTo(expectedResponse.body)
+        }
+
+    @Test
+    fun `test promptTemplate endpoint failure in processing prompt`(): Unit = runBlocking {
+        val query = "some prompt"
+        val variant = ModelVariant.Full
+        val promptTemplateRequest = PromptTemplateRequest(query, variant.toString())
+        val filepath = "some/file/path"
+        val promptTemplate = "{{prompt}} {{text0}} {{sql0}} {{text1}} {{sql1}} {{text2}} {{sql2}}"
+        val demonstrations = listOf<Demonstration>()
+        val error = ProcessPromptError.InsufficientDemonstrationsError
+
+        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns filepath
+        coEvery { fileLoaderService.getTextFile(filepath) } returns
+            ResultWrapper.Success(promptTemplate)
+        coEvery { sentenceTransformerHelperMock.getSimilarDemonstration(query) } returns
+            ResultWrapper.Success(demonstrations)
+
+        val response =
+            DebuggingController(
+                    filePaths = filePaths,
+                    fileLoaderService = fileLoaderService,
+                    sentenceTransformerHelper = sentenceTransformerHelperMock,
+                    preprocessingHelper = preprocessingHelper,
+                    largeLanguageApiHelper = largeLanguageApiHelperMock,
+                    text2SQLService = text2SQLService,
+                    puzzleService = puzzleService,
+                )
+                .promptTemplate(promptTemplateRequest)
+
+        val expectedResponse = ResponseUtils.failure(error)
+
+        expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
@@ -352,22 +497,23 @@ class DebuggingControllerIntegrationTest {
         sentenceTransformerHelper = SentenceTransformerHelper(mockEndpoints, client)
         val controller =
             DebuggingController(
-                text2SQLService,
-                puzzleService,
-                sentenceTransformerHelper,
-                largeLanguageApiHelper,
+                filePaths = filePaths,
+                fileLoaderService = fileLoaderService,
+                sentenceTransformerHelper = sentenceTransformerHelper,
+                preprocessingHelper = preprocessingHelperMock,
+                largeLanguageApiHelper = largeLanguageApiHelper,
+                text2SQLService = text2SQLService,
+                puzzleService = puzzleService,
             )
 
         val genericRequest = GenericRequest(query = "some query")
         val response = controller.sentenceTransformer(genericRequest)
 
         val error = GetSimilarDemonstrationError.NetworkError
-        val expectedResponse =
-            objectMapper.writeValueAsString(
-                mapOf("status" to "failure", "message" to error.message)
-            )
+        val expectedResponse = ResponseUtils.failure(error)
+
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
@@ -400,209 +546,23 @@ class DebuggingControllerIntegrationTest {
         sentenceTransformerHelper = SentenceTransformerHelper(mockEndpoints, client)
         val controller =
             DebuggingController(
-                text2SQLService,
-                puzzleService,
-                sentenceTransformerHelper,
-                largeLanguageApiHelper,
+                filePaths = filePaths,
+                fileLoaderService = fileLoaderService,
+                sentenceTransformerHelper = sentenceTransformerHelper,
+                preprocessingHelper = preprocessingHelperMock,
+                largeLanguageApiHelper = largeLanguageApiHelper,
+                text2SQLService = text2SQLService,
+                puzzleService = puzzleService,
             )
 
         val genericRequest = GenericRequest(query = "some query")
         val response = controller.sentenceTransformer(genericRequest)
 
         val error = GetSimilarDemonstrationError.InternalError
-        val expectedResponse =
-            objectMapper.writeValueAsString(
-                mapOf("status" to "failure", "message" to error.message)
-            )
+        val expectedResponse = ResponseUtils.failure(error)
+
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
-    }
-
-    @Test
-    fun `test text2sql endpoint success`(): Unit = runBlocking {
-        val query = "Find puzzles with rating > 1500"
-        val promptTemplate = "{{prompt}} {{text0}} {{sql0}}"
-        val demonstrations =
-            listOf(
-                Demonstration(
-                    text = "Find puzzles with rating > 2000",
-                    sql = "SELECT * FROM puzzles WHERE rating > 2000",
-                )
-            )
-        val processedPrompt =
-            "Find puzzles with rating > 1500 Find puzzles with rating > 2000 SELECT * FROM puzzles WHERE rating > 2000"
-        val sql = "SELECT * FROM puzzles WHERE rating > 1500"
-
-        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns
-            "full_prompt_template.txt"
-        coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
-            ResultWrapper.Success(promptTemplate)
-        coEvery { sentenceTransformerHelperMock.getSimilarDemonstration(query) } returns
-            ResultWrapper.Success(demonstrations)
-        coEvery { preprocessingHelper.processPrompt(query, promptTemplate, demonstrations) } returns
-            ResultWrapper.Success(processedPrompt)
-        coEvery {
-            largeLanguageApiHelperMock.callModel(processedPrompt, ModelName.Deepseek)
-        } returns ResultWrapper.Success(sql)
-        val controller =
-            DebuggingController(
-                text2SQLService,
-                puzzleService,
-                sentenceTransformerHelperMock,
-                largeLanguageApiHelperMock,
-            )
-
-        val text2SqlRequest = Text2SqlRequest(query)
-        val response = controller.text2sql(text2SqlRequest)
-
-        val expectedResponse =
-            objectMapper.writeValueAsString(mapOf("status" to "success", "data" to sql))
-        expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
-    }
-
-    @Test
-    fun `test text2sql endpoint error in file loading`(): Unit = runBlocking {
-        val query = "Find puzzles with rating > 1500"
-        val error = GetTextFileError.IOException(IOException())
-
-        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns
-            "full_prompt_template.txt"
-        coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
-            ResultWrapper.Failure(error)
-        val controller =
-            DebuggingController(
-                text2SQLService,
-                puzzleService,
-                sentenceTransformerHelperMock,
-                largeLanguageApiHelperMock,
-            )
-
-        val text2SqlRequest = Text2SqlRequest(query)
-        val response = controller.text2sql(text2SqlRequest)
-
-        val expectedResponse =
-            objectMapper.writeValueAsString(
-                mapOf("status" to "failure", "message" to error.message)
-            )
-        expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
-    }
-
-    @Test
-    fun `test text2sql endpoint failure in sentence transformer`(): Unit = runBlocking {
-        val query = "Find puzzles with rating > 1500"
-        val promptTemplate = "{{prompt}} {{text0}} {{sql0}}"
-        val error = GetSimilarDemonstrationError.InternalError
-
-        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns
-            "full_prompt_template.txt"
-        coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
-            ResultWrapper.Success(promptTemplate)
-        coEvery { sentenceTransformerHelperMock.getSimilarDemonstration(query) } returns
-            ResultWrapper.Failure(error)
-        val controller =
-            DebuggingController(
-                text2SQLService,
-                puzzleService,
-                sentenceTransformerHelperMock,
-                largeLanguageApiHelperMock,
-            )
-
-        val text2SqlRequest = Text2SqlRequest(query)
-        val response = controller.text2sql(text2SqlRequest)
-
-        val expectedResponse =
-            objectMapper.writeValueAsString(
-                mapOf("status" to "failure", "message" to error.message)
-            )
-        expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
-    }
-
-    @Test
-    fun `test text2sql endpoint failure in preprocessing`(): Unit = runBlocking {
-        val query = "Find puzzles with rating > 1500"
-        val promptTemplate = "{{prompt}} {{text0}} {{sql0}}"
-        val demonstrations =
-            listOf(
-                Demonstration(
-                    text = "Find puzzles with rating > 2000",
-                    sql = "SELECT * FROM puzzles WHERE rating > 2000",
-                )
-            )
-        val error = ProcessPromptError.MissingPlaceholderError
-
-        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns
-            "full_prompt_template.txt"
-        coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
-            ResultWrapper.Success(promptTemplate)
-        coEvery { sentenceTransformerHelperMock.getSimilarDemonstration(query) } returns
-            ResultWrapper.Success(demonstrations)
-        coEvery { preprocessingHelper.processPrompt(query, promptTemplate, demonstrations) } returns
-            ResultWrapper.Failure(error)
-        val controller =
-            DebuggingController(
-                text2SQLService,
-                puzzleService,
-                sentenceTransformerHelperMock,
-                largeLanguageApiHelperMock,
-            )
-
-        val text2SqlRequest = Text2SqlRequest(query)
-        val response = controller.text2sql(text2SqlRequest)
-
-        val expectedResponse =
-            objectMapper.writeValueAsString(
-                mapOf("status" to "failure", "message" to error.message)
-            )
-        expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
-    }
-
-    @Test
-    fun `test text2sql endpoint failure in large language api`(): Unit = runBlocking {
-        val query = "Find puzzles with rating > 1500"
-        val promptTemplate = "{{prompt}} {{text0}} {{sql0}}"
-        val demonstrations =
-            listOf(
-                Demonstration(
-                    text = "Find puzzles with rating > 2000",
-                    sql = "SELECT * FROM puzzles WHERE rating > 2000",
-                )
-            )
-        val processedPrompt =
-            "Find puzzles with rating > 1500 Find puzzles with rating > 2000 SELECT * FROM puzzles WHERE rating > 2000"
-        val error = CallLargeLanguageModelError.InsufficientBalanceError
-
-        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns
-            "full_prompt_template.txt"
-        coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
-            ResultWrapper.Success(promptTemplate)
-        coEvery { sentenceTransformerHelperMock.getSimilarDemonstration(query) } returns
-            ResultWrapper.Success(demonstrations)
-        coEvery { preprocessingHelper.processPrompt(query, promptTemplate, demonstrations) } returns
-            ResultWrapper.Success(processedPrompt)
-        coEvery {
-            largeLanguageApiHelperMock.callModel(processedPrompt, ModelName.Deepseek)
-        } returns ResultWrapper.Failure(error)
-        val controller =
-            DebuggingController(
-                text2SQLService,
-                puzzleService,
-                sentenceTransformerHelperMock,
-                largeLanguageApiHelperMock,
-            )
-
-        val text2SqlRequest = Text2SqlRequest(query)
-        val response = controller.text2sql(text2SqlRequest)
-
-        val expectedResponse =
-            objectMapper.writeValueAsString(
-                mapOf("status" to "failure", "message" to error.message)
-            )
-        expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
@@ -635,19 +595,22 @@ class DebuggingControllerIntegrationTest {
         coEvery { largeLanguageModel.callModel(promptTemplate) } returns httpResponse
         val controller =
             DebuggingController(
-                text2SQLService,
-                puzzleService,
-                sentenceTransformerHelperMock,
-                largeLanguageApiHelper,
+                filePaths = filePaths,
+                fileLoaderService = fileLoaderService,
+                sentenceTransformerHelper = sentenceTransformerHelperMock,
+                preprocessingHelper = preprocessingHelperMock,
+                largeLanguageApiHelper = largeLanguageApiHelper,
+                text2SQLService = text2SQLService,
+                puzzleService = puzzleService,
             )
 
         val llmRequest = LlmRequest(promptTemplate)
         val response = controller.llm(llmRequest)
 
-        val expectedResponse =
-            objectMapper.writeValueAsString(mapOf("status" to "success", "data" to query))
+        val expectedResponse = ResponseUtils.success(query)
+
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
@@ -663,22 +626,23 @@ class DebuggingControllerIntegrationTest {
         coEvery { largeLanguageModel.callModel(promptTemplate) } returns httpResponse
         val controller =
             DebuggingController(
-                text2SQLService,
-                puzzleService,
-                sentenceTransformerHelperMock,
-                largeLanguageApiHelper,
+                filePaths = filePaths,
+                fileLoaderService = fileLoaderService,
+                sentenceTransformerHelper = sentenceTransformerHelperMock,
+                preprocessingHelper = preprocessingHelperMock,
+                largeLanguageApiHelper = largeLanguageApiHelper,
+                text2SQLService = text2SQLService,
+                puzzleService = puzzleService,
             )
 
         val llmRequest = LlmRequest(promptTemplate)
         val response = controller.llm(llmRequest)
 
         val error = CallLargeLanguageModelError.RateLimitError
-        val expectedResponse =
-            objectMapper.writeValueAsString(
-                mapOf("status" to "failure", "message" to error.message)
-            )
+        val expectedResponse = ResponseUtils.failure(error)
+
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
@@ -694,22 +658,23 @@ class DebuggingControllerIntegrationTest {
         coEvery { largeLanguageModel.callModel(promptTemplate) } returns httpResponse
         val controller =
             DebuggingController(
-                text2SQLService,
-                puzzleService,
-                sentenceTransformerHelperMock,
-                largeLanguageApiHelper,
+                filePaths = filePaths,
+                fileLoaderService = fileLoaderService,
+                sentenceTransformerHelper = sentenceTransformerHelperMock,
+                preprocessingHelper = preprocessingHelperMock,
+                largeLanguageApiHelper = largeLanguageApiHelper,
+                text2SQLService = text2SQLService,
+                puzzleService = puzzleService,
             )
 
         val llmRequest = LlmRequest(promptTemplate)
         val response = controller.llm(llmRequest)
 
         val error = CallLargeLanguageModelError.PermissionError
-        val expectedResponse =
-            objectMapper.writeValueAsString(
-                mapOf("status" to "failure", "message" to error.message)
-            )
+        val expectedResponse = ResponseUtils.failure(error)
+
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
@@ -725,22 +690,23 @@ class DebuggingControllerIntegrationTest {
         coEvery { largeLanguageModel.callModel(promptTemplate) } returns httpResponse
         val controller =
             DebuggingController(
-                text2SQLService,
-                puzzleService,
-                sentenceTransformerHelperMock,
-                largeLanguageApiHelper,
+                filePaths = filePaths,
+                fileLoaderService = fileLoaderService,
+                sentenceTransformerHelper = sentenceTransformerHelperMock,
+                preprocessingHelper = preprocessingHelperMock,
+                largeLanguageApiHelper = largeLanguageApiHelper,
+                text2SQLService = text2SQLService,
+                puzzleService = puzzleService,
             )
 
         val llmRequest = LlmRequest(promptTemplate)
         val response = controller.llm(llmRequest)
 
         val error = CallLargeLanguageModelError.InsufficientBalanceError
-        val expectedResponse =
-            objectMapper.writeValueAsString(
-                mapOf("status" to "failure", "message" to error.message)
-            )
+        val expectedResponse = ResponseUtils.failure(error)
+
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 
     @Test
@@ -755,21 +721,218 @@ class DebuggingControllerIntegrationTest {
         coEvery { largeLanguageModel.callModel(promptTemplate) } returns httpResponse
         val controller =
             DebuggingController(
-                text2SQLService,
-                puzzleService,
-                sentenceTransformerHelperMock,
-                largeLanguageApiHelper,
+                filePaths = filePaths,
+                fileLoaderService = fileLoaderService,
+                sentenceTransformerHelper = sentenceTransformerHelperMock,
+                preprocessingHelper = preprocessingHelperMock,
+                largeLanguageApiHelper = largeLanguageApiHelper,
+                text2SQLService = text2SQLService,
+                puzzleService = puzzleService,
             )
 
         val llmRequest = LlmRequest(promptTemplate)
         val response = controller.llm(llmRequest)
 
         val error = CallLargeLanguageModelError.UnknownStatusError(425)
-        val expectedResponse =
-            objectMapper.writeValueAsString(
-                mapOf("status" to "failure", "message" to error.message)
-            )
+        val expectedResponse = ResponseUtils.failure(error)
+
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(response.body).isEqualTo(expectedResponse)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
+    }
+
+    @Test
+    fun `test text2sql endpoint success`(): Unit = runBlocking {
+        val query = "Find puzzles with rating > 1500"
+        val promptTemplate = "{{prompt}} {{text0}} {{sql0}}"
+        val demonstrations =
+            listOf(
+                Demonstration(
+                    text = "Find puzzles with rating > 2000",
+                    sql = "SELECT * FROM puzzles WHERE rating > 2000",
+                )
+            )
+        val processedPrompt =
+            "Find puzzles with rating > 1500 Find puzzles with rating > 2000 SELECT * FROM puzzles WHERE rating > 2000"
+        val sql = "SELECT * FROM puzzles WHERE rating > 1500"
+
+        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns
+            "full_prompt_template.txt"
+        coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
+            ResultWrapper.Success(promptTemplate)
+        coEvery { sentenceTransformerHelperMock.getSimilarDemonstration(query) } returns
+            ResultWrapper.Success(demonstrations)
+        coEvery {
+            preprocessingHelperMock.processPrompt(query, promptTemplate, demonstrations)
+        } returns ResultWrapper.Success(processedPrompt)
+        coEvery {
+            largeLanguageApiHelperMock.callModel(processedPrompt, ModelName.Deepseek)
+        } returns ResultWrapper.Success(sql)
+        val controller =
+            DebuggingController(
+                filePaths = filePaths,
+                fileLoaderService = fileLoaderService,
+                sentenceTransformerHelper = sentenceTransformerHelperMock,
+                preprocessingHelper = preprocessingHelperMock,
+                largeLanguageApiHelper = largeLanguageApiHelperMock,
+                text2SQLService = text2SQLService,
+                puzzleService = puzzleService,
+            )
+
+        val text2SqlRequest = Text2SqlRequest(query)
+        val response = controller.text2sql(text2SqlRequest)
+
+        val expectedResponse = ResponseUtils.success(sql)
+        expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
+    }
+
+    @Test
+    fun `test text2sql endpoint error in file loading`(): Unit = runBlocking {
+        val query = "Find puzzles with rating > 1500"
+        val error = GetTextFileError.IOException(IOException())
+
+        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns
+            "full_prompt_template.txt"
+        coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
+            ResultWrapper.Failure(error)
+        val controller =
+            DebuggingController(
+                filePaths = filePaths,
+                fileLoaderService = fileLoaderService,
+                sentenceTransformerHelper = sentenceTransformerHelperMock,
+                preprocessingHelper = preprocessingHelperMock,
+                largeLanguageApiHelper = largeLanguageApiHelperMock,
+                text2SQLService = text2SQLService,
+                puzzleService = puzzleService,
+            )
+
+        val text2SqlRequest = Text2SqlRequest(query)
+        val response = controller.text2sql(text2SqlRequest)
+
+        val expectedResponse = ResponseUtils.failure(error)
+
+        expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
+    }
+
+    @Test
+    fun `test text2sql endpoint failure in sentence transformer`(): Unit = runBlocking {
+        val query = "Find puzzles with rating > 1500"
+        val promptTemplate = "{{prompt}} {{text0}} {{sql0}}"
+        val error = GetSimilarDemonstrationError.InternalError
+
+        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns
+            "full_prompt_template.txt"
+        coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
+            ResultWrapper.Success(promptTemplate)
+        coEvery { sentenceTransformerHelperMock.getSimilarDemonstration(query) } returns
+            ResultWrapper.Failure(error)
+        val controller =
+            DebuggingController(
+                filePaths = filePaths,
+                fileLoaderService = fileLoaderService,
+                sentenceTransformerHelper = sentenceTransformerHelperMock,
+                preprocessingHelper = preprocessingHelperMock,
+                largeLanguageApiHelper = largeLanguageApiHelperMock,
+                text2SQLService = text2SQLService,
+                puzzleService = puzzleService,
+            )
+
+        val text2SqlRequest = Text2SqlRequest(query)
+        val response = controller.text2sql(text2SqlRequest)
+
+        val expectedResponse = ResponseUtils.failure(error)
+
+        expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
+    }
+
+    @Test
+    fun `test text2sql endpoint failure in preprocessing`(): Unit = runBlocking {
+        val query = "Find puzzles with rating > 1500"
+        val promptTemplate = "{{prompt}} {{text0}} {{sql0}}"
+        val demonstrations =
+            listOf(
+                Demonstration(
+                    text = "Find puzzles with rating > 2000",
+                    sql = "SELECT * FROM puzzles WHERE rating > 2000",
+                )
+            )
+        val error = ProcessPromptError.MissingPlaceholderError
+
+        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns
+            "full_prompt_template.txt"
+        coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
+            ResultWrapper.Success(promptTemplate)
+        coEvery { sentenceTransformerHelperMock.getSimilarDemonstration(query) } returns
+            ResultWrapper.Success(demonstrations)
+        coEvery {
+            preprocessingHelperMock.processPrompt(query, promptTemplate, demonstrations)
+        } returns ResultWrapper.Failure(error)
+        val controller =
+            DebuggingController(
+                filePaths = filePaths,
+                fileLoaderService = fileLoaderService,
+                sentenceTransformerHelper = sentenceTransformerHelperMock,
+                preprocessingHelper = preprocessingHelperMock,
+                largeLanguageApiHelper = largeLanguageApiHelperMock,
+                text2SQLService = text2SQLService,
+                puzzleService = puzzleService,
+            )
+
+        val text2SqlRequest = Text2SqlRequest(query)
+        val response = controller.text2sql(text2SqlRequest)
+
+        val expectedResponse = ResponseUtils.failure(error)
+
+        expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
+    }
+
+    @Test
+    fun `test text2sql endpoint failure in large language api`(): Unit = runBlocking {
+        val query = "Find puzzles with rating > 1500"
+        val promptTemplate = "{{prompt}} {{text0}} {{sql0}}"
+        val demonstrations =
+            listOf(
+                Demonstration(
+                    text = "Find puzzles with rating > 2000",
+                    sql = "SELECT * FROM puzzles WHERE rating > 2000",
+                )
+            )
+        val processedPrompt =
+            "Find puzzles with rating > 1500 Find puzzles with rating > 2000 SELECT * FROM puzzles WHERE rating > 2000"
+        val error = CallLargeLanguageModelError.InsufficientBalanceError
+
+        coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns
+            "full_prompt_template.txt"
+        coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
+            ResultWrapper.Success(promptTemplate)
+        coEvery { sentenceTransformerHelperMock.getSimilarDemonstration(query) } returns
+            ResultWrapper.Success(demonstrations)
+        coEvery {
+            preprocessingHelperMock.processPrompt(query, promptTemplate, demonstrations)
+        } returns ResultWrapper.Success(processedPrompt)
+        coEvery {
+            largeLanguageApiHelperMock.callModel(processedPrompt, ModelName.Deepseek)
+        } returns ResultWrapper.Failure(error)
+        val controller =
+            DebuggingController(
+                filePaths = filePaths,
+                fileLoaderService = fileLoaderService,
+                sentenceTransformerHelper = sentenceTransformerHelperMock,
+                preprocessingHelper = preprocessingHelperMock,
+                largeLanguageApiHelper = largeLanguageApiHelperMock,
+                text2SQLService = text2SQLService,
+                puzzleService = puzzleService,
+            )
+
+        val text2SqlRequest = Text2SqlRequest(query)
+        val response = controller.text2sql(text2SqlRequest)
+
+        val expectedResponse = ResponseUtils.failure(error)
+
+        expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
+        expectThat(response.body).isEqualTo(expectedResponse.body)
     }
 }

@@ -11,10 +11,9 @@ import com.chess.puzzle.text2sql.web.error.WriteToFileError
 import com.chess.puzzle.text2sql.web.service.BenchmarkService
 import com.chess.puzzle.text2sql.web.service.FileLoaderService
 import com.chess.puzzle.text2sql.web.service.JsonWriterService
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.chess.puzzle.text2sql.web.utility.ResponseUtils
 import io.mockk.coEvery
 import io.mockk.mockk
-import java.io.IOException
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -24,12 +23,10 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
+import java.io.IOException
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class BenchmarkingControllerTest {
-
-    private val objectMapper = jacksonObjectMapper()
-
     private val benchmarkService: BenchmarkService = mockk()
     private val jsonWriterService: JsonWriterService = mockk()
     private val fileLoaderService: FileLoaderService = mockk()
@@ -78,12 +75,10 @@ class BenchmarkingControllerTest {
         val deferredResult = benchmarkingController.benchmark()
         val result = deferredResult.result as ResponseEntity<String>
 
-        val expected =
-            objectMapper.writeValueAsString(
-                mapOf("status" to "success", "data" to benchmarkResults)
-            )
+        val expected = ResponseUtils.success(benchmarkResults)
+
         expectThat(result.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(result.body).isEqualTo(expected)
+        expectThat(result.body).isEqualTo(expected.body)
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -98,12 +93,9 @@ class BenchmarkingControllerTest {
         val deferredResult = benchmarkingController.benchmark()
         val result = deferredResult.result as ResponseEntity<String>
 
-        val expected =
-            objectMapper.writeValueAsString(
-                mapOf("status" to "failure", "message" to error.message)
-            )
+        val expected = ResponseUtils.failure(error)
         expectThat(result.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(result.body).isEqualTo(expected)
+        expectThat(result.body).isEqualTo(expected.body)
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -120,12 +112,9 @@ class BenchmarkingControllerTest {
         val deferredResult = benchmarkingController.benchmark()
         val result = deferredResult.result as ResponseEntity<String>
 
-        val expected =
-            objectMapper.writeValueAsString(
-                mapOf("status" to "failure", "message" to error.message)
-            )
+        val expected = ResponseUtils.failure(error)
         expectThat(result.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(result.body).isEqualTo(expected)
+        expectThat(result.body).isEqualTo(expected.body)
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -145,11 +134,8 @@ class BenchmarkingControllerTest {
         val deferredResult = benchmarkingController.benchmark()
         val result = deferredResult.result as ResponseEntity<String>
 
-        val expected =
-            objectMapper.writeValueAsString(
-                mapOf("status" to "failure", "message" to error.message)
-            )
+        val expected = ResponseUtils.failure(error)
         expectThat(result.statusCode).isEqualTo(HttpStatus.OK)
-        expectThat(result.body).isEqualTo(expected)
+        expectThat(result.body).isEqualTo(expected.body)
     }
 }
