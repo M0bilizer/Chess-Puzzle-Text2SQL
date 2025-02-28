@@ -53,8 +53,9 @@ export async function searchPuzzles(query: string, model: ModelEnum): Promise<Se
 export async function loadRandomPuzzle(query: string) {
 	isLoading.set(true);
 	const metadata: SearchMetadata = {
-		model: null,
 		query: query,
+		model: null,
+		maskedQuery: null,
 		sql: null
 	};
 	const list = _mapToInstance(getDataStub());
