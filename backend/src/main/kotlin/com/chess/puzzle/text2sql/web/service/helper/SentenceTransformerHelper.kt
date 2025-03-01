@@ -112,7 +112,7 @@ class SentenceTransformerHelper(
                 val maskedQuery = fastApiResponse.maskedQuery
                 val demos = fastApiResponse.data
                 logSuccess(logPrefix, input, maskedQuery, demos)
-                ResultWrapper.Success(demos)
+                ResultWrapper.Success(data = demos, metadata = maskedQuery)
             }
             "failure" -> {
                 logger.warn { "$logPrefix { input = $input } -> Network Error" }

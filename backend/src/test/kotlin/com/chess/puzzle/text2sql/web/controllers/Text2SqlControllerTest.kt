@@ -31,6 +31,7 @@ class Text2SqlControllerTest {
         val query = "some natural language query"
         val queryPuzzleRequest = QueryPuzzleRequest(query = "some natural language query")
         val sqlQuery = "SELECT * FROM puzzles WHERE ..."
+        val metadata = SearchMetadata(query, ModelName.Deepseek, "masked query", sqlQuery)
         val puzzles =
             listOf(
                 Puzzle(
@@ -50,13 +51,12 @@ class Text2SqlControllerTest {
 
         coEvery {
             text2SQLService.convertToSQL(query, ModelName.Deepseek, ModelVariant.Full)
-        } returns ResultWrapper.Success(sqlQuery)
+        } returns ResultWrapper.Success(sqlQuery, metadata)
         coEvery { puzzleService.processQuery(sqlQuery) } returns ResultWrapper.Success(puzzles)
 
         val response: ResponseEntity<String> = controller.queryPuzzle(queryPuzzleRequest)
 
-        val expectedMetadata = SearchMetadata(query, ModelName.Deepseek, sqlQuery)
-        val expectedResponse = ResponseUtils.successWithSearchMetadata(puzzles, expectedMetadata)
+        val expectedResponse = ResponseUtils.success(puzzles, metadata)
 
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
         expectThat(response.body).isEqualTo(expectedResponse.body)
@@ -84,10 +84,11 @@ class Text2SqlControllerTest {
         val query = "some natural language query"
         val queryPuzzleRequest = QueryPuzzleRequest(query = "some natural language query")
         val sqlQuery = "SELECT * FROM puzzles WHERE ..."
+        val metadata = SearchMetadata(query, ModelName.Deepseek, "some masked query", sqlQuery)
         val error = ProcessQueryError.HibernateError
         coEvery {
             text2SQLService.convertToSQL(query, ModelName.Deepseek, ModelVariant.Full)
-        } returns ResultWrapper.Success(sqlQuery)
+        } returns ResultWrapper.Success(sqlQuery, metadata)
         coEvery { puzzleService.processQuery(sqlQuery) } returns ResultWrapper.Failure(error)
 
         val response: ResponseEntity<String> = controller.queryPuzzle(queryPuzzleRequest)

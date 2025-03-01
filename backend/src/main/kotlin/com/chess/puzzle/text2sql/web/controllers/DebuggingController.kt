@@ -114,7 +114,7 @@ class DebuggingController(
         logger.info { "Received POST on /api/debug/sentenceTransformer { input = $input }" }
         val request = input.query
         return when (val result = sentenceTransformerHelper.getSimilarDemonstration(request)) {
-            is ResultWrapper.Success -> success(result.data)
+            is ResultWrapper.Success -> success(result.data, result.metadata)
             is ResultWrapper.Failure -> failure(result.error)
         }
     }
@@ -202,7 +202,7 @@ class DebuggingController(
         }
         val (query, model, modelVariant) = input
         return when (val result = text2SQLService.convertToSQL(query, model, modelVariant)) {
-            is ResultWrapper.Success -> success(result.data)
+            is ResultWrapper.Success -> success(result.data, result.metadata)
             is ResultWrapper.Failure -> failure(result.error)
         }
     }

@@ -10,6 +10,7 @@ import com.chess.puzzle.text2sql.web.domain.model.Demonstration
 import com.chess.puzzle.text2sql.web.domain.model.ModelName
 import com.chess.puzzle.text2sql.web.domain.model.ModelVariant
 import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
+import com.chess.puzzle.text2sql.web.domain.model.SearchMetadata
 import com.chess.puzzle.text2sql.web.domain.model.llm.ChatCompletionResponse
 import com.chess.puzzle.text2sql.web.domain.model.llm.Choice
 import com.chess.puzzle.text2sql.web.domain.model.llm.Message
@@ -49,6 +50,7 @@ import io.ktor.serialization.kotlinx.json.json
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
+import java.io.IOException
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -56,7 +58,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
-import java.io.IOException
 
 class DebuggingControllerIntegrationTest {
     private val puzzleRepository: PuzzleRepository = mockk()
@@ -296,10 +297,11 @@ class DebuggingControllerIntegrationTest {
                 Demonstration("text1", "sql1"),
                 Demonstration("text2", "sql2"),
             )
+        val maskedQuery = "masked query"
         val fastapiResponse =
             FastApiResponse(
                 status = "success",
-                maskedQuery = "masked query",
+                maskedQuery = maskedQuery,
                 data = similarDemonstrations,
             )
 
@@ -335,7 +337,7 @@ class DebuggingControllerIntegrationTest {
         val genericRequest = GenericRequest(query = "some query")
         val response = controller.sentenceTransformer(genericRequest)
 
-        val expectedResponse = ResponseUtils.success(similarDemonstrations)
+        val expectedResponse = ResponseUtils.success(similarDemonstrations, maskedQuery)
 
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
         expectThat(response.body).isEqualTo(expectedResponse.body)
@@ -751,6 +753,7 @@ class DebuggingControllerIntegrationTest {
                     sql = "SELECT * FROM puzzles WHERE rating > 2000",
                 )
             )
+        val maskedQuery = "masked Query"
         val processedPrompt =
             "Find puzzles with rating > 1500 Find puzzles with rating > 2000 SELECT * FROM puzzles WHERE rating > 2000"
         val sql = "SELECT * FROM puzzles WHERE rating > 1500"
@@ -760,7 +763,7 @@ class DebuggingControllerIntegrationTest {
         coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
             ResultWrapper.Success(promptTemplate)
         coEvery { sentenceTransformerHelperMock.getSimilarDemonstration(query) } returns
-            ResultWrapper.Success(demonstrations)
+            ResultWrapper.Success(demonstrations, maskedQuery)
         coEvery {
             preprocessingHelperMock.processPrompt(query, promptTemplate, demonstrations)
         } returns ResultWrapper.Success(processedPrompt)
@@ -781,7 +784,8 @@ class DebuggingControllerIntegrationTest {
         val text2SqlRequest = Text2SqlRequest(query)
         val response = controller.text2sql(text2SqlRequest)
 
-        val expectedResponse = ResponseUtils.success(sql)
+        val expectedMetadata = SearchMetadata(query, ModelName.Deepseek, maskedQuery, sql)
+        val expectedResponse = ResponseUtils.success(sql, expectedMetadata)
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
         expectThat(response.body).isEqualTo(expectedResponse.body)
     }
@@ -858,6 +862,7 @@ class DebuggingControllerIntegrationTest {
                     sql = "SELECT * FROM puzzles WHERE rating > 2000",
                 )
             )
+        val maskedQuery = "masked Query"
         val error = ProcessPromptError.MissingPlaceholderError
 
         coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns
@@ -865,7 +870,7 @@ class DebuggingControllerIntegrationTest {
         coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
             ResultWrapper.Success(promptTemplate)
         coEvery { sentenceTransformerHelperMock.getSimilarDemonstration(query) } returns
-            ResultWrapper.Success(demonstrations)
+            ResultWrapper.Success(demonstrations, maskedQuery)
         coEvery {
             preprocessingHelperMock.processPrompt(query, promptTemplate, demonstrations)
         } returns ResultWrapper.Failure(error)
@@ -900,6 +905,7 @@ class DebuggingControllerIntegrationTest {
                     sql = "SELECT * FROM puzzles WHERE rating > 2000",
                 )
             )
+        val maskedQuery = "masked Query"
         val processedPrompt =
             "Find puzzles with rating > 1500 Find puzzles with rating > 2000 SELECT * FROM puzzles WHERE rating > 2000"
         val error = CallLargeLanguageModelError.InsufficientBalanceError
@@ -909,7 +915,7 @@ class DebuggingControllerIntegrationTest {
         coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
             ResultWrapper.Success(promptTemplate)
         coEvery { sentenceTransformerHelperMock.getSimilarDemonstration(query) } returns
-            ResultWrapper.Success(demonstrations)
+            ResultWrapper.Success(demonstrations, maskedQuery)
         coEvery {
             preprocessingHelperMock.processPrompt(query, promptTemplate, demonstrations)
         } returns ResultWrapper.Success(processedPrompt)

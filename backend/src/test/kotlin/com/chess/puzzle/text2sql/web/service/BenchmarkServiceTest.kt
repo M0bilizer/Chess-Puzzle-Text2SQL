@@ -11,12 +11,12 @@ import com.chess.puzzle.text2sql.web.error.GetSimilarDemonstrationError
 import com.chess.puzzle.text2sql.web.error.GetTextFileError
 import io.mockk.coEvery
 import io.mockk.mockk
+import java.io.IOException
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
-import java.io.IOException
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class BenchmarkServiceTest {

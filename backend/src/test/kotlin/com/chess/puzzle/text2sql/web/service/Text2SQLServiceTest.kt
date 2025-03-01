@@ -5,6 +5,7 @@ import com.chess.puzzle.text2sql.web.domain.model.Demonstration
 import com.chess.puzzle.text2sql.web.domain.model.ModelName
 import com.chess.puzzle.text2sql.web.domain.model.ModelVariant
 import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
+import com.chess.puzzle.text2sql.web.domain.model.SearchMetadata
 import com.chess.puzzle.text2sql.web.error.CallLargeLanguageModelError
 import com.chess.puzzle.text2sql.web.error.GetSimilarDemonstrationError
 import com.chess.puzzle.text2sql.web.error.GetTextFileError
@@ -14,12 +15,12 @@ import com.chess.puzzle.text2sql.web.service.helper.PreprocessingHelper
 import com.chess.puzzle.text2sql.web.service.helper.SentenceTransformerHelper
 import io.mockk.coEvery
 import io.mockk.mockk
+import java.io.IOException
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
-import java.io.IOException
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class Text2SQLServiceTest {
@@ -50,6 +51,7 @@ class Text2SQLServiceTest {
                     sql = "SELECT * FROM puzzles WHERE rating > 2000",
                 )
             )
+        val maskedQuery = "masked Query"
         val processedPrompt =
             "Find puzzles with rating > 1500 Find puzzles with rating > 2000 SELECT * FROM puzzles WHERE rating > 2000"
         val sql = "SELECT * FROM puzzles WHERE rating > 1500"
@@ -59,15 +61,16 @@ class Text2SQLServiceTest {
         coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
             ResultWrapper.Success(promptTemplate)
         coEvery { sentenceTransformerHelper.getSimilarDemonstration(query) } returns
-            ResultWrapper.Success(demonstrations)
+            ResultWrapper.Success(demonstrations, maskedQuery)
         coEvery { preprocessingHelper.processPrompt(query, promptTemplate, demonstrations) } returns
             ResultWrapper.Success(processedPrompt)
         coEvery { largeLanguageApiHelper.callModel(processedPrompt, ModelName.Deepseek) } returns
             ResultWrapper.Success(sql)
 
         val result = text2SQLService.convertToSQL(query, ModelName.Deepseek, ModelVariant.Full)
+        val expectedMetadata = SearchMetadata(query, ModelName.Deepseek, maskedQuery, sql)
 
-        expectThat(result) { isEqualTo(ResultWrapper.Success(sql)) }
+        expectThat(result) { isEqualTo(ResultWrapper.Success(sql, expectedMetadata)) }
     }
 
     @Test
@@ -121,6 +124,7 @@ class Text2SQLServiceTest {
                     sql = "SELECT * FROM puzzles WHERE rating > 2000",
                 )
             )
+        val maskedQuery = "masked Query"
         val error = ProcessPromptError.MissingPlaceholderError
 
         coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns
@@ -128,7 +132,7 @@ class Text2SQLServiceTest {
         coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
             ResultWrapper.Success(promptTemplate)
         coEvery { sentenceTransformerHelper.getSimilarDemonstration(query) } returns
-            ResultWrapper.Success(demonstrations)
+            ResultWrapper.Success(demonstrations, maskedQuery)
         coEvery { preprocessingHelper.processPrompt(query, promptTemplate, demonstrations) } returns
             ResultWrapper.Failure(error)
 
@@ -151,6 +155,7 @@ class Text2SQLServiceTest {
                     sql = "SELECT * FROM puzzles WHERE rating > 2000",
                 )
             )
+        val maskedQuery = "masked Query"
         val processedPrompt =
             "Find puzzles with rating > 1500 Find puzzles with rating > 2000 SELECT * FROM puzzles WHERE rating > 2000"
         val error = CallLargeLanguageModelError.InsufficientBalanceError
@@ -160,7 +165,7 @@ class Text2SQLServiceTest {
         coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
             ResultWrapper.Success(promptTemplate)
         coEvery { sentenceTransformerHelper.getSimilarDemonstration(query) } returns
-            ResultWrapper.Success(demonstrations)
+            ResultWrapper.Success(demonstrations, maskedQuery)
         coEvery { preprocessingHelper.processPrompt(query, promptTemplate, demonstrations) } returns
             ResultWrapper.Success(processedPrompt)
         coEvery { largeLanguageApiHelper.callModel(processedPrompt, ModelName.Deepseek) } returns

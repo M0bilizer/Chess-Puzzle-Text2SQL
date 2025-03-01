@@ -8,6 +8,7 @@
 
 	let query = $state('');
 	let model = $state('');
+	let maskedQuery = $state('');
 	let sql = $state('');
 
 	currentGame.subscribe((state) => {
@@ -21,6 +22,7 @@
 			if (search === undefined) return;
 			query = search.metadata.query;
 			model = search.metadata.model == null ? 'Local data' : search.metadata.model;
+			maskedQuery = search.metadata.maskedQuery == null ? '' : search.metadata.maskedQuery;
 			sql = search.metadata.sql == null ? 'Not applicable' : formatSql(search.metadata.sql);
 		}
 	});
@@ -53,6 +55,10 @@
 				<tr>
 					<td>Model Used:</td>
 					<td><span class="code">{model}</span></td>
+				</tr>
+				<tr>
+					<td>Masked Query:</td>
+					<td><span class="code">{maskedQuery}</span></td>
 				</tr>
 				<tr>
 					<td>SQL Statement:</td>

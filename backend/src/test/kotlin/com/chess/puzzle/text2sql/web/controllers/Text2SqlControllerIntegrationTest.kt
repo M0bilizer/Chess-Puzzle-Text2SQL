@@ -65,6 +65,7 @@ class Text2SqlControllerIntegrationTest {
                     sql = "SELECT * FROM puzzles WHERE rating > 2000",
                 )
             )
+        val maskedQuery = "masked Query"
         val puzzles =
             listOf(
                 Puzzle(
@@ -90,7 +91,7 @@ class Text2SqlControllerIntegrationTest {
         coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
             ResultWrapper.Success(promptTemplate)
         coEvery { sentenceTransformerHelper.getSimilarDemonstration(query) } returns
-            ResultWrapper.Success(demonstrations)
+            ResultWrapper.Success(demonstrations, maskedQuery)
         coEvery { preprocessingHelper.processPrompt(query, promptTemplate, demonstrations) } returns
             ResultWrapper.Success(processedPrompt)
         coEvery { largeLanguageApiHelper.callModel(processedPrompt, ModelName.Deepseek) } returns
@@ -102,8 +103,8 @@ class Text2SqlControllerIntegrationTest {
 
         val response: ResponseEntity<String> = controller.queryPuzzle(queryPuzzleRequest)
 
-        val expectedMetadata = SearchMetadata(query, ModelName.Deepseek, sql)
-        val expectedResponse = ResponseUtils.successWithSearchMetadata(puzzles, expectedMetadata)
+        val expectedMetadata = SearchMetadata(query, ModelName.Deepseek, maskedQuery, sql)
+        val expectedResponse = ResponseUtils.success(puzzles, expectedMetadata)
 
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
         expectThat(response.body).isEqualTo(expectedResponse.body)
@@ -121,6 +122,7 @@ class Text2SqlControllerIntegrationTest {
                     sql = "SELECT * FROM puzzles WHERE rating > 2000",
                 )
             )
+        val maskedQuery = "masked Query"
 
         val processedPrompt =
             "Find puzzles with rating > 1500 Find puzzles with rating > 2000 SELECT * FROM puzzles WHERE rating > 2000"
@@ -131,7 +133,7 @@ class Text2SqlControllerIntegrationTest {
         coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
             ResultWrapper.Success(promptTemplate)
         coEvery { sentenceTransformerHelper.getSimilarDemonstration(query) } returns
-            ResultWrapper.Success(demonstrations)
+            ResultWrapper.Success(demonstrations, maskedQuery)
         coEvery { preprocessingHelper.processPrompt(query, promptTemplate, demonstrations) } returns
             ResultWrapper.Success(processedPrompt)
         coEvery { largeLanguageApiHelper.callModel(processedPrompt, ModelName.Deepseek) } returns
@@ -161,6 +163,7 @@ class Text2SqlControllerIntegrationTest {
                     sql = "SELECT * FROM puzzles WHERE rating > 2000",
                 )
             )
+        val maskedQuery = "masked Query"
 
         val processedPrompt =
             "Find puzzles with rating > 1500 Find puzzles with rating > 2000 SELECT * FROM puzzles WHERE rating > 2000"
@@ -171,7 +174,7 @@ class Text2SqlControllerIntegrationTest {
         coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
             ResultWrapper.Success(promptTemplate)
         coEvery { sentenceTransformerHelper.getSimilarDemonstration(query) } returns
-            ResultWrapper.Success(demonstrations)
+            ResultWrapper.Success(demonstrations, maskedQuery)
         coEvery { preprocessingHelper.processPrompt(query, promptTemplate, demonstrations) } returns
             ResultWrapper.Success(processedPrompt)
         coEvery { largeLanguageApiHelper.callModel(processedPrompt, ModelName.Deepseek) } returns
@@ -203,6 +206,7 @@ class Text2SqlControllerIntegrationTest {
                     sql = "SELECT * FROM puzzles WHERE rating > 2000",
                 )
             )
+        val maskedQuery = "masked Query"
 
         val processedPrompt =
             "Find puzzles with rating > 1500 Find puzzles with rating > 2000 SELECT * FROM puzzles WHERE rating > 2000"
@@ -213,7 +217,7 @@ class Text2SqlControllerIntegrationTest {
         coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
             ResultWrapper.Success(promptTemplate)
         coEvery { sentenceTransformerHelper.getSimilarDemonstration(query) } returns
-            ResultWrapper.Success(demonstrations)
+            ResultWrapper.Success(demonstrations, maskedQuery)
         coEvery { preprocessingHelper.processPrompt(query, promptTemplate, demonstrations) } returns
             ResultWrapper.Success(processedPrompt)
         coEvery { largeLanguageApiHelper.callModel(processedPrompt, ModelName.Deepseek) } returns
@@ -245,6 +249,7 @@ class Text2SqlControllerIntegrationTest {
                     sql = "SELECT * FROM puzzles WHERE rating > 2000",
                 )
             )
+        val maskedQuery = "masked Query"
 
         val processedPrompt =
             "Find puzzles with rating > 1500 Find puzzles with rating > 2000 SELECT * FROM puzzles WHERE rating > 2000"
@@ -254,7 +259,7 @@ class Text2SqlControllerIntegrationTest {
         coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
             ResultWrapper.Success(promptTemplate)
         coEvery { sentenceTransformerHelper.getSimilarDemonstration(query) } returns
-            ResultWrapper.Success(demonstrations)
+            ResultWrapper.Success(demonstrations, maskedQuery)
         coEvery { preprocessingHelper.processPrompt(query, promptTemplate, demonstrations) } returns
             ResultWrapper.Success(processedPrompt)
         coEvery { largeLanguageApiHelper.callModel(processedPrompt, ModelName.Deepseek) } returns
@@ -280,13 +285,14 @@ class Text2SqlControllerIntegrationTest {
                     sql = "SELECT * FROM puzzles WHERE rating > 2000",
                 )
             )
+        val maskedQuery = "masked Query"
 
         coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns
             "full_prompt_template.txt"
         coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
             ResultWrapper.Success(promptTemplate)
         coEvery { sentenceTransformerHelper.getSimilarDemonstration(query) } returns
-            ResultWrapper.Success(demonstrations)
+            ResultWrapper.Success(demonstrations, maskedQuery)
         coEvery { preprocessingHelper.processPrompt(query, promptTemplate, demonstrations) } returns
             ResultWrapper.Failure(ProcessPromptError.MissingPlaceholderError)
 

@@ -10,7 +10,7 @@ import com.chess.puzzle.text2sql.web.service.PuzzleService
 import com.chess.puzzle.text2sql.web.service.Text2SQLService
 import com.chess.puzzle.text2sql.web.utility.ResponseUtils.badRequest
 import com.chess.puzzle.text2sql.web.utility.ResponseUtils.failure
-import com.chess.puzzle.text2sql.web.utility.ResponseUtils.successWithSearchMetadata
+import com.chess.puzzle.text2sql.web.utility.ResponseUtils.success
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
@@ -51,6 +51,7 @@ class Text2SqlController(
         logger.info { "Received POST on /api/queryPuzzle { request = $request }" }
         val input: QueryPuzzleInput
         val sql: String
+        val searchMetadata: SearchMetadata
         val puzzles: List<Puzzle>
         when (val result = request.toInput()) {
             is ResultWrapper.Success -> input = result.data
@@ -58,14 +59,16 @@ class Text2SqlController(
         }
         val (query, model) = input
         when (val result = text2SQLService.convertToSQL(query, model, Full)) {
-            is ResultWrapper.Success -> sql = result.data
+            is ResultWrapper.Success -> {
+                sql = result.data
+                searchMetadata = result.metadata as SearchMetadata
+            }
             is ResultWrapper.Failure -> return failure(result.error)
         }
         when (val result = puzzleService.processQuery(sql)) {
             is ResultWrapper.Success -> puzzles = result.data
             is ResultWrapper.Failure -> return failure(result.error)
         }
-        val searchMetadata = SearchMetadata(query, input.modelName, sql)
-        return successWithSearchMetadata(puzzles, searchMetadata)
+        return success(puzzles, searchMetadata)
     }
 }
