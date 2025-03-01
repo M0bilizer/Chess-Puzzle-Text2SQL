@@ -751,6 +751,7 @@ class DebuggingControllerIntegrationTest {
                     sql = "SELECT * FROM puzzles WHERE rating > 2000",
                 )
             )
+        val maskedQuery = "masked Query"
         val processedPrompt =
             "Find puzzles with rating > 1500 Find puzzles with rating > 2000 SELECT * FROM puzzles WHERE rating > 2000"
         val sql = "SELECT * FROM puzzles WHERE rating > 1500"
@@ -760,7 +761,7 @@ class DebuggingControllerIntegrationTest {
         coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
             ResultWrapper.Success(promptTemplate)
         coEvery { sentenceTransformerHelperMock.getSimilarDemonstration(query) } returns
-            ResultWrapper.Success(demonstrations)
+            ResultWrapper.Success(demonstrations, maskedQuery)
         coEvery {
             preprocessingHelperMock.processPrompt(query, promptTemplate, demonstrations)
         } returns ResultWrapper.Success(processedPrompt)
@@ -858,6 +859,7 @@ class DebuggingControllerIntegrationTest {
                     sql = "SELECT * FROM puzzles WHERE rating > 2000",
                 )
             )
+        val maskedQuery = "masked Query"
         val error = ProcessPromptError.MissingPlaceholderError
 
         coEvery { filePaths.getPromptTemplate(ModelVariant.Full) } returns
@@ -865,7 +867,7 @@ class DebuggingControllerIntegrationTest {
         coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
             ResultWrapper.Success(promptTemplate)
         coEvery { sentenceTransformerHelperMock.getSimilarDemonstration(query) } returns
-            ResultWrapper.Success(demonstrations)
+            ResultWrapper.Success(demonstrations, maskedQuery)
         coEvery {
             preprocessingHelperMock.processPrompt(query, promptTemplate, demonstrations)
         } returns ResultWrapper.Failure(error)
@@ -900,6 +902,7 @@ class DebuggingControllerIntegrationTest {
                     sql = "SELECT * FROM puzzles WHERE rating > 2000",
                 )
             )
+        val maskedQuery = "masked Query"
         val processedPrompt =
             "Find puzzles with rating > 1500 Find puzzles with rating > 2000 SELECT * FROM puzzles WHERE rating > 2000"
         val error = CallLargeLanguageModelError.InsufficientBalanceError
@@ -909,7 +912,7 @@ class DebuggingControllerIntegrationTest {
         coEvery { fileLoaderService.getTextFile("full_prompt_template.txt") } returns
             ResultWrapper.Success(promptTemplate)
         coEvery { sentenceTransformerHelperMock.getSimilarDemonstration(query) } returns
-            ResultWrapper.Success(demonstrations)
+            ResultWrapper.Success(demonstrations, maskedQuery)
         coEvery {
             preprocessingHelperMock.processPrompt(query, promptTemplate, demonstrations)
         } returns ResultWrapper.Success(processedPrompt)

@@ -36,7 +36,7 @@ class ResponseUtilsTest {
     @Test
     fun `successWithSearchMetadata should return a ResponseEntity with status success, provided data, and metadata`() {
         val data = "Hello World"
-        val metadata = SearchMetadata("my query", ModelName.Deepseek, "my sql")
+        val metadata = SearchMetadata("my query", ModelName.Deepseek, "my masked query", "my sql")
         val responseEntity = ResponseUtils.successWithSearchMetadata(data, metadata)
 
         expectThat(responseEntity) {
