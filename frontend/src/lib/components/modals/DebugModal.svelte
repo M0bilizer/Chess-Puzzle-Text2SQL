@@ -58,7 +58,7 @@
 				</tr>
 				<tr>
 					<td>Masked Query:</td>
-					<td><pre class="pre">{maskedQuery}</pre></td>
+					<td><span class="code">{maskedQuery}</span></td>
 				</tr>
 				<tr>
 					<td>SQL Statement:</td>

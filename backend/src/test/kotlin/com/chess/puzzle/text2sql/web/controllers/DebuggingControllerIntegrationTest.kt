@@ -49,6 +49,7 @@ import io.ktor.serialization.kotlinx.json.json
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
+import java.io.IOException
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -56,7 +57,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
-import java.io.IOException
 
 class DebuggingControllerIntegrationTest {
     private val puzzleRepository: PuzzleRepository = mockk()

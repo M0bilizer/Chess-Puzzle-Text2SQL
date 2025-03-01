@@ -51,6 +51,7 @@ class Text2SqlController(
         logger.info { "Received POST on /api/queryPuzzle { request = $request }" }
         val input: QueryPuzzleInput
         val sql: String
+        val searchMetadata: SearchMetadata
         val puzzles: List<Puzzle>
         when (val result = request.toInput()) {
             is ResultWrapper.Success -> input = result.data
@@ -58,14 +59,16 @@ class Text2SqlController(
         }
         val (query, model) = input
         when (val result = text2SQLService.convertToSQL(query, model, Full)) {
-            is ResultWrapper.Success -> sql = result.data
+            is ResultWrapper.Success -> {
+                sql = result.data
+                searchMetadata = result.metadata as SearchMetadata
+            }
             is ResultWrapper.Failure -> return failure(result.error)
         }
         when (val result = puzzleService.processQuery(sql)) {
             is ResultWrapper.Success -> puzzles = result.data
             is ResultWrapper.Failure -> return failure(result.error)
         }
-        val searchMetadata = SearchMetadata(query, input.modelName, sql)
         return successWithSearchMetadata(puzzles, searchMetadata)
     }
 }

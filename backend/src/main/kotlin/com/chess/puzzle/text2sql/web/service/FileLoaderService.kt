@@ -6,9 +6,9 @@ import com.chess.puzzle.text2sql.web.error.GetBenchmarkEntriesError
 import com.chess.puzzle.text2sql.web.error.GetTextFileError
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import org.springframework.stereotype.Service
 import java.io.InputStream
 import java.nio.charset.StandardCharsets
+import org.springframework.stereotype.Service
 
 /**
  * Service class for loading files from the classpath.

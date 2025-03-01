@@ -8,6 +8,7 @@ import com.chess.puzzle.text2sql.web.domain.model.ModelVariant.Baseline
 import com.chess.puzzle.text2sql.web.domain.model.ModelVariant.Full
 import com.chess.puzzle.text2sql.web.domain.model.ModelVariant.Partial
 import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
+import com.chess.puzzle.text2sql.web.domain.model.SearchMetadata
 import com.chess.puzzle.text2sql.web.error.SystemError
 import com.chess.puzzle.text2sql.web.service.helper.LargeLanguageApiHelper
 import com.chess.puzzle.text2sql.web.service.helper.PreprocessingHelper
@@ -81,6 +82,7 @@ class Text2SQLService(
     ): ResultWrapper<String, SystemError> {
         val promptTemplate: String
         val demonstrations: List<Demonstration>
+        val maskedQuery: String
         val processedPrompt: String
         val sql: String
         when (val result = fileLoaderService.getTextFile(filePaths.getPromptTemplate(Full))) {
@@ -88,7 +90,10 @@ class Text2SQLService(
             is ResultWrapper.Failure -> return ResultWrapper.Failure(result.error)
         }
         when (val result = sentenceTransformerHelper.getSimilarDemonstration(query)) {
-            is ResultWrapper.Success -> demonstrations = result.data
+            is ResultWrapper.Success -> {
+                demonstrations = result.data
+                maskedQuery = result.metadata as String
+            }
             is ResultWrapper.Failure -> return ResultWrapper.Failure(result.error)
         }
         when (
@@ -101,7 +106,8 @@ class Text2SQLService(
             is ResultWrapper.Success -> sql = result.data
             is ResultWrapper.Failure -> return ResultWrapper.Failure(result.error)
         }
-        return ResultWrapper.Success(sql)
+        val searchMetadata = SearchMetadata(query, modelName, maskedQuery, sql)
+        return ResultWrapper.Success(data = sql, metadata = searchMetadata)
     }
 
     /**

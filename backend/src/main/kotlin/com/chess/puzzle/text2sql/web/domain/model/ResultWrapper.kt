@@ -20,7 +20,9 @@ sealed class ResultWrapper<out T, out E> {
      *
      * @sample Success(data = "SELECT * FROM t_puzzle WHERE opening_tags LIKE '%Italian_Defense%'")
      */
-    data class Success<out T>(val data: T) : ResultWrapper<T, Nothing>()
+    data class Success<out T>(val data: T, val metadata: Any?) : ResultWrapper<T, Nothing>() {
+        constructor(data: T) : this(data, null)
+    }
 
     /**
      * Represents a failure that occurs during an operation.
