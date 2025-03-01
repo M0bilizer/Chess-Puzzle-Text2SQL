@@ -10,6 +10,7 @@ import com.chess.puzzle.text2sql.web.domain.model.Demonstration
 import com.chess.puzzle.text2sql.web.domain.model.ModelName
 import com.chess.puzzle.text2sql.web.domain.model.ModelVariant
 import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
+import com.chess.puzzle.text2sql.web.domain.model.SearchMetadata
 import com.chess.puzzle.text2sql.web.domain.model.llm.ChatCompletionResponse
 import com.chess.puzzle.text2sql.web.domain.model.llm.Choice
 import com.chess.puzzle.text2sql.web.domain.model.llm.Message
@@ -296,10 +297,11 @@ class DebuggingControllerIntegrationTest {
                 Demonstration("text1", "sql1"),
                 Demonstration("text2", "sql2"),
             )
+        val maskedQuery = "masked query"
         val fastapiResponse =
             FastApiResponse(
                 status = "success",
-                maskedQuery = "masked query",
+                maskedQuery = maskedQuery,
                 data = similarDemonstrations,
             )
 
@@ -335,7 +337,7 @@ class DebuggingControllerIntegrationTest {
         val genericRequest = GenericRequest(query = "some query")
         val response = controller.sentenceTransformer(genericRequest)
 
-        val expectedResponse = ResponseUtils.success(similarDemonstrations)
+        val expectedResponse = ResponseUtils.success(similarDemonstrations, maskedQuery)
 
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
         expectThat(response.body).isEqualTo(expectedResponse.body)
@@ -782,7 +784,8 @@ class DebuggingControllerIntegrationTest {
         val text2SqlRequest = Text2SqlRequest(query)
         val response = controller.text2sql(text2SqlRequest)
 
-        val expectedResponse = ResponseUtils.success(sql)
+        val expectedMetadata = SearchMetadata(query, ModelName.Deepseek, maskedQuery, sql)
+        val expectedResponse = ResponseUtils.success(sql, expectedMetadata)
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
         expectThat(response.body).isEqualTo(expectedResponse.body)
     }

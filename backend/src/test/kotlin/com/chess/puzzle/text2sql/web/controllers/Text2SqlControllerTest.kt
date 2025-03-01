@@ -56,7 +56,7 @@ class Text2SqlControllerTest {
 
         val response: ResponseEntity<String> = controller.queryPuzzle(queryPuzzleRequest)
 
-        val expectedResponse = ResponseUtils.successWithSearchMetadata(puzzles, metadata)
+        val expectedResponse = ResponseUtils.success(puzzles, metadata)
 
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
         expectThat(response.body).isEqualTo(expectedResponse.body)

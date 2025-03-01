@@ -104,7 +104,7 @@ class Text2SqlControllerIntegrationTest {
         val response: ResponseEntity<String> = controller.queryPuzzle(queryPuzzleRequest)
 
         val expectedMetadata = SearchMetadata(query, ModelName.Deepseek, maskedQuery, sql)
-        val expectedResponse = ResponseUtils.successWithSearchMetadata(puzzles, expectedMetadata)
+        val expectedResponse = ResponseUtils.success(puzzles, expectedMetadata)
 
         expectThat(response.statusCode).isEqualTo(HttpStatus.OK)
         expectThat(response.body).isEqualTo(expectedResponse.body)
