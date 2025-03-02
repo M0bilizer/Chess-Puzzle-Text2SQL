@@ -21,6 +21,18 @@ export class Success implements Result {
 	}
 }
 
+export class NullQueryFailure implements Result {
+	public readonly message: 'Query should not be null';
+
+	constructor() {
+		this.message = 'Query should not be null';
+	}
+
+	getJson() {
+		return json({ status: SearchResultEnum.NullQueryError, message: this.message });
+	}
+}
+
 export class NoResultsFailure implements Result {
 	public readonly message: 'No results found';
 
