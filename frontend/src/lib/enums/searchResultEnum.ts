@@ -1,5 +1,6 @@
 export enum SearchResultEnum {
 	Success = 'success',
+	NullQueryError = 'nullQueryError',
 	NoResultsError = 'noResultsError',
 	BackendError = 'backendError',
 	ConnectionError = 'connectionError',
@@ -12,6 +13,7 @@ export enum SearchResultEnum {
 }
 
 const standardErrors = new Set<SearchResultEnum>([
+	SearchResultEnum.NullQueryError,
 	SearchResultEnum.NoResultsError,
 	SearchResultEnum.ConnectionError,
 	SearchResultEnum.ConfigurationError,

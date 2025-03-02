@@ -43,9 +43,9 @@
 				<Fa6SolidCheck class="text-primary-500" />
 			</button>
 		{:else if type === GameChipType.locked}
-			<button type="button" onclick={handleClick} class="chip preset-filled-secondary-500">
+			<span class="chip preset-filled-secondary-500">
 				<Fa6SolidCheck class="text-secondary-500" />
-			</button>
+			</span>
 		{/if}
 	{/snippet}
 	{#snippet content()}

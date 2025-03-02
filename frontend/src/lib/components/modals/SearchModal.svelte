@@ -52,7 +52,9 @@
 						<Fa6SolidMagnifyingGlass class="size-4 text-tertiary-500" />
 					</div>
 					<input type="search" placeholder="Search..." bind:value={query} disabled={$isLoading} />
-					<button class="p-2" disabled={$isLoading}> <span>Search</span> </button>
+					<button class="p-2" disabled={$isLoading || query.length === 0}>
+						<span>Search</span>
+					</button>
 				</div>
 				<div class="type-subtitle hidden w-full py-1 text-right sm:block">
 					<p>You can also search using <kbd class="kbd">Enter</kbd></p>

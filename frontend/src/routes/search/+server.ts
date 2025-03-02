@@ -6,6 +6,7 @@ import {
 	ConnectionFailure,
 	ImplementationError,
 	NoResultsFailure,
+	NullQueryFailure,
 	type Result,
 	Success,
 	UnknownError
@@ -27,6 +28,10 @@ async function _callBackend(query: string, model: ModelEnum): Promise<Result> {
 	if (!`${KOTLIN_SPRING_URL}` || `${KOTLIN_SPRING_URL}`.length === 0) {
 		return new ConfigurationError();
 	}
+	if (query === null || query.length === 0) {
+		return new NullQueryFailure();
+	}
+
 	let res: Response;
 	try {
 		console.log(`fetching ${API} with query: ${query}, model: ${model}`);

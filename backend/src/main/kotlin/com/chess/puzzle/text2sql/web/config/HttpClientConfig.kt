@@ -61,7 +61,7 @@ class HttpClientConfig {
             client =
                 HttpClient(OkHttp) {
                     install(ContentNegotiation) { json(Json { ignoreUnknownKeys = true }) }
-                    install(HttpTimeout) { requestTimeoutMillis = 5000 }
+                    install(HttpTimeout) { requestTimeoutMillis = 12000 }
                 },
             apiKey = deepseekApiKey,
             baseUrl = deepSeekBaseUrl,
