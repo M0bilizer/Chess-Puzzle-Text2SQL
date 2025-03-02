@@ -99,13 +99,14 @@ bash build.sh
 ## Packages Used
 
 | Packages                    | Description / Purpose                              |
-| --------------------------- | -------------------------------------------------- |
+|-----------------------------|----------------------------------------------------|
 | Sveltekit                   | Framework                                          |
 | bun                         | Package Manager                                    |
 | @skeletonlabs/skeleton@next | UI Components                                      |
 | @zerodevx/svelte-toast      | Custom Svelte Toast                                |
 | svelte-chess                | Chess component                                    |
 | svelte-chessground          | Static Chess component                             |
+| svelte-sound                | For playing sounds                                 |
 | unplugin-icons              | Icon components                                    |
 | @iconify-json/fa6-solid     | FontAwesome 6 Solid Icons (through unplugin-icons) |
 | Express                     | Node.js server                                     |

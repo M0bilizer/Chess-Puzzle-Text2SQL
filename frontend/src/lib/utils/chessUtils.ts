@@ -1,4 +1,5 @@
 import { Chess } from 'chess.js';
+import { playCaptureSound, playMoveSound } from '$lib/utils/soundUtil';
 
 export function getFirstMoveColor(fen: string): 'w' | 'b' {
 	const fields = fen.split(' ');
@@ -55,6 +56,8 @@ export function playMove(fen: string, sanMove: string): string {
 	const chess = new Chess(fen);
 
 	const move = chess.move(sanMove);
+	if (move.captured) playCaptureSound();
+	else playMoveSound();
 
 	if (!move) {
 		throw new Error(`Invalid move: ${sanMove}`);
