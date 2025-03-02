@@ -11,7 +11,7 @@
 	}
 </script>
 
-<button on:click={() => clearGame()} class="flex flex-col items-center justify-center gap-0">
+<button onclick={() => clearGame()} class="flex flex-col items-center justify-center gap-0">
 	<Fa6SolidChess class="size-6" />
 	<span class="text-xs font-bold tracking-tighter">Text2SQL</span>
 </button>

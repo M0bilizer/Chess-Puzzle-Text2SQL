@@ -4,6 +4,7 @@
 	import { currentGame, type currentGameState } from '$lib/stores/currentGameStore';
 	import { get } from 'svelte/store';
 	import { isInJump, jump, jumpAction } from '$lib/stores/jumpStore';
+	import { feedbackState, feedbackStore } from '$lib/stores/feedbackStore';
 
 	let chess: Chess;
 	let orientation: 'w' | 'b' = $state('w');
@@ -55,7 +56,11 @@
 	currentGame.subscribe((state: currentGameState) => {
 		if (state.query === '') chess?.reset();
 		if (state.game.fen !== '') loadGame(state);
-		if (state.game.hasWon == false) {
+		if (state.game.hasWon === false) {
+			if (state.game.moveIndex == 0 || state.game.moveIndex == 1) {
+				if (orientation == 'w') feedbackStore.set(feedbackState.white);
+				else feedbackStore.set(feedbackState.black);
+			}
 			if (!isPlayerMove()) {
 				if (isLastMove()) {
 					setTimeout(() => {
@@ -67,6 +72,7 @@
 							}
 						}));
 					}, 250);
+					feedbackStore.set(feedbackState.won);
 				} else {
 					setTimeout(() => {
 						chess?.move(state.game.moves[state.game.moveIndex]);
@@ -120,10 +126,12 @@
 		const move = event.detail;
 
 		if (!isCorrectMove(move.san)) {
+			feedbackStore.set(feedbackState.wrong);
 			setTimeout(() => {
 				chess.undo();
 			}, 250);
 		} else {
+			feedbackStore.set(feedbackState.correct);
 			currentGame.update((currentState) => ({
 				...currentState,
 				game: {
