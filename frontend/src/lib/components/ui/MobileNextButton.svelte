@@ -4,7 +4,7 @@
 	import Fa6SolidXMark from 'virtual:icons/fa6-solid/xmark';
 	import Fa6SolidCheck from 'virtual:icons/fa6-solid/check';
 	import { loadNextGame, saveGame } from '$lib/utils/storeUtils';
-	import { currentGame, isAllFinished } from '$lib/stores/currentGameStore';
+	import { isAllFinished } from '$lib/stores/currentGameStore';
 	import { congratulationModalState } from '$lib/stores/modalStore';
 	import { feedbackState, feedbackStore } from '$lib/stores/feedbackStore';
 

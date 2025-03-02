@@ -5,6 +5,7 @@
 	import { get } from 'svelte/store';
 	import { isInJump, jump, jumpAction } from '$lib/stores/jumpStore';
 	import { feedbackState, feedbackStore } from '$lib/stores/feedbackStore';
+	import { playCaptureSound, playMoveSound } from '$lib/utils/soundUtil';
 
 	let chess: Chess;
 	let orientation: 'w' | 'b' = $state('w');
@@ -26,7 +27,7 @@
 	}
 
 	function isLastMove() {
-		return get(currentGame).game.moveIndex > get(currentGame).game.moves.length - 1;
+		return get(currentGame).game.moveIndex + 1 > get(currentGame).game.moves.length - 1;
 	}
 
 	function resetJump() {
@@ -62,18 +63,7 @@
 				else feedbackStore.set(feedbackState.black);
 			}
 			if (!isPlayerMove()) {
-				if (isLastMove()) {
-					setTimeout(() => {
-						currentGame.update((currentState) => ({
-							...currentState,
-							game: {
-								...currentState.game,
-								hasWon: true
-							}
-						}));
-					}, 250);
-					feedbackStore.set(feedbackState.won);
-				} else {
+				if (!isLastMove()) {
 					setTimeout(() => {
 						chess?.move(state.game.moves[state.game.moveIndex]);
 						currentGame.update((currentState) => ({
@@ -126,20 +116,33 @@
 		const move = event.detail;
 
 		if (!isCorrectMove(move.san)) {
+			playMoveSound();
 			feedbackStore.set(feedbackState.wrong);
 			setTimeout(() => {
 				chess.undo();
 			}, 250);
 		} else {
-			feedbackStore.set(feedbackState.correct);
-			currentGame.update((currentState) => ({
-				...currentState,
-				game: {
-					...currentState.game,
-					fen: move.after,
-					moveIndex: currentState.game.moveIndex + 1
+			// eslint-disable-next-line @typescript-eslint/no-unused-expressions
+			move.captured ? playCaptureSound() : playMoveSound();
+			currentGame.update((currentState) => {
+				let hasWon: boolean;
+				if (isLastMove()) {
+					hasWon = true;
+					feedbackStore.set(feedbackState.won);
+				} else {
+					hasWon = false;
+					feedbackStore.set(feedbackState.correct);
 				}
-			}));
+				return {
+					...currentState,
+					game: {
+						...currentState.game,
+						fen: move.after,
+						moveIndex: currentState.game.moveIndex + 1,
+						hasWon: hasWon
+					}
+				};
+			});
 		}
 	}
 </script>
