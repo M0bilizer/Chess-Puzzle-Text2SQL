@@ -82,6 +82,7 @@ async function _handleResponse(
 		loadFirstGame(query, data);
 		addSearchResult(query, metadata, data);
 		if (model !== ModelEnum.DeepSeek) toastInfo('Searched using alternative engine', 'root');
+		toastInfo(`Found ${data.length} ${data.length === 1 ? 'puzzle' : 'puzzles'}`, 'root');
 		return json.status;
 	} else if (isStandardError(json.status)) {
 		toastFailure(json.message, 'modal', query);
