@@ -5,11 +5,11 @@ WORKDIR /app
 COPY . .
 RUN gradle build
 
-FROM eclipse-temurin:17
+FROM eclipse-temurin:17-alpine
 WORKDIR /app
 COPY --from=build /app/build/libs/web-1.jar ./app.jar
 
-RUN apt-get update && apt-get -y install curl
+RUN apk add --no-cache curl
 
 
 EXPOSE 8080
