@@ -82,6 +82,7 @@ class LargeLanguageApiHelper(
      * @return A [ResultWrapper.Failure] containing the corresponding [CallLargeLanguageModelError].
      */
     fun handleHttpException(e: Exception): ResultWrapper.Failure<CallLargeLanguageModelError> {
+        print(e)
         return when (e) {
             is HttpRequestTimeoutException ->
                 ResultWrapper.Failure(CallLargeLanguageModelError.TimeoutError)

@@ -1,5 +1,6 @@
 package com.chess.puzzle.text2sql.web.controllers
 
+import CustomLogger
 import com.chess.puzzle.text2sql.web.domain.input.QueryPuzzleInput
 import com.chess.puzzle.text2sql.web.domain.input.QueryPuzzleRequest
 import com.chess.puzzle.text2sql.web.domain.model.ModelVariant.Full
@@ -11,14 +12,13 @@ import com.chess.puzzle.text2sql.web.service.Text2SQLService
 import com.chess.puzzle.text2sql.web.utility.ResponseUtils.badRequest
 import com.chess.puzzle.text2sql.web.utility.ResponseUtils.failure
 import com.chess.puzzle.text2sql.web.utility.ResponseUtils.success
-import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 
-private val logger = KotlinLogging.logger {}
+private val customLogger = CustomLogger
 
 /**
  * REST Controller to handle HTTP requests for the Text2SQL application.
@@ -48,7 +48,7 @@ class Text2SqlController(
      */
     @PostMapping("/api/queryPuzzle")
     suspend fun queryPuzzle(@RequestBody request: QueryPuzzleRequest): ResponseEntity<String> {
-        logger.info { "Received POST on /api/queryPuzzle { request = $request }" }
+        customLogger.info { "Received POST on /api/queryPuzzle { request = $request }" }
         val input: QueryPuzzleInput
         val sql: String
         val searchMetadata: SearchMetadata
@@ -58,12 +58,14 @@ class Text2SqlController(
             is ResultWrapper.Failure -> return badRequest(result.error)
         }
         val (query, model) = input
-        when (val result = text2SQLService.convertToSQL(query, model, Full)) {
-            is ResultWrapper.Success -> {
-                sql = result.data
-                searchMetadata = result.metadata as SearchMetadata
+        CustomLogger.withIndent(1) {
+            when (val result = text2SQLService.convertToSQL(query, model, Full)) {
+                is ResultWrapper.Success -> {
+                    sql = result.data
+                    searchMetadata = result.metadata as SearchMetadata
+                }
+                is ResultWrapper.Failure -> return failure(result.error)
             }
-            is ResultWrapper.Failure -> return failure(result.error)
         }
         when (val result = puzzleService.processQuery(sql)) {
             is ResultWrapper.Success -> puzzles = result.data

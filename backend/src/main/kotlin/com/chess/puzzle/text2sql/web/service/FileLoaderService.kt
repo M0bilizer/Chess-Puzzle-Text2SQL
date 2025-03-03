@@ -1,5 +1,6 @@
 package com.chess.puzzle.text2sql.web.service
 
+import CustomLogger
 import com.chess.puzzle.text2sql.web.domain.model.BenchmarkEntry
 import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
 import com.chess.puzzle.text2sql.web.error.GetBenchmarkEntriesError
@@ -9,6 +10,8 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import java.io.InputStream
 import java.nio.charset.StandardCharsets
 import org.springframework.stereotype.Service
+
+private val customLogger = CustomLogger
 
 /**
  * Service class for loading files from the classpath.
@@ -65,6 +68,7 @@ class FileLoaderService(
      * @return A [ResultWrapper] containing the file content or an error.
      */
     fun getTextFile(filePath: String): ResultWrapper<String, GetTextFileError> {
+        customLogger.info { "FileLoaderService.getTextFile(filepath=$filePath)"}
         return try {
             val inputStream: InputStream? = classLoader.getResourceAsStream(filePath)
             if (inputStream == null) {
@@ -75,6 +79,7 @@ class FileLoaderService(
                 ResultWrapper.Success(string)
             }
         } catch (e: java.io.IOException) {
+            customLogger.error ({ "IOException: ${e.message}" })
             ResultWrapper.Failure(GetTextFileError.IOException(e))
         }
     }

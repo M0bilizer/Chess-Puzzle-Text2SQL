@@ -1,5 +1,6 @@
 package com.chess.puzzle.text2sql.web.service.helper
 
+import CustomLogger
 import com.chess.puzzle.text2sql.web.config.SentenceTransformerEndpoints
 import com.chess.puzzle.text2sql.web.domain.input.GenericRequest
 import com.chess.puzzle.text2sql.web.domain.model.Demonstration
@@ -21,6 +22,7 @@ import io.ktor.http.contentType
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
+private val customLogger = CustomLogger
 private val logger = KotlinLogging.logger {}
 
 /**
@@ -49,6 +51,7 @@ class SentenceTransformerHelper(
     suspend fun getSimilarDemonstration(
         input: String
     ): ResultWrapper<List<Demonstration>, GetSimilarDemonstrationError> {
+        customLogger.info { "SentenceTransformerHelper.getSimilarDemonstration(input=$input)"}
         val url = sentenceTransformerEndpoints.sentenceTransformerUrl
         return fetchSimilarDemonstrations(input, url, "gettingSimilarDemonstration")
     }
@@ -91,11 +94,13 @@ class SentenceTransformerHelper(
                     setBody(jsonString)
                 }
         } catch (e: Exception) {
+            customLogger.error ({ "Network Error: $e.message" })
             logger.error { "$logPrefix { input = $input } -> Network Error: ${e.message}" }
             return ResultWrapper.Failure(NetworkError)
         }
 
         if (response.status != HttpStatusCode.OK) {
+            customLogger.error ({ "Network Error: response.status != HttpStatusCode.OK" })
             logger.warn { "$logPrefix { input = $input } -> Network Error" }
             return ResultWrapper.Failure(NetworkError)
         }
@@ -104,6 +109,7 @@ class SentenceTransformerHelper(
         try {
             fastApiResponse = response.body()
         } catch (e: Exception) {
+            customLogger.error ({ "Internal Error: $e.message" })
             return ResultWrapper.Failure(InternalError)
         }
 
@@ -115,10 +121,12 @@ class SentenceTransformerHelper(
                 ResultWrapper.Success(data = demos, metadata = maskedQuery)
             }
             "failure" -> {
+                customLogger.error ({ "Network Error: fastapiResponse.status == 'failure'" })
                 logger.warn { "$logPrefix { input = $input } -> Network Error" }
                 ResultWrapper.Failure(InternalError)
             }
             else -> {
+                customLogger.error ({ "Network Error: Unknown fastapiResponse.status" })
                 logger.warn { "$logPrefix { input = $input} -> Internal Error" }
                 ResultWrapper.Failure(InternalError)
             }

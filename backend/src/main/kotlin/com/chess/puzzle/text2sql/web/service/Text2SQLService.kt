@@ -1,5 +1,6 @@
 package com.chess.puzzle.text2sql.web.service
 
+import CustomLogger
 import com.chess.puzzle.text2sql.web.config.FilePaths
 import com.chess.puzzle.text2sql.web.domain.model.Demonstration
 import com.chess.puzzle.text2sql.web.domain.model.ModelName
@@ -17,7 +18,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
-private val logger = KotlinLogging.logger {}
+private val customLogger = CustomLogger
 
 /**
  * Service class for converting natural language queries into SQL queries.
@@ -57,6 +58,7 @@ class Text2SQLService(
         modelName: ModelName,
         modelVariant: ModelVariant,
     ): ResultWrapper<String, SystemError> {
+        customLogger.info { "Text2SQLService.convertToSql(query=$query, modelName=$modelName, modelVariant=$modelVariant)"}
         return when (modelVariant) {
             Full -> full(query, modelName)
             Partial -> partial(query, modelName)
