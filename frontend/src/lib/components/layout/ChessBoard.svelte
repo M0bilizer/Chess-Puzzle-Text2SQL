@@ -5,7 +5,7 @@
 	import { get } from 'svelte/store';
 	import { isInJump, jump, jumpAction } from '$lib/stores/jumpStore';
 	import { feedbackState, feedbackStore } from '$lib/stores/feedbackStore';
-	import { playCaptureSound, playMoveSound } from '$lib/utils/soundUtil';
+	import { playCaptureSound, playMoveSound } from '$lib/utils/soundUtils';
 
 	let chess: Chess;
 	let orientation: 'w' | 'b' = $state('w');

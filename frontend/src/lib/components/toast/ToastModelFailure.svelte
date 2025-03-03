@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { toast } from '@zerodevx/svelte-toast';
 	import Fa6SolidXmark from 'virtual:icons/fa6-solid/xmark';
-	import { searchPuzzles } from '$lib/utils/searchUtil';
+	import { searchPuzzles } from '$lib/utils/searchUtils';
 	import { ModelEnum } from '$lib/enums/modelEnum';
 	import { SearchResultEnum } from '$lib/enums/searchResultEnum';
 	import Fa6SolidTriangleExclamation from 'virtual:icons/fa6-solid/triangle-exclamation';

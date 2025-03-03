@@ -1,5 +1,5 @@
 import { Chess } from 'chess.js';
-import { playCaptureSound, playMoveSound } from '$lib/utils/soundUtil';
+import { playCaptureSound, playMoveSound } from '$lib/utils/soundUtils';
 
 export function getFirstMoveColor(fen: string): 'w' | 'b' {
 	const fields = fen.split(' ');

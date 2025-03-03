@@ -2,7 +2,7 @@
 	import { toast } from '@zerodevx/svelte-toast';
 	import Fa6SolidXmark from 'virtual:icons/fa6-solid/xmark';
 	import Fa6SolidTriangleExclamation from 'virtual:icons/fa6-solid/triangle-exclamation';
-	import { loadRandomPuzzle } from '$lib/utils/searchUtil.ts';
+	import { loadRandomPuzzle } from '$lib/utils/searchUtils.ts';
 	import { searchModalState } from '$lib/stores/modalStore';
 
 	let { message, toastId, query } = $props();
