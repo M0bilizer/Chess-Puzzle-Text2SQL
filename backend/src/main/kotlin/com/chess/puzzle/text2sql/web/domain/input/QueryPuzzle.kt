@@ -6,16 +6,15 @@ import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
 import com.chess.puzzle.text2sql.web.error.ClientError
 import com.chess.puzzle.text2sql.web.error.ClientError.InvalidModel
 import com.chess.puzzle.text2sql.web.error.ClientError.MissingQuery
-import com.chess.puzzle.text2sql.web.utility.CustomLogger
 import com.chess.puzzle.text2sql.web.validator.RequestValidator
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.serialization.Serializable
 
-private val customLogger = CustomLogger(indentLevel = 1)
+private val logger = KotlinLogging.logger {}
 
 @Serializable
 data class QueryPuzzleRequest(val query: String? = null, val model: String? = null) {
     fun toInput(): ResultWrapper<QueryPuzzleInput, List<ClientError>> {
-        customLogger.init { "QueryPuzzleRequest(query=$query, model=$model).toInput())" }
         val validator =
             RequestValidator<QueryPuzzleInput> {
                 isNotNull(query, MissingQuery)
@@ -25,8 +24,8 @@ data class QueryPuzzleRequest(val query: String? = null, val model: String? = nu
                 }
             }
         if (validator.haveErrors()) {
-            customLogger.error{
-                "Client Errors : ${validator.getErrors()}"
+            logger.error {
+                "ERROR: QueryPuzzleRequest(query=$query, model=$model).toInput()) -> Client Errors: ${validator.getErrors()}"
             }
             return ResultWrapper.Failure(validator.getErrors())
         }

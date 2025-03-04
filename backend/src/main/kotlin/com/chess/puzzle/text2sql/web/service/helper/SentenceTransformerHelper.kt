@@ -8,8 +8,8 @@ import com.chess.puzzle.text2sql.web.error.GetSimilarDemonstrationError
 import com.chess.puzzle.text2sql.web.error.GetSimilarDemonstrationError.InternalError
 import com.chess.puzzle.text2sql.web.error.GetSimilarDemonstrationError.NetworkError
 import com.chess.puzzle.text2sql.web.integration.FastApiResponse
-import com.chess.puzzle.text2sql.web.utility.CustomLogger
 import com.google.gson.Gson
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.post
@@ -21,7 +21,7 @@ import io.ktor.http.contentType
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
-private val customLogger = CustomLogger(indentLevel = 2)
+private val logger = KotlinLogging.logger {}
 
 /**
  * Service class for interacting with the Sentence Transformer microservice.
@@ -49,7 +49,8 @@ class SentenceTransformerHelper(
     suspend fun getSimilarDemonstration(
         input: String
     ): ResultWrapper<List<Demonstration>, GetSimilarDemonstrationError> {
-        customLogger.init { "SentenceTransformerHelper.getSimilarDemonstration(input=${input.take(10)})" }
+        logger.info { "getting Similar Demonstration { input=${input.take(30)} }" }
+
         val url = sentenceTransformerEndpoints.sentenceTransformerUrl
         return fetchSimilarDemonstrations(input, url)
     }
@@ -90,12 +91,16 @@ class SentenceTransformerHelper(
                     setBody(jsonString)
                 }
         } catch (e: Exception) {
-            customLogger.error { "Network Error: ${e.message}" }
+            logger.error {
+                "ERROR: SentenceTransformerHelper.getSimilarDemonstration(input=$input) -> Network Error: ${e.message}"
+            }
             return ResultWrapper.Failure(NetworkError)
         }
 
         if (response.status != HttpStatusCode.OK) {
-            customLogger.error { "Network Error: response.status != HttpStatusCode.OK" }
+            logger.error {
+                "ERROR: SentenceTransformerHelper.getSimilarDemonstration(input=$input) -> Network Error: response.status != HttpStatusCode.OK"
+            }
             return ResultWrapper.Failure(NetworkError)
         }
 
@@ -103,7 +108,9 @@ class SentenceTransformerHelper(
         try {
             fastApiResponse = response.body()
         } catch (e: Exception) {
-            customLogger.error { "Internal Error: ${e.message}" }
+            logger.error {
+                "ERROR: SentenceTransformerHelper.getSimilarDemonstration(input=$input) -> Internal Error: ${e.message}"
+            }
             return ResultWrapper.Failure(InternalError)
         }
 
@@ -111,15 +118,21 @@ class SentenceTransformerHelper(
             "success" -> {
                 val maskedQuery = fastApiResponse.maskedQuery
                 val demos = fastApiResponse.data
-                customLogger.success { "(data=$demos, metadata=$maskedQuery)" }
+                logger.info {
+                    "OK: SentenceTransformerHelper.getSimilarDemonstration(input=$input) -> (data=$demos, metadata=$maskedQuery)"
+                }
                 ResultWrapper.Success(data = demos, metadata = maskedQuery)
             }
             "failure" -> {
-                customLogger.error { "Network Error: fastapiResponse.status == 'failure'" }
+                logger.error {
+                    "ERROR: SentenceTransformerHelper.getSimilarDemonstration(input=$input) -> Network Error: fastapiResponse.status == 'failure'"
+                }
                 ResultWrapper.Failure(InternalError)
             }
             else -> {
-                customLogger.error { "Network Error: Unknown fastapiResponse.status" }
+                logger.error {
+                    "ERROR: SentenceTransformerHelper.getSimilarDemonstration(input=$input) -> Network Error: Unknown fastapiResponse.status"
+                }
                 ResultWrapper.Failure(InternalError)
             }
         }

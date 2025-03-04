@@ -13,7 +13,6 @@ import com.chess.puzzle.text2sql.web.error.SystemError
 import com.chess.puzzle.text2sql.web.service.helper.LargeLanguageApiHelper
 import com.chess.puzzle.text2sql.web.service.helper.PreprocessingHelper
 import com.chess.puzzle.text2sql.web.service.helper.SentenceTransformerHelper
-import com.chess.puzzle.text2sql.web.utility.CustomLogger
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 

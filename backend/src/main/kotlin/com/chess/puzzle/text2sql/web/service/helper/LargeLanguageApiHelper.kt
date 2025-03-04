@@ -5,7 +5,7 @@ import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
 import com.chess.puzzle.text2sql.web.domain.model.llm.ChatCompletionResponse
 import com.chess.puzzle.text2sql.web.error.CallLargeLanguageModelError
 import com.chess.puzzle.text2sql.web.service.llm.LargeLanguageModelFactory
-import com.chess.puzzle.text2sql.web.utility.CustomLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.client.call.body
 import io.ktor.client.plugins.HttpRequestTimeoutException
 import io.ktor.client.plugins.ServerResponseException
@@ -16,7 +16,7 @@ import io.ktor.utils.io.errors.IOException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
-private val customLogger = CustomLogger(indentLevel = 2)
+private val logger = KotlinLogging.logger {}
 
 /**
  * Service class for interacting with the DeepSeek API.
@@ -36,53 +36,73 @@ class LargeLanguageApiHelper(
         query: String,
         modelName: ModelName,
     ): ResultWrapper<String, CallLargeLanguageModelError> {
-        customLogger.init { "LargeLanguageApiHelper.callModel(query=${query.take(10)}, modelName=$modelName)" }
+        logger.info { "Calling Model { query = ${query.take(10)}, modelName = $modelName }" }
+        val parameters = Parameters(query.take(10), modelName)
+
         val response: HttpResponse
         try {
             response = largeLanguageModelFactory.getModel(modelName).callModel(query)
         } catch (e: Exception) {
-            return handleHttpException(e)
+            return handleHttpException(parameters, e)
         }
         if (!response.status.isSuccess()) {
-            return handleUnsuccessfulResponse(response)
+            return handleUnsuccessfulResponse(parameters, response)
         }
         val chatCompletion = response.body<ChatCompletionResponse>()
         val textResponse = chatCompletion.choices.first().message.content
         val sql = stripUnnecessary(textResponse)
-        customLogger.success { "(sql=$sql)" }
+        logger.info {
+            "OK: LargeLanguageApiHelper.callModel(query=${query.take(10)}, modelName=$modelName) -> (sql=$sql)"
+        }
         return ResultWrapper.Success(sql)
     }
 
-    fun handleUnsuccessfulResponse(
-        response: HttpResponse
+    private fun handleUnsuccessfulResponse(
+        parameters: Parameters,
+        response: HttpResponse,
     ): ResultWrapper.Failure<CallLargeLanguageModelError> {
+        val (query, modelName) = parameters
         return when (response.status) {
             HttpStatusCode.TooManyRequests -> {
-                customLogger.error { "CallLargeLanguageModelError.TooManyRequests" }
+                logger.error {
+                    "ERROR: LargeLanguageApiHelper.callModel(query=$query, modelName=$modelName) -> CallLargeLanguageModelError.TooManyRequests"
+                }
                 ResultWrapper.Failure(CallLargeLanguageModelError.RateLimitError)
             }
             HttpStatusCode.BadRequest -> {
-                customLogger.error { "CallLargeLanguageModelError.BadRequest" }
+                logger.error {
+                    "ERROR: LargeLanguageApiHelper.callModel(query=$query, modelName=$modelName) -> CallLargeLanguageModelError.BadRequest"
+                }
                 ResultWrapper.Failure(CallLargeLanguageModelError.InvalidRequestError)
             }
             HttpStatusCode.Unauthorized -> {
-                customLogger.error { "CallLargeLanguageModelError.Unauthorized" }
+                logger.error {
+                    "ERROR: LargeLanguageApiHelper.callModel(query=$query, modelName=$modelName) -> CallLargeLanguageModelError.Unauthorized"
+                }
                 ResultWrapper.Failure(CallLargeLanguageModelError.AuthenticationError)
             }
             HttpStatusCode.Forbidden -> {
-                customLogger.error { "CallLargeLanguageModelError.Forbidden" }
+                logger.error {
+                    "ERROR: LargeLanguageApiHelper.callModel(query=$query, modelName=$modelName) -> CallLargeLanguageModelError.Forbidden"
+                }
                 ResultWrapper.Failure(CallLargeLanguageModelError.PermissionError)
             }
             HttpStatusCode.PaymentRequired -> {
-                customLogger.error { "CallLargeLanguageModelError.PaymentRequired" }
+                logger.error {
+                    "ERROR: LargeLanguageApiHelper.callModel(query=$query, modelName=$modelName) -> CallLargeLanguageModelError.PaymentRequired"
+                }
                 ResultWrapper.Failure(CallLargeLanguageModelError.InsufficientBalanceError)
             }
             HttpStatusCode.ServiceUnavailable -> {
-                customLogger.error { "CallLargeLanguageModelError.ServiceUnavailable" }
+                logger.error {
+                    "ERROR: LargeLanguageApiHelper.callModel(query=$query, modelName=$modelName) -> CallLargeLanguageModelError.ServiceUnavailable"
+                }
                 ResultWrapper.Failure(CallLargeLanguageModelError.ServerOverload)
             }
             else -> {
-                customLogger.error { "CallLargeLanguageModelError.UnknownStatusError" }
+                logger.error {
+                    "ERROR: LargeLanguageApiHelper.callModel(query=$query, modelName=$modelName) -> CallLargeLanguageModelError.UnknownStatusError"
+                }
                 ResultWrapper.Failure(
                     CallLargeLanguageModelError.UnknownStatusError(response.status.value)
                 )
@@ -97,23 +117,34 @@ class LargeLanguageApiHelper(
      * @param e The [Exception] to handle.
      * @return A [ResultWrapper.Failure] containing the corresponding [CallLargeLanguageModelError].
      */
-    fun handleHttpException(e: Exception): ResultWrapper.Failure<CallLargeLanguageModelError> {
-        print(e)
+    private fun handleHttpException(
+        parameters: Parameters,
+        e: Exception,
+    ): ResultWrapper.Failure<CallLargeLanguageModelError> {
+        val (query, modelName) = parameters
         return when (e) {
             is HttpRequestTimeoutException -> {
-                customLogger.error { "CallLargeLanguageModelError.TimeoutError" }
+                logger.error {
+                    "ERROR: LargeLanguageApiHelper.callModel(query=$query, modelName=$modelName) -> CallLargeLanguageModelError.TimeoutError"
+                }
                 ResultWrapper.Failure(CallLargeLanguageModelError.TimeoutError)
             }
             is ServerResponseException -> {
-                customLogger.error { "CallLargeLanguageModelError.ServerError" }
+                logger.error {
+                    "ERROR: LargeLanguageApiHelper.callModel(query=$query, modelName=$modelName) -> CallLargeLanguageModelError.ServerError"
+                }
                 ResultWrapper.Failure(CallLargeLanguageModelError.ServerError)
             }
             is IOException -> {
-                customLogger.error { "CallLargeLanguageModelError.IOException" }
+                logger.error {
+                    "ERROR: LargeLanguageApiHelper.callModel(query=$query, modelName=$modelName) -> CallLargeLanguageModelError.IOException"
+                }
                 ResultWrapper.Failure(CallLargeLanguageModelError.IOException)
             }
             else -> {
-                customLogger.error { "CallLargeLanguageModelError.UnknownError" }
+                logger.error {
+                    "ERROR: LargeLanguageApiHelper.callModel(query=$query, modelName=$modelName) -> CallLargeLanguageModelError.UnknownError"
+                }
                 ResultWrapper.Failure(
                     CallLargeLanguageModelError.UnknownError(-1, e.message ?: "no message")
                 )
@@ -130,7 +161,7 @@ class LargeLanguageApiHelper(
      * @param string The raw response string from the API.
      * @return The cleaned SQL query.
      */
-    fun stripUnnecessary(string: String): String {
+    private fun stripUnnecessary(string: String): String {
         return string
             .substringAfter("```")
             .substringBefore("```")
@@ -142,3 +173,5 @@ class LargeLanguageApiHelper(
             .replace("\"", "")
     }
 }
+
+private data class Parameters(val query: String, val modelName: ModelName)

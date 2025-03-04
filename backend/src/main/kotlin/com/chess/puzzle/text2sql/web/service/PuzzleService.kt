@@ -8,12 +8,12 @@ import com.chess.puzzle.text2sql.web.error.ProcessQueryError
 import com.chess.puzzle.text2sql.web.error.ProcessQueryError.HibernateError
 import com.chess.puzzle.text2sql.web.error.ProcessQueryError.ValidationError
 import com.chess.puzzle.text2sql.web.repositories.PuzzleRepository
-import com.chess.puzzle.text2sql.web.utility.CustomLogger
 import com.chess.puzzle.text2sql.web.validator.SqlValidator
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
-private val customLogger = CustomLogger(indentLevel = 1)
+private val logger = KotlinLogging.logger {}
 
 /**
  * Service class responsible for querying and fetching [Puzzle] entities.
@@ -74,20 +74,27 @@ class PuzzleService(
     // IMPORTANT: This method allows executing raw SQL queries. Ensure that the input
     // is sanitized to prevent SQL injection attacks.
     fun processQuery(sqlCommand: String): ResultWrapper<List<Puzzle>, ProcessQueryError> {
-        customLogger.init { "PuzzleService.processQuery(sqlCommand=$sqlCommand)" }
+        logger.info { "Processing Query { sqlCommand = $sqlCommand }" }
+
         val isValid = sqlValidator.isValidSql(sqlCommand)
         val isAllowed = sqlValidator.isAllowed(sqlCommand)
         if (!isValid || !isAllowed) {
-            customLogger.error { "ValidationError(isValid=$isValid, isAllowed=$isAllowed)" }
+            logger.error {
+                "ERROR: PuzzleService.processQuery(sqlCommand=$sqlCommand) -> ValidationError(isValid=$isValid, isAllowed=$isAllowed)"
+            }
             return ResultWrapper.Failure(ValidationError(isValid, isAllowed))
         }
 
         return try {
             val result = puzzleRepository.executeSqlQuery(sqlCommand)
-            customLogger.success { "(result=$result)" }
+            logger.info {
+                "OK: PuzzleService.processQuery(sqlCommand=$sqlCommand) -> result.size = ${result.size}"
+            }
             ResultWrapper.Success(result)
         } catch (e: kotlin.Throwable) {
-            customLogger.error { "HibernateError: ${e.message}" }
+            logger.error {
+                "ERROR: PuzzleService.processQuery(sqlCommand=$sqlCommand) -> HibernateError: ${e.message}"
+            }
             ResultWrapper.Failure(HibernateError)
         }
     }

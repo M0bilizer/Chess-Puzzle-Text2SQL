@@ -6,10 +6,7 @@ import com.chess.puzzle.text2sql.web.error.ProcessPromptError
 import com.chess.puzzle.text2sql.web.error.ProcessPromptError.InsufficientDemonstrationsError
 import com.chess.puzzle.text2sql.web.error.ProcessPromptError.InvalidDemonstrationError
 import com.chess.puzzle.text2sql.web.error.ProcessPromptError.MissingPlaceholderError
-import com.chess.puzzle.text2sql.web.utility.CustomLogger
 import org.springframework.stereotype.Service
-
-private val customLogger = CustomLogger(indentLevel = 2)
 
 /**
  * Service class for preprocessing user prompts and demonstrations into a formatted prompt template.
@@ -41,7 +38,6 @@ class PreprocessingHelper {
         promptTemplate: String,
         demonstrations: List<Demonstration>?,
     ): ResultWrapper<String, ProcessPromptError> {
-        customLogger.init {"processPrompt(userPrompt=${userPrompt}, promptTemplate=${promptTemplate.take(10)}, demonstrations=$demonstrations)"}
         return try {
             val promptTemplateWithUserPrompt = loadPrompt(userPrompt, promptTemplate)
             val processedPromptTemplate =
@@ -52,19 +48,10 @@ class PreprocessingHelper {
                 }
             ResultWrapper.Success(processedPromptTemplate)
         } catch (e: InvalidDemonstrationException) {
-            customLogger.error{
-                "InvalidDemonstrationException: ${e.message}"
-            }
             ResultWrapper.Failure(InvalidDemonstrationError)
         } catch (e: InsufficientDemonstrationsException) {
-            customLogger.error{
-                "InsufficientDemonstrationsException: ${e.message}"
-            }
             ResultWrapper.Failure(InsufficientDemonstrationsError)
         } catch (e: MissingPlaceholderException) {
-            customLogger.error{
-                "MissingPlaceholderException: ${e.message}"
-            }
             ResultWrapper.Failure(MissingPlaceholderError)
         }
     }
