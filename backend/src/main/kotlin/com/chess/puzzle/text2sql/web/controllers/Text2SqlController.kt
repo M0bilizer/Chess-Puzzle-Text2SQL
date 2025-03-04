@@ -1,6 +1,5 @@
 package com.chess.puzzle.text2sql.web.controllers
 
-import CustomLogger
 import com.chess.puzzle.text2sql.web.domain.input.QueryPuzzleInput
 import com.chess.puzzle.text2sql.web.domain.input.QueryPuzzleRequest
 import com.chess.puzzle.text2sql.web.domain.model.ModelVariant.Full
@@ -9,6 +8,7 @@ import com.chess.puzzle.text2sql.web.domain.model.SearchMetadata
 import com.chess.puzzle.text2sql.web.entities.Puzzle
 import com.chess.puzzle.text2sql.web.service.PuzzleService
 import com.chess.puzzle.text2sql.web.service.Text2SQLService
+import com.chess.puzzle.text2sql.web.utility.CustomLogger
 import com.chess.puzzle.text2sql.web.utility.ResponseUtils.badRequest
 import com.chess.puzzle.text2sql.web.utility.ResponseUtils.failure
 import com.chess.puzzle.text2sql.web.utility.ResponseUtils.success
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 
-private val customLogger = CustomLogger
+private val customLogger = CustomLogger.instance
 
 /**
  * REST Controller to handle HTTP requests for the Text2SQL application.
@@ -58,18 +58,22 @@ class Text2SqlController(
             is ResultWrapper.Failure -> return badRequest(result.error)
         }
         val (query, model) = input
-        CustomLogger.withIndent(1) {
-            when (val result = text2SQLService.convertToSQL(query, model, Full)) {
-                is ResultWrapper.Success -> {
-                    sql = result.data
-                    searchMetadata = result.metadata as SearchMetadata
-                }
-                is ResultWrapper.Failure -> return failure(result.error)
+        when (
+            val result =
+                customLogger.withIndent(1) { text2SQLService.convertToSQL(query, model, Full) }
+        ) {
+            is ResultWrapper.Success -> {
+                sql = result.data
+                searchMetadata = result.metadata as SearchMetadata
             }
+            is ResultWrapper.Failure -> return failure(result.error)
         }
-        when (val result = puzzleService.processQuery(sql)) {
+        when (val result = customLogger.withIndent(1) { puzzleService.processQuery(sql) }) {
             is ResultWrapper.Success -> puzzles = result.data
             is ResultWrapper.Failure -> return failure(result.error)
+        }
+        customLogger.success {
+            "(success=Success(puzzles=${puzzles.take(3)}, searchMetadata=$searchMetadata)"
         }
         return success(puzzles, searchMetadata)
     }

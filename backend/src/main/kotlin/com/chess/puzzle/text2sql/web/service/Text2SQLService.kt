@@ -1,6 +1,5 @@
 package com.chess.puzzle.text2sql.web.service
 
-import CustomLogger
 import com.chess.puzzle.text2sql.web.config.FilePaths
 import com.chess.puzzle.text2sql.web.domain.model.Demonstration
 import com.chess.puzzle.text2sql.web.domain.model.ModelName
@@ -14,11 +13,11 @@ import com.chess.puzzle.text2sql.web.error.SystemError
 import com.chess.puzzle.text2sql.web.service.helper.LargeLanguageApiHelper
 import com.chess.puzzle.text2sql.web.service.helper.PreprocessingHelper
 import com.chess.puzzle.text2sql.web.service.helper.SentenceTransformerHelper
-import io.github.oshai.kotlinlogging.KotlinLogging
+import com.chess.puzzle.text2sql.web.utility.CustomLogger
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
-private val customLogger = CustomLogger
+private val customLogger = CustomLogger.instance
 
 /**
  * Service class for converting natural language queries into SQL queries.
@@ -58,7 +57,9 @@ class Text2SQLService(
         modelName: ModelName,
         modelVariant: ModelVariant,
     ): ResultWrapper<String, SystemError> {
-        customLogger.info { "Text2SQLService.convertToSql(query=$query, modelName=$modelName, modelVariant=$modelVariant)"}
+        customLogger.info {
+            "Text2SQLService.convertToSql(query=$query, modelName=$modelName, modelVariant=$modelVariant)"
+        }
         return when (modelVariant) {
             Full -> full(query, modelName)
             Partial -> partial(query, modelName)
@@ -109,6 +110,7 @@ class Text2SQLService(
             is ResultWrapper.Failure -> return ResultWrapper.Failure(result.error)
         }
         val searchMetadata = SearchMetadata(query, modelName, maskedQuery, sql)
+        customLogger.success { "(data=$sql, metadata=$searchMetadata)" }
         return ResultWrapper.Success(data = sql, metadata = searchMetadata)
     }
 

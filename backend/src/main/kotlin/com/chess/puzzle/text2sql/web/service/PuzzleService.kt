@@ -8,12 +8,12 @@ import com.chess.puzzle.text2sql.web.error.ProcessQueryError
 import com.chess.puzzle.text2sql.web.error.ProcessQueryError.HibernateError
 import com.chess.puzzle.text2sql.web.error.ProcessQueryError.ValidationError
 import com.chess.puzzle.text2sql.web.repositories.PuzzleRepository
+import com.chess.puzzle.text2sql.web.utility.CustomLogger
 import com.chess.puzzle.text2sql.web.validator.SqlValidator
-import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
-private val logger = KotlinLogging.logger {}
+private val customLogger = CustomLogger.instance
 
 /**
  * Service class responsible for querying and fetching [Puzzle] entities.
@@ -74,23 +74,20 @@ class PuzzleService(
     // IMPORTANT: This method allows executing raw SQL queries. Ensure that the input
     // is sanitized to prevent SQL injection attacks.
     fun processQuery(sqlCommand: String): ResultWrapper<List<Puzzle>, ProcessQueryError> {
+        customLogger.info { "PuzzleService.processQuery(sqlCommand=$sqlCommand)" }
         val isValid = sqlValidator.isValidSql(sqlCommand)
         val isAllowed = sqlValidator.isAllowed(sqlCommand)
         if (!isValid || !isAllowed) {
-            logger.warn {
-                "Processing Query { sqlCommand = $sqlCommand } -> ValidationError(isValid = $isValid, isAllowed = $isAllowed)"
-            }
+            customLogger.error { "ValidationError(isValid=$isValid, isAllowed=$isAllowed)" }
             return ResultWrapper.Failure(ValidationError(isValid, isAllowed))
         }
 
         return try {
             val result = puzzleRepository.executeSqlQuery(sqlCommand)
-            logger.info { "Processing Query { sqlCommand = $sqlCommand } -> OK" }
+            customLogger.success { "(result=$result)" }
             ResultWrapper.Success(result)
         } catch (e: kotlin.Throwable) {
-            logger.warn {
-                "Processing Query { sqlCommand = $sqlCommand } -> HibernateError(message = ${e.message})"
-            }
+            customLogger.error { "HibernateError: ${e.message}" }
             ResultWrapper.Failure(HibernateError)
         }
     }

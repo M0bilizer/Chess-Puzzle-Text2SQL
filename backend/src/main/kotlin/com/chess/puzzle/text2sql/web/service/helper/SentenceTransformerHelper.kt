@@ -1,6 +1,5 @@
 package com.chess.puzzle.text2sql.web.service.helper
 
-import CustomLogger
 import com.chess.puzzle.text2sql.web.config.SentenceTransformerEndpoints
 import com.chess.puzzle.text2sql.web.domain.input.GenericRequest
 import com.chess.puzzle.text2sql.web.domain.model.Demonstration
@@ -9,8 +8,8 @@ import com.chess.puzzle.text2sql.web.error.GetSimilarDemonstrationError
 import com.chess.puzzle.text2sql.web.error.GetSimilarDemonstrationError.InternalError
 import com.chess.puzzle.text2sql.web.error.GetSimilarDemonstrationError.NetworkError
 import com.chess.puzzle.text2sql.web.integration.FastApiResponse
+import com.chess.puzzle.text2sql.web.utility.CustomLogger
 import com.google.gson.Gson
-import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.post
@@ -22,8 +21,7 @@ import io.ktor.http.contentType
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
-private val customLogger = CustomLogger
-private val logger = KotlinLogging.logger {}
+private val customLogger = CustomLogger.instance
 
 /**
  * Service class for interacting with the Sentence Transformer microservice.
@@ -51,9 +49,9 @@ class SentenceTransformerHelper(
     suspend fun getSimilarDemonstration(
         input: String
     ): ResultWrapper<List<Demonstration>, GetSimilarDemonstrationError> {
-        customLogger.info { "SentenceTransformerHelper.getSimilarDemonstration(input=$input)"}
+        customLogger.info { "SentenceTransformerHelper.getSimilarDemonstration(input=$input)" }
         val url = sentenceTransformerEndpoints.sentenceTransformerUrl
-        return fetchSimilarDemonstrations(input, url, "gettingSimilarDemonstration")
+        return fetchSimilarDemonstrations(input, url)
     }
 
     /**
@@ -66,7 +64,7 @@ class SentenceTransformerHelper(
         input: String
     ): ResultWrapper<List<Demonstration>, GetSimilarDemonstrationError> {
         val partialUrl = sentenceTransformerEndpoints.partialSentenceTransformerUrl
-        return fetchSimilarDemonstrations(input, partialUrl, "gettingPartialSimilarDemonstration")
+        return fetchSimilarDemonstrations(input, partialUrl)
     }
 
     /**
@@ -77,13 +75,11 @@ class SentenceTransformerHelper(
      *
      * @param input The input query for which to fetch similar demonstrations.
      * @param url The URL of the Sentence Transformer microservice endpoint.
-     * @param logPrefix A prefix for logging messages.
      * @return A [ResultWrapper] containing the list of similar demonstrations or an error.
      */
     private suspend fun fetchSimilarDemonstrations(
         input: String,
         url: String,
-        logPrefix: String,
     ): ResultWrapper<List<Demonstration>, GetSimilarDemonstrationError> {
         val jsonString = Gson().toJson(GenericRequest(input))
         val response: HttpResponse
@@ -94,14 +90,12 @@ class SentenceTransformerHelper(
                     setBody(jsonString)
                 }
         } catch (e: Exception) {
-            customLogger.error ({ "Network Error: $e.message" })
-            logger.error { "$logPrefix { input = $input } -> Network Error: ${e.message}" }
+            customLogger.error { "Network Error: ${e.message}" }
             return ResultWrapper.Failure(NetworkError)
         }
 
         if (response.status != HttpStatusCode.OK) {
-            customLogger.error ({ "Network Error: response.status != HttpStatusCode.OK" })
-            logger.warn { "$logPrefix { input = $input } -> Network Error" }
+            customLogger.error { "Network Error: response.status != HttpStatusCode.OK" }
             return ResultWrapper.Failure(NetworkError)
         }
 
@@ -109,7 +103,7 @@ class SentenceTransformerHelper(
         try {
             fastApiResponse = response.body()
         } catch (e: Exception) {
-            customLogger.error ({ "Internal Error: $e.message" })
+            customLogger.error { "Internal Error: ${e.message}" }
             return ResultWrapper.Failure(InternalError)
         }
 
@@ -117,49 +111,17 @@ class SentenceTransformerHelper(
             "success" -> {
                 val maskedQuery = fastApiResponse.maskedQuery
                 val demos = fastApiResponse.data
-                logSuccess(logPrefix, input, maskedQuery, demos)
+                customLogger.success { "(data=$demos, metadata=$maskedQuery)" }
                 ResultWrapper.Success(data = demos, metadata = maskedQuery)
             }
             "failure" -> {
-                customLogger.error ({ "Network Error: fastapiResponse.status == 'failure'" })
-                logger.warn { "$logPrefix { input = $input } -> Network Error" }
+                customLogger.error { "Network Error: fastapiResponse.status == 'failure'" }
                 ResultWrapper.Failure(InternalError)
             }
             else -> {
-                customLogger.error ({ "Network Error: Unknown fastapiResponse.status" })
-                logger.warn { "$logPrefix { input = $input} -> Internal Error" }
+                customLogger.error { "Network Error: Unknown fastapiResponse.status" }
                 ResultWrapper.Failure(InternalError)
             }
-        }
-    }
-
-    /**
-     * Logs the successful retrieval of similar demonstrations.
-     *
-     * @param logPrefix A prefix for logging messages.
-     * @param input The input query for which similar demonstrations were fetched.
-     * @param maskedQuery The masked query returned by the microservice.
-     * @param demos The list of similar demonstrations.
-     * @param maxTruncateLength The maximum length to truncate demonstration text for logging.
-     */
-    private fun logSuccess(
-        logPrefix: String,
-        input: String,
-        maskedQuery: String,
-        demos: List<Demonstration>,
-        maxTruncateLength: Int = 10,
-    ) {
-        fun Demonstration.truncate(): String {
-            return if (this.text.length < maxTruncateLength) {
-                this.text
-            } else {
-                this.text.substring(0, maxTruncateLength) + "..."
-            }
-        }
-
-        logger.info {
-            """$logPrefix { input = $input } -> { maskedQuery = $maskedQuery, demo = [${demos[0].truncate()},${demos[1].truncate()},${demos[2].truncate()}]"}"""
-                .trimIndent()
         }
     }
 }

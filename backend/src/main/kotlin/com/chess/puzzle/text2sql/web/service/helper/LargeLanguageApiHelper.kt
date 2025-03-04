@@ -5,7 +5,7 @@ import com.chess.puzzle.text2sql.web.domain.model.ResultWrapper
 import com.chess.puzzle.text2sql.web.domain.model.llm.ChatCompletionResponse
 import com.chess.puzzle.text2sql.web.error.CallLargeLanguageModelError
 import com.chess.puzzle.text2sql.web.service.llm.LargeLanguageModelFactory
-import io.github.oshai.kotlinlogging.KotlinLogging
+import com.chess.puzzle.text2sql.web.utility.CustomLogger
 import io.ktor.client.call.body
 import io.ktor.client.plugins.HttpRequestTimeoutException
 import io.ktor.client.plugins.ServerResponseException
@@ -16,7 +16,7 @@ import io.ktor.utils.io.errors.IOException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
-private val logger = KotlinLogging.logger {}
+private val customLogger = CustomLogger.instance
 
 /**
  * Service class for interacting with the DeepSeek API.
@@ -36,6 +36,7 @@ class LargeLanguageApiHelper(
         query: String,
         modelName: ModelName,
     ): ResultWrapper<String, CallLargeLanguageModelError> {
+        customLogger.info { "LargeLanguageApiHelper.callModel(query=$query, modelName=$modelName)" }
         val response: HttpResponse
         try {
             response = largeLanguageModelFactory.getModel(modelName).callModel(query)
@@ -48,6 +49,7 @@ class LargeLanguageApiHelper(
         val chatCompletion = response.body<ChatCompletionResponse>()
         val textResponse = chatCompletion.choices.first().message.content
         val sql = stripUnnecessary(textResponse)
+        customLogger.success { "(sql=$sql)" }
         return ResultWrapper.Success(sql)
     }
 
@@ -55,22 +57,36 @@ class LargeLanguageApiHelper(
         response: HttpResponse
     ): ResultWrapper.Failure<CallLargeLanguageModelError> {
         return when (response.status) {
-            HttpStatusCode.TooManyRequests ->
+            HttpStatusCode.TooManyRequests -> {
+                customLogger.error { "CallLargeLanguageModelError.TooManyRequests" }
                 ResultWrapper.Failure(CallLargeLanguageModelError.RateLimitError)
-            HttpStatusCode.BadRequest ->
+            }
+            HttpStatusCode.BadRequest -> {
+                customLogger.error { "CallLargeLanguageModelError.BadRequest" }
                 ResultWrapper.Failure(CallLargeLanguageModelError.InvalidRequestError)
-            HttpStatusCode.Unauthorized ->
+            }
+            HttpStatusCode.Unauthorized -> {
+                customLogger.error { "CallLargeLanguageModelError.Unauthorized" }
                 ResultWrapper.Failure(CallLargeLanguageModelError.AuthenticationError)
-            HttpStatusCode.Forbidden ->
+            }
+            HttpStatusCode.Forbidden -> {
+                customLogger.error { "CallLargeLanguageModelError.Forbidden" }
                 ResultWrapper.Failure(CallLargeLanguageModelError.PermissionError)
-            HttpStatusCode.PaymentRequired ->
+            }
+            HttpStatusCode.PaymentRequired -> {
+                customLogger.error { "CallLargeLanguageModelError.PaymentRequired" }
                 ResultWrapper.Failure(CallLargeLanguageModelError.InsufficientBalanceError)
-            HttpStatusCode.ServiceUnavailable ->
+            }
+            HttpStatusCode.ServiceUnavailable -> {
+                customLogger.error { "CallLargeLanguageModelError.ServiceUnavailable" }
                 ResultWrapper.Failure(CallLargeLanguageModelError.ServerOverload)
-            else ->
+            }
+            else -> {
+                customLogger.error { "CallLargeLanguageModelError.UnknownStatusError" }
                 ResultWrapper.Failure(
                     CallLargeLanguageModelError.UnknownStatusError(response.status.value)
                 )
+            }
         }
     }
 
@@ -84,15 +100,24 @@ class LargeLanguageApiHelper(
     fun handleHttpException(e: Exception): ResultWrapper.Failure<CallLargeLanguageModelError> {
         print(e)
         return when (e) {
-            is HttpRequestTimeoutException ->
+            is HttpRequestTimeoutException -> {
+                customLogger.error { "CallLargeLanguageModelError.TimeoutError" }
                 ResultWrapper.Failure(CallLargeLanguageModelError.TimeoutError)
-            is ServerResponseException ->
+            }
+            is ServerResponseException -> {
+                customLogger.error { "CallLargeLanguageModelError.ServerError" }
                 ResultWrapper.Failure(CallLargeLanguageModelError.ServerError)
-            is IOException -> ResultWrapper.Failure(CallLargeLanguageModelError.IOException)
-            else ->
+            }
+            is IOException -> {
+                customLogger.error { "CallLargeLanguageModelError.IOException" }
+                ResultWrapper.Failure(CallLargeLanguageModelError.IOException)
+            }
+            else -> {
+                customLogger.error { "CallLargeLanguageModelError.UnknownError" }
                 ResultWrapper.Failure(
                     CallLargeLanguageModelError.UnknownError(-1, e.message ?: "no message")
                 )
+            }
         }
     }
 
