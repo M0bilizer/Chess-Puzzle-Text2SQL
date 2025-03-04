@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 
-private val customLogger = CustomLogger.instance
+private val customLogger = CustomLogger()
 
 /**
  * REST Controller to handle HTTP requests for the Text2SQL application.
@@ -48,7 +48,7 @@ class Text2SqlController(
      */
     @PostMapping("/api/queryPuzzle")
     suspend fun queryPuzzle(@RequestBody request: QueryPuzzleRequest): ResponseEntity<String> {
-        customLogger.info { "Received POST on /api/queryPuzzle { request = $request }" }
+        customLogger.init { "Received POST on /api/queryPuzzle { request = $request }" }
         val input: QueryPuzzleInput
         val sql: String
         val searchMetadata: SearchMetadata
@@ -59,8 +59,7 @@ class Text2SqlController(
         }
         val (query, model) = input
         when (
-            val result =
-                customLogger.withIndent(1) { text2SQLService.convertToSQL(query, model, Full) }
+            val result = text2SQLService.convertToSQL(query, model, Full)
         ) {
             is ResultWrapper.Success -> {
                 sql = result.data
@@ -68,7 +67,7 @@ class Text2SqlController(
             }
             is ResultWrapper.Failure -> return failure(result.error)
         }
-        when (val result = customLogger.withIndent(1) { puzzleService.processQuery(sql) }) {
+        when (val result = puzzleService.processQuery(sql)) {
             is ResultWrapper.Success -> puzzles = result.data
             is ResultWrapper.Failure -> return failure(result.error)
         }

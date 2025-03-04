@@ -21,7 +21,7 @@ import io.ktor.http.contentType
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
-private val customLogger = CustomLogger.instance
+private val customLogger = CustomLogger(indentLevel = 2)
 
 /**
  * Service class for interacting with the Sentence Transformer microservice.
@@ -49,7 +49,7 @@ class SentenceTransformerHelper(
     suspend fun getSimilarDemonstration(
         input: String
     ): ResultWrapper<List<Demonstration>, GetSimilarDemonstrationError> {
-        customLogger.info { "SentenceTransformerHelper.getSimilarDemonstration(input=$input)" }
+        customLogger.init { "SentenceTransformerHelper.getSimilarDemonstration(input=${input.take(10)})" }
         val url = sentenceTransformerEndpoints.sentenceTransformerUrl
         return fetchSimilarDemonstrations(input, url)
     }

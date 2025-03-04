@@ -17,8 +17,6 @@ import com.chess.puzzle.text2sql.web.utility.CustomLogger
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
-private val customLogger = CustomLogger.instance
-
 /**
  * Service class for converting natural language queries into SQL queries.
  *
@@ -57,9 +55,6 @@ class Text2SQLService(
         modelName: ModelName,
         modelVariant: ModelVariant,
     ): ResultWrapper<String, SystemError> {
-        customLogger.info {
-            "Text2SQLService.convertToSql(query=$query, modelName=$modelName, modelVariant=$modelVariant)"
-        }
         return when (modelVariant) {
             Full -> full(query, modelName)
             Partial -> partial(query, modelName)
@@ -110,7 +105,6 @@ class Text2SQLService(
             is ResultWrapper.Failure -> return ResultWrapper.Failure(result.error)
         }
         val searchMetadata = SearchMetadata(query, modelName, maskedQuery, sql)
-        customLogger.success { "(data=$sql, metadata=$searchMetadata)" }
         return ResultWrapper.Success(data = sql, metadata = searchMetadata)
     }
 

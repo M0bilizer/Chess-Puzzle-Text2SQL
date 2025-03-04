@@ -11,7 +11,7 @@ import java.io.InputStream
 import java.nio.charset.StandardCharsets
 import org.springframework.stereotype.Service
 
-private val customLogger = CustomLogger.instance
+private val customLogger = CustomLogger(indentLevel = 2)
 
 /**
  * Service class for loading files from the classpath.
@@ -68,9 +68,11 @@ class FileLoaderService(
      * @return A [ResultWrapper] containing the file content or an error.
      */
     fun getTextFile(filePath: String): ResultWrapper<String, GetTextFileError> {
+        customLogger.init { "getTextFile(filePath=$filePath)" }
         return try {
             val inputStream: InputStream? = classLoader.getResourceAsStream(filePath)
             if (inputStream == null) {
+                customLogger.error { "FileNotFoundError" }
                 ResultWrapper.Failure(GetTextFileError.FileNotFoundError)
             } else {
                 val string =
@@ -78,7 +80,7 @@ class FileLoaderService(
                 ResultWrapper.Success(string)
             }
         } catch (e: java.io.IOException) {
-            customLogger.error("getTextFile(filePath=$filePath)") { "IOException: ${e.message}" }
+            customLogger.error { "IOException: ${e.message}" }
             ResultWrapper.Failure(GetTextFileError.IOException(e))
         }
     }

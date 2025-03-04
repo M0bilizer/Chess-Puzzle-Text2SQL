@@ -13,7 +13,7 @@ import com.chess.puzzle.text2sql.web.validator.SqlValidator
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
-private val customLogger = CustomLogger.instance
+private val customLogger = CustomLogger(indentLevel = 1)
 
 /**
  * Service class responsible for querying and fetching [Puzzle] entities.
@@ -74,7 +74,7 @@ class PuzzleService(
     // IMPORTANT: This method allows executing raw SQL queries. Ensure that the input
     // is sanitized to prevent SQL injection attacks.
     fun processQuery(sqlCommand: String): ResultWrapper<List<Puzzle>, ProcessQueryError> {
-        customLogger.info { "PuzzleService.processQuery(sqlCommand=$sqlCommand)" }
+        customLogger.init { "PuzzleService.processQuery(sqlCommand=$sqlCommand)" }
         val isValid = sqlValidator.isValidSql(sqlCommand)
         val isAllowed = sqlValidator.isAllowed(sqlCommand)
         if (!isValid || !isAllowed) {

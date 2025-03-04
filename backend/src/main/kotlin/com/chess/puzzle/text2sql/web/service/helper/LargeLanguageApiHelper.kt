@@ -16,7 +16,7 @@ import io.ktor.utils.io.errors.IOException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
-private val customLogger = CustomLogger.instance
+private val customLogger = CustomLogger(indentLevel = 2)
 
 /**
  * Service class for interacting with the DeepSeek API.
@@ -36,7 +36,7 @@ class LargeLanguageApiHelper(
         query: String,
         modelName: ModelName,
     ): ResultWrapper<String, CallLargeLanguageModelError> {
-        customLogger.info { "LargeLanguageApiHelper.callModel(query=$query, modelName=$modelName)" }
+        customLogger.init { "LargeLanguageApiHelper.callModel(query=${query.take(10)}, modelName=$modelName)" }
         val response: HttpResponse
         try {
             response = largeLanguageModelFactory.getModel(modelName).callModel(query)

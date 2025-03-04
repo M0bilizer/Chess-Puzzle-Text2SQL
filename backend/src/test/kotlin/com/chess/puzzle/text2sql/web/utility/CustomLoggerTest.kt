@@ -18,7 +18,7 @@ class CustomLoggerTest {
 
     @Test
     fun `test info logging`() {
-        customLogger.info { "Test info message" }
+        customLogger.init { "Test info message" }
 
         // Since info just adds to the list, we need to trigger a print to verify
         customLogger.success { "Trigger print" }
@@ -61,7 +61,7 @@ class CustomLoggerTest {
     @Test
     fun `test indentation handling`() {
         runBlocking {
-            customLogger.withIndent(2) { customLogger.info { "Indented message" } }
+            customLogger.withIndent(2) { customLogger.init { "Indented message" } }
             customLogger.success { "Trigger print" }
         }
 

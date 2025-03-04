@@ -10,11 +10,12 @@ import com.chess.puzzle.text2sql.web.utility.CustomLogger
 import com.chess.puzzle.text2sql.web.validator.RequestValidator
 import kotlinx.serialization.Serializable
 
-private val customLogger = CustomLogger.instance
+private val customLogger = CustomLogger(indentLevel = 1)
 
 @Serializable
 data class QueryPuzzleRequest(val query: String? = null, val model: String? = null) {
     fun toInput(): ResultWrapper<QueryPuzzleInput, List<ClientError>> {
+        customLogger.init { "QueryPuzzleRequest(query=$query, model=$model).toInput())" }
         val validator =
             RequestValidator<QueryPuzzleInput> {
                 isNotNull(query, MissingQuery)
@@ -24,7 +25,7 @@ data class QueryPuzzleRequest(val query: String? = null, val model: String? = nu
                 }
             }
         if (validator.haveErrors()) {
-            customLogger.error("QueryPuzzleRequest(query=$query, model=$model).toInput())") {
+            customLogger.error{
                 "Client Errors : ${validator.getErrors()}"
             }
             return ResultWrapper.Failure(validator.getErrors())
