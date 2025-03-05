@@ -61,7 +61,10 @@ class HttpClientConfig {
             client =
                 HttpClient(OkHttp) {
                     install(ContentNegotiation) { json(Json { ignoreUnknownKeys = true }) }
-                    install(HttpTimeout) { requestTimeoutMillis = 12000 }
+                    install(HttpTimeout) {
+                        requestTimeoutMillis = 12000
+                        socketTimeoutMillis = 14000
+                    }
                 },
             apiKey = deepseekApiKey,
             baseUrl = deepSeekBaseUrl,
@@ -75,7 +78,10 @@ class HttpClientConfig {
             client =
                 HttpClient(OkHttp) {
                     install(ContentNegotiation) { json(Json { ignoreUnknownKeys = true }) }
-                    install(HttpTimeout) { requestTimeoutMillis = 5000 }
+                    install(HttpTimeout) {
+                        requestTimeoutMillis = 5000
+                        socketTimeoutMillis = 7000
+                    }
                 },
             apiKey = mistralApiKey,
             baseUrl = mistralBaseUrl,

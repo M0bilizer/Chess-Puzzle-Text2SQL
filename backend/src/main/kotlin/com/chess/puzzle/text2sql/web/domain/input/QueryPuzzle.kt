@@ -7,12 +7,14 @@ import com.chess.puzzle.text2sql.web.error.ClientError
 import com.chess.puzzle.text2sql.web.error.ClientError.InvalidModel
 import com.chess.puzzle.text2sql.web.error.ClientError.MissingQuery
 import com.chess.puzzle.text2sql.web.validator.RequestValidator
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.serialization.Serializable
+
+private val logger = KotlinLogging.logger {}
 
 @Serializable
 data class QueryPuzzleRequest(val query: String? = null, val model: String? = null) {
     fun toInput(): ResultWrapper<QueryPuzzleInput, List<ClientError>> {
-
         val validator =
             RequestValidator<QueryPuzzleInput> {
                 isNotNull(query, MissingQuery)
@@ -22,6 +24,9 @@ data class QueryPuzzleRequest(val query: String? = null, val model: String? = nu
                 }
             }
         if (validator.haveErrors()) {
+            logger.error {
+                "ERROR: Client Errors: ${validator.getErrors()} <- QueryPuzzleRequest(query=$query, model=$model).toInput())"
+            }
             return ResultWrapper.Failure(validator.getErrors())
         }
 

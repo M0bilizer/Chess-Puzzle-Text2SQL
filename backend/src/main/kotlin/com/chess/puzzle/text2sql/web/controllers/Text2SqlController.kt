@@ -48,14 +48,19 @@ class Text2SqlController(
      */
     @PostMapping("/api/queryPuzzle")
     suspend fun queryPuzzle(@RequestBody request: QueryPuzzleRequest): ResponseEntity<String> {
-        logger.info { "Received POST on /api/queryPuzzle { request = $request }" }
+        logger.info { "=> Received POST on /api/queryPuzzle { request = $request }" }
         val input: QueryPuzzleInput
         val sql: String
         val searchMetadata: SearchMetadata
         val puzzles: List<Puzzle>
         when (val result = request.toInput()) {
             is ResultWrapper.Success -> input = result.data
-            is ResultWrapper.Failure -> return badRequest(result.error)
+            is ResultWrapper.Failure -> {
+                logger.warn {
+                    "=> Failure in request.toInput() <- Text2SqlController.queryPuzzle(request=$request)"
+                }
+                return badRequest(result.error)
+            }
         }
         val (query, model) = input
         when (val result = text2SQLService.convertToSQL(query, model, Full)) {
@@ -63,11 +68,24 @@ class Text2SqlController(
                 sql = result.data
                 searchMetadata = result.metadata as SearchMetadata
             }
-            is ResultWrapper.Failure -> return failure(result.error)
+            is ResultWrapper.Failure -> {
+                logger.warn {
+                    "=> Failure in text2SQLService.convertToSQL(query=$query, model=$model, Full) <- ERROR: Text2SqlController.queryPuzzle(request=$request)"
+                }
+                return failure(result.error)
+            }
         }
         when (val result = puzzleService.processQuery(sql)) {
             is ResultWrapper.Success -> puzzles = result.data
-            is ResultWrapper.Failure -> return failure(result.error)
+            is ResultWrapper.Failure -> {
+                logger.warn {
+                    "=> Failure in puzzleService.processQuery(sql=$sql) <- ERROR: Text2SqlController.queryPuzzle(request=$request)"
+                }
+                return failure(result.error)
+            }
+        }
+        logger.info {
+            "=> OK: Text2SqlController.queryPuzzle(request=$request) -> (success=Success(puzzles=${puzzles.take(3)}, searchMetadata=$searchMetadata)"
         }
         return success(puzzles, searchMetadata)
     }

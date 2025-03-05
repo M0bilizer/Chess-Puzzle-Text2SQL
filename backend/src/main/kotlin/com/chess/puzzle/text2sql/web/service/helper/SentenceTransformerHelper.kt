@@ -49,8 +49,10 @@ class SentenceTransformerHelper(
     suspend fun getSimilarDemonstration(
         input: String
     ): ResultWrapper<List<Demonstration>, GetSimilarDemonstrationError> {
+        logger.info { "getting Similar Demonstration { input=${input.take(30)} }" }
+
         val url = sentenceTransformerEndpoints.sentenceTransformerUrl
-        return fetchSimilarDemonstrations(input, url, "gettingSimilarDemonstration")
+        return fetchSimilarDemonstrations(input, url)
     }
 
     /**
@@ -63,7 +65,7 @@ class SentenceTransformerHelper(
         input: String
     ): ResultWrapper<List<Demonstration>, GetSimilarDemonstrationError> {
         val partialUrl = sentenceTransformerEndpoints.partialSentenceTransformerUrl
-        return fetchSimilarDemonstrations(input, partialUrl, "gettingPartialSimilarDemonstration")
+        return fetchSimilarDemonstrations(input, partialUrl)
     }
 
     /**
@@ -74,13 +76,11 @@ class SentenceTransformerHelper(
      *
      * @param input The input query for which to fetch similar demonstrations.
      * @param url The URL of the Sentence Transformer microservice endpoint.
-     * @param logPrefix A prefix for logging messages.
      * @return A [ResultWrapper] containing the list of similar demonstrations or an error.
      */
     private suspend fun fetchSimilarDemonstrations(
         input: String,
         url: String,
-        logPrefix: String,
     ): ResultWrapper<List<Demonstration>, GetSimilarDemonstrationError> {
         val jsonString = Gson().toJson(GenericRequest(input))
         val response: HttpResponse
@@ -91,12 +91,16 @@ class SentenceTransformerHelper(
                     setBody(jsonString)
                 }
         } catch (e: Exception) {
-            logger.error { "$logPrefix { input = $input } -> Network Error: ${e.message}" }
+            logger.error {
+                "ERROR: Network Error: ${e.message} <- SentenceTransformerHelper.getSimilarDemonstration(input=$input)"
+            }
             return ResultWrapper.Failure(NetworkError)
         }
 
         if (response.status != HttpStatusCode.OK) {
-            logger.warn { "$logPrefix { input = $input } -> Network Error" }
+            logger.error {
+                "ERROR: Network Error: response.status != HttpStatusCode.OK <- SentenceTransformerHelper.getSimilarDemonstration(input=$input)"
+            }
             return ResultWrapper.Failure(NetworkError)
         }
 
@@ -104,6 +108,9 @@ class SentenceTransformerHelper(
         try {
             fastApiResponse = response.body()
         } catch (e: Exception) {
+            logger.error {
+                "ERROR: Internal Error: ${e.message} <- SentenceTransformerHelper.getSimilarDemonstration(input=$input)"
+            }
             return ResultWrapper.Failure(InternalError)
         }
 
@@ -111,47 +118,23 @@ class SentenceTransformerHelper(
             "success" -> {
                 val maskedQuery = fastApiResponse.maskedQuery
                 val demos = fastApiResponse.data
-                logSuccess(logPrefix, input, maskedQuery, demos)
+                logger.info {
+                    "OK: SentenceTransformerHelper.getSimilarDemonstration(input=$input) -> (data=$demos, metadata=$maskedQuery)"
+                }
                 ResultWrapper.Success(data = demos, metadata = maskedQuery)
             }
             "failure" -> {
-                logger.warn { "$logPrefix { input = $input } -> Network Error" }
+                logger.error {
+                    "ERROR: Network Error: fastapiResponse.status == 'failure' <- SentenceTransformerHelper.getSimilarDemonstration(input=$input)"
+                }
                 ResultWrapper.Failure(InternalError)
             }
             else -> {
-                logger.warn { "$logPrefix { input = $input} -> Internal Error" }
+                logger.error {
+                    "ERROR: Network Error: Unknown fastapiResponse.status <- SentenceTransformerHelper.getSimilarDemonstration(input=$input)"
+                }
                 ResultWrapper.Failure(InternalError)
             }
-        }
-    }
-
-    /**
-     * Logs the successful retrieval of similar demonstrations.
-     *
-     * @param logPrefix A prefix for logging messages.
-     * @param input The input query for which similar demonstrations were fetched.
-     * @param maskedQuery The masked query returned by the microservice.
-     * @param demos The list of similar demonstrations.
-     * @param maxTruncateLength The maximum length to truncate demonstration text for logging.
-     */
-    private fun logSuccess(
-        logPrefix: String,
-        input: String,
-        maskedQuery: String,
-        demos: List<Demonstration>,
-        maxTruncateLength: Int = 10,
-    ) {
-        fun Demonstration.truncate(): String {
-            return if (this.text.length < maxTruncateLength) {
-                this.text
-            } else {
-                this.text.substring(0, maxTruncateLength) + "..."
-            }
-        }
-
-        logger.info {
-            """$logPrefix { input = $input } -> { maskedQuery = $maskedQuery, demo = [${demos[0].truncate()},${demos[1].truncate()},${demos[2].truncate()}]"}"""
-                .trimIndent()
         }
     }
 }

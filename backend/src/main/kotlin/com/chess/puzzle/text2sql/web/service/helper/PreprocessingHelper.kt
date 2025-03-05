@@ -6,10 +6,7 @@ import com.chess.puzzle.text2sql.web.error.ProcessPromptError
 import com.chess.puzzle.text2sql.web.error.ProcessPromptError.InsufficientDemonstrationsError
 import com.chess.puzzle.text2sql.web.error.ProcessPromptError.InvalidDemonstrationError
 import com.chess.puzzle.text2sql.web.error.ProcessPromptError.MissingPlaceholderError
-import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Service
-
-private val logger = KotlinLogging.logger {}
 
 /**
  * Service class for preprocessing user prompts and demonstrations into a formatted prompt template.

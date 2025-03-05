@@ -36,41 +36,77 @@ class LargeLanguageApiHelper(
         query: String,
         modelName: ModelName,
     ): ResultWrapper<String, CallLargeLanguageModelError> {
+        logger.info { "Calling Model { query = ${query.take(10)}, modelName = $modelName }" }
+        val parameters = Parameters(query.take(10), modelName)
+
         val response: HttpResponse
         try {
             response = largeLanguageModelFactory.getModel(modelName).callModel(query)
         } catch (e: Exception) {
-            return handleHttpException(e)
+            return handleHttpException(parameters, e)
         }
         if (!response.status.isSuccess()) {
-            return handleUnsuccessfulResponse(response)
+            return handleUnsuccessfulResponse(parameters, response)
         }
         val chatCompletion = response.body<ChatCompletionResponse>()
         val textResponse = chatCompletion.choices.first().message.content
         val sql = stripUnnecessary(textResponse)
+        logger.info {
+            "OK: LargeLanguageApiHelper.callModel(query=${query.take(10)}, modelName=$modelName) -> (sql=$sql)"
+        }
         return ResultWrapper.Success(sql)
     }
 
-    fun handleUnsuccessfulResponse(
-        response: HttpResponse
+    private fun handleUnsuccessfulResponse(
+        parameters: Parameters,
+        response: HttpResponse,
     ): ResultWrapper.Failure<CallLargeLanguageModelError> {
+        val (query, modelName) = parameters
         return when (response.status) {
-            HttpStatusCode.TooManyRequests ->
+            HttpStatusCode.TooManyRequests -> {
+                logger.error {
+                    "ERROR: CallLargeLanguageModelError.TooManyRequests <- LargeLanguageApiHelper.callModel(query=$query, modelName=$modelName)"
+                }
                 ResultWrapper.Failure(CallLargeLanguageModelError.RateLimitError)
-            HttpStatusCode.BadRequest ->
+            }
+            HttpStatusCode.BadRequest -> {
+                logger.error {
+                    "ERROR: CallLargeLanguageModelError.BadRequest <- LargeLanguageApiHelper.callModel(query=$query, modelName=$modelName)"
+                }
                 ResultWrapper.Failure(CallLargeLanguageModelError.InvalidRequestError)
-            HttpStatusCode.Unauthorized ->
+            }
+            HttpStatusCode.Unauthorized -> {
+                logger.error {
+                    "ERROR: CallLargeLanguageModelError.Unauthorized <- LargeLanguageApiHelper.callModel(query=$query, modelName=$modelName)"
+                }
                 ResultWrapper.Failure(CallLargeLanguageModelError.AuthenticationError)
-            HttpStatusCode.Forbidden ->
+            }
+            HttpStatusCode.Forbidden -> {
+                logger.error {
+                    "ERROR: CallLargeLanguageModelError.Forbidden <- LargeLanguageApiHelper.callModel(query=$query, modelName=$modelName)"
+                }
                 ResultWrapper.Failure(CallLargeLanguageModelError.PermissionError)
-            HttpStatusCode.PaymentRequired ->
+            }
+            HttpStatusCode.PaymentRequired -> {
+                logger.error {
+                    "ERROR: CallLargeLanguageModelError.PaymentRequired <- LargeLanguageApiHelper.callModel(query=$query, modelName=$modelName)"
+                }
                 ResultWrapper.Failure(CallLargeLanguageModelError.InsufficientBalanceError)
-            HttpStatusCode.ServiceUnavailable ->
+            }
+            HttpStatusCode.ServiceUnavailable -> {
+                logger.error {
+                    "ERROR: CallLargeLanguageModelError.ServiceUnavailable <- LargeLanguageApiHelper.callModel(query=$query, modelName=$modelName)"
+                }
                 ResultWrapper.Failure(CallLargeLanguageModelError.ServerOverload)
-            else ->
+            }
+            else -> {
+                logger.error {
+                    "ERROR: CallLargeLanguageModelError.UnknownStatusError <- LargeLanguageApiHelper.callModel(query=$query, modelName=$modelName)"
+                }
                 ResultWrapper.Failure(
                     CallLargeLanguageModelError.UnknownStatusError(response.status.value)
                 )
+            }
         }
     }
 
@@ -81,17 +117,38 @@ class LargeLanguageApiHelper(
      * @param e The [Exception] to handle.
      * @return A [ResultWrapper.Failure] containing the corresponding [CallLargeLanguageModelError].
      */
-    fun handleHttpException(e: Exception): ResultWrapper.Failure<CallLargeLanguageModelError> {
+    private fun handleHttpException(
+        parameters: Parameters,
+        e: Exception,
+    ): ResultWrapper.Failure<CallLargeLanguageModelError> {
+        val (query, modelName) = parameters
         return when (e) {
-            is HttpRequestTimeoutException ->
+            is HttpRequestTimeoutException -> {
+                logger.error {
+                    "ERROR: CallLargeLanguageModelError.TimeoutError <- LargeLanguageApiHelper.callModel(query=$query, modelName=$modelName)"
+                }
                 ResultWrapper.Failure(CallLargeLanguageModelError.TimeoutError)
-            is ServerResponseException ->
+            }
+            is ServerResponseException -> {
+                logger.error {
+                    "ERROR: CallLargeLanguageModelError.ServerError <- LargeLanguageApiHelper.callModel(query=$query, modelName=$modelName)"
+                }
                 ResultWrapper.Failure(CallLargeLanguageModelError.ServerError)
-            is IOException -> ResultWrapper.Failure(CallLargeLanguageModelError.IOException)
-            else ->
+            }
+            is IOException -> {
+                logger.error {
+                    "ERROR: CallLargeLanguageModelError.IOException <- LargeLanguageApiHelper.callModel(query=$query, modelName=$modelName)"
+                }
+                ResultWrapper.Failure(CallLargeLanguageModelError.IOException)
+            }
+            else -> {
+                logger.error {
+                    "ERROR: CallLargeLanguageModelError.UnknownError <- LargeLanguageApiHelper.callModel(query=$query, modelName=$modelName)"
+                }
                 ResultWrapper.Failure(
                     CallLargeLanguageModelError.UnknownError(-1, e.message ?: "no message")
                 )
+            }
         }
     }
 
@@ -104,7 +161,7 @@ class LargeLanguageApiHelper(
      * @param string The raw response string from the API.
      * @return The cleaned SQL query.
      */
-    fun stripUnnecessary(string: String): String {
+    private fun stripUnnecessary(string: String): String {
         return string
             .substringAfter("```")
             .substringBefore("```")
@@ -116,3 +173,5 @@ class LargeLanguageApiHelper(
             .replace("\"", "")
     }
 }
+
+private data class Parameters(val query: String, val modelName: ModelName)

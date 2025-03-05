@@ -74,22 +74,26 @@ class PuzzleService(
     // IMPORTANT: This method allows executing raw SQL queries. Ensure that the input
     // is sanitized to prevent SQL injection attacks.
     fun processQuery(sqlCommand: String): ResultWrapper<List<Puzzle>, ProcessQueryError> {
+        logger.info { "Processing Query { sqlCommand = $sqlCommand }" }
+
         val isValid = sqlValidator.isValidSql(sqlCommand)
         val isAllowed = sqlValidator.isAllowed(sqlCommand)
         if (!isValid || !isAllowed) {
-            logger.warn {
-                "Processing Query { sqlCommand = $sqlCommand } -> ValidationError(isValid = $isValid, isAllowed = $isAllowed)"
+            logger.error {
+                "ERROR: ValidationError(isValid=$isValid, isAllowed=$isAllowed) <- PuzzleService.processQuery(sqlCommand=$sqlCommand)"
             }
             return ResultWrapper.Failure(ValidationError(isValid, isAllowed))
         }
 
         return try {
             val result = puzzleRepository.executeSqlQuery(sqlCommand)
-            logger.info { "Processing Query { sqlCommand = $sqlCommand } -> OK" }
+            logger.info {
+                "OK: PuzzleService.processQuery(sqlCommand=$sqlCommand) -> result.size = ${result.size}"
+            }
             ResultWrapper.Success(result)
         } catch (e: kotlin.Throwable) {
-            logger.warn {
-                "Processing Query { sqlCommand = $sqlCommand } -> HibernateError(message = ${e.message})"
+            logger.error {
+                "ERROR: HibernateError: ${e.message} <- PuzzleService.processQuery(sqlCommand=$sqlCommand)"
             }
             ResultWrapper.Failure(HibernateError)
         }
