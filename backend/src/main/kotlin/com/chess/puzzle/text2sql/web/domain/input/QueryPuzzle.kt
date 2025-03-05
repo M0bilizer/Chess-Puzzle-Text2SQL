@@ -25,7 +25,7 @@ data class QueryPuzzleRequest(val query: String? = null, val model: String? = nu
             }
         if (validator.haveErrors()) {
             logger.error {
-                "ERROR: QueryPuzzleRequest(query=$query, model=$model).toInput()) -> Client Errors: ${validator.getErrors()}"
+                "ERROR: Client Errors: ${validator.getErrors()} <- QueryPuzzleRequest(query=$query, model=$model).toInput())"
             }
             return ResultWrapper.Failure(validator.getErrors())
         }

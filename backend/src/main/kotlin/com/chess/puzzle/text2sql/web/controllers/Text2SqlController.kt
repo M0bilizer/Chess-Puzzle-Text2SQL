@@ -57,7 +57,7 @@ class Text2SqlController(
             is ResultWrapper.Success -> input = result.data
             is ResultWrapper.Failure -> {
                 logger.warn {
-                    "=> ERROR: Text2SqlController.queryPuzzle(request=$request) -> Failure in request.toInput()"
+                    "=> Failure in request.toInput() <- Text2SqlController.queryPuzzle(request=$request)"
                 }
                 return badRequest(result.error)
             }
@@ -70,7 +70,7 @@ class Text2SqlController(
             }
             is ResultWrapper.Failure -> {
                 logger.warn {
-                    "=> ERROR: Text2SqlController.queryPuzzle(request=$request) -> Failure in text2SQLService.convertToSQL(query=$query, model=$model, Full)"
+                    "=> Failure in text2SQLService.convertToSQL(query=$query, model=$model, Full) <- ERROR: Text2SqlController.queryPuzzle(request=$request)"
                 }
                 return failure(result.error)
             }
@@ -79,7 +79,7 @@ class Text2SqlController(
             is ResultWrapper.Success -> puzzles = result.data
             is ResultWrapper.Failure -> {
                 logger.warn {
-                    "=> ERROR: Text2SqlController.queryPuzzle(request=$request) -> Failure in puzzleService.processQuery(sql=$sql)"
+                    "=> Failure in puzzleService.processQuery(sql=$sql) <- ERROR: Text2SqlController.queryPuzzle(request=$request)"
                 }
                 return failure(result.error)
             }

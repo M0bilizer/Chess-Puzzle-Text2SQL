@@ -92,14 +92,14 @@ class SentenceTransformerHelper(
                 }
         } catch (e: Exception) {
             logger.error {
-                "ERROR: SentenceTransformerHelper.getSimilarDemonstration(input=$input) -> Network Error: ${e.message}"
+                "ERROR: Network Error: ${e.message} <- SentenceTransformerHelper.getSimilarDemonstration(input=$input)"
             }
             return ResultWrapper.Failure(NetworkError)
         }
 
         if (response.status != HttpStatusCode.OK) {
             logger.error {
-                "ERROR: SentenceTransformerHelper.getSimilarDemonstration(input=$input) -> Network Error: response.status != HttpStatusCode.OK"
+                "ERROR: Network Error: response.status != HttpStatusCode.OK <- SentenceTransformerHelper.getSimilarDemonstration(input=$input)"
             }
             return ResultWrapper.Failure(NetworkError)
         }
@@ -109,7 +109,7 @@ class SentenceTransformerHelper(
             fastApiResponse = response.body()
         } catch (e: Exception) {
             logger.error {
-                "ERROR: SentenceTransformerHelper.getSimilarDemonstration(input=$input) -> Internal Error: ${e.message}"
+                "ERROR: Internal Error: ${e.message} <- SentenceTransformerHelper.getSimilarDemonstration(input=$input)"
             }
             return ResultWrapper.Failure(InternalError)
         }
@@ -125,13 +125,13 @@ class SentenceTransformerHelper(
             }
             "failure" -> {
                 logger.error {
-                    "ERROR: SentenceTransformerHelper.getSimilarDemonstration(input=$input) -> Network Error: fastapiResponse.status == 'failure'"
+                    "ERROR: Network Error: fastapiResponse.status == 'failure' <- SentenceTransformerHelper.getSimilarDemonstration(input=$input)"
                 }
                 ResultWrapper.Failure(InternalError)
             }
             else -> {
                 logger.error {
-                    "ERROR: SentenceTransformerHelper.getSimilarDemonstration(input=$input) -> Network Error: Unknown fastapiResponse.status"
+                    "ERROR: Network Error: Unknown fastapiResponse.status <- SentenceTransformerHelper.getSimilarDemonstration(input=$input)"
                 }
                 ResultWrapper.Failure(InternalError)
             }

@@ -80,7 +80,7 @@ class PuzzleService(
         val isAllowed = sqlValidator.isAllowed(sqlCommand)
         if (!isValid || !isAllowed) {
             logger.error {
-                "ERROR: PuzzleService.processQuery(sqlCommand=$sqlCommand) -> ValidationError(isValid=$isValid, isAllowed=$isAllowed)"
+                "ERROR: ValidationError(isValid=$isValid, isAllowed=$isAllowed) <- PuzzleService.processQuery(sqlCommand=$sqlCommand)"
             }
             return ResultWrapper.Failure(ValidationError(isValid, isAllowed))
         }
@@ -93,7 +93,7 @@ class PuzzleService(
             ResultWrapper.Success(result)
         } catch (e: kotlin.Throwable) {
             logger.error {
-                "ERROR: PuzzleService.processQuery(sqlCommand=$sqlCommand) -> HibernateError: ${e.message}"
+                "ERROR: HibernateError: ${e.message} <- PuzzleService.processQuery(sqlCommand=$sqlCommand)"
             }
             ResultWrapper.Failure(HibernateError)
         }

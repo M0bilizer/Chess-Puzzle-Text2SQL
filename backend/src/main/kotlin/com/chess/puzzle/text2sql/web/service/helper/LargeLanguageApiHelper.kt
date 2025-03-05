@@ -65,43 +65,43 @@ class LargeLanguageApiHelper(
         return when (response.status) {
             HttpStatusCode.TooManyRequests -> {
                 logger.error {
-                    "ERROR: LargeLanguageApiHelper.callModel(query=$query, modelName=$modelName) -> CallLargeLanguageModelError.TooManyRequests"
+                    "ERROR: CallLargeLanguageModelError.TooManyRequests <- LargeLanguageApiHelper.callModel(query=$query, modelName=$modelName)"
                 }
                 ResultWrapper.Failure(CallLargeLanguageModelError.RateLimitError)
             }
             HttpStatusCode.BadRequest -> {
                 logger.error {
-                    "ERROR: LargeLanguageApiHelper.callModel(query=$query, modelName=$modelName) -> CallLargeLanguageModelError.BadRequest"
+                    "ERROR: CallLargeLanguageModelError.BadRequest <- LargeLanguageApiHelper.callModel(query=$query, modelName=$modelName)"
                 }
                 ResultWrapper.Failure(CallLargeLanguageModelError.InvalidRequestError)
             }
             HttpStatusCode.Unauthorized -> {
                 logger.error {
-                    "ERROR: LargeLanguageApiHelper.callModel(query=$query, modelName=$modelName) -> CallLargeLanguageModelError.Unauthorized"
+                    "ERROR: CallLargeLanguageModelError.Unauthorized <- LargeLanguageApiHelper.callModel(query=$query, modelName=$modelName)"
                 }
                 ResultWrapper.Failure(CallLargeLanguageModelError.AuthenticationError)
             }
             HttpStatusCode.Forbidden -> {
                 logger.error {
-                    "ERROR: LargeLanguageApiHelper.callModel(query=$query, modelName=$modelName) -> CallLargeLanguageModelError.Forbidden"
+                    "ERROR: CallLargeLanguageModelError.Forbidden <- LargeLanguageApiHelper.callModel(query=$query, modelName=$modelName)"
                 }
                 ResultWrapper.Failure(CallLargeLanguageModelError.PermissionError)
             }
             HttpStatusCode.PaymentRequired -> {
                 logger.error {
-                    "ERROR: LargeLanguageApiHelper.callModel(query=$query, modelName=$modelName) -> CallLargeLanguageModelError.PaymentRequired"
+                    "ERROR: CallLargeLanguageModelError.PaymentRequired <- LargeLanguageApiHelper.callModel(query=$query, modelName=$modelName)"
                 }
                 ResultWrapper.Failure(CallLargeLanguageModelError.InsufficientBalanceError)
             }
             HttpStatusCode.ServiceUnavailable -> {
                 logger.error {
-                    "ERROR: LargeLanguageApiHelper.callModel(query=$query, modelName=$modelName) -> CallLargeLanguageModelError.ServiceUnavailable"
+                    "ERROR: CallLargeLanguageModelError.ServiceUnavailable <- LargeLanguageApiHelper.callModel(query=$query, modelName=$modelName)"
                 }
                 ResultWrapper.Failure(CallLargeLanguageModelError.ServerOverload)
             }
             else -> {
                 logger.error {
-                    "ERROR: LargeLanguageApiHelper.callModel(query=$query, modelName=$modelName) -> CallLargeLanguageModelError.UnknownStatusError"
+                    "ERROR: CallLargeLanguageModelError.UnknownStatusError <- LargeLanguageApiHelper.callModel(query=$query, modelName=$modelName)"
                 }
                 ResultWrapper.Failure(
                     CallLargeLanguageModelError.UnknownStatusError(response.status.value)
@@ -125,25 +125,25 @@ class LargeLanguageApiHelper(
         return when (e) {
             is HttpRequestTimeoutException -> {
                 logger.error {
-                    "ERROR: LargeLanguageApiHelper.callModel(query=$query, modelName=$modelName) -> CallLargeLanguageModelError.TimeoutError"
+                    "ERROR: CallLargeLanguageModelError.TimeoutError <- LargeLanguageApiHelper.callModel(query=$query, modelName=$modelName)"
                 }
                 ResultWrapper.Failure(CallLargeLanguageModelError.TimeoutError)
             }
             is ServerResponseException -> {
                 logger.error {
-                    "ERROR: LargeLanguageApiHelper.callModel(query=$query, modelName=$modelName) -> CallLargeLanguageModelError.ServerError"
+                    "ERROR: CallLargeLanguageModelError.ServerError <- LargeLanguageApiHelper.callModel(query=$query, modelName=$modelName)"
                 }
                 ResultWrapper.Failure(CallLargeLanguageModelError.ServerError)
             }
             is IOException -> {
                 logger.error {
-                    "ERROR: LargeLanguageApiHelper.callModel(query=$query, modelName=$modelName) -> CallLargeLanguageModelError.IOException"
+                    "ERROR: CallLargeLanguageModelError.IOException <- LargeLanguageApiHelper.callModel(query=$query, modelName=$modelName)"
                 }
                 ResultWrapper.Failure(CallLargeLanguageModelError.IOException)
             }
             else -> {
                 logger.error {
-                    "ERROR: LargeLanguageApiHelper.callModel(query=$query, modelName=$modelName) -> CallLargeLanguageModelError.UnknownError"
+                    "ERROR: CallLargeLanguageModelError.UnknownError <- LargeLanguageApiHelper.callModel(query=$query, modelName=$modelName)"
                 }
                 ResultWrapper.Failure(
                     CallLargeLanguageModelError.UnknownError(-1, e.message ?: "no message")
