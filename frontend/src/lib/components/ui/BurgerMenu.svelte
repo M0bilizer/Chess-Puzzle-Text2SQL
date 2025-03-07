@@ -5,7 +5,7 @@
 
 	let puzzleId: string = $state('');
 	let openState: boolean = $state(false);
-	let flipped: boolean = $state(false);
+	// let flipped: boolean = $state(false);
 	let disabled: boolean = $state(false);
 
 	function handleSkipPuzzle() {

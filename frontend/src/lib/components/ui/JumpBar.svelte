@@ -3,15 +3,7 @@
 	import Fa6SolidBackwardStep from 'virtual:icons/fa6-solid/backward-step';
 	import Fa6SolidForwardStep from 'virtual:icons/fa6-solid/forward-step';
 	import Fa6SolidForwardFast from 'virtual:icons/fa6-solid/forward-fast';
-	import {
-		decrementJump,
-		endJump,
-		incrementJump,
-		isAtStart,
-		isInJump,
-		jump,
-		reset
-	} from '$lib/stores/jumpStore';
+	import { decrementJump, endJump, incrementJump, isAtStart, isInJump, jump, reset } from '$lib/stores/jumpStore';
 	import BurgerMenu from '$lib/components/ui/BurgerMenu.svelte';
 
 	let disableUndo = $state(false);
