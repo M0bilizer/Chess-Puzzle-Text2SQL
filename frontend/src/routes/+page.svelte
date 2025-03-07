@@ -13,7 +13,7 @@
 </script>
 
 <div
-	class="w-full mx-auto grid grid-cols-1 gap-x-4 gap-y-2 px-4 py-4 md:grid-cols-[minmax(0px,_1fr)_250px] md:w-4/6 xl:grid-cols-[300px_minmax(0px,_1fr)_300px] xl:w-1/2"
+	class="mx-auto grid w-full grid-cols-1 gap-x-4 gap-y-2 px-4 py-4 md:w-4/6 md:grid-cols-[minmax(0px,_1fr)_250px] xl:w-10/12 xl:grid-cols-[250px_minmax(0px,_1fr)_250px] 2xl:w-2/3"
 >
 	<aside class="hidden xl:block">
 		<div class="desktop grid-rows-[auto_auto] gap-4">
