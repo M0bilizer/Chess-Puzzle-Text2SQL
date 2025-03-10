@@ -29,8 +29,10 @@ class HttpClientConfig {
 
     @Value("\${deepseek_api_key}") lateinit var deepseekApiKey: String
     @Value("\${deepseek_base_url}") lateinit var deepSeekBaseUrl: String
+    @Value("\${deepseek_timeout}") lateinit var deepSeekTimeout: Number
     @Value("\${mistral_api_key}") lateinit var mistralApiKey: String
     @Value("\${mistral_base_url}") lateinit var mistralBaseUrl: String
+    @Value("\${mistral_timeout}") lateinit var mistralTimeout: Number
 
     /**
      * Creates and configures an HTTP client using Ktor's OkHttp engine.
@@ -62,8 +64,8 @@ class HttpClientConfig {
                 HttpClient(OkHttp) {
                     install(ContentNegotiation) { json(Json { ignoreUnknownKeys = true }) }
                     install(HttpTimeout) {
-                        requestTimeoutMillis = 12000
-                        socketTimeoutMillis = 14000
+                        requestTimeoutMillis = deepSeekTimeout.toLong()
+                        socketTimeoutMillis = deepSeekTimeout.toLong()
                     }
                 },
             apiKey = deepseekApiKey,
@@ -79,8 +81,8 @@ class HttpClientConfig {
                 HttpClient(OkHttp) {
                     install(ContentNegotiation) { json(Json { ignoreUnknownKeys = true }) }
                     install(HttpTimeout) {
-                        requestTimeoutMillis = 5000
-                        socketTimeoutMillis = 7000
+                        requestTimeoutMillis = mistralTimeout.toLong()
+                        socketTimeoutMillis = mistralTimeout.toLong()
                     }
                 },
             apiKey = mistralApiKey,

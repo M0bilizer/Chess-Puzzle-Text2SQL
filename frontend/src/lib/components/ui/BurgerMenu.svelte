@@ -5,7 +5,7 @@
 
 	let puzzleId: string = $state('');
 	let openState: boolean = $state(false);
-	let flipped: boolean = $state(false);
+	// let flipped: boolean = $state(false);
 	let disabled: boolean = $state(false);
 
 	function handleSkipPuzzle() {
@@ -29,7 +29,7 @@
 		<Fa6SolidBars class="size-4 text-tertiary-500" />
 	{/snippet}
 	{#snippet content()}
-		<div class="flex flex-col gap-2">
+		<div class="z-[1000] flex flex-col gap-2">
 			<!--			<span class="flex items-center justify-around align-middle">-->
 			<!--				<span class="h6">Flip Board</span>-->
 			<!--				<Switch name="example" bind:checked={flipped} />-->

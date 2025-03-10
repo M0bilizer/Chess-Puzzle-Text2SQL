@@ -5,7 +5,7 @@
 	import HelpToolTip from '$lib/components/modals/HelpToolTip.svelte';
 	import Fa6SolidMagnifyingGlass from 'virtual:icons/fa6-solid/magnifying-glass';
 	import { isLoading } from '$lib/stores/isLoading';
-	import { searchPuzzles } from '$lib/utils/searchUtil';
+	import { searchPuzzles } from '$lib/utils/searchUtils';
 	import { searchModalState } from '$lib/stores/modalStore';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import { SearchResultEnum } from '$lib/enums/searchResultEnum';

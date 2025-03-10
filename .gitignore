@@ -133,5 +133,6 @@ fabric.properties
 .history
 .ionide
 
-docker-compose.yml
+docker-compose-*.yml
+!docker-compose-sample.yml
 .idea/

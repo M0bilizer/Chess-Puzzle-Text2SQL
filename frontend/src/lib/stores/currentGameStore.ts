@@ -2,6 +2,7 @@ import { get, writable } from 'svelte/store';
 import type { GameProgress } from '$lib/types/gameProgress';
 import type { PuzzleInstance } from '$lib/types/puzzleInstance';
 import { playMove } from '$lib/utils/chessUtils';
+import { feedbackState, feedbackStore } from '$lib/stores/feedbackStore';
 
 export interface currentGameState {
 	query: string;
@@ -96,4 +97,5 @@ export function skipCurrentGame() {
 			}
 		};
 	});
+	feedbackStore.set(feedbackState.won);
 }
