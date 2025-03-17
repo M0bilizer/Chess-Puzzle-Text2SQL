@@ -18,6 +18,12 @@ enum class ModelVariant {
     Baseline;
 
     companion object {
+        /**
+         * Converts a string to a corresponding [ModelVariant] instance.
+         *
+         * @param value the string value to convert
+         * @return the corresponding [ModelVariant] instance, or null if the value is invalid
+         */
         fun toEnum(value: String): ModelVariant? {
             return try {
                 valueOf(value.lowercase().replaceFirstChar { it.uppercase() })

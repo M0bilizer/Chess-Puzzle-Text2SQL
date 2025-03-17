@@ -21,17 +21,28 @@ private val logger = KotlinLogging.logger {}
 /**
  * Service class for interacting with the DeepSeek API.
  *
- * This class handles sending queries to the DeepSeek API, processing the responses, and converting
- * them into SQL queries. It also handles exceptions and errors returned by the API.
+ * This class handles sending search queries to the DeepSeek API, processing the responses,
+ * converting them into SQL queries, and handling exceptions. It uses the
+ * [LargeLanguageModelFactory] to get the appropriate LLM model based on the [ModelName].
  *
- * @property largeLanguageModelFactory The [LargeLanguageModelFactory] used to get correct LLM
- *   Model.
+ * @property largeLanguageModelFactory The factory used to create the appropriate LLM model.
  */
 @Service
 class LargeLanguageApiHelper(
     @Autowired private val largeLanguageModelFactory: LargeLanguageModelFactory
 ) {
 
+    /**
+     * Calls the specified model with the given query and returns the result as an SQL query.
+     *
+     * This function handles the entire flow of sending the query to the model, processing the
+     * response, extracting the SQL query, and handling any errors.
+     *
+     * @param query The search query string to be converted into SQL.
+     * @param modelName The [ModelName] specifying which LLM model to use (e.g., Deepseek or
+     *   Mistral).
+     * @return A [ResultWrapper] containing either the SQL query or an error.
+     */
     suspend fun callModel(
         query: String,
         modelName: ModelName,
@@ -57,6 +68,16 @@ class LargeLanguageApiHelper(
         return ResultWrapper.Success(sql)
     }
 
+    /**
+     * Handles HTTP errors from the API response and returns the corresponding error.
+     *
+     * This function maps HTTP status codes to specific [CallLargeLanguageModelError] values, logs
+     * the error, and returns a [ResultWrapper.Failure].
+     *
+     * @param parameters The [Parameters] holding the query and model name for logging purposes.
+     * @param response The [HttpResponse] containing the error status.
+     * @return A [ResultWrapper.Failure] with the corresponding error.
+     */
     private fun handleUnsuccessfulResponse(
         parameters: Parameters,
         response: HttpResponse,
@@ -111,11 +132,15 @@ class LargeLanguageApiHelper(
     }
 
     /**
-     * Handles exceptions thrown by the OpenAI API and returns the appropriate
-     * [CallLargeLanguageModelError].
+     * Handles exceptions thrown during the API call and returns the corresponding error.
      *
+     * This function catches and processes exceptions, mapping them to specific
+     * [CallLargeLanguageModelError] values, logging the error, and returning a
+     * [ResultWrapper.Failure].
+     *
+     * @param parameters The [Parameters] holding the query and model name for logging purposes.
      * @param e The [Exception] to handle.
-     * @return A [ResultWrapper.Failure] containing the corresponding [CallLargeLanguageModelError].
+     * @return A [ResultWrapper.Failure] with the corresponding error.
      */
     private fun handleHttpException(
         parameters: Parameters,
@@ -153,10 +178,10 @@ class LargeLanguageApiHelper(
     }
 
     /**
-     * Strips unnecessary characters and formatting from the API response to extract the SQL query.
+     * Processes the API response to extract and clean up the SQL query.
      *
-     * DeepSeek might add unnecessary characters (e.g., Markdown formatting) to the response, which
-     * this method removes.
+     * This function strips unnecessary characters, formatting, and noise from the raw API response
+     * to ensure the extracted SQL query is clean and usable.
      *
      * @param string The raw response string from the API.
      * @return The cleaned SQL query.
@@ -174,4 +199,10 @@ class LargeLanguageApiHelper(
     }
 }
 
+/**
+ * A private helper class storing temporary parameters used for logging.
+ *
+ * @property query The query string being processed.
+ * @property modelName The model name being used.
+ */
 private data class Parameters(val query: String, val modelName: ModelName)
