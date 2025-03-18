@@ -46,7 +46,7 @@ data class PromptTemplateRequest(val query: String? = null, val variant: String?
                     isNotNull(ModelVariant.toEnum(variant!!), InvalidModelVariant)
                 }
             }
-        if (validator.haveErrors()) {
+        if (validator.hasErrors()) {
             return ResultWrapper.Failure(validator.getErrors())
         }
 

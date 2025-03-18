@@ -48,7 +48,7 @@ data class LlmRequest(val query: String? = null, val model: String? = null) {
                     isInCollection(ModelVariant.toEnum(model), ModelVariant.entries, InvalidModel)
                 }
             }
-        if (validator.haveErrors()) {
+        if (validator.hasErrors()) {
             return ResultWrapper.Failure(validator.getErrors())
         }
 

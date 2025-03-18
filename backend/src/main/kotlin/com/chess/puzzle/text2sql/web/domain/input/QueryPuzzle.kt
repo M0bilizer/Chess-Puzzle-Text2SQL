@@ -47,7 +47,7 @@ data class QueryPuzzleRequest(val query: String? = null, val model: String? = nu
                     isInCollection(ModelVariant.toEnum(model), ModelVariant.entries, InvalidModel)
                 }
             }
-        if (validator.haveErrors()) {
+        if (validator.hasErrors()) {
             logger.error {
                 "ERROR: Client Errors: ${validator.getErrors()} <- QueryPuzzleRequest(query=$query, model=$model).toInput())"
             }

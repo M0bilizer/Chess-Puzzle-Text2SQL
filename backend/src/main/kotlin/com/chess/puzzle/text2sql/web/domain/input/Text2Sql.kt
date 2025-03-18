@@ -65,7 +65,7 @@ data class Text2SqlRequest(
                     )
                 }
             }
-        if (validator.haveErrors()) {
+        if (validator.hasErrors()) {
             return ResultWrapper.Failure(validator.getErrors())
         }
 

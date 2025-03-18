@@ -23,7 +23,7 @@ class RequestValidatorTest {
             }
 
         expectThat(validator) {
-            get { haveErrors() }.isFalse()
+            get { hasErrors() }.isFalse()
             get { getErrors() }.isEmpty()
         }
     }
@@ -33,7 +33,7 @@ class RequestValidatorTest {
         val validator = RequestValidator<String> { isNotNull(null, MissingQuery) }
 
         expectThat(validator) {
-            get { haveErrors() }.isTrue()
+            get { hasErrors() }.isTrue()
             get { getErrors() }.containsExactly(MissingQuery)
         }
     }
@@ -43,7 +43,7 @@ class RequestValidatorTest {
         val validator = RequestValidator<String> { isNotNull("valid value", MissingQuery) }
 
         expectThat(validator) {
-            get { haveErrors() }.isFalse()
+            get { hasErrors() }.isFalse()
             get { getErrors() }.isEmpty()
         }
     }
@@ -58,7 +58,7 @@ class RequestValidatorTest {
             }
 
         expectThat(validator) {
-            get { haveErrors() }.isTrue()
+            get { hasErrors() }.isTrue()
             get { getErrors() }.containsExactly(InvalidModelVariant)
         }
     }
@@ -73,7 +73,7 @@ class RequestValidatorTest {
             }
 
         expectThat(validator) {
-            get { haveErrors() }.isFalse()
+            get { hasErrors() }.isFalse()
             get { getErrors() }.isEmpty()
         }
     }
@@ -86,7 +86,7 @@ class RequestValidatorTest {
             }
 
         expectThat(validator) {
-            get { haveErrors() }.isFalse()
+            get { hasErrors() }.isFalse()
             get { getErrors() }.isEmpty()
         }
     }
@@ -102,7 +102,7 @@ class RequestValidatorTest {
             }
 
         expectThat(validator) {
-            get { haveErrors() }.isTrue()
+            get { hasErrors() }.isTrue()
             get { getErrors() }.containsExactlyInAnyOrder(MissingQuery, InvalidModelVariant)
         }
     }
