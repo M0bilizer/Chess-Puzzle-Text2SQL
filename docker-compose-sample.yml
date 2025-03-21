@@ -1,5 +1,6 @@
 services:
   frontend:
+    build: ./frontend
     image: typescript-sveltekit:latest
     container_name: web_frontend
     ports:
@@ -15,6 +16,7 @@ services:
       - KOTLIN_SPRING_URL=http://backend:8080/api
       
   backend:
+    build: ./backend
     image: kotlin-spring:latest
     container_name: web_backend
     ports:
@@ -37,6 +39,7 @@ services:
       - SENTENCE_TRANSFORMER_URL=http://microservice:8000/api/similarity
 
   microservice:
+    build: ./microservice
     image: python-fastapi:latest
     container_name: web_microservice
     ports:
@@ -50,6 +53,7 @@ services:
         max-file: "10"
 
   nginx:
+    build: ./ngnix
     image: web-nginx:latest
     container_name: web_ngnix
     ports:

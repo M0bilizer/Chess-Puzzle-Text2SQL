@@ -1,0 +1,29 @@
+[ {
+  "text" : "Find puzzles with rating > 1500",
+  "full" : {
+    "sql" : "SELECT * FROM puzzles WHERE rating > 1500",
+    "status" : ""
+  },
+  "partial" : {
+    "sql" : "SELECT * FROM puzzles WHERE rating > 1500",
+    "status" : ""
+  },
+  "baseline" : {
+    "sql" : "SELECT * FROM puzzles WHERE rating > 1500",
+    "status" : ""
+  }
+}, {
+  "text" : "Find puzzles with rating > 2000",
+  "full" : {
+    "sql" : "SELECT * FROM puzzles WHERE rating > 2000",
+    "status" : ""
+  },
+  "partial" : {
+    "sql" : "SELECT * FROM puzzles WHERE rating > 2000",
+    "status" : ""
+  },
+  "baseline" : {
+    "sql" : "SELECT * FROM puzzles WHERE rating > 2000",
+    "status" : ""
+  }
+} ]
