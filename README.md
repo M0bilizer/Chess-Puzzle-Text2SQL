@@ -11,12 +11,8 @@ Hi! Welcome to my final year project. In this project, I aimed to enhance the ch
 
 # Additional Documentation
 
-<h1>
-    This README.md does not contain the full documentation.
-</h1>
-<h2>
-    Visit the project's [Github Wiki](https://github.com/M0bilizer/Chess-Puzzle-Text2SQL/wiki) for api documentation, and setting up your own chesspuzzletext2sql.com.
-</h2>
+**This README.md does not contain the full documentation.**
+Visit the project's [Github Wiki](https://github.com/M0bilizer/Chess-Puzzle-Text2SQL/wiki) for api documentation, and setting up your own chesspuzzletext2sql.com.
 
 # File Structure
 
@@ -53,9 +49,9 @@ Main Idea:
 # The Text2SQL process
 
 LLM can't always do Text2SQL, sometimes it makes mistake so we'll need a detailed Text2SQL process.
-This project is using (DAIL-SQL)[https://arxiv.org/abs/2308.15363]'s methodology
+This project is using [DAIL-SQL](https://arxiv.org/abs/2308.15363)'s methodology
 <p align="right">
-    View DAIL-SQL's github (here)[https://github.com/BeachWang/DAIL-SQL]
+    <i>View DAIL-SQL's github [here](https://github.com/BeachWang/DAIL-SQL)</i>
 </>
 
 The idea is to find similar demonstrations
@@ -115,7 +111,7 @@ Then we load the similar demonstration into the prompt template.
 
 - **Masking Database Keywords**: It's actually hard to check if two sentence are semantically similar, so we're going to replace user's queries with more generalized words
 Example: "I want a Dutch Defense Puzzle" -> "I want a <opening_tags>"
-- **Synthetic Demonstrations**: I used 3 LLMs to create 27 demonstrations, and I used cosine similarity to make sure they're not too similar. This is the (prompt template)[https://arxiv.org/abs/2104.07540] I used. 
+- **Synthetic Demonstrations**: I used 3 LLMs to create 27 demonstrations, and I used cosine similarity to make sure they're not too similar. This is the [prompt template](https://arxiv.org/abs/2104.07540) I used. 
 
 ---
 
