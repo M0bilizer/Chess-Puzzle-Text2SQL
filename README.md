@@ -18,6 +18,22 @@ Hi! Welcome to my final year project. In this project, I aimed to enhance the ch
     Visit the project's [Github Wiki](https://github.com/M0bilizer/Chess-Puzzle-Text2SQL/wiki) for api documentation, and setting up your own chesspuzzletext2sql.com.
 </h2>
 
+# File Structure
+
+```
+Chess-Puzzle-Text2SQL/
+├─ backend/                   # Backend Project
+├─ frontend/                  # Frontend Project
+├─ microservice/              # Microservice Project
+├─ misc/                      # Contains the benchmark result
+├─ ngnix/                     # Ngnix Project
+├─ scripts                    # Contains Scripts that may be useful
+├─ README.md                  # README.md
+└─ docker-compose-sample.yml  # Sample Docker-compose to set up your own containers
+```
+
+---
+
 # Gist of this project
 
 To let user find chess puzzle using natural language, we're going to use Text2SQL!
@@ -93,11 +109,15 @@ Then we load the similar demonstration into the prompt template.
                                                            └─────────────────────────────────────────┘
                                                                      │                                
                                                                      └─────▶  Send this prompt to LLM!
-
-
-Edit/view: https://cascii.app/91208
 ```
 
+# Some other things I've done to help the Text2SQL process
+
+- **Masking Database Keywords**: It's actually hard to check if two sentence are semantically similar, so we're going to replace user's queries with more generalized words
+Example: "I want a Dutch Defense Puzzle" -> "I want a <opening_tags>"
+- **Synthetic Demonstrations**: I used 3 LLMs to create 27 demonstrations, and I used cosine similarity to make sure they're not too similar. This is the (prompt template)[https://arxiv.org/abs/2104.07540] I used. 
+
+---
 
 # High Level System Architecture
 
@@ -130,19 +150,7 @@ Edit/view: https://cascii.app/91208
 - **External LLM API**: Handles the inference tasks.
 - **Database**: Stores all chess puzzle data. Many thanks to lichess.org for providing their open database.
 
-# File Structure
-
-```
-Chess-Puzzle-Text2SQL/
-├─ backend/                   # Backend Project
-├─ frontend/                  # Frontend Project
-├─ microservice/              # Microservice Project
-├─ misc/                      # Contains the benchmark result
-├─ ngnix/                     # Ngnix Project
-├─ scripts                    # Contains Scripts that may be useful
-├─ README.md                  # README.md
-└─ docker-compose-sample.yml  # Sample Docker-compose to set up your own containers
-```
+---
 
 # Some cool tools that I used to make this README.md
 
