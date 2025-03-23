@@ -44,7 +44,7 @@ This project is using (DAIL-SQL)[https://arxiv.org/abs/2308.15363]'s methodology
 
 The idea is to find similar demonstrations
 ```
-    User's Queries                                   My Demonstrations                                                                        
+    User's Query                                     My Demonstrations                                                                        
                                                                                                                                               
 ┌───────────────────────────────┐                  ┌─────────────────────────────────────┐                                                    
 │ I want a Dutch Defense Puzzle │      pick this ->│Text: I want a English Defense Puzzle│                                                    
@@ -65,9 +65,38 @@ The idea is to find similar demonstrations
                                                    ┌───────────────────┐                                                                      
                                                    │Text: hard puzzles │                                                                      
                                                    │SQL: ...           │                                                                      
-                                                   └───────────────────┘                                                                      
+                                                   └───────────────────┘                                                                                                       
 ```
+Then we load the similar demonstration into the prompt template.
 
+```
+                                                           ┌─────────────────────────────────────────┐
+                                                           │                                         │
+                                                           │ # You are a Text2SQL model. Based on ...│
+                                                           │ # convert the given natural language... │
+                                                           │                                         │
+┌─────────────────────────────────────┐                    │ # Below are some demonstrations...      │
+│Text: I want a English Defense Puzzle│                    │ ┌╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶┐       │
+│SQL: ...                             │  ───────────────▶  │ ╷ Text1:                        ╷       │
+└─────────────────────────────────────┘                    │ ╷ SQL1:                         ╷       │
+                                                           │ └╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶┘       │
+┌─────────────────────────────────────┐                    │                                         │
+│Text: My friends keeps playing the...│                    │ ┌╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶┐       │
+│SQL: ...                             │  ───────────────▶  │ ╷ Text2:                        ╷       │
+└─────────────────────────────────────┘                    │ ╷ SQL2:                         ╷       │
+                                                           │ └╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶╶┘       │
+                                                           │                                         │
+                                                           │ # Convert this query                    │
+                                                           │ {user's query}                          │
+                                                           │                                         │
+                                                           │                                         │
+                                                           └─────────────────────────────────────────┘
+                                                                     │                                
+                                                                     └─────▶  Send this prompt to LLM!
+
+
+Edit/view: https://cascii.app/91208
+```
 
 
 # High Level System Architecture
@@ -114,3 +143,7 @@ Chess-Puzzle-Text2SQL/
 ├─ README.md                  # README.md
 └─ docker-compose-sample.yml  # Sample Docker-compose to set up your own containers
 ```
+
+# Some cool tools that I used to make this README.md
+
+- (Cascii)[https://cascii.app/]
