@@ -36,7 +36,39 @@ Main Idea:
 
 # The Text2SQL process
 
-Text2SQL isn't always accurate, sometimes it makes mistake so we'll need a detailed Text2SQL process.
+LLM can't always do Text2SQL, sometimes it makes mistake so we'll need a detailed Text2SQL process.
+This project is using (DAIL-SQL)[https://arxiv.org/abs/2308.15363]'s methodology
+<p align="right">
+    View DAIL-SQL's github (here)[https://github.com/BeachWang/DAIL-SQL]
+</>
+
+The idea is to find similar demonstrations
+```
+    User's Queries                                   My Demonstrations                                                                        
+                                                                                                                                              
+┌───────────────────────────────┐                  ┌─────────────────────────────────────┐                                                    
+│ I want a Dutch Defense Puzzle │      pick this ->│Text: I want a English Defense Puzzle│                                                    
+└───────────────────────────────┘                  │SQL: ...                             │                                                    
+                                                   └─────────────────────────────────────┘                                                    
+                                                   ┌─────────────────────────────────────┐                                                    
+                                                   │Text: Give me some really hard puzzle│                                                    
+                                                   │SQL: ...                             │                                                    
+                                                   └─────────────────────────────────────┘                                                    
+                                                   ┌───────────────────────────────────────┐                                                  
+                                                   │Text: Is there some easy puzzle for me?│                                                  
+                                                   │SQL: ...                               │                                                  
+                                                   └───────────────────────────────────────┘                                                  
+                                                   ┌─────────────────────────────────────────────────────────────────────────────────────────┐
+                                       pick this ->│Text: My friends keeps playing the London System, give me some puzzle so I can crush him │
+                                                   │SQL: ...                                                                                 │
+                                                   └─────────────────────────────────────────────────────────────────────────────────────────┘
+                                                   ┌───────────────────┐                                                                      
+                                                   │Text: hard puzzles │                                                                      
+                                                   │SQL: ...           │                                                                      
+                                                   └───────────────────┘                                                                      
+```
+
+
 
 # High Level System Architecture
 
