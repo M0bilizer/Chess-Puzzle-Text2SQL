@@ -4,10 +4,25 @@ Hi! Welcome to my final year project. In this project, I aimed to enhance the ch
 
 # Student Info
 
-| Student Name (LAST NAME, First Name) | CABALLERO, Rakichaz Calimbahin |
-| Student ID                           | 57140124                       |
-| University                           | City University of Hong Kong   |
-| Course Code                          | CS4514                         |
+<table>
+  <tr>
+    <th>Student Name (LAST NAME, First Name)</th>
+    <td>CABALLERO, Rakichaz Calimbahin</td>
+  </tr>
+  <tr>
+    <th>Student ID</th>
+    <td>57140124</td>
+  </tr>
+  <tr>
+    <th>University</th>
+    <td>City University of Hong Kong</td>
+  </tr>
+  <tr>
+    <th>Course Code</th>
+    <td>CS4514</td>
+  </tr>
+</table>
+
 
 # Additional Documentation
 
@@ -51,7 +66,13 @@ Main Idea:
 LLM can't always do Text2SQL, sometimes it makes mistake so we'll need a detailed Text2SQL process.
 This project is using [DAIL-SQL](https://arxiv.org/abs/2308.15363)'s methodology
 <p align="right">
-    <i>View DAIL-SQL's github [here](https://github.com/BeachWang/DAIL-SQL)</i>
+    <i>
+        View DAIL-SQL's github 
+        <a href="https://github.com/BeachWang/DAIL-SQL">
+            here
+        </a>
+        .
+    </i>
 </>
 
 The idea is to find similar demonstrations
@@ -150,4 +171,4 @@ Example: "I want a Dutch Defense Puzzle" -> "I want a <opening_tags>"
 
 # Some cool tools that I used to make this README.md
 
-- (Cascii)[https://cascii.app/]
+- [Cascii](https://cascii.app/): Creates ASCII diagram
