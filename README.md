@@ -1,3 +1,10 @@
+```
+ \+/    \^/   (V)   ("\   [-]    _   ┏┓┓             ┓    ┏┳┓     ┏┓┏┓┏┓┓    \+/    \^/   (V)   ("\   [-]    _
+ ) (    ) (   ) (   ) '   | |   ( )  ┃ ┣┓┏┓┏┏  ┏┓┓┏┓┓┃┏┓   ┃ ┏┓┓┏╋┏┛┗┓┃┃┃    ) (    ) (   ) (   ) '   | |   ( )
+/___\  /___\ /___\ /___\ /___\ /___\ ┗┛┛┗┗ ┛┛  ┣┛┗┻┗┗┗┗    ┻ ┗ ┛┗┗┗━┗┛┗┻┗┛  /___\  /___\ /___\ /___\ /___\ /___\
+                                               ┛                          
+```
+
 # Introduction
 
 Hi! Welcome to my final year project. In this project, I aimed to enhance the chess experience by creating a new website! This website allows users to find chess puzzles using natural language. You can visit the website on [https://chesspuzzletext2sql.com](https://chesspuzzletext2sql.com)
