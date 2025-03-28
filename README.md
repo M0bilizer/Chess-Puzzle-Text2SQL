@@ -4,6 +4,13 @@
 /___\  /___\ /___\ /___\ /___\ /___\ ┗┛┛┗┗ ┛┛  ┣┛┗┻┗┗┗┗    ┻ ┗ ┛┗┗┗━┗┛┗┻┗┛  /___\  /___\ /___\ /___\ /___\ /___\
                                                ┛                                       
 ```
+</br>
+<p align="center">
+ <a href="https://github.com/M0bilizer/Chess-Puzzle-Text2SQL/wiki">
+  Documentation
+ </a>
+</p>  
+</br>
 
 # Introduction
 
