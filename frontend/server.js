@@ -8,7 +8,21 @@ app.use(handler);
 
 const PORT = process.env.PORT || 3000;
 const KOTLIN_SPRING_URL = process.env.KOTLIN_SPRING_URL;
+const NODE_VERSION = process.version.match(/^v(\d+\.\d+)/)[1]
 app.listen(PORT, () => {
-	console.log(`Server is running on http://localhost:${PORT}`);
-	console.log(`API calls is sent to ${KOTLIN_SPRING_URL}`);
+	console.log(
+		`
+==================================================================================================================
+
+  \\+/    \\^/   (V)   ("\\   [-]    _   ┏┓┓             ┓    ┏┳┓     ┏┓┏┓┏┓┓     _     [-]   ("\\   (V)   \\^/   \\+/
+  ) (    ) (   ) (   ) '   | |   ( )  ┃ ┣┓┏┓┏┏  ┏┓┓┏┓┓┃┏┓   ┃ ┏┓┓┏╋┏┛┗┓┃┃┃    ( )    | |   ) '   ) (   ) (   ) (
+ /___\\  /___\\ /___\\ /___\\ /___\\ /___\\ ┗┛┛┗┗ ┛┛  ┣┛┗┻┗┗┗┗    ┻ ┗ ┛┗┗┗━┗┛┗┻┗┛  /___\\  /___\\ /___\\ /___\\ /___\\ /___\\
+                                                ┛
+
+  :: Node Version        : ${NODE_VERSION}
+  :: Server Port         : ${PORT}
+  :: API Destination URL : ${KOTLIN_SPRING_URL}
+
+==================================================================================================================
+		`)
 });
