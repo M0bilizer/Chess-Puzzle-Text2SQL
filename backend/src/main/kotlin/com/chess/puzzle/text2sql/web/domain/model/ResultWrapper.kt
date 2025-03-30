@@ -14,13 +14,20 @@ package com.chess.puzzle.text2sql.web.domain.model
  */
 sealed class ResultWrapper<out T, out E> {
     /**
-     * Represents a successful result of a function, encapsulating the relevant data.
+     * Represents a successful result of a function, encapsulating the relevant data and optional
+     * metadata.
      *
-     * This class is used to return data when an operation is successful.
+     * This class is used to return data when an operation is successful. The optional metadata
+     * parameter allows additional information to be associated with the result.
      *
-     * @sample Success(data = "SELECT * FROM t_puzzle WHERE opening_tags LIKE '%Italian_Defense%'")
+     * @Sample Success(data = "SELECT * FROM t_puzzle WHERE opening_tags LIKE '%Italian_Defense%'")
      */
     data class Success<out T>(val data: T, val metadata: Any?) : ResultWrapper<T, Nothing>() {
+        /**
+         * Creates a Success instance with the provided data, setting metadata to null.
+         *
+         * @param data The relevant data returned by the operation.
+         */
         constructor(data: T) : this(data, null)
     }
 

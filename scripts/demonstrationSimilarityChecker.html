@@ -5,8 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Text Similarity Report</title>
     <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 40px; /* Added padding around the body */
+            box-sizing: border-box;
+        }
         table {
-            width: 100%;
+            width: 80%; /* Adjusted table width */
             border-collapse: collapse;
             margin-top: 20px;
         }
@@ -14,7 +25,7 @@
             border: 1px solid black;
         }
         th, td {
-            padding: 8px;
+            padding: 12px; /* Increased padding for better readability */
             text-align: left;
         }
         th {
@@ -23,10 +34,22 @@
         .file-input {
             margin-bottom: 20px;
         }
+        h1 {
+            margin-bottom: 20px;
+        }
+        #uploadMessage {
+            margin-bottom: 20px;
+            font-size: 1.2em;
+            color: #555;
+        }
     </style>
 </head>
 <body>
     <h1>Text Similarity Report</h1>
+    <div id="uploadMessage">
+        This is a script to calculate the cosine similarity of the preset demonstrations. <br/>
+        Upload one <code>demonstration.json</code>.
+    </div>
     <input type="file" id="jsonFileInput" accept=".json" class="file-input">
     <table id="similarityTable">
         <thead>

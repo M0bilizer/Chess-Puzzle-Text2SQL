@@ -24,25 +24,21 @@ These are the system requirement
 pip install uv
 ```
 
-2. Create a virtual environment using uv:
+2. Install Dependencies
 ```commandline
-uv venv venv
+uv sync
 ```
 
-3. Activate the Virtual Environment
+3. Activate Virtual Environemt
 
-- **On macOS/Linux**:
+For Windows:
 ```commandline
-source venv/bin/activate
-```
-- **On Windows**:
-```bash
-.\venv\Scripts\activate
+.venv\Scripts\activate
 ```
 
-4. Install Dependencies
+For macOS and Linux:
 ```commandline
-uv pip install -r requirements.txt
+source .venv/bin/activate
 ```
 
 ---

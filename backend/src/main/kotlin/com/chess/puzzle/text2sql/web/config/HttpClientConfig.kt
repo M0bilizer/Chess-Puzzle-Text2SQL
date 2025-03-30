@@ -21,8 +21,10 @@ import org.springframework.context.annotation.Configuration
  *
  * @property deepseekApiKey The API key for authenticating requests to the DeepSeek API.
  * @property deepSeekBaseUrl The base URL for the DeepSeek API.
+ * @property deepSeekTimeout The timeout (in milliseconds) for requests to the DeepSeek API.
  * @property mistralApiKey The API key for authenticating requests to the Mistral API.
  * @property mistralBaseUrl The base URL for the Mistral API.
+ * @property mistralTimeout The timeout (in milliseconds) for requests to the Mistral API.
  */
 @Configuration
 class HttpClientConfig {
@@ -38,7 +40,8 @@ class HttpClientConfig {
      * Creates and configures an HTTP client using Ktor's OkHttp engine.
      *
      * The client is configured with `ContentNegotiation` to support JSON serialization using
-     * Kotlin's `kotlinx.serialization` library.
+     * Kotlin's `kotlinx.serialization` library. This client can be used for general-purpose HTTP
+     * communication.
      *
      * @return An instance of `HttpClient` configured for JSON communication.
      */
@@ -48,13 +51,14 @@ class HttpClientConfig {
     }
 
     /**
-     * Creates and configures an OpenAI client.
+     * Creates and configures an OpenAI client for the DeepSeek API.
      *
-     * The client is initialized with the provided API key, base URL, and logging configuration.
-     * Logging is configured to sanitize sensitive information and use a simple logger with no log
-     * level.
+     * The client is initialized with the provided API key, base URL, and timeout settings. It uses
+     * Ktor's `HttpClient` with the OkHttp engine and is configured to handle JSON serialization and
+     * deserialization using `kotlinx.serialization`. The client also includes timeout settings to
+     * ensure requests do not hang indefinitely.
      *
-     * @return An instance of `OpenAI` configured for API communication.
+     * @return An instance of `OpenAiClient` configured for communication with the DeepSeek API.
      */
     @Bean
     @Qualifier("deepSeekClient")
@@ -73,6 +77,16 @@ class HttpClientConfig {
         )
     }
 
+    /**
+     * Creates and configures an OpenAI client for the Mistral API.
+     *
+     * The client is initialized with the provided API key, base URL, and timeout settings. It uses
+     * Ktor's `HttpClient` with the OkHttp engine and is configured to handle JSON serialization and
+     * deserialization using `kotlinx.serialization`. The client also includes timeout settings to
+     * ensure requests do not hang indefinitely.
+     *
+     * @return An instance of `OpenAiClient` configured for communication with the Mistral API.
+     */
     @Bean
     @Qualifier("mistralClient")
     fun mistralClient(): OpenAiClient {

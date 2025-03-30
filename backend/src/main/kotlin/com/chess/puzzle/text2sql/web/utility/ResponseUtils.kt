@@ -69,6 +69,14 @@ object ResponseUtils {
             .body(objectMapper.writeValueAsString(response))
     }
 
+    /**
+     * Handles bad request scenarios by creating an error response with associated error fields and
+     * messages.
+     *
+     * @param clientErrors List of client error objects containing the details of the errors.
+     * @return A [ResponseEntity] with a 400 Bad Request status and a JSON response containing the
+     *   error details.
+     */
     fun badRequest(clientErrors: List<ClientError>): ResponseEntity<String> {
         val message = clientErrors.associate { it.field to it.message }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
