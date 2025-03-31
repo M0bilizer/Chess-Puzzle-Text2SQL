@@ -4,8 +4,13 @@
 /___\  /___\ /___\ /___\ /___\ /___\ ┗┛┛┗┗ ┛┛  ┣┛┗┻┗┗┗┗    ┻ ┗ ┛┗┗┗━┗┛┗┻┗┛  /___\  /___\ /___\ /___\ /___\ /___\
                                                ┛                                       
 ```
-</br>
 <p align="center">
+ City University of Hong Kong
+</br>
+ CS4514
+</br>
+ 24CS110
+ </br>
  <a href="https://github.com/M0bilizer/Chess-Puzzle-Text2SQL/wiki">
   Documentation
  </a>
