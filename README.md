@@ -40,6 +40,10 @@ Hi! Welcome to my final year project. In this project, I aimed to enhance the ch
     <th>Course Code</th>
     <td>CS4514</td>
   </tr>
+ <tr>
+  <th>Project Code</th>
+  <td>24CS110</td>
+ </tr>
 </table>
 
 
