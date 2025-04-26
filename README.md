@@ -33,8 +33,10 @@ Hi! Welcome to my final year project. In this project, I aimed to enhance the ch
 ![Image 3](docs/3.png)
 ![Image 4](docs/4.png)
 ![Image 5](docs/5.png)
-<img src="docs/6.png" width="300" height="auto">
-<img src="docs/7.png" width="300" height="auto">
+<img src="docs/8t.png" width="500" height="auto">
+<img src="docs/9t.png" width="500" height="auto">
+<img src="docs/6m.png" width="250" height="auto">
+<img src="docs/7m.png" width="250" height="auto">
 
 
 # Additional Documentation
