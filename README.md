@@ -21,30 +21,16 @@
 
 Hi! Welcome to my final year project. In this project, I aimed to enhance the chess experience by creating a new website! This website allows users to find chess puzzles using natural language. You can visit the website on [https://chesspuzzletext2sql.com](https://chesspuzzletext2sql.com)
 
-# Student Info
+# Features
+- 🔍 Natural Language Search: Search for puzzles using everyday language—no need for complex keywords or filters.
+- ⚡ Blazing Website: No loading. Only about 250kB of javascript transfered
+- 🧠 Intuitive & User-Friendly: Clean, minimalist interface with the familiar chess graphic and sound effect.
 
-<table>
-  <tr>
-    <th>Student Name (LAST NAME, First Name)</th>
-    <td>CABALLERO, Rakichaz Calimbahin</td>
-  </tr>
-  <tr>
-    <th>Student ID</th>
-    <td>57140124</td>
-  </tr>
-  <tr>
-    <th>University</th>
-    <td>City University of Hong Kong</td>
-  </tr>
-  <tr>
-    <th>Course Code</th>
-    <td>CS4514</td>
-  </tr>
- <tr>
-  <th>Project Code</th>
-  <td>24CS110</td>
- </tr>
-</table>
+# Screenshot
+
+image::docs/1.png[]
+image::docs/2.png[]
+image::docs/3.png[]
 
 
 # Additional Documentation
