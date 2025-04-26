@@ -1,3 +1,9 @@
+> [!CAUTION]
+> The website is currently down for cost-saving purposes
+
+</br>
+
+
 ```
  \+/    \^/   (V)   ("\   [-]    _   ┏┓┓             ┓    ┏┳┓     ┏┓┏┓┏┓┓     _     [-]   ("\   (V)   \^/   \+/
  ) (    ) (   ) (   ) '   | |   ( )  ┃ ┣┓┏┓┏┏  ┏┓┓┏┓┓┃┏┓   ┃ ┏┓┓┏╋┏┛┗┓┃┃┃    ( )    | |   ) '   ) (   ) (   ) (
@@ -16,9 +22,6 @@
  </a>
 </p>  
 </br>
-
-> [!NOTE]
-> The website is currently down for cost-saving purposes
 
 # Introduction
 
