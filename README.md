@@ -28,9 +28,9 @@ Hi! Welcome to my final year project. In this project, I aimed to enhance the ch
 
 # Screenshot
 
-image::docs/1.png[]
-image::docs/2.png[]
-image::docs/3.png[]
+![Image 1](docs/1.png)
+![Image 2](docs/2.png)
+![Image 3](docs/3.png)
 
 
 # Additional Documentation
