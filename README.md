@@ -31,6 +31,8 @@ Hi! Welcome to my final year project. In this project, I aimed to enhance the ch
 ![Image 1](docs/1.png)
 ![Image 2](docs/2.png)
 ![Image 3](docs/3.png)
+![Image 4](docs/4.png)
+![Image 5](docs/5.png)
 
 
 # Additional Documentation
