@@ -31,11 +31,11 @@ Hi! Welcome to my final year project. In this project, I aimed to enhance the ch
 <details open>
 <summary> Desktop View </summary>
 <br>
-![Image 1](docs/1.png)
-![Image 2](docs/2.png)
-![Image 3](docs/3.png)
-![Image 4](docs/4.png)
-![Image 5](docs/5.png)
+<img src="docs/1.png" width="1080" height="auto">
+<img src="docs/2.png" width="1080" height="auto">
+<img src="docs/3.png" width="1080" height="auto">
+<img src="docs/4.png" width="1080" height="auto">
+<img src="docs/5.png" width="1080" height="auto">
 </details>
 
 <details>
