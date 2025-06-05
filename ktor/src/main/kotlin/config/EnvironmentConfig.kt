@@ -6,6 +6,7 @@ private val logger = KotlinLogging.logger {}
 
 data class EnvironmentConfig(val name: String = System.getProperty("ENV") ?: "Unknown") {
     val database = DatabaseConfig()
+    val file = FileConfig()
 
     data class DatabaseConfig(
         val url: String =
@@ -22,4 +23,6 @@ data class EnvironmentConfig(val name: String = System.getProperty("ENV") ?: "Un
             logger.info { "Connected to $url as $user" }
         }
     }
+
+    data class FileConfig(val promptTemplatePath: String = "inferencePromptTemplate.md")
 }
