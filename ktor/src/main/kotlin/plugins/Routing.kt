@@ -1,6 +1,6 @@
 package com.chesspuzzletext2sql.plugins
 
-import com.chesspuzzletext2sql.features.getPromptTemplate
+import com.chesspuzzletext2sql.routes.getPromptTemplate
 import com.chesspuzzletext2sql.routes.getPuzzles
 import io.ktor.server.application.Application
 import io.ktor.server.application.install

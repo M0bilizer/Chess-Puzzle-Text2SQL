@@ -1,8 +1,8 @@
 package com.chesspuzzletext2sql.plugins
 
+import com.chesspuzzletext2sql.config.ApplicationConfig
 import com.chesspuzzletext2sql.config.EnvironmentConfig
 import com.chesspuzzletext2sql.services.DatabaseService
-import com.chesspuzzletext2sql.services.PreprocessingService
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import org.koin.dsl.module
@@ -16,13 +16,8 @@ fun Application.configureKoin() {
             module {
                 single { EnvironmentConfig() }
                 single { get<EnvironmentConfig>().database }
-                single { get<EnvironmentConfig>().file }
+                single { ApplicationConfig }
                 single { DatabaseService() }
-                single {
-                    PreprocessingService(
-                        promptTemplatePath = get<EnvironmentConfig.FileConfig>().promptTemplatePath
-                    )
-                }
             }
         )
     }
