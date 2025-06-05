@@ -1,4 +1,4 @@
-package com.chesspuzzletext2sql.common
+package com.chesspuzzletext2sql.helpers
 
 import com.chesspuzzletext2sql.errors.ClientError
 import com.chesspuzzletext2sql.errors.SystemError
