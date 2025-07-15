@@ -14,9 +14,9 @@ fun Application.configureKoin() {
         slf4jLogger()
         modules(
             module {
+                single { ApplicationConfig() }
                 single { EnvironmentConfig() }
                 single { get<EnvironmentConfig>().database }
-                single { ApplicationConfig }
                 single { DatabaseService() }
             }
         )
