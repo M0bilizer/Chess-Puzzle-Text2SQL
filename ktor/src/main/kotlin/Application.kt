@@ -3,6 +3,7 @@ package com.chesspuzzletext2sql
 import com.chesspuzzletext2sql.plugins.configureDatabases
 import com.chesspuzzletext2sql.plugins.configureHTTP
 import com.chesspuzzletext2sql.plugins.configureKoin
+import com.chesspuzzletext2sql.plugins.configureLLMConfigurationManager
 import com.chesspuzzletext2sql.plugins.configureMonitoring
 import com.chesspuzzletext2sql.plugins.configureRouting
 import com.chesspuzzletext2sql.plugins.configureSerialization
@@ -25,6 +26,7 @@ fun main() {
 
 fun Application.module() {
     configureKoin()
+    configureLLMConfigurationManager()
     configureSerialization()
     configureDatabases()
     configureMonitoring()

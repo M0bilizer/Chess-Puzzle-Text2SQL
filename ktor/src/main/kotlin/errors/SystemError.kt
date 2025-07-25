@@ -9,25 +9,53 @@ sealed class SystemError(val status: HttpStatusCode, message: String) : CustomEr
     class UnknownError :
         SystemError(HttpStatusCode.InternalServerError, "Something unexpected occurred!")
 
-    class MissingPromptTemplate :
-        SystemError(HttpStatusCode.ServiceUnavailable, "Missing Prompt Template")
+    class UnavailableModel : SystemError(HttpStatusCode.ServiceUnavailable, "Model is unavailable")
 
-    class FileIOError :
-        SystemError(HttpStatusCode.ServiceUnavailable, "IO Error while reading file")
+    class IOException : SystemError(HttpStatusCode.InternalServerError, "Cannot Connect to LLM")
 
-    class EmptyPromptTemplate :
-        SystemError(HttpStatusCode.ServiceUnavailable, "Prompt Template is empty!")
+    class TimeoutException :
+        SystemError(
+            HttpStatusCode.InternalServerError,
+            "Could not complete request within expected timeframe",
+        )
 
-    companion object {}
+    class PaymentRequired :
+        SystemError(HttpStatusCode.InternalServerError, "Contact System Administrator")
+
+    class TooManyRequests :
+        SystemError(HttpStatusCode.InternalServerError, "Too many request sent")
+
+    class LLMServerError : SystemError(HttpStatusCode.InternalServerError, "LLM Server Error")
+
+    class LLMServiceUnavailable :
+        SystemError(HttpStatusCode.InternalServerError, "LLM Service Unavailable")
+
+    companion object {
+        val CannotConnect
+            get() = CannotConnectToDatabase()
+
+        val UnknownError
+            get() = UnknownError()
+
+        val UnavailableModel
+            get() = UnavailableModel()
+
+        val IOException
+            get() = IOException()
+
+        val TimeoutException
+            get() = TimeoutException()
+
+        val PaymentRequired
+            get() = PaymentRequired()
+
+        val TooManyRequests
+            get() = TooManyRequests()
+
+        val LLMServerError
+            get() = LLMServerError()
+
+        val LLMServiceUnavailable
+            get() = LLMServiceUnavailable()
+    }
 }
-
-val SystemError.Companion.CannotConnect
-    get() = SystemError.CannotConnectToDatabase()
-val SystemError.Companion.UnknownError
-    get() = SystemError.UnknownError()
-val SystemError.Companion.MissingPrompt
-    get() = SystemError.MissingPromptTemplate()
-val SystemError.Companion.FileIO
-    get() = SystemError.FileIOError()
-val SystemError.Companion.EmptyPrompt
-    get() = SystemError.EmptyPromptTemplate()

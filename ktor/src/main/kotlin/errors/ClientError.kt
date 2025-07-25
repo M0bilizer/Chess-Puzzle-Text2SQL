@@ -6,8 +6,18 @@ sealed class ClientError(val status: HttpStatusCode = HttpStatusCode.BadRequest,
     CustomError(message) {
     class InvalidLimit : ClientError(message = "Limit must be positive")
 
-    companion object {}
-}
+    class EmptyMessage : ClientError(message = "Message cannot be empty")
 
-val ClientError.Companion.InvalidLimit
-    get() = ClientError.InvalidLimit()
+    class UnsupportedModel : ClientError(message = "Unsupported Model")
+
+    companion object {
+        val InvalidLimit
+            get() = InvalidLimit()
+
+        val EmptyMesssage
+            get() = EmptyMessage()
+
+        val UnsupportedModel
+            get() = UnsupportedModel()
+    }
+}

@@ -33,6 +33,9 @@ dependencies {
     implementation(libs.ktor.server.request.validation)
     implementation(libs.ktor.server.cors)
     implementation(libs.ktor.server.cio)
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.cio)
+    implementation(libs.ktor.client.content.negotiation)
     implementation(libs.logback.classic)
     testImplementation(libs.ktor.server.test.host)
     testImplementation(libs.kotlin.test.junit)
@@ -41,4 +44,5 @@ dependencies {
     implementation("io.github.cdimascio:dotenv-kotlin:6.5.1")
     implementation("com.github.jsqlparser:jsqlparser:5.1")
     implementation("com.michael-bull.kotlin-result:kotlin-result:2.0.1")
+    implementation("com.michael-bull.kotlin-result:kotlin-result-coroutines:2.0.1")
 }

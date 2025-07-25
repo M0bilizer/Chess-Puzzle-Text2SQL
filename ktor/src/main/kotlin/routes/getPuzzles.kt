@@ -1,11 +1,8 @@
 package com.chesspuzzletext2sql.routes
 
-import com.chesspuzzletext2sql.errors.CannotConnect
 import com.chesspuzzletext2sql.errors.ClientError
 import com.chesspuzzletext2sql.errors.CustomError
-import com.chesspuzzletext2sql.errors.InvalidLimit
 import com.chesspuzzletext2sql.errors.SystemError
-import com.chesspuzzletext2sql.errors.UnknownError
 import com.chesspuzzletext2sql.helpers.handleClientError
 import com.chesspuzzletext2sql.helpers.handleSystemError
 import com.chesspuzzletext2sql.helpers.isConnected

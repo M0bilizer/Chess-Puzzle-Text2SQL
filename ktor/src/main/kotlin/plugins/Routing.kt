@@ -2,6 +2,7 @@ package com.chesspuzzletext2sql.plugins
 
 import com.chesspuzzletext2sql.routes.getPromptTemplate
 import com.chesspuzzletext2sql.routes.getPuzzles
+import com.chesspuzzletext2sql.routes.postCompletions
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.plugins.requestvalidation.RequestValidation
@@ -20,6 +21,7 @@ fun Application.configureRouting() {
     }
 
     routing {
+        postCompletions("/completions")
         getPuzzles("/puzzles")
         getPromptTemplate("/promptTemplate")
         get("/hello") { call.respondText("Hello World from Ktor") }

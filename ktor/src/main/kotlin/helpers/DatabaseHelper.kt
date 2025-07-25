@@ -1,6 +1,5 @@
 package com.chesspuzzletext2sql.helpers
 
-import com.chesspuzzletext2sql.errors.CannotConnect
 import com.chesspuzzletext2sql.errors.CustomError
 import com.chesspuzzletext2sql.errors.SystemError
 import com.github.michaelbull.result.Err
