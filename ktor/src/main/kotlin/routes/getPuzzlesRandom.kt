@@ -18,7 +18,7 @@ import io.ktor.server.routing.RoutingCall
 import io.ktor.server.routing.get
 import org.koin.ktor.ext.inject
 
-fun Route.getPuzzles(path: String) {
+fun Route.getPuzzlesRandom(path: String) {
     val databaseService: DatabaseService by inject()
     get(path) {
         val result = binding {
@@ -40,11 +40,10 @@ fun Route.getPuzzles(path: String) {
 }
 
 private fun validateCall(call: RoutingCall): Result<Int, CustomError> {
-    val limit = call.request.queryParameters["limit"]?.toIntOrNull()
+    val count = call.request.queryParameters["count"]?.toIntOrNull() ?: 1
     return when {
-        limit == null -> Err(SystemError.CannotConnect)
-        limit <= 0 -> Err(ClientError.InvalidLimit)
-        limit > 0 -> Ok(limit)
+        count <= 0 -> Err(ClientError.InvalidCount)
+        count > 0 -> Ok(count)
         else -> Err(SystemError.UnknownError)
     }
 }
