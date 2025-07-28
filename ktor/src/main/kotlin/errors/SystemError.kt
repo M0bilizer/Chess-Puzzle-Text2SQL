@@ -30,6 +30,12 @@ sealed class SystemError(val status: HttpStatusCode, message: String) : CustomEr
     class LLMServiceUnavailable :
         SystemError(HttpStatusCode.InternalServerError, "LLM Service Unavailable")
 
+    class SQLException() :
+        SystemError(
+            HttpStatusCode.InternalServerError,
+            message = "Exception when executing SQL statement",
+        )
+
     companion object {
         val CannotConnect
             get() = CannotConnectToDatabase()
@@ -57,5 +63,8 @@ sealed class SystemError(val status: HttpStatusCode, message: String) : CustomEr
 
         val LLMServiceUnavailable
             get() = LLMServiceUnavailable()
+
+        val SQLException
+            get() = SQLException()
     }
 }

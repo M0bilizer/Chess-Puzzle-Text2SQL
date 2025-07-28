@@ -16,8 +16,6 @@ sealed class ClientError(val status: HttpStatusCode = HttpStatusCode.BadRequest,
 
     class UnallowedQuery : ClientError(message = "Query is unallowed")
 
-    class SQLException() : ClientError(message = "SQLException")
-
     companion object {
         val InvalidCount
             get() = InvalidCount()
@@ -36,8 +34,5 @@ sealed class ClientError(val status: HttpStatusCode = HttpStatusCode.BadRequest,
 
         val UnallowedQuery
             get() = UnallowedQuery()
-
-        val SQLException
-            get() = SQLException()
     }
 }
