@@ -57,7 +57,7 @@ fun Route.postCompletions(path: String) {
 private suspend fun validateCall(call: RoutingCall): Result<Pair<String, LLMConfig>, CustomError> {
     val request = call.receive<CompletionRequest>()
     if (request.message.isEmpty()) {
-        return Err(ClientError.EmptyMesssage)
+        return Err(ClientError.EmptyMessage)
     }
     val model =
         SupportedModel.fromProviderName(request.model) ?: return Err(ClientError.UnsupportedModel)

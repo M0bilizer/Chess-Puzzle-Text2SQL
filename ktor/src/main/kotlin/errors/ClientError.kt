@@ -10,14 +10,34 @@ sealed class ClientError(val status: HttpStatusCode = HttpStatusCode.BadRequest,
 
     class UnsupportedModel : ClientError(message = "Unsupported Model")
 
+    class EmptyQuery : ClientError(message = "Query cannot be empty")
+
+    class InvalidQuery : ClientError(message = "Query is invalid")
+
+    class UnallowedQuery : ClientError(message = "Query is unallowed")
+
+    class SQLException() : ClientError(message = "SQLException")
+
     companion object {
         val InvalidCount
             get() = InvalidCount()
 
-        val EmptyMesssage
+        val EmptyMessage
             get() = EmptyMessage()
 
         val UnsupportedModel
             get() = UnsupportedModel()
+
+        val EmptyQuery
+            get() = EmptyQuery()
+
+        val InvalidQuery
+            get() = InvalidQuery()
+
+        val UnallowedQuery
+            get() = UnallowedQuery()
+
+        val SQLException
+            get() = SQLException()
     }
 }

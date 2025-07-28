@@ -1,5 +1,6 @@
 package com.chesspuzzletext2sql.tables
 
+import java.sql.ResultSet
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.Table
@@ -48,5 +49,21 @@ fun ResultRow.toPuzzle(): Puzzle {
         themes = this[PuzzleTable.themes],
         gameUrl = this[PuzzleTable.gameUrl],
         openingTags = this[PuzzleTable.openingTags],
+    )
+}
+
+fun ResultSet.toPuzzle(): Puzzle {
+    return Puzzle(
+        id = getInt("id"),
+        puzzleId = getString("puzzle_id"),
+        fen = getString("fen"),
+        moves = getString("moves"),
+        rating = getInt("rating"),
+        ratingDeviation = getInt("rating_deviation"),
+        popularity = getInt("popularity"),
+        nbPlays = getInt("nb_plays"),
+        themes = getString("themes"),
+        gameUrl = getString("game_url"),
+        openingTags = getString("opening_tags"),
     )
 }
