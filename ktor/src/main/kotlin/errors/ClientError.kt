@@ -16,6 +16,10 @@ sealed class ClientError(val status: HttpStatusCode = HttpStatusCode.BadRequest,
 
     class UnallowedQuery : ClientError(message = "Query is unallowed")
 
+    class EmptyTemplate : ClientError(message = "Template cannot be empty")
+
+    class UnsupportedTemplate : ClientError(message = "Unsupported Template")
+
     companion object {
         val InvalidCount
             get() = InvalidCount()
@@ -34,5 +38,11 @@ sealed class ClientError(val status: HttpStatusCode = HttpStatusCode.BadRequest,
 
         val UnallowedQuery
             get() = UnallowedQuery()
+
+        val EmptyTemplate
+            get() = EmptyTemplate()
+
+        val UnsupportedTemplate
+            get() = UnsupportedTemplate()
     }
 }

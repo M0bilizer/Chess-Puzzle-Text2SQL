@@ -1,6 +1,5 @@
 package com.chesspuzzletext2sql.plugins
 
-import com.chesspuzzletext2sql.config.ApplicationConfig
 import com.chesspuzzletext2sql.config.EnvironmentConfig
 import com.chesspuzzletext2sql.services.DatabaseService
 import com.chesspuzzletext2sql.services.HTTPService
@@ -15,7 +14,6 @@ fun Application.configureKoin() {
         slf4jLogger()
         modules(
             module {
-                single { ApplicationConfig() }
                 single { EnvironmentConfig() }
                 single { get<EnvironmentConfig>().database }
                 single { DatabaseService() }

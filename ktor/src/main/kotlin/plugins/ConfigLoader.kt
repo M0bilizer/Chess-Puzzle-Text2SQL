@@ -1,10 +1,15 @@
 package com.chesspuzzletext2sql.plugins
 
+import com.charleskorn.kaml.Yaml
 import com.chesspuzzletext2sql.model.AvailableModels
+import com.chesspuzzletext2sql.model.AvailablePromptTemplate
 import com.chesspuzzletext2sql.model.LLMConfig
+import com.chesspuzzletext2sql.model.PromptTemplate
 import com.chesspuzzletext2sql.model.SupportedModel
 import io.github.cdimascio.dotenv.dotenv
 import io.ktor.server.application.Application
+import java.io.File
+import kotlinx.serialization.decodeFromString
 
 object LLMConfigLoader {
     private const val ENV_PREFIX = "LLM_"
@@ -42,6 +47,17 @@ object LLMConfigLoader {
     }
 }
 
-fun Application.configureLLMConfigurationManager() {
+object PromptTemplateConfigLoader {
+    private val yaml = Yaml.default
+
+    fun load() {
+        val configFile = File("prompt-templates.yaml").readText()
+        val loaded = yaml.decodeFromString<Map<String, PromptTemplate>>(configFile)
+        AvailablePromptTemplate.update(loaded)
+    }
+}
+
+fun Application.configureConfigLoader() {
     LLMConfigLoader.load()
+    PromptTemplateConfigLoader.load()
 }
