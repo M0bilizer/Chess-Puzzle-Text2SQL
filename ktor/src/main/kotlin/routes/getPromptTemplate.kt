@@ -7,8 +7,8 @@ import io.ktor.server.routing.get
 import org.koin.ktor.ext.get
 
 fun Route.getPromptTemplate(path: String) {
+    val applicationConfig: ApplicationConfig = get<ApplicationConfig>()
     get(path) {
-        val applicationConfig: ApplicationConfig = get<ApplicationConfig>()
         val promptTemplate = applicationConfig.promptTemplate
         call.respond(promptTemplate)
     }
