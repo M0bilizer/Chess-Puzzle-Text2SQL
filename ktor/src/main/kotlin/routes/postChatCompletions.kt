@@ -24,7 +24,7 @@ import io.ktor.server.routing.post
 import kotlin.getValue
 import org.koin.ktor.ext.inject
 
-fun Route.postCompletions(path: String) {
+fun Route.postChatCompletions(path: String) {
     val httpService: HTTPService by inject()
     post(path) {
         val result = coroutineBinding {
