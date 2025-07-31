@@ -9,9 +9,23 @@ data class PromptTemplate(
     val demonstrations: List<String>,
     val input: String,
 ) {
-    fun process(input: String) {
-        TODO()
+    init {
+        require(input.contains("\${input}"))
     }
+
+    operator fun invoke(userInput: String): String = """
+        | #Instruction
+        | $instruction
+        | 
+        | #Context
+        | $context
+        | 
+        | #Demonstrations
+        | ${demonstrations.joinToString("\n")}
+        | 
+        | #Input
+        | ${input.replace("\${input}", userInput)}
+    """.trimMargin("| ")
 }
 
 object AvailablePromptTemplate {

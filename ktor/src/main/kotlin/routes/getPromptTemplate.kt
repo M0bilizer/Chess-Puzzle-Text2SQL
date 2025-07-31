@@ -30,7 +30,7 @@ fun Route.getPromptTemplate(path: String) {
                     is ClientError -> call.handleClientError(err)
                 }
             },
-            success = { puzzles -> call.respond(puzzles) },
+            success = { promptTemplate -> call.respond(promptTemplate) },
         )
     }
 }

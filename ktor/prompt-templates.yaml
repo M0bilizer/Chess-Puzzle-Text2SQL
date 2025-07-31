@@ -29,5 +29,5 @@ default:
             natural question: "I want to improve my tactical skills."
             sql: "SELECT * FROM t_puzzle WHERE LENGTH(themes) - LENGTH(REPLACE(themes, ' ', '')) + 1 >= 7"
     input: |
-        natural question: {input}
+        natural question: ${input}
         sql:
