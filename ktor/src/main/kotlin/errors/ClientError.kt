@@ -1,8 +1,6 @@
 package com.chesspuzzletext2sql.errors
 
-import com.github.michaelbull.result.Err
-import com.github.michaelbull.result.Ok
-import com.github.michaelbull.result.Result
+import com.chesspuzzletext2sql.errors.ClientError.MultipleErrors
 
 sealed class ClientError(override val message: String) : CustomError() {
     object InvalidCount : ClientError("Count must be positive")
@@ -23,39 +21,45 @@ sealed class ClientError(override val message: String) : CustomError() {
 
     object UnsupportedTemplate : ClientError("Unsupported template")
 
-    data class MultipleErrors(val errors: List<ClientError>) :
-        ClientError("Multiple validation errors occurred")
+    class MultipleErrors private constructor(val errors: List<ClientError>) :
+        ClientError("Multiple validation errors occurred") {
+        val size: Int
+            get() = errors.size
+
+        operator fun get(index: Int): ClientError = errors[index]
+
+        fun iterator(): Iterator<ClientError> = errors.iterator()
+
+        companion object {
+            internal fun create(errors: List<ClientError>): MultipleErrors {
+                return MultipleErrors(errors)
+            }
+        }
+    }
+
+    companion object {
+        fun collect(block: ClientErrorCollector.() -> Unit): MultipleErrors {
+            return ClientErrorCollector().apply(block).build()
+        }
+    }
 }
 
-class ValidationResult {
+class ClientErrorCollector internal constructor() {
     private val errors = mutableListOf<ClientError>()
 
-    fun check(condition: Boolean, error: () -> ClientError) {
-        if (!condition) {
-            errors.add(error())
+    fun addIf(condition: Boolean, error: ClientError): ClientErrorCollector {
+        if (condition) {
+            errors.add(error)
         }
+        return this
     }
 
-    fun <T> requireNotNull(value: T?, error: () -> ClientError): T? {
-        if (value == null) {
-            errors.add(error())
-        }
-        return value
+    fun add(error: ClientError): ClientErrorCollector {
+        errors.add(error)
+        return this
     }
 
-    fun <T> toResult(successValue: T): Result<T, ClientError> {
-        return when {
-            errors.isEmpty() -> Ok(successValue)
-            errors.size == 1 -> Err(errors.first())
-            else -> Err(ClientError.MultipleErrors(errors))
-        }
-    }
-
-    fun <T> toResult(successTransform: () -> T): Result<T, ClientError> {
-        return when {
-            errors.isEmpty() -> Ok(successTransform())
-            errors.size == 1 -> Err(errors.first())
-            else -> Err(ClientError.MultipleErrors(errors))
-        }
+    fun build(): MultipleErrors {
+        return MultipleErrors.create(errors)
     }
 }
