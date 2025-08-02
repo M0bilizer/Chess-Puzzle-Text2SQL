@@ -4,6 +4,7 @@ import com.chesspuzzletext2sql.routes.getPromptTemplate
 import com.chesspuzzletext2sql.routes.getPuzzlesRandom
 import com.chesspuzzletext2sql.routes.getPuzzlesSql
 import com.chesspuzzletext2sql.routes.postChatCompletions
+import com.chesspuzzletext2sql.routes.postChatText2Sql
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.plugins.requestvalidation.RequestValidation
@@ -23,6 +24,7 @@ fun Application.configureRouting() {
 
     routing {
         postChatCompletions("/chat/completions")
+        postChatText2Sql("/chat/text2sql")
         getPuzzlesRandom("/puzzles/random")
         getPuzzlesSql("/puzzles/sql")
         getPromptTemplate("/promptTemplate")
