@@ -1,9 +1,7 @@
 package com.chesspuzzletext2sql.routes
 
 import com.chesspuzzletext2sql.errors.ClientError
-import com.chesspuzzletext2sql.errors.SystemError
 import com.chesspuzzletext2sql.helpers.handleClientError
-import com.chesspuzzletext2sql.helpers.handleSystemError
 import com.chesspuzzletext2sql.model.AvailablePromptTemplate
 import com.chesspuzzletext2sql.model.PromptTemplate
 import com.github.michaelbull.result.Err
@@ -23,12 +21,7 @@ fun Route.getPromptTemplate(path: String) {
             promptTemplate
         }
         result.fold(
-            failure = { err ->
-                when (err) {
-                    is SystemError -> call.handleSystemError(err)
-                    is ClientError -> call.handleClientError(err)
-                }
-            },
+            failure = { err -> call.handleClientError(err) },
             success = { promptTemplate -> call.respond(promptTemplate) },
         )
     }
