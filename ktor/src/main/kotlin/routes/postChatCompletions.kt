@@ -1,12 +1,10 @@
 package com.chesspuzzletext2sql.routes
 
 import com.chesspuzzletext2sql.errors.ClientError
-import com.chesspuzzletext2sql.errors.CustomError
 import com.chesspuzzletext2sql.errors.SystemError
 import com.chesspuzzletext2sql.helpers.handleClientError
 import com.chesspuzzletext2sql.helpers.handleSystemError
 import com.chesspuzzletext2sql.model.AvailableModels
-import com.chesspuzzletext2sql.model.CompletionRequest
 import com.chesspuzzletext2sql.model.LLMConfig
 import com.chesspuzzletext2sql.model.SupportedModel
 import com.chesspuzzletext2sql.model.messages
@@ -22,6 +20,7 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.RoutingCall
 import io.ktor.server.routing.post
 import kotlin.getValue
+import kotlinx.serialization.Serializable
 import org.koin.ktor.ext.inject
 
 fun Route.postChatCompletions(path: String) {
@@ -54,15 +53,24 @@ fun Route.postChatCompletions(path: String) {
     }
 }
 
-private suspend fun validateCall(call: RoutingCall): Result<Pair<String, LLMConfig>, CustomError> {
-    val request = call.receive<CompletionRequest>()
-    if (request.message.isEmpty()) {
+@Serializable private data class ChatCompletionRequest(val message: String, val model: String)
+
+private data class ChatCompletionDto(val query: String, val llmConfig: LLMConfig) {
+    companion object {
+        fun from(request: ChatCompletionRequest, config: LLMConfig) =
+            ChatCompletionDto(request.message, config)
+    }
+}
+
+private suspend fun validateCall(call: RoutingCall): Result<ChatCompletionDto, ClientError> {
+    val request = call.receive<ChatCompletionRequest>()
+    if (request.message.isBlank()) {
         return Err(ClientError.EmptyMessage)
     }
     val model =
         SupportedModel.fromProviderName(request.model) ?: return Err(ClientError.UnsupportedModel)
-    val config = AvailableModels[model] ?: return Err(SystemError.UnavailableModel)
-    return Ok(request.message to config)
+    val config = AvailableModels[model] ?: return Err(ClientError.UnavailableModel)
+    return Ok(ChatCompletionDto.from(request, config))
 }
 
 private fun clean(string: String): String {

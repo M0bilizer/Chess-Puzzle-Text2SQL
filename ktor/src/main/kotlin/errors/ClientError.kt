@@ -1,48 +1,61 @@
 package com.chesspuzzletext2sql.errors
 
-import io.ktor.http.HttpStatusCode
+import com.github.michaelbull.result.Err
+import com.github.michaelbull.result.Ok
+import com.github.michaelbull.result.Result
 
-sealed class ClientError(val status: HttpStatusCode = HttpStatusCode.BadRequest, message: String) :
-    CustomError(message) {
-    class InvalidCount : ClientError(message = "Count must be positive")
+sealed class ClientError(override val message: String) : CustomError() {
+    object InvalidCount : ClientError("Count must be positive")
 
-    class EmptyMessage : ClientError(message = "Message cannot be empty")
+    object EmptyMessage : ClientError("Message cannot be empty")
 
-    class UnsupportedModel : ClientError(message = "Unsupported Model")
+    object UnsupportedModel : ClientError("Unsupported model")
 
-    class EmptyQuery : ClientError(message = "Query cannot be empty")
+    object UnavailableModel : ClientError("Model is unavailable")
 
-    class InvalidQuery : ClientError(message = "Query is invalid")
+    object EmptyQuery : ClientError("Query cannot be empty")
 
-    class UnallowedQuery : ClientError(message = "Query is unallowed")
+    object InvalidQuery : ClientError("Query is invalid")
 
-    class EmptyTemplate : ClientError(message = "Template cannot be empty")
+    object UnallowedQuery : ClientError("Query is not allowed")
 
-    class UnsupportedTemplate : ClientError(message = "Unsupported Template")
+    object EmptyTemplate : ClientError("Template cannot be empty")
 
-    companion object {
-        val InvalidCount
-            get() = InvalidCount()
+    object UnsupportedTemplate : ClientError("Unsupported template")
 
-        val EmptyMessage
-            get() = EmptyMessage()
+    data class MultipleErrors(val errors: List<ClientError>) :
+        ClientError("Multiple validation errors occurred")
+}
 
-        val UnsupportedModel
-            get() = UnsupportedModel()
+class ValidationResult {
+    private val errors = mutableListOf<ClientError>()
 
-        val EmptyQuery
-            get() = EmptyQuery()
+    fun check(condition: Boolean, error: () -> ClientError) {
+        if (!condition) {
+            errors.add(error())
+        }
+    }
 
-        val InvalidQuery
-            get() = InvalidQuery()
+    fun <T> requireNotNull(value: T?, error: () -> ClientError): T? {
+        if (value == null) {
+            errors.add(error())
+        }
+        return value
+    }
 
-        val UnallowedQuery
-            get() = UnallowedQuery()
+    fun <T> toResult(successValue: T): Result<T, ClientError> {
+        return when {
+            errors.isEmpty() -> Ok(successValue)
+            errors.size == 1 -> Err(errors.first())
+            else -> Err(ClientError.MultipleErrors(errors))
+        }
+    }
 
-        val EmptyTemplate
-            get() = EmptyTemplate()
-
-        val UnsupportedTemplate
-            get() = UnsupportedTemplate()
+    fun <T> toResult(successTransform: () -> T): Result<T, ClientError> {
+        return when {
+            errors.isEmpty() -> Ok(successTransform())
+            errors.size == 1 -> Err(errors.first())
+            else -> Err(ClientError.MultipleErrors(errors))
+        }
     }
 }

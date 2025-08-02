@@ -1,7 +1,6 @@
 package com.chesspuzzletext2sql.routes
 
 import com.chesspuzzletext2sql.errors.ClientError
-import com.chesspuzzletext2sql.errors.CustomError
 import com.chesspuzzletext2sql.errors.SystemError
 import com.chesspuzzletext2sql.helpers.handleClientError
 import com.chesspuzzletext2sql.helpers.handleSystemError
@@ -41,7 +40,7 @@ fun Route.getPuzzlesSql(path: String) {
     }
 }
 
-private fun validateCall(call: RoutingCall): Result<String, CustomError> {
+private fun validateCall(call: RoutingCall): Result<String, ClientError> {
     val query = call.request.queryParameters["query"]
     if (query.isNullOrBlank()) return Err(ClientError.EmptyQuery)
     if (!isValidSql(query)) return Err(ClientError.InvalidQuery)

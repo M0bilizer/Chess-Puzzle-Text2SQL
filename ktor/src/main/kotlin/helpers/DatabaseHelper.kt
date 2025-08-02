@@ -11,6 +11,6 @@ fun isConnected(): Result<Boolean, CustomError> = transaction {
     try {
         Ok(!connection.isClosed)
     } catch (e: Exception) {
-        Err(SystemError.CannotConnect)
+        Err(SystemError.CannotConnectToDatabase)
     }
 }

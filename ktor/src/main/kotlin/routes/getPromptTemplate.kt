@@ -1,7 +1,6 @@
 package com.chesspuzzletext2sql.routes
 
 import com.chesspuzzletext2sql.errors.ClientError
-import com.chesspuzzletext2sql.errors.CustomError
 import com.chesspuzzletext2sql.errors.SystemError
 import com.chesspuzzletext2sql.helpers.handleClientError
 import com.chesspuzzletext2sql.helpers.handleSystemError
@@ -35,7 +34,7 @@ fun Route.getPromptTemplate(path: String) {
     }
 }
 
-private fun validateCall(call: RoutingCall): Result<PromptTemplate, CustomError> {
+private fun validateCall(call: RoutingCall): Result<PromptTemplate, ClientError> {
     val template = call.request.queryParameters["template"]
     if (template.isNullOrBlank()) return Err(ClientError.EmptyTemplate)
     val promptTemplate =

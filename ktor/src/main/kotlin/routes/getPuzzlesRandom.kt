@@ -1,7 +1,6 @@
 package com.chesspuzzletext2sql.routes
 
 import com.chesspuzzletext2sql.errors.ClientError
-import com.chesspuzzletext2sql.errors.CustomError
 import com.chesspuzzletext2sql.errors.SystemError
 import com.chesspuzzletext2sql.helpers.handleClientError
 import com.chesspuzzletext2sql.helpers.handleSystemError
@@ -39,11 +38,10 @@ fun Route.getPuzzlesRandom(path: String) {
     }
 }
 
-private fun validateCall(call: RoutingCall): Result<Int, CustomError> {
+private fun validateCall(call: RoutingCall): Result<Int, ClientError> {
     val count = call.request.queryParameters["count"]?.toIntOrNull() ?: 1
-    return when {
-        count <= 0 -> Err(ClientError.InvalidCount)
-        count > 0 -> Ok(count)
-        else -> Err(SystemError.UnknownError)
+    return when (count) {
+        in Int.MIN_VALUE..0 -> Err(ClientError.InvalidCount)
+        else -> Ok(count)
     }
 }

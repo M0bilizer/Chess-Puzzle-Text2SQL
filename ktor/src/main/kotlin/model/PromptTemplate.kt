@@ -13,7 +13,8 @@ data class PromptTemplate(
         require(input.contains("\${input}"))
     }
 
-    operator fun invoke(userInput: String): String = """
+    operator fun invoke(userInput: String): String =
+        """
         | #Instruction
         | $instruction
         | 
@@ -25,7 +26,8 @@ data class PromptTemplate(
         | 
         | #Input
         | ${input.replace("\${input}", userInput)}
-    """.trimMargin("| ")
+    """
+            .trimMargin("| ")
 }
 
 object AvailablePromptTemplate {

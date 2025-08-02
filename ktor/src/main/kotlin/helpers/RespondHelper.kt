@@ -11,5 +11,18 @@ suspend fun RoutingCall.handleSystemError(err: SystemError) {
 }
 
 suspend fun RoutingCall.handleClientError(err: ClientError) {
-    this.respond(HttpStatusCode.BadRequest, mapOf("error" to "something", "message" to err.message))
+    when (err) {
+        is ClientError.MultipleErrors -> {
+            this.respond(
+                HttpStatusCode.BadRequest,
+                mapOf("error" to "validation_errors", "message" to err.errors.map { it.message }),
+            )
+        }
+        else -> {
+            this.respond(
+                HttpStatusCode.BadRequest,
+                mapOf("error" to err::class.simpleName, "message" to err.message.toList()),
+            )
+        }
+    }
 }

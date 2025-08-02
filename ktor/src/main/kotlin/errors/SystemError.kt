@@ -2,69 +2,31 @@ package com.chesspuzzletext2sql.errors
 
 import io.ktor.http.HttpStatusCode
 
-sealed class SystemError(val status: HttpStatusCode, message: String) : CustomError(message) {
-    class CannotConnectToDatabase :
-        SystemError(HttpStatusCode.ServiceUnavailable, "Cannot Connect to Database")
+sealed class SystemError(val status: HttpStatusCode, override val message: String) : CustomError() {
+    object CannotConnectToDatabase :
+        SystemError(HttpStatusCode.ServiceUnavailable, "Cannot connect to database")
 
-    class UnknownError :
-        SystemError(HttpStatusCode.InternalServerError, "Something unexpected occurred!")
+    object SQLException :
+        SystemError(HttpStatusCode.InternalServerError, "Exception when executing SQL statement")
 
-    class UnavailableModel : SystemError(HttpStatusCode.ServiceUnavailable, "Model is unavailable")
+    object IOException : SystemError(HttpStatusCode.InternalServerError, "Cannot connect to LLM")
 
-    class IOException : SystemError(HttpStatusCode.InternalServerError, "Cannot Connect to LLM")
+    object LLMServerError : SystemError(HttpStatusCode.InternalServerError, "LLM server error")
 
-    class TimeoutException :
+    object LLMServiceUnavailable :
+        SystemError(HttpStatusCode.ServiceUnavailable, "LLM service unavailable")
+
+    object TimeoutException :
         SystemError(
             HttpStatusCode.InternalServerError,
             "Could not complete request within expected timeframe",
         )
 
-    class PaymentRequired :
-        SystemError(HttpStatusCode.InternalServerError, "Contact System Administrator")
+    object TooManyRequests : SystemError(HttpStatusCode.TooManyRequests, "Too many requests sent")
 
-    class TooManyRequests :
-        SystemError(HttpStatusCode.InternalServerError, "Too many request sent")
+    object PaymentRequired :
+        SystemError(HttpStatusCode.PaymentRequired, "Contact system administrator")
 
-    class LLMServerError : SystemError(HttpStatusCode.InternalServerError, "LLM Server Error")
-
-    class LLMServiceUnavailable :
-        SystemError(HttpStatusCode.InternalServerError, "LLM Service Unavailable")
-
-    class SQLException() :
-        SystemError(
-            HttpStatusCode.InternalServerError,
-            message = "Exception when executing SQL statement",
-        )
-
-    companion object {
-        val CannotConnect
-            get() = CannotConnectToDatabase()
-
-        val UnknownError
-            get() = UnknownError()
-
-        val UnavailableModel
-            get() = UnavailableModel()
-
-        val IOException
-            get() = IOException()
-
-        val TimeoutException
-            get() = TimeoutException()
-
-        val PaymentRequired
-            get() = PaymentRequired()
-
-        val TooManyRequests
-            get() = TooManyRequests()
-
-        val LLMServerError
-            get() = LLMServerError()
-
-        val LLMServiceUnavailable
-            get() = LLMServiceUnavailable()
-
-        val SQLException
-            get() = SQLException()
-    }
+    object UnknownError :
+        SystemError(HttpStatusCode.InternalServerError, "Something unexpected occurred")
 }
