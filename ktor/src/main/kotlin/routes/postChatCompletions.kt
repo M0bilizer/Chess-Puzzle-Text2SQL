@@ -38,7 +38,7 @@ fun Route.postChatCompletions(path: String) {
                         stream = false
                     }
                     .bind()
-            clean(chatCompletion)
+            chatCompletion
         }
 
         result.fold(
@@ -71,16 +71,4 @@ private suspend fun validateCall(call: RoutingCall): Result<ChatCompletionDto, C
         SupportedModel.fromProviderName(request.model) ?: return Err(ClientError.UnsupportedModel)
     val config = AvailableModels[model] ?: return Err(ClientError.UnavailableModel)
     return Ok(ChatCompletionDto.from(request, config))
-}
-
-private fun clean(string: String): String {
-    return string
-        .substringAfter("```")
-        .substringBefore("```")
-        .replace("\n", "")
-        .substringAfter("sql")
-        .replace(":", "")
-        .substringBefore(";")
-        .substringBefore("\r")
-        .replace("\"", "")
 }

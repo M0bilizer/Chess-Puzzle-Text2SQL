@@ -5,6 +5,7 @@ import com.chesspuzzletext2sql.errors.CustomError
 import com.chesspuzzletext2sql.errors.SystemError
 import com.chesspuzzletext2sql.helpers.handleClientError
 import com.chesspuzzletext2sql.helpers.handleSystemError
+import com.chesspuzzletext2sql.helpers.preprocess
 import com.chesspuzzletext2sql.model.AvailableModels
 import com.chesspuzzletext2sql.model.AvailablePromptTemplate
 import com.chesspuzzletext2sql.model.LLMConfig
@@ -30,18 +31,18 @@ fun Route.postChatText2Sql(path: String) {
     val httpService: HTTPService by inject()
     post(path) {
         val result = coroutineBinding {
-            val (query, promptTemplate, llmConfig) = validateCall(call).bind()
+            val (text, promptTemplate, llmConfig) = validateCall(call).bind()
             val chatCompletion =
                 httpService
                     .callModel(llmConfig) {
                         messages = messages {
                             system("You are a text-to-SQL model")
-                            user(promptTemplate(query))
+                            user(promptTemplate(text))
                         }
                         stream = false
                     }
                     .bind()
-            clean(chatCompletion)
+            preprocess(chatCompletion)
         }
 
         result.fold(
@@ -57,16 +58,16 @@ fun Route.postChatText2Sql(path: String) {
 }
 
 @Serializable
-private data class ChatText2SqlRequest(val query: String, val template: String, val model: String)
+private data class ChatText2SqlRequest(val text: String, val template: String, val model: String)
 
 private data class ChatText2SqlDto(
-    val query: String,
+    val text: String,
     val promptTemplate: PromptTemplate,
     val llmConfig: LLMConfig,
 ) {
     companion object {
         fun from(request: ChatText2SqlRequest, promptTemplate: PromptTemplate, config: LLMConfig) =
-            ChatText2SqlDto(request.query, promptTemplate, config)
+            ChatText2SqlDto(request.text, promptTemplate, config)
     }
 }
 
@@ -74,7 +75,7 @@ private suspend fun validateCall(call: RoutingCall): Result<ChatText2SqlDto, Cus
     val request = call.receive<ChatText2SqlRequest>()
     val multipleErrors =
         ClientError.collect {
-            addIf(request.query.isEmpty(), ClientError.EmptyMessage)
+            addIf(request.text.isEmpty(), ClientError.EmptyMessage)
             addIf(request.template.isEmpty(), ClientError.EmptyTemplate)
 
             val promptTemplate = AvailablePromptTemplate[request.template]
@@ -91,16 +92,4 @@ private suspend fun validateCall(call: RoutingCall): Result<ChatText2SqlDto, Cus
         val config = AvailableModels[SupportedModel.fromProviderName(request.model)!!]!!
         Ok(ChatText2SqlDto.from(request, promptTemplate, config))
     }
-}
-
-private fun clean(string: String): String {
-    return string
-        .substringAfter("```")
-        .substringBefore("```")
-        .replace("\n", "")
-        .substringAfter("sql")
-        .replace(":", "")
-        .substringBefore(";")
-        .substringBefore("\r")
-        .replace("\"", "")
 }

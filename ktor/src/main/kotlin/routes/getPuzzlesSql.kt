@@ -7,6 +7,7 @@ import com.chesspuzzletext2sql.helpers.handleSystemError
 import com.chesspuzzletext2sql.helpers.isAllowed
 import com.chesspuzzletext2sql.helpers.isConnected
 import com.chesspuzzletext2sql.helpers.isValidSql
+import com.chesspuzzletext2sql.helpers.preprocess
 import com.chesspuzzletext2sql.services.DatabaseService
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
@@ -25,7 +26,8 @@ fun Route.getPuzzlesSql(path: String) {
         val result = binding {
             val query = validateCall(call).bind()
             isConnected().bind()
-            val puzzles = databaseService.fetchPuzzles(query).bind()
+            val sql = preprocess(query)
+            val puzzles = databaseService.fetchPuzzles(sql).bind()
             puzzles
         }
         result.fold(
