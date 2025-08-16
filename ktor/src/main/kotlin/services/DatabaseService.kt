@@ -8,11 +8,14 @@ import com.chesspuzzletext2sql.tables.toPuzzle
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.sql.Connection
 import java.sql.SQLException
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.koin.core.component.KoinComponent
+
+private val logger = KotlinLogging.logger {}
 
 class DatabaseService : KoinComponent {
     fun getPuzzlesTransaction(count: Int) =
@@ -23,8 +26,9 @@ class DatabaseService : KoinComponent {
             PuzzleTable.selectAll().limit(count).map { it.toPuzzle() }
         }
 
-    fun fetchPuzzles(query: String): Result<List<Puzzle>, CustomError> =
-        try {
+    fun fetchPuzzles(query: String): Result<List<Puzzle>, CustomError> {
+        logger.info { "Fetching puzzles with (query = $query)" }
+        return try {
             val result =
                 transaction(
                     readOnly = true,
@@ -37,7 +41,8 @@ class DatabaseService : KoinComponent {
                     } ?: emptyList()
                 }
             Ok(result)
-        } catch (e: SQLException) {
+        } catch (e: Exception) {
             Err(SystemError.SQLException)
         }
+    }
 }

@@ -11,13 +11,13 @@ import com.chesspuzzletext2sql.model.AvailablePromptTemplate
 import com.chesspuzzletext2sql.model.LLMConfig
 import com.chesspuzzletext2sql.model.PromptTemplate
 import com.chesspuzzletext2sql.model.SupportedModel
-import com.chesspuzzletext2sql.model.messages
-import com.chesspuzzletext2sql.services.HTTPService
+import com.chesspuzzletext2sql.services.LLMClient
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.coroutines.coroutineBinding
 import com.github.michaelbull.result.fold
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
@@ -25,30 +25,25 @@ import io.ktor.server.routing.RoutingCall
 import io.ktor.server.routing.post
 import kotlin.getValue
 import kotlinx.serialization.Serializable
-import org.koin.ktor.ext.inject
+
+private val logger = KotlinLogging.logger {}
 
 fun Route.postChatText2Sql(path: String) {
-    val httpService: HTTPService by inject()
     post(path) {
         val result = coroutineBinding {
             val (text, promptTemplate, llmConfig) = validateCall(call).bind()
-            val chatCompletion =
-                httpService
-                    .callModel(llmConfig) {
-                        messages = messages {
-                            system("You are a text-to-SQL model")
-                            user(promptTemplate(text))
-                        }
-                        stream = false
-                    }
-                    .bind()
+            val llmClient = LLMClient(llmConfig)
+            val chatCompletion = llmClient.call(template = promptTemplate, userInput = text).bind()
             preprocess(chatCompletion)
         }
 
         result.fold(
             failure = { err ->
                 when (err) {
-                    is SystemError -> call.handleSystemError(err)
+                    is SystemError -> {
+                        logger.error { err.message }
+                        call.handleSystemError(err)
+                    }
                     is ClientError -> call.handleClientError(err)
                 }
             },
@@ -56,6 +51,8 @@ fun Route.postChatText2Sql(path: String) {
         )
     }
 }
+
+/* ================================================================================================================ */
 
 @Serializable
 private data class ChatText2SqlRequest(val text: String, val template: String, val model: String)

@@ -2,7 +2,6 @@ package com.chesspuzzletext2sql.plugins
 
 import com.chesspuzzletext2sql.config.EnvironmentConfig
 import com.chesspuzzletext2sql.services.DatabaseService
-import com.chesspuzzletext2sql.services.HTTPService
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import org.koin.dsl.module
@@ -17,7 +16,6 @@ fun Application.configureKoin() {
                 single { EnvironmentConfig() }
                 single { get<EnvironmentConfig>().database }
                 single { DatabaseService() }
-                single { HTTPService() }
             }
         )
     }

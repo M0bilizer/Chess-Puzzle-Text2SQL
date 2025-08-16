@@ -9,10 +9,13 @@ import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.binding
 import com.github.michaelbull.result.fold
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.RoutingCall
 import io.ktor.server.routing.get
+
+private val logger = KotlinLogging.logger {}
 
 fun Route.getPromptTemplate(path: String) {
     get(path) {
@@ -26,6 +29,8 @@ fun Route.getPromptTemplate(path: String) {
         )
     }
 }
+
+/* ================================================================================================================ */
 
 private fun validateCall(call: RoutingCall): Result<PromptTemplate, ClientError> {
     val template = call.request.queryParameters["template"]

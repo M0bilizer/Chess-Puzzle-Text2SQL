@@ -14,11 +14,14 @@ import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.binding
 import com.github.michaelbull.result.fold
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.RoutingCall
 import io.ktor.server.routing.get
 import org.koin.ktor.ext.inject
+
+private val logger = KotlinLogging.logger {}
 
 fun Route.getPuzzlesSql(path: String) {
     val databaseService: DatabaseService by inject()
@@ -33,7 +36,10 @@ fun Route.getPuzzlesSql(path: String) {
         result.fold(
             failure = { err ->
                 when (err) {
-                    is SystemError -> call.handleSystemError(err)
+                    is SystemError -> {
+                        logger.error { err.message }
+                        call.handleSystemError(err)
+                    }
                     is ClientError -> call.handleClientError(err)
                 }
             },
@@ -41,6 +47,8 @@ fun Route.getPuzzlesSql(path: String) {
         )
     }
 }
+
+/* ================================================================================================================ */
 
 private fun validateCall(call: RoutingCall): Result<String, ClientError> {
     val query = call.request.queryParameters["query"]

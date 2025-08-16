@@ -35,6 +35,9 @@ object AvailablePromptTemplate {
 
     operator fun get(name: String): PromptTemplate? = storage[name]
 
+    val PromptTemplate.name: String
+        get() = storage.entries.first { it.value == this }.key
+
     val all: Map<String, PromptTemplate>
         get() = storage.toMap()
 

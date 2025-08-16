@@ -11,14 +11,14 @@ import com.chesspuzzletext2sql.model.AvailablePromptTemplate
 import com.chesspuzzletext2sql.model.LLMConfig
 import com.chesspuzzletext2sql.model.PromptTemplate
 import com.chesspuzzletext2sql.model.SupportedModel
-import com.chesspuzzletext2sql.model.messages
 import com.chesspuzzletext2sql.services.DatabaseService
-import com.chesspuzzletext2sql.services.HTTPService
+import com.chesspuzzletext2sql.services.LLMClient
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.coroutines.coroutineBinding
 import com.github.michaelbull.result.fold
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
@@ -28,22 +28,15 @@ import kotlin.getValue
 import kotlinx.serialization.Serializable
 import org.koin.ktor.ext.inject
 
+private val logger = KotlinLogging.logger {}
+
 fun Route.postPuzzlesQuery(path: String) {
-    val httpService: HTTPService by inject()
     val databaseService: DatabaseService by inject()
     post(path) {
         val result = coroutineBinding {
             val (query, promptTemplate, llmConfig) = validateCall(call).bind()
-            val chatCompletion =
-                httpService
-                    .callModel(llmConfig) {
-                        messages = messages {
-                            system("You are a text-to-SQL model")
-                            user(promptTemplate(query))
-                        }
-                        stream = false
-                    }
-                    .bind()
+            val llmClient = LLMClient(llmConfig)
+            val chatCompletion = llmClient.call(promptTemplate, query).bind()
             val sql = preprocess(chatCompletion)
             val puzzles = databaseService.fetchPuzzles(sql).bind()
             puzzles
@@ -52,7 +45,10 @@ fun Route.postPuzzlesQuery(path: String) {
         result.fold(
             failure = { err ->
                 when (err) {
-                    is SystemError -> call.handleSystemError(err)
+                    is SystemError -> {
+                        logger.error { err.message }
+                        call.handleSystemError(err)
+                    }
                     is ClientError -> call.handleClientError(err)
                 }
             },
@@ -60,6 +56,8 @@ fun Route.postPuzzlesQuery(path: String) {
         )
     }
 }
+
+/* ================================================================================================================ */
 
 @Serializable
 private data class PuzzlesQueryRequest(val query: String, val template: String, val model: String)
