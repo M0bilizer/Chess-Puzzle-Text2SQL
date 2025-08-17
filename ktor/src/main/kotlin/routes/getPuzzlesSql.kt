@@ -24,36 +24,36 @@ import org.koin.ktor.ext.inject
 private val logger = KotlinLogging.logger {}
 
 fun Route.getPuzzlesSql(path: String) {
-    val databaseService: DatabaseService by inject()
-    get(path) {
-        val result = binding {
-            val query = validateCall(call).bind()
-            isConnected().bind()
-            val sql = preprocess(query)
-            val puzzles = databaseService.fetchPuzzles(sql).bind()
-            puzzles
-        }
-        result.fold(
-            failure = { err ->
-                when (err) {
-                    is SystemError -> {
-                        logger.error { err.message }
-                        call.handleSystemError(err)
-                    }
-                    is ClientError -> call.handleClientError(err)
-                }
-            },
-            success = { puzzles -> call.respond(puzzles) },
-        )
+  val databaseService: DatabaseService by inject()
+  get(path) {
+    val result = binding {
+      val query = validateCall(call).bind()
+      isConnected().bind()
+      val sql = preprocess(query)
+      val puzzles = databaseService.fetchPuzzles(sql).bind()
+      puzzles
     }
+    result.fold(
+      failure = { err ->
+        when (err) {
+          is SystemError -> {
+            logger.error { err.message }
+            call.handleSystemError(err)
+          }
+          is ClientError -> call.handleClientError(err)
+        }
+      },
+      success = { puzzles -> call.respond(puzzles) },
+    )
+  }
 }
 
 /* ================================================================================================================ */
 
 private fun validateCall(call: RoutingCall): Result<String, ClientError> {
-    val query = call.request.queryParameters["query"]
-    if (query.isNullOrBlank()) return Err(ClientError.EmptyQuery)
-    if (!isValidSql(query)) return Err(ClientError.InvalidQuery)
-    if (!isAllowed((query))) return Err(ClientError.UnallowedQuery)
-    return Ok(query)
+  val query = call.request.queryParameters["query"]
+  if (query.isNullOrBlank()) return Err(ClientError.EmptyQuery)
+  if (!isValidSql(query)) return Err(ClientError.InvalidQuery)
+  if (!isAllowed((query))) return Err(ClientError.UnallowedQuery)
+  return Ok(query)
 }

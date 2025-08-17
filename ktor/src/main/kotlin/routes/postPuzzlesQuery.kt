@@ -31,30 +31,30 @@ import org.koin.ktor.ext.inject
 private val logger = KotlinLogging.logger {}
 
 fun Route.postPuzzlesQuery(path: String) {
-    val databaseService: DatabaseService by inject()
-    post(path) {
-        val result = coroutineBinding {
-            val (query, promptTemplate, llmConfig) = validateCall(call).bind()
-            val llmClient = LLMClient(llmConfig)
-            val chatCompletion = llmClient.call(promptTemplate, query).bind()
-            val sql = preprocess(chatCompletion)
-            val puzzles = databaseService.fetchPuzzles(sql).bind()
-            puzzles
-        }
-
-        result.fold(
-            failure = { err ->
-                when (err) {
-                    is SystemError -> {
-                        logger.error { err.message }
-                        call.handleSystemError(err)
-                    }
-                    is ClientError -> call.handleClientError(err)
-                }
-            },
-            success = { puzzles -> call.respond(puzzles) },
-        )
+  val databaseService: DatabaseService by inject()
+  post(path) {
+    val result = coroutineBinding {
+      val (query, promptTemplate, llmConfig) = validateCall(call).bind()
+      val llmClient = LLMClient(llmConfig)
+      val chatCompletion = llmClient.call(promptTemplate, query).bind()
+      val sql = preprocess(chatCompletion)
+      val puzzles = databaseService.fetchPuzzles(sql).bind()
+      puzzles
     }
+
+    result.fold(
+      failure = { err ->
+        when (err) {
+          is SystemError -> {
+            logger.error { err.message }
+            call.handleSystemError(err)
+          }
+          is ClientError -> call.handleClientError(err)
+        }
+      },
+      success = { puzzles -> call.respond(puzzles) },
+    )
+  }
 }
 
 /* ================================================================================================================ */
@@ -63,35 +63,35 @@ fun Route.postPuzzlesQuery(path: String) {
 private data class PuzzlesQueryRequest(val query: String, val template: String, val model: String)
 
 private data class PuzzlesQueryDto(
-    val query: String,
-    val promptTemplate: PromptTemplate,
-    val llmConfig: LLMConfig,
+  val query: String,
+  val promptTemplate: PromptTemplate,
+  val llmConfig: LLMConfig,
 ) {
-    companion object {
-        fun from(request: PuzzlesQueryRequest, promptTemplate: PromptTemplate, config: LLMConfig) =
-            PuzzlesQueryDto(request.query, promptTemplate, config)
-    }
+  companion object {
+    fun from(request: PuzzlesQueryRequest, promptTemplate: PromptTemplate, config: LLMConfig) =
+      PuzzlesQueryDto(request.query, promptTemplate, config)
+  }
 }
 
 private suspend fun validateCall(call: RoutingCall): Result<PuzzlesQueryDto, CustomError> {
-    val request = call.receive<PuzzlesQueryRequest>()
-    val multipleErrors =
-        ClientError.collect {
-            addIf(request.query.isEmpty(), ClientError.EmptyMessage)
-            addIf(request.template.isEmpty(), ClientError.EmptyTemplate)
+  val request = call.receive<PuzzlesQueryRequest>()
+  val multipleErrors =
+    ClientError.collect {
+      addIf(request.query.isEmpty(), ClientError.EmptyMessage)
+      addIf(request.template.isEmpty(), ClientError.EmptyTemplate)
 
-            val promptTemplate = AvailablePromptTemplate[request.template]
-            addIf(promptTemplate == null, ClientError.UnsupportedTemplate)
+      val promptTemplate = AvailablePromptTemplate[request.template]
+      addIf(promptTemplate == null, ClientError.UnsupportedTemplate)
 
-            val model = SupportedModel.fromProviderName(request.model)
-            addIf(model == null, ClientError.UnsupportedModel)
-            model?.let { addIf(AvailableModels[it] == null, ClientError.UnavailableModel) }
-        }
-
-    return if (multipleErrors.size > 0) Err(multipleErrors)
-    else {
-        val promptTemplate = AvailablePromptTemplate[request.template]!!
-        val config = AvailableModels[SupportedModel.fromProviderName(request.model)!!]!!
-        Ok(PuzzlesQueryDto.from(request, promptTemplate, config))
+      val model = SupportedModel.fromProviderName(request.model)
+      addIf(model == null, ClientError.UnsupportedModel)
+      model?.let { addIf(AvailableModels[it] == null, ClientError.UnavailableModel) }
     }
+
+  return if (multipleErrors.size > 0) Err(multipleErrors)
+  else {
+    val promptTemplate = AvailablePromptTemplate[request.template]!!
+    val config = AvailableModels[SupportedModel.fromProviderName(request.model)!!]!!
+    Ok(PuzzlesQueryDto.from(request, promptTemplate, config))
+  }
 }

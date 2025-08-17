@@ -21,35 +21,35 @@ import org.koin.ktor.ext.inject
 private val logger = KotlinLogging.logger {}
 
 fun Route.getPuzzlesRandom(path: String) {
-    val databaseService: DatabaseService by inject()
-    get(path) {
-        val result = binding {
-            val limit = validateCall(call).bind()
-            isConnected().bind()
-            val puzzles = databaseService.getPuzzlesTransaction(limit)
-            puzzles
-        }
-        result.fold(
-            failure = { err ->
-                when (err) {
-                    is SystemError -> {
-                        logger.error { err.message }
-                        call.handleSystemError(err)
-                    }
-                    is ClientError -> call.handleClientError(err)
-                }
-            },
-            success = { puzzles -> call.respond(puzzles) },
-        )
+  val databaseService: DatabaseService by inject()
+  get(path) {
+    val result = binding {
+      val limit = validateCall(call).bind()
+      isConnected().bind()
+      val puzzles = databaseService.getPuzzlesTransaction(limit)
+      puzzles
     }
+    result.fold(
+      failure = { err ->
+        when (err) {
+          is SystemError -> {
+            logger.error { err.message }
+            call.handleSystemError(err)
+          }
+          is ClientError -> call.handleClientError(err)
+        }
+      },
+      success = { puzzles -> call.respond(puzzles) },
+    )
+  }
 }
 
 /* ================================================================================================================ */
 
 private fun validateCall(call: RoutingCall): Result<Int, ClientError> {
-    val count = call.request.queryParameters["count"]?.toIntOrNull() ?: 1
-    return when (count) {
-        in Int.MIN_VALUE..0 -> Err(ClientError.InvalidCount)
-        else -> Ok(count)
-    }
+  val count = call.request.queryParameters["count"]?.toIntOrNull() ?: 1
+  return when (count) {
+    in Int.MIN_VALUE..0 -> Err(ClientError.InvalidCount)
+    else -> Ok(count)
+  }
 }

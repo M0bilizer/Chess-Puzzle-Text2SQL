@@ -26,36 +26,36 @@ import kotlinx.serialization.Serializable
 private val logger = KotlinLogging.logger {}
 
 fun Route.postChatCompletions(path: String) {
-    post(path) {
-        val result = coroutineBinding {
-            val (query, llmConfig) = validateCall(call).bind()
-            val llmClient = LLMClient(llmConfig)
-            val chatCompletion =
-                llmClient
-                    .call(
-                        messages =
-                            listOf(
-                                Message("system", "You are an AI trained to answer questions"),
-                                Message("user", query),
-                            )
-                    )
-                    .bind()
-            chatCompletion
-        }
-
-        result.fold(
-            failure = { err ->
-                when (err) {
-                    is SystemError -> {
-                        logger.error { err.message }
-                        call.handleSystemError(err)
-                    }
-                    is ClientError -> call.handleClientError(err)
-                }
-            },
-            success = { chatCompletion -> call.respond(chatCompletion) },
-        )
+  post(path) {
+    val result = coroutineBinding {
+      val (query, llmConfig) = validateCall(call).bind()
+      val llmClient = LLMClient(llmConfig)
+      val chatCompletion =
+        llmClient
+          .call(
+            messages =
+              listOf(
+                Message("system", "You are an AI trained to answer questions"),
+                Message("user", query),
+              )
+          )
+          .bind()
+      chatCompletion
     }
+
+    result.fold(
+      failure = { err ->
+        when (err) {
+          is SystemError -> {
+            logger.error { err.message }
+            call.handleSystemError(err)
+          }
+          is ClientError -> call.handleClientError(err)
+        }
+      },
+      success = { chatCompletion -> call.respond(chatCompletion) },
+    )
+  }
 }
 
 /* ================================================================================================================ */
@@ -63,19 +63,19 @@ fun Route.postChatCompletions(path: String) {
 @Serializable private data class ChatCompletionRequest(val message: String, val model: String)
 
 private data class ChatCompletionDto(val query: String, val llmConfig: LLMConfig) {
-    companion object {
-        fun from(request: ChatCompletionRequest, config: LLMConfig) =
-            ChatCompletionDto(request.message, config)
-    }
+  companion object {
+    fun from(request: ChatCompletionRequest, config: LLMConfig) =
+      ChatCompletionDto(request.message, config)
+  }
 }
 
 private suspend fun validateCall(call: RoutingCall): Result<ChatCompletionDto, ClientError> {
-    val request = call.receive<ChatCompletionRequest>()
-    if (request.message.isBlank()) {
-        return Err(ClientError.EmptyMessage)
-    }
-    val model =
-        SupportedModel.fromProviderName(request.model) ?: return Err(ClientError.UnsupportedModel)
-    val config = AvailableModels[model] ?: return Err(ClientError.UnavailableModel)
-    return Ok(ChatCompletionDto.from(request, config))
+  val request = call.receive<ChatCompletionRequest>()
+  if (request.message.isBlank()) {
+    return Err(ClientError.EmptyMessage)
+  }
+  val model =
+    SupportedModel.fromProviderName(request.model) ?: return Err(ClientError.UnsupportedModel)
+  val config = AvailableModels[model] ?: return Err(ClientError.UnavailableModel)
+  return Ok(ChatCompletionDto.from(request, config))
 }

@@ -8,9 +8,9 @@ import com.github.michaelbull.result.Result
 import org.jetbrains.exposed.sql.transactions.transaction
 
 fun isConnected(): Result<Boolean, CustomError> = transaction {
-    try {
-        Ok(!connection.isClosed)
-    } catch (e: Exception) {
-        Err(SystemError.CannotConnectToDatabase)
-    }
+  try {
+    Ok(!connection.isClosed)
+  } catch (e: Exception) {
+    Err(SystemError.CannotConnectToDatabase)
+  }
 }

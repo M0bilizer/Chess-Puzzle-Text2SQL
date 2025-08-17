@@ -9,14 +9,14 @@ import org.koin.ktor.plugin.Koin
 import org.koin.logger.slf4jLogger
 
 fun Application.configureKoin() {
-    install(Koin) {
-        slf4jLogger()
-        modules(
-            module {
-                single { EnvironmentConfig() }
-                single { get<EnvironmentConfig>().database }
-                single { DatabaseService() }
-            }
-        )
-    }
+  install(Koin) {
+    slf4jLogger()
+    modules(
+      module {
+        single { EnvironmentConfig() }
+        single { get<EnvironmentConfig>().database }
+        single { DatabaseService() }
+      }
+    )
+  }
 }

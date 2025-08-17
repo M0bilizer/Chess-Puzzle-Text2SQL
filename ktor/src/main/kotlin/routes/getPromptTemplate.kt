@@ -18,24 +18,24 @@ import io.ktor.server.routing.get
 private val logger = KotlinLogging.logger {}
 
 fun Route.getPromptTemplate(path: String) {
-    get(path) {
-        val result = binding {
-            val promptTemplate = validateCall(call).bind()
-            promptTemplate
-        }
-        result.fold(
-            failure = { err -> call.handleClientError(err) },
-            success = { promptTemplate -> call.respond(promptTemplate) },
-        )
+  get(path) {
+    val result = binding {
+      val promptTemplate = validateCall(call).bind()
+      promptTemplate
     }
+    result.fold(
+      failure = { err -> call.handleClientError(err) },
+      success = { promptTemplate -> call.respond(promptTemplate) },
+    )
+  }
 }
 
 /* ================================================================================================================ */
 
 private fun validateCall(call: RoutingCall): Result<PromptTemplate, ClientError> {
-    val template = call.request.queryParameters["template"]
-    if (template.isNullOrBlank()) return Err(ClientError.EmptyTemplate)
-    val promptTemplate =
-        AvailablePromptTemplate[template] ?: return Err(ClientError.UnsupportedTemplate)
-    return Ok(promptTemplate)
+  val template = call.request.queryParameters["template"]
+  if (template.isNullOrBlank()) return Err(ClientError.EmptyTemplate)
+  val promptTemplate =
+    AvailablePromptTemplate[template] ?: return Err(ClientError.UnsupportedTemplate)
+  return Ok(promptTemplate)
 }

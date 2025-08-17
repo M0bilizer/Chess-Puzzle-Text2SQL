@@ -29,27 +29,27 @@ import kotlinx.serialization.Serializable
 private val logger = KotlinLogging.logger {}
 
 fun Route.postChatText2Sql(path: String) {
-    post(path) {
-        val result = coroutineBinding {
-            val (text, promptTemplate, llmConfig) = validateCall(call).bind()
-            val llmClient = LLMClient(llmConfig)
-            val chatCompletion = llmClient.call(template = promptTemplate, userInput = text).bind()
-            preprocess(chatCompletion)
-        }
-
-        result.fold(
-            failure = { err ->
-                when (err) {
-                    is SystemError -> {
-                        logger.error { err.message }
-                        call.handleSystemError(err)
-                    }
-                    is ClientError -> call.handleClientError(err)
-                }
-            },
-            success = { sql -> call.respond(sql) },
-        )
+  post(path) {
+    val result = coroutineBinding {
+      val (text, promptTemplate, llmConfig) = validateCall(call).bind()
+      val llmClient = LLMClient(llmConfig)
+      val chatCompletion = llmClient.call(template = promptTemplate, userInput = text).bind()
+      preprocess(chatCompletion)
     }
+
+    result.fold(
+      failure = { err ->
+        when (err) {
+          is SystemError -> {
+            logger.error { err.message }
+            call.handleSystemError(err)
+          }
+          is ClientError -> call.handleClientError(err)
+        }
+      },
+      success = { sql -> call.respond(sql) },
+    )
+  }
 }
 
 /* ================================================================================================================ */
@@ -58,35 +58,35 @@ fun Route.postChatText2Sql(path: String) {
 private data class ChatText2SqlRequest(val text: String, val template: String, val model: String)
 
 private data class ChatText2SqlDto(
-    val text: String,
-    val promptTemplate: PromptTemplate,
-    val llmConfig: LLMConfig,
+  val text: String,
+  val promptTemplate: PromptTemplate,
+  val llmConfig: LLMConfig,
 ) {
-    companion object {
-        fun from(request: ChatText2SqlRequest, promptTemplate: PromptTemplate, config: LLMConfig) =
-            ChatText2SqlDto(request.text, promptTemplate, config)
-    }
+  companion object {
+    fun from(request: ChatText2SqlRequest, promptTemplate: PromptTemplate, config: LLMConfig) =
+      ChatText2SqlDto(request.text, promptTemplate, config)
+  }
 }
 
 private suspend fun validateCall(call: RoutingCall): Result<ChatText2SqlDto, CustomError> {
-    val request = call.receive<ChatText2SqlRequest>()
-    val multipleErrors =
-        ClientError.collect {
-            addIf(request.text.isEmpty(), ClientError.EmptyMessage)
-            addIf(request.template.isEmpty(), ClientError.EmptyTemplate)
+  val request = call.receive<ChatText2SqlRequest>()
+  val multipleErrors =
+    ClientError.collect {
+      addIf(request.text.isEmpty(), ClientError.EmptyMessage)
+      addIf(request.template.isEmpty(), ClientError.EmptyTemplate)
 
-            val promptTemplate = AvailablePromptTemplate[request.template]
-            addIf(promptTemplate == null, ClientError.UnsupportedTemplate)
+      val promptTemplate = AvailablePromptTemplate[request.template]
+      addIf(promptTemplate == null, ClientError.UnsupportedTemplate)
 
-            val model = SupportedModel.fromProviderName(request.model)
-            addIf(model == null, ClientError.UnsupportedModel)
-            model?.let { addIf(AvailableModels[it] == null, ClientError.UnavailableModel) }
-        }
-
-    return if (multipleErrors.size > 0) Err(multipleErrors)
-    else {
-        val promptTemplate = AvailablePromptTemplate[request.template]!!
-        val config = AvailableModels[SupportedModel.fromProviderName(request.model)!!]!!
-        Ok(ChatText2SqlDto.from(request, promptTemplate, config))
+      val model = SupportedModel.fromProviderName(request.model)
+      addIf(model == null, ClientError.UnsupportedModel)
+      model?.let { addIf(AvailableModels[it] == null, ClientError.UnavailableModel) }
     }
+
+  return if (multipleErrors.size > 0) Err(multipleErrors)
+  else {
+    val promptTemplate = AvailablePromptTemplate[request.template]!!
+    val config = AvailableModels[SupportedModel.fromProviderName(request.model)!!]!!
+    Ok(ChatText2SqlDto.from(request, promptTemplate, config))
+  }
 }

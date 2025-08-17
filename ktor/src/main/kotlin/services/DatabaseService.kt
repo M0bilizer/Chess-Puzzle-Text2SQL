@@ -18,31 +18,25 @@ import org.koin.core.component.KoinComponent
 private val logger = KotlinLogging.logger {}
 
 class DatabaseService : KoinComponent {
-    fun getPuzzlesTransaction(count: Int) =
-        transaction(
-            readOnly = true,
-            transactionIsolation = Connection.TRANSACTION_READ_UNCOMMITTED,
-        ) {
-            PuzzleTable.selectAll().limit(count).map { it.toPuzzle() }
-        }
-
-    fun fetchPuzzles(query: String): Result<List<Puzzle>, CustomError> {
-        logger.info { "Fetching puzzles with (query = $query)" }
-        return try {
-            val result =
-                transaction(
-                    readOnly = true,
-                    transactionIsolation = Connection.TRANSACTION_READ_COMMITTED,
-                ) {
-                    maxAttempts = 1
-                    queryTimeout = 5
-                    exec(query) { result ->
-                        generateSequence { if (result.next()) result.toPuzzle() else null }.toList()
-                    } ?: emptyList()
-                }
-            Ok(result)
-        } catch (e: Exception) {
-            Err(SystemError.SQLException)
-        }
+  fun getPuzzlesTransaction(count: Int) =
+    transaction(readOnly = true, transactionIsolation = Connection.TRANSACTION_READ_UNCOMMITTED) {
+      PuzzleTable.selectAll().limit(count).map { it.toPuzzle() }
     }
+
+  fun fetchPuzzles(query: String): Result<List<Puzzle>, CustomError> {
+    logger.info { "Fetching puzzles with (query = $query)" }
+    return try {
+      val result =
+        transaction(readOnly = true, transactionIsolation = Connection.TRANSACTION_READ_COMMITTED) {
+          maxAttempts = 1
+          queryTimeout = 5
+          exec(query) { result ->
+            generateSequence { if (result.next()) result.toPuzzle() else null }.toList()
+          } ?: emptyList()
+        }
+      Ok(result)
+    } catch (e: Exception) {
+      Err(SystemError.SQLException)
+    }
+  }
 }
