@@ -3,6 +3,8 @@ package com.chesspuzzletext2sql.errors
 import com.chesspuzzletext2sql.errors.ClientError.MultipleErrors
 
 sealed class ClientError(override val message: String) : CustomError() {
+  class CustomClientError(override val message: String) : ClientError(message)
+
   object InvalidCount : ClientError("Count must be positive")
 
   object EmptyMessage : ClientError("Message cannot be empty")

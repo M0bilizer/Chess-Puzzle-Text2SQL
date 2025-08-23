@@ -20,7 +20,6 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.RoutingCall
 import io.ktor.server.routing.post
-import kotlin.getValue
 import kotlinx.serialization.Serializable
 
 private val logger = KotlinLogging.logger {}
@@ -29,9 +28,8 @@ fun Route.postChatCompletions(path: String) {
   post(path) {
     val result = coroutineBinding {
       val (query, llmConfig) = validateCall(call).bind()
-      val llmClient = LLMClient(llmConfig)
       val chatCompletion =
-        llmClient
+        LLMClient(llmConfig)
           .call(
             messages =
               listOf(

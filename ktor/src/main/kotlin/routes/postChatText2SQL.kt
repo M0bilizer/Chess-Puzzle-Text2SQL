@@ -32,8 +32,8 @@ fun Route.postChatText2Sql(path: String) {
   post(path) {
     val result = coroutineBinding {
       val (text, promptTemplate, llmConfig) = validateCall(call).bind()
-      val llmClient = LLMClient(llmConfig)
-      val chatCompletion = llmClient.call(template = promptTemplate, userInput = text).bind()
+      val chatCompletion =
+        LLMClient(llmConfig).call(template = promptTemplate, userInput = text).bind()
       preprocess(chatCompletion)
     }
 

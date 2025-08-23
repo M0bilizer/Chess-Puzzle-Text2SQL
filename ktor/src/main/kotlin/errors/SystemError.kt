@@ -2,7 +2,11 @@ package com.chesspuzzletext2sql.errors
 
 import io.ktor.http.HttpStatusCode
 
-sealed class SystemError(val status: HttpStatusCode, override val message: String) : CustomError() {
+sealed class SystemError(open val status: HttpStatusCode, override val message: String) :
+  CustomError() {
+  class CustomSystemError(override val status: HttpStatusCode, message: String) :
+    SystemError(status, message)
+
   object CannotConnectToDatabase :
     SystemError(HttpStatusCode.ServiceUnavailable, "Cannot connect to database")
 

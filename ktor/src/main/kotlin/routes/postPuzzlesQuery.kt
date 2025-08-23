@@ -35,8 +35,7 @@ fun Route.postPuzzlesQuery(path: String) {
   post(path) {
     val result = coroutineBinding {
       val (query, promptTemplate, llmConfig) = validateCall(call).bind()
-      val llmClient = LLMClient(llmConfig)
-      val chatCompletion = llmClient.call(promptTemplate, query).bind()
+      val chatCompletion = LLMClient(llmConfig).call(promptTemplate, query).bind()
       val sql = preprocess(chatCompletion)
       val puzzles = databaseService.fetchPuzzles(sql).bind()
       puzzles
