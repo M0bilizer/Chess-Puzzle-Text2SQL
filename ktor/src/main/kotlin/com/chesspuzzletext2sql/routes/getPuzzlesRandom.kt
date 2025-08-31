@@ -1,16 +1,17 @@
 package com.chesspuzzletext2sql.routes
 
-import com.chesspuzzletext2sql.errors.ClientError
-import com.chesspuzzletext2sql.errors.SystemError
+import com.chesspuzzletext2sql.errors.Error
+import com.chesspuzzletext2sql.errors.Fail
+import com.chesspuzzletext2sql.errors.ValidationErrorMessage
 import com.chesspuzzletext2sql.helpers.handleClientError
 import com.chesspuzzletext2sql.helpers.handleSystemError
 import com.chesspuzzletext2sql.helpers.isConnected
+import com.chesspuzzletext2sql.helpers.validate
 import com.chesspuzzletext2sql.services.DatabaseService
-import com.github.michaelbull.result.Err
-import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.binding
 import com.github.michaelbull.result.fold
+import com.github.michaelbull.result.map
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
@@ -32,11 +33,12 @@ fun Route.getPuzzlesRandom(path: String) {
     result.fold(
       failure = { err ->
         when (err) {
-          is SystemError -> {
-            logger.error { err.message }
+          is Error -> {
+            logger.error { err.type }
             call.handleSystemError(err)
           }
-          is ClientError -> call.handleClientError(err)
+
+          is Fail -> call.handleClientError(err)
         }
       },
       success = { puzzles -> call.respond(puzzles) },
@@ -46,10 +48,12 @@ fun Route.getPuzzlesRandom(path: String) {
 
 /* ================================================================================================================ */
 
-private fun validateCall(call: RoutingCall): Result<Int, ClientError> {
-  val count = call.request.queryParameters["count"]?.toIntOrNull() ?: 1
-  return when (count) {
-    in Int.MIN_VALUE..0 -> Err(ClientError.InvalidCount)
-    else -> Ok(count)
-  }
+private fun validateCall(call: RoutingCall): Result<Int, Fail> {
+  val request = call.request
+
+  return validate(request) {
+      must("count") { it.toIntOrNull() in 1..Int.MAX_VALUE } withMessage
+        ValidationErrorMessage.InvalidCount
+    }
+    .map { request.queryParameters["count"]?.toIntOrNull() ?: 1 }
 }

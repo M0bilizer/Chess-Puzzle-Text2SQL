@@ -1,38 +1,34 @@
 package com.chesspuzzletext2sql.helpers
 
-import com.chesspuzzletext2sql.errors.ClientError
-import com.chesspuzzletext2sql.errors.SystemError
-import io.ktor.http.ContentType
+import com.chesspuzzletext2sql.errors.Error
+import com.chesspuzzletext2sql.errors.Fail
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.response.respond
-import io.ktor.server.response.respondText
 import io.ktor.server.routing.RoutingCall
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
 
-suspend fun RoutingCall.handleSystemError(err: SystemError) {
+suspend fun RoutingCall.handleSystemError(err: Error) {
   respond(err.status)
 }
 
-@Serializable private class MultipleErrorResponse(val error: String, val message: List<String>)
+@Serializable
+data class ErrorResponse(
+  val code: String,
+  val message: String,
+  val details: List<Map<String, String>>,
+)
 
-suspend fun RoutingCall.handleClientError(err: ClientError) {
-  when (err) {
-    is ClientError.MultipleErrors -> {
-      require(err.size > 0)
-      val message =
-        Json.encodeToString(MultipleErrorResponse("multiple_errors", err.errors.map { it.message }))
-      respondText(
-        status = HttpStatusCode.BadRequest,
-        text = message,
-        contentType = ContentType.Application.Json,
+suspend fun RoutingCall.handleClientError(err: Fail) {
+  println(err.toString())
+  val details =
+    err.details.map { detail ->
+      mapOf(
+        "field" to detail.field,
+        "code" to detail.code,
+        "description" to detail.message.description,
       )
     }
-    else ->
-      respond(
-        status = HttpStatusCode.BadRequest,
-        message =
-          mapOf("error" to (err::class.simpleName ?: "client_error"), "message" to err.message),
-      )
-  }
+
+  val response = ErrorResponse(code = err.type.code, message = err.type.message, details = details)
+  respond(status = HttpStatusCode.BadRequest, response)
 }

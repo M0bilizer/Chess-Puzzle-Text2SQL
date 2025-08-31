@@ -1,11 +1,12 @@
 package com.chesspuzzletext2sql.routes
 
-import com.chesspuzzletext2sql.errors.ClientError
-import com.chesspuzzletext2sql.errors.CustomError
-import com.chesspuzzletext2sql.errors.SystemError
+import com.chesspuzzletext2sql.errors.Error
+import com.chesspuzzletext2sql.errors.Fail
+import com.chesspuzzletext2sql.errors.ValidationErrorMessage
 import com.chesspuzzletext2sql.helpers.handleClientError
 import com.chesspuzzletext2sql.helpers.handleSystemError
 import com.chesspuzzletext2sql.helpers.preprocess
+import com.chesspuzzletext2sql.helpers.validateJson
 import com.chesspuzzletext2sql.model.AvailableModels
 import com.chesspuzzletext2sql.model.AvailablePromptTemplate
 import com.chesspuzzletext2sql.model.LLMConfig
@@ -13,18 +14,16 @@ import com.chesspuzzletext2sql.model.PromptTemplate
 import com.chesspuzzletext2sql.model.SupportedModel
 import com.chesspuzzletext2sql.services.DatabaseService
 import com.chesspuzzletext2sql.services.LLMClient
-import com.github.michaelbull.result.Err
-import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.coroutines.coroutineBinding
 import com.github.michaelbull.result.fold
+import com.github.michaelbull.result.map
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.RoutingCall
 import io.ktor.server.routing.post
-import kotlin.getValue
 import kotlinx.serialization.Serializable
 import org.koin.ktor.ext.inject
 
@@ -44,11 +43,12 @@ fun Route.postPuzzlesQuery(path: String) {
     result.fold(
       failure = { err ->
         when (err) {
-          is SystemError -> {
-            logger.error { err.message }
+          is Error -> {
+            logger.error { err.type }
             call.handleSystemError(err)
           }
-          is ClientError -> call.handleClientError(err)
+
+          is Fail -> call.handleClientError(err)
         }
       },
       success = { puzzles -> call.respond(puzzles) },
@@ -72,25 +72,27 @@ private data class PuzzlesQueryDto(
   }
 }
 
-private suspend fun validateCall(call: RoutingCall): Result<PuzzlesQueryDto, CustomError> {
+private suspend fun validateCall(call: RoutingCall): Result<PuzzlesQueryDto, Fail> {
   val request = call.receive<PuzzlesQueryRequest>()
-  val multipleErrors =
-    ClientError.collect {
-      addIf(request.query.isEmpty(), ClientError.EmptyMessage)
-      addIf(request.template.isEmpty(), ClientError.EmptyTemplate)
 
-      val promptTemplate = AvailablePromptTemplate[request.template]
-      addIf(promptTemplate == null, ClientError.UnsupportedTemplate)
-
-      val model = SupportedModel.fromProviderName(request.model)
-      addIf(model == null, ClientError.UnsupportedModel)
-      model?.let { addIf(AvailableModels[it] == null, ClientError.UnavailableModel) }
+  return validateJson(request) {
+      must("query") { it is String && it.isNotEmpty() } withMessage
+        ValidationErrorMessage.EmptyMessage
+      must("template") { it is String && it.isNotEmpty() } withMessage
+        ValidationErrorMessage.EmptyTemplate
+      must("template") { it is String && AvailablePromptTemplate[it] != null } withMessage
+        ValidationErrorMessage.UnsupportedTemplate
+      must("model") { it is String && SupportedModel.fromProviderName(it) != null } withMessage
+        ValidationErrorMessage.UnsupportedModel
+      must("model") {
+        it is String &&
+          SupportedModel.fromProviderName(it)?.let { model -> AvailableModels[model] != null }
+            ?: false
+      } withMessage ValidationErrorMessage.UnavailableModel
     }
-
-  return if (multipleErrors.size > 0) Err(multipleErrors)
-  else {
-    val promptTemplate = AvailablePromptTemplate[request.template]!!
-    val config = AvailableModels[SupportedModel.fromProviderName(request.model)!!]!!
-    Ok(PuzzlesQueryDto.from(request, promptTemplate, config))
-  }
+    .map {
+      val promptTemplate = AvailablePromptTemplate[request.template]!!
+      val config = AvailableModels[SupportedModel.fromProviderName(request.model)!!]!!
+      PuzzlesQueryDto.from(request, promptTemplate, config)
+    }
 }

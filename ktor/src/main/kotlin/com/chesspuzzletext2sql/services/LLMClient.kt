@@ -1,7 +1,7 @@
 package com.chesspuzzletext2sql.services
 
-import com.chesspuzzletext2sql.errors.CustomError
-import com.chesspuzzletext2sql.errors.SystemError
+import com.chesspuzzletext2sql.errors.Error
+import com.chesspuzzletext2sql.errors.Failure
 import com.chesspuzzletext2sql.model.AvailablePromptTemplate.name
 import com.chesspuzzletext2sql.model.ChatCompletionRequest
 import com.chesspuzzletext2sql.model.ChatCompletionResponse
@@ -13,15 +13,20 @@ import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.client.HttpClient
-import io.ktor.client.call.*
+import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.HttpRequestTimeoutException
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
-import io.ktor.client.request.*
-import io.ktor.http.*
+import io.ktor.client.request.accept
+import io.ktor.client.request.header
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.http.ContentType
+import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
+import io.ktor.http.isSuccess
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.io.IOException
 import kotlinx.serialization.json.Json
@@ -41,7 +46,7 @@ class LLMClient(private val config: LLMConfig) {
     stream: Boolean = false,
     temperature: Double? = null,
     maxTokens: Int? = null,
-  ): Result<String, CustomError> {
+  ): Result<String, Failure> {
     require(messages.isNotEmpty()) { "At least one message is required" }
     require(messages.any { it.role == "user" }) { "At least one user message is required" }
     val lastUserMessage = messages.last { it.role == "user" }.content
@@ -65,7 +70,7 @@ class LLMClient(private val config: LLMConfig) {
     stream: Boolean = false,
     temperature: Double? = null,
     maxTokens: Int? = null,
-  ): Result<String, CustomError> {
+  ): Result<String, Failure> {
     println("ok")
     logger.info {
       "Calling model (provider=${config.provider}, model=${config.modelName}) " +
@@ -82,7 +87,7 @@ class LLMClient(private val config: LLMConfig) {
     )
   }
 
-  private suspend fun makeRequest(request: ChatCompletionRequest): Result<String, CustomError> {
+  private suspend fun makeRequest(request: ChatCompletionRequest): Result<String, Failure> {
     return try {
       val response =
         client.post(config.baseUrl) {
@@ -94,10 +99,10 @@ class LLMClient(private val config: LLMConfig) {
 
       if (!response.status.isSuccess()) {
         when (response.status) {
-          HttpStatusCode.PaymentRequired -> Err(SystemError.PaymentRequired)
-          HttpStatusCode.TooManyRequests -> Err(SystemError.TooManyRequests)
-          HttpStatusCode.InternalServerError -> Err(SystemError.LLMServerError)
-          HttpStatusCode.ServiceUnavailable -> Err(SystemError.LLMServiceUnavailable)
+          HttpStatusCode.PaymentRequired -> Err(Error.PaymentRequired)
+          HttpStatusCode.TooManyRequests -> Err(Error.TooManyRequests)
+          HttpStatusCode.InternalServerError -> Err(Error.LLMServerError)
+          HttpStatusCode.ServiceUnavailable -> Err(Error.LLMServiceUnavailable)
           else ->
             throw IllegalStateException(
               "Unexpected HTTP status ${response.status.value} from LLM API"
@@ -108,9 +113,9 @@ class LLMClient(private val config: LLMConfig) {
       val chatCompletion = response.body<ChatCompletionResponse>()
       Ok(chatCompletion.choices.first().message.content)
     } catch (e: IOException) {
-      Err(SystemError.IOException)
+      Err(Error.IOException)
     } catch (e: HttpRequestTimeoutException) {
-      Err(SystemError.TimeoutException)
+      Err(Error.TimeoutException)
     }
   }
 }

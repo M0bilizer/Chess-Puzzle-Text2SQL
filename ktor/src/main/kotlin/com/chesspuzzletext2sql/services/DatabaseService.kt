@@ -1,7 +1,7 @@
 package com.chesspuzzletext2sql.services
 
-import com.chesspuzzletext2sql.errors.CustomError
-import com.chesspuzzletext2sql.errors.SystemError
+import com.chesspuzzletext2sql.errors.Error
+import com.chesspuzzletext2sql.errors.Failure
 import com.chesspuzzletext2sql.tables.Puzzle
 import com.chesspuzzletext2sql.tables.PuzzleTable
 import com.chesspuzzletext2sql.tables.toPuzzle
@@ -10,7 +10,6 @@ import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.sql.Connection
-import java.sql.SQLException
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.koin.core.component.KoinComponent
@@ -23,7 +22,7 @@ class DatabaseService : KoinComponent {
       PuzzleTable.selectAll().limit(count).map { it.toPuzzle() }
     }
 
-  fun fetchPuzzles(query: String): Result<List<Puzzle>, CustomError> {
+  fun fetchPuzzles(query: String): Result<List<Puzzle>, Failure> {
     logger.info { "Fetching puzzles with (query = $query)" }
     return try {
       val result =
@@ -36,7 +35,7 @@ class DatabaseService : KoinComponent {
         }
       Ok(result)
     } catch (e: Exception) {
-      Err(SystemError.SQLException)
+      Err(Error.SQLException)
     }
   }
 }

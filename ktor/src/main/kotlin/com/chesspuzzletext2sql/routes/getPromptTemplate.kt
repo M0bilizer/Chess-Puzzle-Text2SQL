@@ -1,14 +1,17 @@
 package com.chesspuzzletext2sql.routes
 
-import com.chesspuzzletext2sql.errors.ClientError
+import com.chesspuzzletext2sql.errors.Fail
+import com.chesspuzzletext2sql.errors.ValidationErrorMessage
 import com.chesspuzzletext2sql.helpers.handleClientError
+import com.chesspuzzletext2sql.helpers.validate
+import com.chesspuzzletext2sql.helpers.validateMissing
 import com.chesspuzzletext2sql.model.AvailablePromptTemplate
 import com.chesspuzzletext2sql.model.PromptTemplate
-import com.github.michaelbull.result.Err
-import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
+import com.github.michaelbull.result.andThen
 import com.github.michaelbull.result.binding
 import com.github.michaelbull.result.fold
+import com.github.michaelbull.result.map
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
@@ -32,10 +35,15 @@ fun Route.getPromptTemplate(path: String) {
 
 /* ================================================================================================================ */
 
-private fun validateCall(call: RoutingCall): Result<PromptTemplate, ClientError> {
-  val template = call.request.queryParameters["template"]
-  if (template.isNullOrBlank()) return Err(ClientError.EmptyTemplate)
-  val promptTemplate =
-    AvailablePromptTemplate[template] ?: return Err(ClientError.UnsupportedTemplate)
-  return Ok(promptTemplate)
+private fun validateCall(call: RoutingCall): Result<PromptTemplate, Fail> {
+  val request = call.request
+
+  return validateMissing(request) { mustNotBeNull("template") }
+    .andThen {
+      validate(request) {
+        must("template") { AvailablePromptTemplate[it] != null } withMessage
+          ValidationErrorMessage.UnsupportedTemplate
+      }
+    }
+    .map { AvailablePromptTemplate[request.queryParameters["template"]!!]!! }
 }

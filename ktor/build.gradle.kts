@@ -37,14 +37,15 @@ dependencies {
   implementation(libs.ktor.server.request.validation)
   implementation(libs.ktor.server.cors)
   implementation(libs.ktor.server.cio)
+  testImplementation(libs.ktor.server.test.host)
   implementation(libs.ktor.client.core)
   implementation(libs.ktor.client.cio)
   implementation(libs.ktor.client.content.negotiation)
   implementation(libs.logback.classic)
-  testImplementation(libs.ktor.server.test.host)
   testImplementation("io.kotest:kotest-framework-engine:6.0.0")
   testImplementation("io.kotest:kotest-property:6.0.0")
   testImplementation("io.strikt:strikt-core:0.34.0")
+  testImplementation("io.mockk:mockk:1.14.5")
   implementation("mysql:mysql-connector-java:8.0.33")
   implementation("io.github.oshai:kotlin-logging-jvm:7.0.3")
   implementation("io.github.cdimascio:dotenv-kotlin:6.5.1")
@@ -52,13 +53,4 @@ dependencies {
   implementation("com.michael-bull.kotlin-result:kotlin-result:2.0.1")
   implementation("com.michael-bull.kotlin-result:kotlin-result-coroutines:2.0.1")
   implementation("com.charleskorn.kaml:kaml-jvm:0.85.0")
-}
-
-tasks.withType<Test>().configureEach {
-  useJUnitPlatform()
-  systemProperties =
-    mapOf(
-      "kotest.framework.classpath.scanning.config.disable" to "true",
-      "kotest.framework.classpath.scanning.autoscan.disable" to "true",
-    )
 }
