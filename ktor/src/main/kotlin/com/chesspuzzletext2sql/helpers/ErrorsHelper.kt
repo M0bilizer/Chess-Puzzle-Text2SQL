@@ -1,106 +1,173 @@
 package com.chesspuzzletext2sql.helpers
 
 import com.chesspuzzletext2sql.errors.Fail
-import com.chesspuzzletext2sql.errors.MissingFieldDetail
-import com.chesspuzzletext2sql.errors.ValidationErrorMessage
-import com.chesspuzzletext2sql.errors.ValidationFailedDetail
-import com.github.michaelbull.result.Err
-import com.github.michaelbull.result.Ok
-import com.github.michaelbull.result.Result
-import io.ktor.server.request.ApplicationRequest
-import kotlin.reflect.KProperty1
+import com.chesspuzzletext2sql.errors.InvalidParameterDetail
+import com.chesspuzzletext2sql.errors.InvalidParameterMessage
+import com.chesspuzzletext2sql.errors.InvalidRequestDetail
+import com.chesspuzzletext2sql.errors.InvalidRequestMessage
+import dev.nesk.akkurate.constraints.ConstraintViolationSet
+import kotlin.reflect.KClass
+import kotlin.reflect.KType
 import kotlin.reflect.full.memberProperties
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.booleanOrNull
+import kotlinx.serialization.json.doubleOrNull
+import kotlinx.serialization.json.intOrNull
 
-class MissingFieldValidator(private val request: ApplicationRequest) {
-  private val errors = mutableListOf<MissingFieldDetail>()
+fun mapViolationsToErrors(violationSet: ConstraintViolationSet): Fail.InvalidParameter {
+  val details =
+    violationSet.map { (constraintMessage, path) ->
+      val fieldName = extractFieldName(path)
 
-  fun mustNotBeNull(field: String) {
-    if (request.queryParameters[field].isNullOrBlank()) {
-      errors.add(MissingFieldDetail(field))
-    }
-  }
-
-  fun validate(): com.github.michaelbull.result.Result<Unit, Fail.MissingFields> {
-    return if (errors.isEmpty()) Ok(Unit) else Err(Fail.MissingFields(errors))
-  }
-}
-
-class FieldValidator(private val request: ApplicationRequest) {
-  private val errors = mutableListOf<ValidationFailedDetail>()
-
-  inner class ValidationBuilder(val field: String, val predicate: (String) -> Boolean) {
-    infix fun withMessage(message: ValidationErrorMessage) {
-      request.queryParameters[field]?.let { value ->
-        if (!predicate(value)) {
-          errors.add(ValidationFailedDetail(field, message))
-        }
+      try {
+        val message =
+          InvalidParameterMessage.CustomConstraint.fromCode(constraintMessage)
+            ?: GenericConstraintRegistry.parseConstraint(constraintMessage, fieldName)
+            ?: InvalidParameterMessage.UnknownConstraint
+        InvalidParameterDetail(fieldName, message)
+      } catch (e: IllegalArgumentException) {
+        // This should never happen if all constraints are registered
+        val errorMessage = "Missing constraint registration: $constraintMessage. Field: $fieldName"
+        throw IllegalStateException(errorMessage, e)
       }
     }
-  }
 
-  fun must(field: String, predicate: (String) -> Boolean): ValidationBuilder {
-    return ValidationBuilder(field, predicate)
-  }
-
-  fun validate(): com.github.michaelbull.result.Result<Unit, Fail.ValidationFailed> {
-    return if (errors.isEmpty()) Ok(Unit) else Err(Fail.ValidationFailed(errors))
-  }
+  return Fail.InvalidParameter(details)
 }
 
-fun validateMissing(
-  request: ApplicationRequest,
-  block: MissingFieldValidator.() -> Unit,
-): com.github.michaelbull.result.Result<Unit, Fail.MissingFields> {
-  val validator = MissingFieldValidator(request)
-  validator.block()
-  return validator.validate()
+private fun extractFieldName(path: List<Any>): String {
+  return path.joinToString(".") { it.toString() }
 }
 
-fun validate(
-  request: ApplicationRequest,
-  block: FieldValidator.() -> Unit,
-): com.github.michaelbull.result.Result<Unit, Fail.ValidationFailed> {
-  val validator = FieldValidator(request)
-  validator.block()
-  return validator.validate()
-}
+object GenericConstraintRegistry {
+  private val constraints =
+    mutableMapOf<String, (String) -> InvalidParameterMessage.GenericConstraint>()
 
-class JsonFieldValidator(private val data: Any) {
-  private val errors = mutableListOf<ValidationFailedDetail>()
+  init {
+    registerStringConstraints()
+    registerNumberConstraints()
+  }
 
-  inner class ValidationBuilder(val field: String, val predicate: (Any?) -> Boolean) {
-    infix fun withMessage(message: ValidationErrorMessage) {
-      val value = getFieldValue(field)
-      if (!predicate(value)) {
-        errors.add(ValidationFailedDetail(field, message))
-      }
+  // String constraints
+  private fun registerStringConstraints() {
+    register("Must be empty") { field -> InvalidParameterMessage.GenericConstraint.IsEmpty(field) }
+    register("Must not be empty") { field ->
+      InvalidParameterMessage.GenericConstraint.IsNotEmpty(field)
     }
   }
 
-  private fun getFieldValue(field: String): Any? {
-    return when (data) {
-      is Map<*, *> -> data[field]
-      else -> {
-        val property = data::class.memberProperties.firstOrNull { it.name == field }
-        property?.let { @Suppress("UNCHECKED_CAST") ((it as KProperty1<Any, *>).get(data)) }
-      }
+  // Number constraints
+  private fun registerNumberConstraints() {
+    register("Must be positive") { field ->
+      InvalidParameterMessage.GenericConstraint.IsPositive(field)
+    }
+    register("Must be negative") { field ->
+      InvalidParameterMessage.GenericConstraint.IsNegative(field)
     }
   }
 
-  fun must(field: String, predicate: (Any?) -> Boolean): ValidationBuilder {
-    return ValidationBuilder(field, predicate)
+  private fun register(
+    message: String,
+    creator: (String) -> InvalidParameterMessage.GenericConstraint,
+  ) {
+    constraints[message] = creator
   }
 
-  fun validate(): com.github.michaelbull.result.Result<Unit, Fail.ValidationFailed> {
-    return if (errors.isEmpty()) Ok(Unit) else Err(Fail.ValidationFailed(errors))
+  fun parseConstraint(
+    constraintMessage: String,
+    field: String,
+  ): InvalidParameterMessage.GenericConstraint? {
+    val creator = constraints[constraintMessage] ?: return null
+    return creator(field)
   }
 }
 
-fun validateJson(
-  data: Any,
-  block: JsonFieldValidator.() -> Unit,
-): Result<Unit, Fail.ValidationFailed> {
-  val validator = JsonFieldValidator(data)
-  validator.block()
-  return validator.validate()
+fun validateJsonStructure(jsonElement: JsonElement, targetClass: KClass<*>): Fail? {
+  if (jsonElement !is JsonObject) {
+    return Fail.MalformedJson
+  }
+
+  val details = mutableListOf<InvalidRequestDetail>()
+
+  val expectedProperties = getExpectedProperties(targetClass)
+  val expectedPropertiesName = expectedProperties.map { it.name }.toSet()
+
+  // Check for extra properties
+  jsonElement.keys.forEach { key ->
+    if (key !in expectedPropertiesName) {
+      details.add(InvalidRequestDetail(key, InvalidRequestMessage.UnexpectedField(key)))
+    }
+  }
+
+  // Check required properties and types
+  expectedProperties.forEach { prop ->
+    val jsonValue = jsonElement[prop.name]
+
+    // Check if required field is missing
+    if (jsonValue == null) {
+      if (prop.isRequired) {
+        details.add(InvalidRequestDetail(prop.name, InvalidRequestMessage.MissingField(prop.name)))
+      }
+      return@forEach
+    }
+
+    // Check type compatibility (basic implementation)
+    if (!isTypeCompatible(jsonValue, prop.returnType)) {
+      val receivedType = getJsonValueType(jsonValue)
+      details.add(
+        InvalidRequestDetail(
+          prop.name,
+          InvalidRequestMessage.TypeMismatch(prop.name, receivedType, prop.returnType.toString()),
+        )
+      )
+    }
+  }
+
+  return details.takeUnless { it.isEmpty() }?.let { Fail.InvalidRequest(it) }
 }
+
+private fun isTypeCompatible(jsonValue: JsonElement, expectedType: KType): Boolean {
+  return when (expectedType.classifier) {
+    String::class -> jsonValue is JsonPrimitive && jsonValue.isString
+    Int::class -> jsonValue is JsonPrimitive && jsonValue.intOrNull != null
+    Boolean::class -> jsonValue is JsonPrimitive && jsonValue.booleanOrNull != null
+    Double::class -> jsonValue is JsonPrimitive && jsonValue.doubleOrNull != null
+    List::class -> false
+    // Add more type checks as needed
+    else -> true // For complex types, defer to deserialization
+  }
+}
+
+private fun getExpectedProperties(targetClass: KClass<*>): List<PropertyInfo> {
+  return targetClass.memberProperties.map { prop ->
+    PropertyInfo(
+      name = prop.name,
+      isRequired = prop.returnType.isMarkedNullable.not(),
+      returnType = prop.returnType,
+    )
+  }
+}
+
+private fun getJsonValueType(jsonValue: JsonElement): String {
+  return when (jsonValue) {
+    is JsonNull -> "null"
+    is JsonPrimitive -> {
+      when {
+        jsonValue.isString -> "string"
+        jsonValue.intOrNull != null -> "number (int)"
+        jsonValue.doubleOrNull != null -> "number (double)"
+        jsonValue.booleanOrNull != null -> "boolean"
+        else -> "unknown primitive"
+      }
+    }
+
+    is JsonArray -> "array"
+    is JsonObject -> "object"
+  }
+}
+
+private data class PropertyInfo(val name: String, val isRequired: Boolean, val returnType: KType)

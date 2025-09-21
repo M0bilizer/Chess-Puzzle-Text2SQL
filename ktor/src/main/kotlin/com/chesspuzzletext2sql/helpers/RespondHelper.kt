@@ -25,7 +25,7 @@ suspend fun RoutingCall.handleClientError(err: Fail) {
       mapOf(
         "field" to detail.field,
         "code" to detail.code,
-        "description" to detail.message.description,
+        "description" to detail.description.description,
       )
     }
 

@@ -2,33 +2,67 @@ package com.chesspuzzletext2sql.routes
 
 import com.chesspuzzletext2sql.errors.Error
 import com.chesspuzzletext2sql.errors.Fail
-import com.chesspuzzletext2sql.errors.ValidationErrorMessage
+import com.chesspuzzletext2sql.errors.InvalidParameterMessage.CustomConstraint
 import com.chesspuzzletext2sql.helpers.handleClientError
 import com.chesspuzzletext2sql.helpers.handleSystemError
-import com.chesspuzzletext2sql.helpers.validateJson
 import com.chesspuzzletext2sql.model.AvailableModels
 import com.chesspuzzletext2sql.model.LLMConfig
 import com.chesspuzzletext2sql.model.Message
 import com.chesspuzzletext2sql.model.SupportedModel
+import com.chesspuzzletext2sql.routes.validation.accessors.message
+import com.chesspuzzletext2sql.routes.validation.accessors.model
 import com.chesspuzzletext2sql.services.LLMClient
-import com.github.michaelbull.result.Result
+import com.chesspuzzletext2sql.services.ValidationConfig
+import com.chesspuzzletext2sql.services.validateRequest
 import com.github.michaelbull.result.coroutines.coroutineBinding
 import com.github.michaelbull.result.fold
-import com.github.michaelbull.result.map
+import dev.nesk.akkurate.Validator
+import dev.nesk.akkurate.annotations.Validate
+import dev.nesk.akkurate.constraints.builders.isNotEmpty
+import dev.nesk.akkurate.constraints.constrain
+import dev.nesk.akkurate.constraints.otherwise
 import io.github.oshai.kotlinlogging.KotlinLogging
-import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
-import io.ktor.server.routing.RoutingCall
 import io.ktor.server.routing.post
 import kotlinx.serialization.Serializable
 
 private val logger = KotlinLogging.logger {}
 
+@Serializable @Validate data class ChatCompletionsRequest(val message: String, val model: String)
+
+data class ChatCompletionsDto(val query: String, val llmConfig: LLMConfig)
+
+val chatCompletionsValidation =
+  ValidationConfig(
+    validator =
+      Validator<ChatCompletionsRequest> {
+        message.isNotEmpty()
+        val (isValidModel) = model.isNotEmpty()
+        if (isValidModel) {
+          val (isSupported) =
+            model.constrain { SupportedModel.fromProviderName(it) != null } otherwise
+              {
+                CustomConstraint.UnsupportedModel.code
+              }
+          if (isSupported) {
+            model.constrain {
+              AvailableModels[SupportedModel.fromProviderName(it)!!] != null
+            } otherwise { CustomConstraint.UnavailableModel.code }
+          }
+        }
+      },
+    transform = { request: ChatCompletionsRequest ->
+      val model = SupportedModel.fromProviderName(request.model)!!
+      val config = AvailableModels[model]!!
+      ChatCompletionsDto(request.message, config)
+    },
+  )
+
 fun Route.postChatCompletions(path: String) {
   post(path) {
     val result = coroutineBinding {
-      val (query, llmConfig) = validateCall(call).bind()
+      val (query, llmConfig) = validateRequest(chatCompletionsValidation).bind()
       val chatCompletion =
         LLMClient(llmConfig)
           .call(
@@ -56,36 +90,4 @@ fun Route.postChatCompletions(path: String) {
       success = { chatCompletion -> call.respond(chatCompletion) },
     )
   }
-}
-
-/* ================================================================================================================ */
-
-@Serializable private data class ChatCompletionRequest(val message: String, val model: String)
-
-private data class ChatCompletionDto(val query: String, val llmConfig: LLMConfig) {
-  companion object {
-    fun from(request: ChatCompletionRequest, config: LLMConfig) =
-      ChatCompletionDto(request.message, config)
-  }
-}
-
-private suspend fun validateCall(call: RoutingCall): Result<ChatCompletionDto, Fail> {
-  val request = call.receive<ChatCompletionRequest>()
-
-  return validateJson(request) {
-      must("message") { it is String && it.isNotBlank() } withMessage
-        ValidationErrorMessage.EmptyMessage
-      must("model") { it is String && SupportedModel.fromProviderName(it) != null } withMessage
-        ValidationErrorMessage.UnsupportedModel
-      must("model") {
-        it is String &&
-          SupportedModel.fromProviderName(it)?.let { model -> AvailableModels[model] != null }
-            ?: false
-      } withMessage ValidationErrorMessage.UnavailableModel
-    }
-    .map {
-      val model = SupportedModel.fromProviderName(request.model)!!
-      val config = AvailableModels[model]!!
-      ChatCompletionDto.from(request, config)
-    }
 }
