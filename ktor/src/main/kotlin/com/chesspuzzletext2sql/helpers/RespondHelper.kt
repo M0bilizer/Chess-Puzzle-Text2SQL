@@ -8,27 +8,28 @@ import io.ktor.server.routing.RoutingCall
 import kotlinx.serialization.Serializable
 
 suspend fun RoutingCall.handleSystemError(err: Error) {
-  respond(err.status)
+    respond(err.status)
 }
 
 @Serializable
 data class ErrorResponse(
-  val code: String,
-  val message: String,
-  val details: List<Map<String, String>>,
+    val code: String,
+    val message: String,
+    val details: List<Map<String, String>>,
 )
 
 suspend fun RoutingCall.handleClientError(err: Fail) {
-  println(err.toString())
-  val details =
-    err.details.map { detail ->
-      mapOf(
-        "field" to detail.field,
-        "code" to detail.code,
-        "description" to detail.description.description,
-      )
-    }
+    println(err.toString())
+    val details =
+        err.details.map { detail ->
+            mapOf(
+                "field" to detail.field,
+                "code" to detail.code,
+                "description" to detail.description.description,
+            )
+        }
 
-  val response = ErrorResponse(code = err.type.code, message = err.type.message, details = details)
-  respond(status = HttpStatusCode.BadRequest, response)
+    val response =
+        ErrorResponse(code = err.type.code, message = err.type.message, details = details)
+    respond(status = HttpStatusCode.BadRequest, response)
 }

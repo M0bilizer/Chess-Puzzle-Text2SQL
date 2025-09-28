@@ -34,38 +34,38 @@ private val logger = KotlinLogging.logger {}
 @Serializable data class PuzzlesSqlDto(val query: String)
 
 val puzzlesSqlConfig =
-  QueryValidationConfig(
-    validator =
-      Validator<PuzzlesSqlRequest> {
-        query.constrain { isValidSql(it) } otherwise { CustomConstraint.InvalidSql.code }
-        query.constrain { isAllowed(it) } otherwise { CustomConstraint.UnallowedSql.code }
-      },
-    transform = { request: PuzzlesSqlRequest -> PuzzlesSqlDto(request.query) },
-    parser = { params -> PuzzlesSqlRequest(query = QueryParsers.stringParser("query")(params)) },
-  )
+    QueryValidationConfig(
+        validator =
+            Validator<PuzzlesSqlRequest> {
+                query.constrain { isValidSql(it) } otherwise { CustomConstraint.InvalidSql.code }
+                query.constrain { isAllowed(it) } otherwise { CustomConstraint.UnallowedSql.code }
+            },
+        transform = { request: PuzzlesSqlRequest -> PuzzlesSqlDto(request.query) },
+        parser = { params -> PuzzlesSqlRequest(query = QueryParsers.stringParser("query")(params)) },
+    )
 
 fun Route.getPuzzlesSql(path: String) {
-  val databaseService: DatabaseService by inject()
-  get(path) {
-    val result = binding {
-      val (query) = validateQuery(puzzlesSqlConfig).bind()
-      isConnected().bind()
-      val sql = preprocess(query)
-      val puzzles = databaseService.fetchPuzzles(sql).bind()
-      puzzles
-    }
-    result.fold(
-      failure = { err ->
-        when (err) {
-          is Error -> {
-            logger.error { err.type }
-            call.handleSystemError(err)
-          }
-
-          is Fail -> call.handleClientError(err)
+    val databaseService: DatabaseService by inject()
+    get(path) {
+        val result = binding {
+            val (query) = validateQuery(puzzlesSqlConfig).bind()
+            isConnected().bind()
+            val sql = preprocess(query)
+            val puzzles = databaseService.fetchPuzzles(sql).bind()
+            puzzles
         }
-      },
-      success = { puzzles -> call.respond(puzzles) },
-    )
-  }
+        result.fold(
+            failure = { err ->
+                when (err) {
+                    is Error -> {
+                        logger.error { err.type }
+                        call.handleSystemError(err)
+                    }
+
+                    is Fail -> call.handleClientError(err)
+                }
+            },
+            success = { puzzles -> call.respond(puzzles) },
+        )
+    }
 }

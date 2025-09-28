@@ -29,33 +29,35 @@ private val logger = KotlinLogging.logger {}
 @Serializable data class PuzzlesRandomDto(val limit: Int)
 
 val puzzlesRandomConfig =
-  QueryValidationConfig(
-    validator = Validator<PuzzlesRandomRequest> { count.isPositive() },
-    transform = { request: PuzzlesRandomRequest -> PuzzlesRandomDto(request.count) },
-    parser = { params -> PuzzlesRandomRequest(count = QueryParsers.intParser("count", 0)(params)) },
-  )
+    QueryValidationConfig(
+        validator = Validator<PuzzlesRandomRequest> { count.isPositive() },
+        transform = { request: PuzzlesRandomRequest -> PuzzlesRandomDto(request.count) },
+        parser = { params ->
+            PuzzlesRandomRequest(count = QueryParsers.intParser("count", 0)(params))
+        },
+    )
 
 fun Route.getPuzzlesRandom(path: String) {
-  val databaseService: DatabaseService by inject()
-  get(path) {
-    val result = binding {
-      val (limit) = validateQuery(puzzlesRandomConfig).bind()
-      isConnected().bind()
-      val puzzles = databaseService.getPuzzlesTransaction(limit)
-      puzzles
-    }
-    result.fold(
-      failure = { err ->
-        when (err) {
-          is Error -> {
-            logger.error { err.type }
-            call.handleSystemError(err)
-          }
-
-          is Fail -> call.handleClientError(err)
+    val databaseService: DatabaseService by inject()
+    get(path) {
+        val result = binding {
+            val (limit) = validateQuery(puzzlesRandomConfig).bind()
+            isConnected().bind()
+            val puzzles = databaseService.getPuzzlesTransaction(limit)
+            puzzles
         }
-      },
-      success = { puzzles -> call.respond(puzzles) },
-    )
-  }
+        result.fold(
+            failure = { err ->
+                when (err) {
+                    is Error -> {
+                        logger.error { err.type }
+                        call.handleSystemError(err)
+                    }
+
+                    is Fail -> call.handleClientError(err)
+                }
+            },
+            success = { puzzles -> call.respond(puzzles) },
+        )
+    }
 }

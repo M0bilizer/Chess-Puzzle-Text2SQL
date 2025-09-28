@@ -12,51 +12,47 @@ import java.io.File
 import kotlinx.serialization.decodeFromString
 
 object LLMConfigLoader {
-  private const val ENV_PREFIX = "LLM_"
+    private const val ENV_PREFIX = "LLM_"
 
-  fun load() {
-    val loaded =
-      SupportedModel.all
-        .mapNotNull { model ->
-          try {
-            model to loadConfig(model).also { println("✅ Loaded ${model.providerName}") }
-          } catch (e: Exception) {
-            println("⚠️ Skipped ${model.providerName}: ${e.message}")
-            null
-          }
-        }
-        .toMap()
-    AvailableModels.update(loaded)
-  }
+    fun load(): Map<SupportedModel, LLMConfig> =
+        SupportedModel.all
+            .mapNotNull { model ->
+                try {
+                    model to loadConfig(model).also { println("✅ Loaded ${model.providerName}") }
+                } catch (e: Exception) {
+                    println("⚠️ Skipped ${model.providerName}: ${e.message}")
+                    null
+                }
+            }
+            .toMap()
 
-  private fun loadConfig(model: SupportedModel): LLMConfig {
-    val prefix = "${ENV_PREFIX}${model.providerName.uppercase()}_"
+    private fun loadConfig(model: SupportedModel): LLMConfig {
+        val prefix = "${ENV_PREFIX}${model.providerName.uppercase()}_"
 
-    return LLMConfig(
-      provider = model.providerName,
-      baseUrl = getEnvOrThrow("${prefix}BASE_URL"),
-      apiKey = getEnvOrThrow("${prefix}API_KEY"),
-      modelName = getEnvOrThrow("${prefix}MODEL_NAME"),
-    )
-  }
+        return LLMConfig(
+            provider = model.providerName,
+            baseUrl = getEnvOrThrow("${prefix}BASE_URL"),
+            apiKey = getEnvOrThrow("${prefix}API_KEY"),
+            modelName = getEnvOrThrow("${prefix}MODEL_NAME"),
+        )
+    }
 
-  private fun getEnvOrThrow(key: String): String {
-    val dotenv = dotenv()
-    return dotenv[key] ?: throw IllegalStateException("Missing env var: $key")
-  }
+    private fun getEnvOrThrow(key: String): String {
+        val dotenv = dotenv()
+        return dotenv[key] ?: throw IllegalStateException("Missing env var: $key")
+    }
 }
 
 object PromptTemplateConfigLoader {
-  private val yaml = Yaml.default
+    private val yaml = Yaml.default
 
-  fun load() {
-    val configFile = File("prompt-templates.yaml").readText()
-    val loaded = yaml.decodeFromString<Map<String, PromptTemplate>>(configFile)
-    AvailablePromptTemplate.update(loaded)
-  }
+    fun load(): Map<String, PromptTemplate> {
+        val configFile = File("prompt-templates.yaml").readText()
+        return yaml.decodeFromString<Map<String, PromptTemplate>>(configFile)
+    }
 }
 
 fun Application.configureConfigLoader() {
-  LLMConfigLoader.load()
-  PromptTemplateConfigLoader.load()
+    AvailableModels.update(LLMConfigLoader.load())
+    AvailablePromptTemplate.update(PromptTemplateConfigLoader.load())
 }

@@ -39,67 +39,67 @@ private val logger = KotlinLogging.logger {}
 data class PuzzlesQueryRequest(val query: String, val template: String, val model: String)
 
 data class PuzzlesQueryDto(
-  val query: String,
-  val promptTemplate: PromptTemplate,
-  val llmConfig: LLMConfig,
+    val query: String,
+    val promptTemplate: PromptTemplate,
+    val llmConfig: LLMConfig,
 )
 
 val puzzlesQueryValidation =
-  ValidationConfig(
-    validator =
-      Validator<PuzzlesQueryRequest> {
-        query.isNotEmpty()
-        val (isValidTemplate) = template.isNotEmpty()
-        if (isValidTemplate) {
-          template.constrain { AvailablePromptTemplate[it] != null } otherwise
-            {
-              CustomConstraint.UnsupportedTemplate.code
-            }
-        }
-        val (isValidModel) = model.isNotEmpty()
-        if (isValidModel) {
-          val (isSupported) =
-            model.constrain { SupportedModel.fromProviderName(it) != null } otherwise
-              {
-                CustomConstraint.UnsupportedModel.code
-              }
-          if (isSupported) {
-            model.constrain {
-              AvailableModels[SupportedModel.fromProviderName(it)!!] != null
-            } otherwise { CustomConstraint.UnsupportedModel.code }
-          }
-        }
-      },
-    transform = { request: PuzzlesQueryRequest ->
-      val promptTemplate = AvailablePromptTemplate[request.template]!!
-      val config = AvailableModels[SupportedModel.fromProviderName(request.model)!!]!!
-      PuzzlesQueryDto(request.query, promptTemplate, config)
-    },
-  )
+    ValidationConfig(
+        validator =
+            Validator<PuzzlesQueryRequest> {
+                query.isNotEmpty()
+                val (isValidTemplate) = template.isNotEmpty()
+                if (isValidTemplate) {
+                    template.constrain { AvailablePromptTemplate[it] != null } otherwise
+                        {
+                            CustomConstraint.UnsupportedTemplate.code
+                        }
+                }
+                val (isValidModel) = model.isNotEmpty()
+                if (isValidModel) {
+                    val (isSupported) =
+                        model.constrain { SupportedModel.fromProviderName(it) != null } otherwise
+                            {
+                                CustomConstraint.UnsupportedModel.code
+                            }
+                    if (isSupported) {
+                        model.constrain {
+                            AvailableModels[SupportedModel.fromProviderName(it)!!] != null
+                        } otherwise { CustomConstraint.UnsupportedModel.code }
+                    }
+                }
+            },
+        transform = { request: PuzzlesQueryRequest ->
+            val promptTemplate = AvailablePromptTemplate[request.template]!!
+            val config = AvailableModels[SupportedModel.fromProviderName(request.model)!!]!!
+            PuzzlesQueryDto(request.query, promptTemplate, config)
+        },
+    )
 
 fun Route.postPuzzlesQuery(path: String) {
-  val databaseService: DatabaseService by inject()
-  post(path) {
-    val result = coroutineBinding {
-      val (query, promptTemplate, llmConfig) = validateRequest(puzzlesQueryValidation).bind()
-      val chatCompletion = LLMClient(llmConfig).call(promptTemplate, query).bind()
-      val sql = preprocess(chatCompletion)
-      val puzzles = databaseService.fetchPuzzles(sql).bind()
-      puzzles
-    }
-
-    result.fold(
-      failure = { err ->
-        when (err) {
-          is Error -> {
-            logger.error { err.type }
-            call.handleSystemError(err)
-          }
-
-          is Fail -> call.handleClientError(err)
+    val databaseService: DatabaseService by inject()
+    post(path) {
+        val result = coroutineBinding {
+            val (query, promptTemplate, llmConfig) = validateRequest(puzzlesQueryValidation).bind()
+            val chatCompletion = LLMClient(llmConfig).call(promptTemplate, query).bind()
+            val sql = preprocess(chatCompletion)
+            val puzzles = databaseService.fetchPuzzles(sql).bind()
+            puzzles
         }
-      },
-      success = { puzzles -> call.respond(puzzles) },
-    )
-  }
+
+        result.fold(
+            failure = { err ->
+                when (err) {
+                    is Error -> {
+                        logger.error { err.type }
+                        call.handleSystemError(err)
+                    }
+
+                    is Fail -> call.handleClientError(err)
+                }
+            },
+            success = { puzzles -> call.respond(puzzles) },
+        )
+    }
 }

@@ -4,17 +4,17 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class PromptTemplate(
-  val instruction: String,
-  val context: String,
-  val demonstrations: List<String>,
-  val input: String,
+    val instruction: String,
+    val context: String,
+    val demonstrations: List<String>,
+    val input: String,
 ) {
-  init {
-    require(input.contains("\${input}"))
-  }
+    init {
+        require(input.contains("\${input}"))
+    }
 
-  operator fun invoke(userInput: String): String =
-    """
+    operator fun invoke(userInput: String): String =
+        """
         | #Instruction
         | $instruction
         | 
@@ -27,23 +27,23 @@ data class PromptTemplate(
         | #Input
         | ${input.replace("\${input}", userInput)}
     """
-      .trimMargin("| ")
+            .trimMargin("| ")
 }
 
 object AvailablePromptTemplate {
-  private val storage = mutableMapOf<String, PromptTemplate>()
+    private val storage = mutableMapOf<String, PromptTemplate>()
 
-  operator fun get(name: String): PromptTemplate? = storage[name]
+    operator fun get(name: String): PromptTemplate? = storage[name]
 
-  val PromptTemplate.name: String
-    get() = storage.entries.first { it.value == this }.key
+    val PromptTemplate.name: String
+        get() = storage.entries.first { it.value == this }.key
 
-  val all: Map<String, PromptTemplate>
-    get() = storage.toMap()
+    val all: Map<String, PromptTemplate>
+        get() = storage.toMap()
 
-  internal fun update(configs: Map<String, PromptTemplate>) {
-    require(configs.isNotEmpty()) { "Must have at least one prompt template" }
-    storage.clear()
-    storage.putAll(configs)
-  }
+    internal fun update(configs: Map<String, PromptTemplate>) {
+        require(configs.isNotEmpty()) { "Must have at least one prompt template" }
+        storage.clear()
+        storage.putAll(configs)
+    }
 }

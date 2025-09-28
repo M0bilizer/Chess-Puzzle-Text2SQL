@@ -15,21 +15,21 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 
 fun Application.configureRouting() {
-  install(RequestValidation) {
-    validate<String> { bodyText ->
-      if (!bodyText.startsWith("Hello"))
-        ValidationResult.Invalid("Body text should start with 'Hello'")
-      else ValidationResult.Valid
+    install(RequestValidation) {
+        validate<String> { bodyText ->
+            if (!bodyText.startsWith("Hello"))
+                ValidationResult.Invalid("Body text should start with 'Hello'")
+            else ValidationResult.Valid
+        }
     }
-  }
 
-  routing {
-    postChatCompletions("/chat/completions")
-    postChatText2Sql("/chat/text2sql")
-    postPuzzlesQuery("/puzzles/query")
-    getPuzzlesRandom("/puzzles/random")
-    getPuzzlesSql("/puzzles/sql")
-    getPromptTemplate("/promptTemplate")
-    get("/hello") { call.respondText("Hello World from Ktor") }
-  }
+    routing {
+        postChatCompletions("/chat/completions")
+        postChatText2Sql("/chat/text2sql")
+        postPuzzlesQuery("/puzzles/query")
+        getPuzzlesRandom("/puzzles/random")
+        getPuzzlesSql("/puzzles/sql")
+        getPromptTemplate("/promptTemplate")
+        get("/hello") { call.respondText("Hello World from Ktor") }
+    }
 }

@@ -34,60 +34,60 @@ private val logger = KotlinLogging.logger {}
 data class ChatCompletionsDto(val query: String, val llmConfig: LLMConfig)
 
 val chatCompletionsValidation =
-  ValidationConfig(
-    validator =
-      Validator<ChatCompletionsRequest> {
-        message.isNotEmpty()
-        val (isValidModel) = model.isNotEmpty()
-        if (isValidModel) {
-          val (isSupported) =
-            model.constrain { SupportedModel.fromProviderName(it) != null } otherwise
-              {
-                CustomConstraint.UnsupportedModel.code
-              }
-          if (isSupported) {
-            model.constrain {
-              AvailableModels[SupportedModel.fromProviderName(it)!!] != null
-            } otherwise { CustomConstraint.UnavailableModel.code }
-          }
-        }
-      },
-    transform = { request: ChatCompletionsRequest ->
-      val model = SupportedModel.fromProviderName(request.model)!!
-      val config = AvailableModels[model]!!
-      ChatCompletionsDto(request.message, config)
-    },
-  )
+    ValidationConfig(
+        validator =
+            Validator<ChatCompletionsRequest> {
+                message.isNotEmpty()
+                val (isValidModel) = model.isNotEmpty()
+                if (isValidModel) {
+                    val (isSupported) =
+                        model.constrain { SupportedModel.fromProviderName(it) != null } otherwise
+                            {
+                                CustomConstraint.UnsupportedModel.code
+                            }
+                    if (isSupported) {
+                        model.constrain {
+                            AvailableModels[SupportedModel.fromProviderName(it)!!] != null
+                        } otherwise { CustomConstraint.UnavailableModel.code }
+                    }
+                }
+            },
+        transform = { request: ChatCompletionsRequest ->
+            val model = SupportedModel.fromProviderName(request.model)!!
+            val config = AvailableModels[model]!!
+            ChatCompletionsDto(request.message, config)
+        },
+    )
 
 fun Route.postChatCompletions(path: String) {
-  post(path) {
-    val result = coroutineBinding {
-      val (query, llmConfig) = validateRequest(chatCompletionsValidation).bind()
-      val chatCompletion =
-        LLMClient(llmConfig)
-          .call(
-            messages =
-              listOf(
-                Message("system", "You are an AI trained to answer questions"),
-                Message("user", query),
-              )
-          )
-          .bind()
-      chatCompletion
-    }
-
-    result.fold(
-      failure = { err ->
-        when (err) {
-          is Error -> {
-            logger.error { err.type }
-            call.handleSystemError(err)
-          }
-
-          is Fail -> call.handleClientError(err)
+    post(path) {
+        val result = coroutineBinding {
+            val (query, llmConfig) = validateRequest(chatCompletionsValidation).bind()
+            val chatCompletion =
+                LLMClient(llmConfig)
+                    .call(
+                        messages =
+                            listOf(
+                                Message("system", "You are an AI trained to answer questions"),
+                                Message("user", query),
+                            )
+                    )
+                    .bind()
+            chatCompletion
         }
-      },
-      success = { chatCompletion -> call.respond(chatCompletion) },
-    )
-  }
+
+        result.fold(
+            failure = { err ->
+                when (err) {
+                    is Error -> {
+                        logger.error { err.type }
+                        call.handleSystemError(err)
+                    }
+
+                    is Fail -> call.handleClientError(err)
+                }
+            },
+            success = { chatCompletion -> call.respond(chatCompletion) },
+        )
+    }
 }

@@ -28,34 +28,36 @@ private val logger = KotlinLogging.logger {}
 @Serializable data class PromptTemplateDto(val promptTemplate: PromptTemplate)
 
 val promptTemplateConfig =
-  QueryValidationConfig(
-    validator =
-      Validator<PromptTemplateRequest> {
-        val (isValidTemplate) = template.isNotEmpty()
-        if (isValidTemplate) {
-          template.constrain { AvailablePromptTemplate[it] != null } otherwise
-            {
-              CustomConstraint.UnsupportedTemplate.code
-            }
-        }
-      },
-    transform = { request: PromptTemplateRequest ->
-      PromptTemplateDto(AvailablePromptTemplate[request.template]!!)
-    },
-    parser = { params ->
-      PromptTemplateRequest(template = QueryParsers.stringParser("template", "default")(params))
-    },
-  )
+    QueryValidationConfig(
+        validator =
+            Validator<PromptTemplateRequest> {
+                val (isValidTemplate) = template.isNotEmpty()
+                if (isValidTemplate) {
+                    template.constrain { AvailablePromptTemplate[it] != null } otherwise
+                        {
+                            CustomConstraint.UnsupportedTemplate.code
+                        }
+                }
+            },
+        transform = { request: PromptTemplateRequest ->
+            PromptTemplateDto(AvailablePromptTemplate[request.template]!!)
+        },
+        parser = { params ->
+            PromptTemplateRequest(
+                template = QueryParsers.stringParser("template", "default")(params)
+            )
+        },
+    )
 
 fun Route.getPromptTemplate(path: String) {
-  get(path) {
-    val result = binding {
-      val promptTemplate = validateQuery(promptTemplateConfig).bind()
-      promptTemplate
+    get(path) {
+        val result = binding {
+            val promptTemplate = validateQuery(promptTemplateConfig).bind()
+            promptTemplate
+        }
+        result.fold(
+            failure = { err -> call.handleClientError(err) },
+            success = { promptTemplate -> call.respond(promptTemplate) },
+        )
     }
-    result.fold(
-      failure = { err -> call.handleClientError(err) },
-      success = { promptTemplate -> call.respond(promptTemplate) },
-    )
-  }
 }
