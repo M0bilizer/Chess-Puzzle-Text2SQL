@@ -12,7 +12,7 @@ sealed class Fail : Failure {
 
     data object MalformedJson : Fail() {
         override val type: FailType = FailType.MalformedJson
-        override val details: List<FailDetail> = listOf(InvalidJsonDetail())
+        override val details: List<FailDetail> = listOf(InvalidJsonDetail)
     }
 
     data class InvalidRequest(override val details: List<InvalidRequestDetail>) : Fail() {
@@ -36,19 +36,19 @@ sealed interface FailMessage {
 }
 
 /** ** */
-class InvalidJsonDetail() : FailDetail {
+data object InvalidJsonDetail : FailDetail {
     override val description: FailMessage = InvalidJsonErrorMessage
     override val code: String = description.code
     override val field: String = "request_body"
 }
 
-object InvalidJsonErrorMessage : FailMessage {
+data object InvalidJsonErrorMessage : FailMessage {
     override val code: String = "invalid_json"
     override val description: String = "The request body contains invalid JSON syntax"
 }
 
 /** ** */
-class InvalidRequestDetail(
+data class InvalidRequestDetail(
     override val field: String,
     override val description: InvalidRequestMessage,
 ) : FailDetail {
@@ -59,16 +59,16 @@ class InvalidRequestDetail(
 sealed class InvalidRequestMessage(override val code: String, override val description: String) :
     FailMessage {
 
-    class MissingField(val field: String) :
+    data class MissingField(val field: String) :
         InvalidRequestMessage("missing_field", "Field '$field' is required but was not provided")
 
-    class UnexpectedField(val field: String) :
+    data class UnexpectedField(val field: String) :
         InvalidRequestMessage(
             "unexpected_field",
             "Field '$field' is not allowed for this resource",
         )
 
-    class TypeMismatch(val field: String, val receivedValue: Any?, val expectedType: String) :
+    data class TypeMismatch(val field: String, val receivedValue: Any?, val expectedType: String) :
         InvalidRequestMessage(
             "type_mismatch",
             "Field '$field' is expecting $expectedType but received ${formatValue(receivedValue)}",
@@ -90,7 +90,7 @@ sealed class InvalidRequestMessage(override val code: String, override val descr
 }
 
 /** ** */
-class InvalidParameterDetail(
+data class InvalidParameterDetail(
     override val field: String,
     override val description: InvalidParameterMessage,
 ) : FailDetail {
