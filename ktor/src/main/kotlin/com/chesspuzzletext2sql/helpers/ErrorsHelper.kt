@@ -6,6 +6,9 @@ import com.chesspuzzletext2sql.errors.InvalidParameterMessage
 import com.chesspuzzletext2sql.errors.InvalidRequestDetail
 import com.chesspuzzletext2sql.errors.InvalidRequestMessage
 import dev.nesk.akkurate.constraints.ConstraintViolationSet
+import kotlin.reflect.KClass
+import kotlin.reflect.KType
+import kotlin.reflect.full.memberProperties
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
@@ -14,9 +17,6 @@ import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.booleanOrNull
 import kotlinx.serialization.json.doubleOrNull
 import kotlinx.serialization.json.intOrNull
-import kotlin.reflect.KClass
-import kotlin.reflect.KType
-import kotlin.reflect.full.memberProperties
 
 fun mapViolationsToErrors(violationSet: ConstraintViolationSet): Fail.InvalidParameter {
     val details =
