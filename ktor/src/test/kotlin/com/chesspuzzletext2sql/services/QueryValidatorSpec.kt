@@ -26,8 +26,7 @@ import strikt.assertions.isA
 import strikt.assertions.isEqualTo
 
 // Test data class for complex validation scenarios
-@Validate
-data class TestQueryParams(val name: String, val age: Int, val active: Boolean)
+@Validate data class TestQueryParams(val name: String, val age: Int, val active: Boolean)
 
 enum class TestEnum {
     ACTIVE,
@@ -144,10 +143,11 @@ class QueryValidatorTest :
                                 "Must not be empty" to listOf("name"),
                                 "Must be positive" to listOf("age"),
                             )
-                        val validator = Validator<TestQueryParams> {
-                            name.isNotEmpty()
-                            age.isPositive()
-                        }
+                        val validator =
+                            Validator<TestQueryParams> {
+                                name.isNotEmpty()
+                                age.isPositive()
+                            }
 
                         // When
                         val result = queryValidator.validateBusinessLogic(testData, validator)
@@ -155,16 +155,17 @@ class QueryValidatorTest :
                         // Then
                         expectThat(result).isA<Result<Nothing, Fail.InvalidParameter>>().and {
                             get { error.details }.hasSize(2)
-                            get { error.details }.containsExactlyInAnyOrder(
-                                InvalidParameterDetail(
-                                    "name",
-                                    InvalidParameterMessage.GenericConstraint.IsNotEmpty("name")
-                                ),
-                                InvalidParameterDetail(
-                                    "age",
-                                    InvalidParameterMessage.GenericConstraint.IsPositive("age")
+                            get { error.details }
+                                .containsExactlyInAnyOrder(
+                                    InvalidParameterDetail(
+                                        "name",
+                                        InvalidParameterMessage.GenericConstraint.IsNotEmpty("name"),
+                                    ),
+                                    InvalidParameterDetail(
+                                        "age",
+                                        InvalidParameterMessage.GenericConstraint.IsPositive("age"),
+                                    ),
                                 )
-                            )
                         }
                     }
                 }
