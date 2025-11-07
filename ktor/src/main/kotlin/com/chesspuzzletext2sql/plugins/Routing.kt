@@ -2,10 +2,10 @@ package com.chesspuzzletext2sql.plugins
 
 import com.chesspuzzletext2sql.routes.getPromptTemplate
 import com.chesspuzzletext2sql.routes.getPuzzlesRandom
+import com.chesspuzzletext2sql.routes.getPuzzlesSearch
 import com.chesspuzzletext2sql.routes.getPuzzlesSql
 import com.chesspuzzletext2sql.routes.postChatCompletions
 import com.chesspuzzletext2sql.routes.postChatText2Sql
-import com.chesspuzzletext2sql.routes.postPuzzlesQuery
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.plugins.requestvalidation.RequestValidation
@@ -24,12 +24,12 @@ fun Application.configureRouting() {
     }
 
     routing {
-        postChatCompletions("/chat/completions")
-        postChatText2Sql("/chat/text2sql")
-        postPuzzlesQuery("/puzzles/query")
-        getPuzzlesRandom("/puzzles/random")
-        getPuzzlesSql("/puzzles/sql")
-        getPromptTemplate("/promptTemplate")
+        postChatCompletions("/v1/chat/completions")
+        postChatText2Sql("/v1/chat/text2sql")
+        getPuzzlesRandom("/v1/puzzles/random")
+        getPuzzlesSql("/v1/puzzles/sql")
+        getPromptTemplate("/v1/promptTemplate")
+        getPuzzlesSearch("/v2/puzzles/search")
         get("/hello") { call.respondText("Hello World from Ktor") }
     }
 }

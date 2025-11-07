@@ -16,8 +16,8 @@ import org.koin.core.component.KoinComponent
 
 private val logger = KotlinLogging.logger {}
 
-class DatabaseService : KoinComponent {
-    fun getPuzzlesTransaction(count: Int) =
+class PuzzleService : KoinComponent {
+    fun getPuzzles(count: Int) =
         transaction(
             readOnly = true,
             transactionIsolation = Connection.TRANSACTION_READ_UNCOMMITTED,
@@ -25,7 +25,7 @@ class DatabaseService : KoinComponent {
             PuzzleTable.selectAll().limit(count).map { it.toPuzzle() }
         }
 
-    fun fetchPuzzles(query: String): Result<List<Puzzle>, Failure> {
+    fun selectPuzzles(query: String): Result<List<Puzzle>, Failure> {
         logger.info { "Fetching puzzles with (query = $query)" }
         return try {
             val result =

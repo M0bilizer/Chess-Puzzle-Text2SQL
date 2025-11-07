@@ -6,10 +6,10 @@ import com.chesspuzzletext2sql.helpers.handleClientError
 import com.chesspuzzletext2sql.helpers.handleSystemError
 import com.chesspuzzletext2sql.helpers.isConnected
 import com.chesspuzzletext2sql.routes.validation.accessors.count
-import com.chesspuzzletext2sql.services.DatabaseService
-import com.chesspuzzletext2sql.services.QueryParsers
-import com.chesspuzzletext2sql.services.QueryValidationConfig
-import com.chesspuzzletext2sql.services.validateQuery
+import com.chesspuzzletext2sql.services.PuzzleService
+import com.chesspuzzletext2sql.validators.QueryParsers
+import com.chesspuzzletext2sql.validators.QueryValidationConfig
+import com.chesspuzzletext2sql.validators.validateQuery
 import com.github.michaelbull.result.binding
 import com.github.michaelbull.result.fold
 import dev.nesk.akkurate.Validator
@@ -38,12 +38,12 @@ val puzzlesRandomConfig =
     )
 
 fun Route.getPuzzlesRandom(path: String) {
-    val databaseService: DatabaseService by inject()
+    val puzzleService: PuzzleService by inject()
     get(path) {
         val result = binding {
             val (limit) = validateQuery(puzzlesRandomConfig).bind()
             isConnected().bind()
-            val puzzles = databaseService.getPuzzlesTransaction(limit)
+            val puzzles = puzzleService.getPuzzles(limit)
             puzzles
         }
         result.fold(

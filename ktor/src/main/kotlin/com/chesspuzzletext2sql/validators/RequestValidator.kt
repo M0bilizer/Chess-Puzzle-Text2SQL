@@ -1,4 +1,4 @@
-package com.chesspuzzletext2sql.services
+package com.chesspuzzletext2sql.validators
 
 import com.chesspuzzletext2sql.errors.Fail
 import com.chesspuzzletext2sql.errors.InvalidRequestDetail

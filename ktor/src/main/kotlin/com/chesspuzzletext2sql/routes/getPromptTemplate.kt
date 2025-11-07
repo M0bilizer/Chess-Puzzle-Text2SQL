@@ -5,9 +5,9 @@ import com.chesspuzzletext2sql.helpers.handleClientError
 import com.chesspuzzletext2sql.model.AvailablePromptTemplate
 import com.chesspuzzletext2sql.model.PromptTemplate
 import com.chesspuzzletext2sql.routes.validation.accessors.template
-import com.chesspuzzletext2sql.services.QueryParsers
-import com.chesspuzzletext2sql.services.QueryValidationConfig
-import com.chesspuzzletext2sql.services.validateQuery
+import com.chesspuzzletext2sql.validators.QueryParsers
+import com.chesspuzzletext2sql.validators.QueryValidationConfig
+import com.chesspuzzletext2sql.validators.validateQuery
 import com.github.michaelbull.result.binding
 import com.github.michaelbull.result.fold
 import dev.nesk.akkurate.Validator

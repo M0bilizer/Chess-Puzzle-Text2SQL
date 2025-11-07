@@ -52,7 +52,7 @@ object PromptTemplateConfigLoader {
     }
 }
 
-fun Application.configureConfigLoader() {
+fun Application.configureConfiguration() {
     AvailableModels.update(LLMConfigLoader.load())
     AvailablePromptTemplate.update(PromptTemplateConfigLoader.load())
 }

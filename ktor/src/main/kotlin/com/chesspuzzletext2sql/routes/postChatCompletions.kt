@@ -1,5 +1,6 @@
 package com.chesspuzzletext2sql.routes
 
+import com.chesspuzzletext2sql.clients.LLMClient
 import com.chesspuzzletext2sql.errors.Error
 import com.chesspuzzletext2sql.errors.Fail
 import com.chesspuzzletext2sql.errors.InvalidParameterMessage.CustomConstraint
@@ -11,9 +12,8 @@ import com.chesspuzzletext2sql.model.Message
 import com.chesspuzzletext2sql.model.SupportedModel
 import com.chesspuzzletext2sql.routes.validation.accessors.message
 import com.chesspuzzletext2sql.routes.validation.accessors.model
-import com.chesspuzzletext2sql.services.LLMClient
-import com.chesspuzzletext2sql.services.ValidationConfig
-import com.chesspuzzletext2sql.services.validateRequest
+import com.chesspuzzletext2sql.validators.ValidationConfig
+import com.chesspuzzletext2sql.validators.validateRequest
 import com.github.michaelbull.result.coroutines.coroutineBinding
 import com.github.michaelbull.result.fold
 import dev.nesk.akkurate.Validator

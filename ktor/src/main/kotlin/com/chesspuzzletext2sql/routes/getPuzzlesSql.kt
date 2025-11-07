@@ -10,10 +10,10 @@ import com.chesspuzzletext2sql.helpers.isConnected
 import com.chesspuzzletext2sql.helpers.isValidSql
 import com.chesspuzzletext2sql.helpers.preprocess
 import com.chesspuzzletext2sql.routes.validation.accessors.query
-import com.chesspuzzletext2sql.services.DatabaseService
-import com.chesspuzzletext2sql.services.QueryParsers
-import com.chesspuzzletext2sql.services.QueryValidationConfig
-import com.chesspuzzletext2sql.services.validateQuery
+import com.chesspuzzletext2sql.services.PuzzleService
+import com.chesspuzzletext2sql.validators.QueryParsers
+import com.chesspuzzletext2sql.validators.QueryValidationConfig
+import com.chesspuzzletext2sql.validators.validateQuery
 import com.github.michaelbull.result.binding
 import com.github.michaelbull.result.fold
 import dev.nesk.akkurate.Validator
@@ -45,13 +45,13 @@ val puzzlesSqlConfig =
     )
 
 fun Route.getPuzzlesSql(path: String) {
-    val databaseService: DatabaseService by inject()
+    val puzzleService: PuzzleService by inject()
     get(path) {
         val result = binding {
             val (query) = validateQuery(puzzlesSqlConfig).bind()
             isConnected().bind()
             val sql = preprocess(query)
-            val puzzles = databaseService.fetchPuzzles(sql).bind()
+            val puzzles = puzzleService.selectPuzzles(sql).bind()
             puzzles
         }
         result.fold(

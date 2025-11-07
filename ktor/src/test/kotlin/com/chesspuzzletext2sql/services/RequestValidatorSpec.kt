@@ -6,6 +6,8 @@ import com.chesspuzzletext2sql.errors.InvalidParameterMessage
 import com.chesspuzzletext2sql.services.validation.accessors.age
 import com.chesspuzzletext2sql.services.validation.accessors.email
 import com.chesspuzzletext2sql.services.validation.accessors.name
+import com.chesspuzzletext2sql.validators.RequestValidator
+import com.chesspuzzletext2sql.validators.ValidationConfig
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
 import dev.nesk.akkurate.Validator
@@ -132,9 +134,7 @@ class RequestValidatorTest :
                         // Given
                         // Mock a scenario that causes non-SerializationException
                         val requestValidatorWithFailingJson =
-                            RequestValidator(
-                                kotlinx.serialization.json.Json { ignoreUnknownKeys = false }
-                            )
+                            RequestValidator(Json { ignoreUnknownKeys = false })
                         val jsonWithExtraFields =
                             kotlinx.serialization.json.Json.parseToJsonElement(
                                 """{"name": "John", "age": 25, "email": "john@test.com", "extra": "field"}"""
