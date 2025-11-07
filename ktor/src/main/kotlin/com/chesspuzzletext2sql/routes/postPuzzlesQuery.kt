@@ -1,0 +1,105 @@
+package com.chesspuzzletext2sql.routes
+
+import com.chesspuzzletext2sql.errors.Error
+import com.chesspuzzletext2sql.errors.Fail
+import com.chesspuzzletext2sql.errors.InvalidParameterMessage.CustomConstraint
+import com.chesspuzzletext2sql.helpers.handleClientError
+import com.chesspuzzletext2sql.helpers.handleSystemError
+import com.chesspuzzletext2sql.helpers.preprocess
+import com.chesspuzzletext2sql.model.AvailableModels
+import com.chesspuzzletext2sql.model.AvailablePromptTemplate
+import com.chesspuzzletext2sql.model.LLMConfig
+import com.chesspuzzletext2sql.model.PromptTemplate
+import com.chesspuzzletext2sql.model.SupportedModel
+import com.chesspuzzletext2sql.routes.validation.accessors.model
+import com.chesspuzzletext2sql.routes.validation.accessors.query
+import com.chesspuzzletext2sql.routes.validation.accessors.template
+import com.chesspuzzletext2sql.services.DatabaseService
+import com.chesspuzzletext2sql.services.LLMClient
+import com.chesspuzzletext2sql.services.ValidationConfig
+import com.chesspuzzletext2sql.services.validateRequest
+import com.github.michaelbull.result.coroutines.coroutineBinding
+import com.github.michaelbull.result.fold
+import dev.nesk.akkurate.Validator
+import dev.nesk.akkurate.annotations.Validate
+import dev.nesk.akkurate.constraints.builders.isNotEmpty
+import dev.nesk.akkurate.constraints.constrain
+import dev.nesk.akkurate.constraints.otherwise
+import io.github.oshai.kotlinlogging.KotlinLogging
+import io.ktor.server.response.respond
+import io.ktor.server.routing.Route
+import io.ktor.server.routing.post
+import kotlinx.serialization.Serializable
+import org.koin.ktor.ext.inject
+
+private val logger = KotlinLogging.logger {}
+
+@Serializable
+@Validate
+data class PuzzlesQueryRequest(val query: String, val template: String, val model: String)
+
+data class PuzzlesQueryDto(
+    val query: String,
+    val promptTemplate: PromptTemplate,
+    val llmConfig: LLMConfig,
+)
+
+val puzzlesQueryValidation =
+    ValidationConfig(
+        validator =
+            Validator<PuzzlesQueryRequest> {
+                query.isNotEmpty()
+                val (isValidTemplate) = template.isNotEmpty()
+                if (isValidTemplate) {
+                    template.constrain { AvailablePromptTemplate[it] != null } otherwise
+                        {
+                            CustomConstraint.UnsupportedTemplate.code
+                        }
+                }
+                val (isValidModel) = model.isNotEmpty()
+                if (isValidModel) {
+                    val (isSupported) =
+                        model.constrain { SupportedModel.fromProviderName(it) != null } otherwise
+                            {
+                                CustomConstraint.UnsupportedModel.code
+                            }
+                    if (isSupported) {
+                        model.constrain {
+                            AvailableModels[SupportedModel.fromProviderName(it)!!] != null
+                        } otherwise { CustomConstraint.UnsupportedModel.code }
+                    }
+                }
+            },
+        transform = { request: PuzzlesQueryRequest ->
+            val promptTemplate = AvailablePromptTemplate[request.template]!!
+            val config = AvailableModels[SupportedModel.fromProviderName(request.model)!!]!!
+            PuzzlesQueryDto(request.query, promptTemplate, config)
+        },
+    )
+
+fun Route.postPuzzlesQuery(path: String) {
+    val databaseService: DatabaseService by inject()
+    post(path) {
+        val result = coroutineBinding {
+            val (query, promptTemplate, llmConfig) = validateRequest(puzzlesQueryValidation).bind()
+            val chatCompletion = LLMClient(llmConfig).call(promptTemplate, query).bind()
+            val sql = preprocess(chatCompletion)
+            val puzzles = databaseService.fetchPuzzles(sql).bind()
+            puzzles
+        }
+
+        result.fold(
+            failure = { err ->
+                when (err) {
+                    is Error -> {
+                        logger.error { err.type }
+                        call.handleSystemError(err)
+                    }
+
+                    is Fail -> call.handleClientError(err)
+                }
+            },
+            success = { puzzles -> call.respond(puzzles) },
+        )
+    }
+}
