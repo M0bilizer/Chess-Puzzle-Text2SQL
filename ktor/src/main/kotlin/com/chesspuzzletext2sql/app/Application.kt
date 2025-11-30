@@ -1,7 +1,11 @@
 package com.chesspuzzletext2sql.app
 
-import com.chesspuzzletext2sql.app.di.createAppModule
 import com.chesspuzzletext2sql.config.ApplicationConfigLoader
+import com.chesspuzzletext2sql.plugins.configureHTTP
+import com.chesspuzzletext2sql.plugins.configureKoin
+import com.chesspuzzletext2sql.plugins.configureMonitoring
+import com.chesspuzzletext2sql.plugins.configureRouting
+import com.chesspuzzletext2sql.plugins.configureSerialization
 import com.github.michaelbull.result.getOrElse
 import io.github.cdimascio.dotenv.dotenv
 import io.ktor.server.cio.CIO
@@ -21,7 +25,13 @@ fun main() {
             port = 8080,
             watchPaths = listOf("classes"),
             host = "0.0.0.0",
-            module = { createAppModule(appConfig) },
+            module = {
+                configureHTTP()
+                configureRouting()
+                configureMonitoring()
+                configureSerialization()
+                configureKoin(appConfig)
+            },
         )
         .start(wait = true)
 }
