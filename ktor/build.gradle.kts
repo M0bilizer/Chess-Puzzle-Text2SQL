@@ -4,7 +4,6 @@ plugins {
     alias(libs.plugins.kotlin.plugin.serialization)
     id("com.ncorti.ktfmt.gradle") version "0.22.0"
     id("io.kotest") version "6.0.0"
-    id("com.google.devtools.ksp") version "2.2.20-2.0.3"
 }
 
 group = "com.chesspuzzletext2sql"
@@ -56,6 +55,4 @@ dependencies {
     implementation("com.michael-bull.kotlin-result:kotlin-result:2.0.1")
     implementation("com.michael-bull.kotlin-result:kotlin-result-coroutines:2.0.1")
     implementation("com.charleskorn.kaml:kaml-jvm:0.85.0")
-    implementation("dev.nesk.akkurate:akkurate-core:0.11.0")
-    ksp("dev.nesk.akkurate:akkurate-ksp-plugin:0.11.0")
 }
