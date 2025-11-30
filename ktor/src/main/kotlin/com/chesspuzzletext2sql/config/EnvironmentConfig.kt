@@ -1,25 +1,63 @@
 package com.chesspuzzletext2sql.config
 
-import io.github.oshai.kotlinlogging.KotlinLogging
+import com.chesspuzzletext2sql.features.llm.models.LLMConfig
+import com.chesspuzzletext2sql.features.llm.models.SupportedModel
+import com.github.michaelbull.result.Result
+import com.github.michaelbull.result.runCatching
+import io.github.cdimascio.dotenv.Dotenv
 
-private val logger = KotlinLogging.logger {}
-
-data class EnvironmentConfig(val name: String = System.getProperty("ENV") ?: "Unknown") {
-    val database = DatabaseConfig()
-
+data class EnvironmentConfig(
+    val database: DatabaseConfig,
+    val llmConfigs: Map<SupportedModel, LLMConfig>,
+    val defaultConfig: SupportedModel,
+    val appEnvironment: String = "development",
+) {
     data class DatabaseConfig(
-        val url: String =
-            System.getProperty("DB_URL") ?: throw IllegalStateException("DB_URL is required"),
-        val driver: String =
-            System.getProperty("DB_DRIVER") ?: throw IllegalStateException("DB_DRIVER is required"),
-        val user: String =
-            System.getProperty("DB_USER") ?: throw IllegalStateException("DB_USER is required"),
-        val password: String =
-            System.getProperty("DB_PASSWORD")
-                ?: throw IllegalStateException("DB_PASSWORD is required"),
-    ) {
-        init {
-            logger.info { "Connected to $url as $user" }
-        }
+        val url: String,
+        val driver: String,
+        val user: String,
+        val password: String,
+    )
+}
+
+object EnvironmentConfigLoader {
+    fun load(dotenv: Dotenv): Result<EnvironmentConfig, Throwable> = runCatching {
+        val dbConfig =
+            EnvironmentConfig.DatabaseConfig(
+                url = dotenv["DATABASE_URL"] ?: "jdbc:h2:mem:test",
+                driver = dotenv["DATABASE_DRIVER"] ?: "org.h2.Driver",
+                user = dotenv["DATABASE_USER"] ?: "sa",
+                password = dotenv["DATABASE_PASSWORD"] ?: "",
+            )
+
+        val llmConfigs =
+            SupportedModel.entries
+                .mapNotNull { model ->
+                    val baseUrl = dotenv["LLM_${model.providerName.uppercase()}_BASE_URL"]
+                    val apiKey = dotenv["LLM_${model.providerName.uppercase()}_API_KEY"]
+                    val modelName = dotenv["LLM_${model.providerName.uppercase()}_MODEL_NAME"]
+
+                    if (baseUrl != null && apiKey != null && modelName != null) {
+                        model to LLMConfig(model.providerName, baseUrl, apiKey, modelName)
+                    } else {
+                        null
+                    }
+                }
+                .toMap()
+
+        val defaultModelName =
+            dotenv["DEFAULT_LLM"]
+                ?: throw IllegalArgumentException("DEFAULT_LLM environment variable must be set")
+
+        val defaultConfig =
+            llmConfigs.entries
+                .find { (_, llmConfig) -> llmConfig.provider.equals(defaultModelName, ignoreCase = true) }
+                ?.key
+                ?: throw IllegalArgumentException(
+                    "DEFAULT_LLM '$defaultModelName' does not match any configured model. " +
+                            "Available models: ${llmConfigs.values.map { it.modelName }}"
+                )
+
+        EnvironmentConfig(dbConfig, llmConfigs, defaultConfig)
     }
 }

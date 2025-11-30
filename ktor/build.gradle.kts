@@ -11,6 +11,8 @@ group = "com.chesspuzzletext2sql"
 
 version = "0.0.1"
 
+kotlin { compilerOptions { freeCompilerArgs.add("-Xcontext-parameters") } }
+
 application {
     mainClass = "com.chesspuzzletext2sql.ApplicationKt"
 
