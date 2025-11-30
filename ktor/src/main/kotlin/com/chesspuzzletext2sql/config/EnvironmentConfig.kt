@@ -51,11 +51,13 @@ object EnvironmentConfigLoader {
 
         val defaultConfig =
             llmConfigs.entries
-                .find { (_, llmConfig) -> llmConfig.provider.equals(defaultModelName, ignoreCase = true) }
+                .find { (_, llmConfig) ->
+                    llmConfig.provider.equals(defaultModelName, ignoreCase = true)
+                }
                 ?.key
                 ?: throw IllegalArgumentException(
                     "DEFAULT_LLM '$defaultModelName' does not match any configured model. " +
-                            "Available models: ${llmConfigs.values.map { it.modelName }}"
+                        "Available models: ${llmConfigs.values.map { it.provider.uppercase() }}"
                 )
 
         EnvironmentConfig(dbConfig, llmConfigs, defaultConfig)
