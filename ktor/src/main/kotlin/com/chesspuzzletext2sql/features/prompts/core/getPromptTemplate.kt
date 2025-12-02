@@ -6,7 +6,7 @@ import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
 
-fun getModelConfig(
+fun getPromptTemplate(
     template: String?,
     repository: TemplateRepository,
 ): Result<PromptTemplate, Throwable> =

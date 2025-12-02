@@ -10,6 +10,6 @@ import org.koin.logger.slf4jLogger
 fun Application.configureKoin(appConfig: ApplicationConfig) {
     install(Koin) {
         slf4jLogger()
-        createAppModule(appConfig)
+        modules(createAppModule(appConfig))
     }
 }

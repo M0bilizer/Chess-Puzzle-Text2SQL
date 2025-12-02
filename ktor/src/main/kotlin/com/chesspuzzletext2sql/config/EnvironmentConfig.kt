@@ -24,10 +24,10 @@ object EnvironmentConfigLoader {
     fun load(dotenv: Dotenv): Result<EnvironmentConfig, Throwable> = runCatching {
         val dbConfig =
             EnvironmentConfig.DatabaseConfig(
-                url = dotenv["DATABASE_URL"] ?: "jdbc:h2:mem:test",
-                driver = dotenv["DATABASE_DRIVER"] ?: "org.h2.Driver",
-                user = dotenv["DATABASE_USER"] ?: "sa",
-                password = dotenv["DATABASE_PASSWORD"] ?: "",
+                url = dotenv["DB_URL"] ?: "jdbc:h2:mem:test",
+                driver = dotenv["DB_DRIVER"] ?: "org.h2.Driver",
+                user = dotenv["DB_USER"] ?: "sa",
+                password = dotenv["DB_PASSWORD"] ?: "",
             )
 
         val llmConfigs =
@@ -38,7 +38,7 @@ object EnvironmentConfigLoader {
                     val modelName = dotenv["LLM_${model.providerName.uppercase()}_MODEL_NAME"]
 
                     if (baseUrl != null && apiKey != null && modelName != null) {
-                        model to LLMConfig(model.providerName, baseUrl, apiKey, modelName)
+                        model to LLMConfig(model.providerName, modelName, baseUrl, apiKey)
                     } else {
                         null
                     }

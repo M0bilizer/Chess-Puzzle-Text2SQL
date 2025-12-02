@@ -27,10 +27,10 @@ fun main() {
             host = "0.0.0.0",
             module = {
                 configureHTTP()
-                configureRouting()
-                configureMonitoring()
                 configureSerialization()
                 configureKoin(appConfig)
+                configureRouting()
+                configureMonitoring()
             },
         )
         .start(wait = true)

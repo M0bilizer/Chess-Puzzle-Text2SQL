@@ -1,4 +1,4 @@
-package com.chesspuzzletext2sql.helpers
+package com.chesspuzzletext2sql.features.puzzles.core
 
 import net.sf.jsqlparser.JSQLParserException
 import net.sf.jsqlparser.parser.CCJSqlParserUtil
@@ -48,15 +48,14 @@ fun preprocess(string: String, defaultLimit: Int = 100): String {
         string
             .substringAfter("```")
             .substringBefore("```")
-            .replace("\r", "")
-            .replace("\n", " ")
-            .replace(Regex("\\s+"), " ")
+            .replace("\r", "") // Remove carriage returns
+            .replace("\n", " ") // Replace newlines with single spaces
+            .replace(Regex("\\s+"), " ") // Collapse multiple spaces
             .substringAfter("sql")
             .substringAfter("SQL")
             .replace(":", "")
             .substringBefore(";")
             .replace("\"", "")
-            .replace("'", "")
             .trim()
 
     val limitRegex = Regex("LIMIT\\s+\\d+\\s*$", RegexOption.IGNORE_CASE)
