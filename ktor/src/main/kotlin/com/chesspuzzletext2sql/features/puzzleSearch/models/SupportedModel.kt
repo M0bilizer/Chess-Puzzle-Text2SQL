@@ -1,4 +1,4 @@
-package com.chesspuzzletext2sql.features.llm.models
+package com.chesspuzzletext2sql.features.puzzleSearch.models
 
 sealed class SupportedModel {
     abstract val providerName: String

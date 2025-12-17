@@ -1,7 +1,5 @@
-package com.chesspuzzletext2sql.features.puzzles.models
+package com.chesspuzzletext2sql.features.puzzleSearch.models
 
-import com.chesspuzzletext2sql.features.llm.models.LLMConfig
-import com.chesspuzzletext2sql.features.prompts.models.PromptTemplate
 import kotlinx.serialization.Serializable
 
 @Serializable

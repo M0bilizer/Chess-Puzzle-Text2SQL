@@ -1,12 +1,13 @@
-package com.chesspuzzletext2sql.features.puzzles.routes
+package com.chesspuzzletext2sql.features.puzzleSearch.routes
 
-import com.chesspuzzletext2sql.features.llm.core.callModel
-import com.chesspuzzletext2sql.features.llm.core.getModelConfig
-import com.chesspuzzletext2sql.features.llm.data.ModelRepository
-import com.chesspuzzletext2sql.features.prompts.core.getPromptTemplate
-import com.chesspuzzletext2sql.features.prompts.data.TemplateRepository
-import com.chesspuzzletext2sql.features.puzzles.core.preprocess
-import com.chesspuzzletext2sql.features.puzzles.data.PuzzleRepository
+import com.chesspuzzletext2sql.features.puzzleSearch.core.callModel
+import com.chesspuzzletext2sql.features.puzzleSearch.core.getModelConfig
+import com.chesspuzzletext2sql.features.puzzleSearch.core.getPromptTemplate
+import com.chesspuzzletext2sql.features.puzzleSearch.core.preprocessSqlStatement
+import com.chesspuzzletext2sql.features.puzzleSearch.core.selectPuzzles
+import com.chesspuzzletext2sql.features.puzzleSearch.data.ModelRepository
+import com.chesspuzzletext2sql.features.puzzleSearch.data.PuzzleRepository
+import com.chesspuzzletext2sql.features.puzzleSearch.data.TemplateRepository
 import com.github.michaelbull.result.coroutines.coroutineBinding
 import com.github.michaelbull.result.fold
 import io.ktor.client.HttpClient
@@ -34,12 +35,12 @@ fun Route.searchPuzzle(
             val promptTemplate = getPromptTemplate(template, templateRepository).bind()
             val modelConfig = getModelConfig(model, modelRepository).bind()
             val sql = client.callModel(modelConfig, promptTemplate(search)).bind()
-            val cleaned = preprocess(sql)
-            puzzleRepository.selectPuzzles(cleaned).bind()
+            val cleaned = preprocessSqlStatement(sql)
+            val puzzles = selectPuzzles(cleaned, puzzleRepository).bind()
         }
         result.fold(
             { puzzles -> call.respond(puzzles) },
-            { throwable -> call.respond(throwable.message ?: "oops") },
+            { error -> call.respond(error.status, error.response) },
         )
     }
 }

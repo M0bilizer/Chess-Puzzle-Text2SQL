@@ -15,9 +15,9 @@ import kotlin.system.exitProcess
 fun main() {
     val dotenv = dotenv()
     val appConfig =
-        ApplicationConfigLoader.load(dotenv).getOrElse { error ->
-            System.err.println("Failed to load application configuration: ${error.message}")
-            error.printStackTrace()
+        ApplicationConfigLoader.load(dotenv).getOrElse { errors ->
+            System.err.println("Failed to load application configuration:")
+            errors.forEach { error -> System.err.println("- $error") }
             exitProcess(1)
         }
     embeddedServer(

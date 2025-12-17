@@ -1,12 +1,10 @@
-package com.chesspuzzletext2sql.features.llm.data
+package com.chesspuzzletext2sql.features.puzzleSearch.data
 
-import com.chesspuzzletext2sql.features.llm.models.LLMConfig
-import com.chesspuzzletext2sql.features.llm.models.SupportedModel
-import com.github.michaelbull.result.Result
-import com.github.michaelbull.result.runCatching
+import com.chesspuzzletext2sql.features.puzzleSearch.models.LLMConfig
+import com.chesspuzzletext2sql.features.puzzleSearch.models.SupportedModel
 
 interface ModelRepository {
-    fun getConfig(model: SupportedModel): Result<LLMConfig, Throwable>
+    fun getConfig(model: SupportedModel): LLMConfig?
 
     fun getDefault(): LLMConfig
 
@@ -23,9 +21,7 @@ class ModelRepositoryImp(
         }
     }
 
-    override fun getConfig(model: SupportedModel): Result<LLMConfig, Throwable> = runCatching {
-        modelConfigs[model] ?: throw NoSuchElementException("Model '$model' not configured")
-    }
+    override fun getConfig(model: SupportedModel) = modelConfigs[model]
 
     override fun getDefault(): LLMConfig = modelConfigs[defaultModel]!!
 

@@ -1,4 +1,4 @@
-package com.chesspuzzletext2sql.features.puzzles.data
+package com.chesspuzzletext2sql.features.puzzleSearch.data
 
 import org.jetbrains.exposed.sql.Table
 

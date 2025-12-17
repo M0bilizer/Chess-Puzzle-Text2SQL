@@ -1,4 +1,4 @@
-package com.chesspuzzletext2sql.features.llm.models
+package com.chesspuzzletext2sql.features.puzzleSearch.models
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

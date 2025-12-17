@@ -1,9 +1,9 @@
 package com.chesspuzzletext2sql.plugins
 
-import com.chesspuzzletext2sql.features.llm.data.ModelRepository
-import com.chesspuzzletext2sql.features.prompts.data.TemplateRepository
-import com.chesspuzzletext2sql.features.puzzles.data.PuzzleRepository
-import com.chesspuzzletext2sql.features.puzzles.routes.searchPuzzle
+import com.chesspuzzletext2sql.features.puzzleSearch.data.ModelRepository
+import com.chesspuzzletext2sql.features.puzzleSearch.data.PuzzleRepository
+import com.chesspuzzletext2sql.features.puzzleSearch.data.TemplateRepository
+import com.chesspuzzletext2sql.features.puzzleSearch.routes.searchPuzzle
 import io.ktor.client.HttpClient
 import io.ktor.server.application.Application
 import io.ktor.server.response.respondText

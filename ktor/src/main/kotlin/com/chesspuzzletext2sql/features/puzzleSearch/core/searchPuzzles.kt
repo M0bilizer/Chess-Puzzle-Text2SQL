@@ -1,10 +1,37 @@
-package com.chesspuzzletext2sql.features.puzzles.core
+package com.chesspuzzletext2sql.features.puzzleSearch.core
 
+import com.chesspuzzletext2sql.errors.ApplicationError
+import com.chesspuzzletext2sql.errors.DatabaseConnectionError
+import com.chesspuzzletext2sql.errors.SqlGenerationError
+import com.chesspuzzletext2sql.errors.UnknownError
+import com.chesspuzzletext2sql.features.puzzleSearch.data.PuzzleRepository
+import com.chesspuzzletext2sql.features.puzzleSearch.models.Puzzle
+import com.github.michaelbull.result.Err
+import com.github.michaelbull.result.Ok
+import com.github.michaelbull.result.Result
+import java.net.ConnectException
+import java.sql.SQLException
 import net.sf.jsqlparser.JSQLParserException
 import net.sf.jsqlparser.parser.CCJSqlParserUtil
 import net.sf.jsqlparser.statement.select.Select
 
-fun isValidSql(sql: String): Boolean {
+fun selectPuzzles(
+    sql: String,
+    repository: PuzzleRepository,
+): Result<List<Puzzle>, ApplicationError> {
+    if (!isValidSql(sql) || !isAllowed(sql)) return Err(SqlGenerationError)
+    return try {
+        Ok(repository.selectPuzzles(sql))
+    } catch (e: Exception) {
+        when (e) {
+            is SQLException -> Err(SqlGenerationError)
+            is ConnectException -> Err(DatabaseConnectionError)
+            else -> Err(UnknownError("Something when wrong when selecting for puzzles"))
+        }
+    }
+}
+
+private fun isValidSql(sql: String): Boolean {
     if (sql.isBlank()) return false
     return try {
         CCJSqlParserUtil.parse(sql)
@@ -14,7 +41,7 @@ fun isValidSql(sql: String): Boolean {
     }
 }
 
-fun isAllowed(sql: String): Boolean {
+private fun isAllowed(sql: String): Boolean {
     if (sql.isBlank()) return false
     if (
         !sql.trim().startsWith("SELECT", ignoreCase = true) &&
@@ -41,27 +68,4 @@ fun isAllowed(sql: String): Boolean {
     } catch (e: JSQLParserException) {
         false
     }
-}
-
-fun preprocess(string: String, defaultLimit: Int = 100): String {
-    var sql =
-        string
-            .substringAfter("```")
-            .substringBefore("```")
-            .replace("\r", "") // Remove carriage returns
-            .replace("\n", " ") // Replace newlines with single spaces
-            .replace(Regex("\\s+"), " ") // Collapse multiple spaces
-            .substringAfter("sql")
-            .substringAfter("SQL")
-            .replace(":", "")
-            .substringBefore(";")
-            .replace("\"", "")
-            .trim()
-
-    val limitRegex = Regex("LIMIT\\s+\\d+\\s*$", RegexOption.IGNORE_CASE)
-
-    if (!limitRegex.containsMatchIn(sql) && sql.isNotBlank()) {
-        sql += " LIMIT $defaultLimit"
-    }
-    return sql
 }

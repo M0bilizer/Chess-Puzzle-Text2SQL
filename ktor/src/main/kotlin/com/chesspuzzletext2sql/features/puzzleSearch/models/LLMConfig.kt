@@ -1,4 +1,4 @@
-package com.chesspuzzletext2sql.features.llm.models
+package com.chesspuzzletext2sql.features.puzzleSearch.models
 
 data class LLMConfig(
     val provider: String,

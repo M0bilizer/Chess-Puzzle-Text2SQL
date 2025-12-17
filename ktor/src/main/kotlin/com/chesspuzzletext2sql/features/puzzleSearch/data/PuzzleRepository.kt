@@ -1,8 +1,6 @@
-package com.chesspuzzletext2sql.features.puzzles.data
+package com.chesspuzzletext2sql.features.puzzleSearch.data
 
-import com.chesspuzzletext2sql.features.puzzles.models.Puzzle
-import com.github.michaelbull.result.Result
-import com.github.michaelbull.result.runCatching
+import com.chesspuzzletext2sql.features.puzzleSearch.models.Puzzle
 import java.sql.Connection
 import java.sql.ResultSet
 import org.jetbrains.exposed.sql.Database
@@ -11,14 +9,14 @@ import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 
 interface PuzzleRepository {
-    fun getPuzzles(limit: Int): Result<List<Puzzle>, Throwable>
+    fun getPuzzles(limit: Int): List<Puzzle>
 
-    fun selectPuzzles(query: String): Result<List<Puzzle>, Throwable>
+    fun selectPuzzles(query: String): List<Puzzle>
 }
 
 class PuzzleRepositoryImp(private val database: Database) : PuzzleRepository {
 
-    override fun getPuzzles(limit: Int) = runCatching {
+    override fun getPuzzles(limit: Int) =
         transaction(
             db = database,
             readOnly = true,
@@ -26,9 +24,8 @@ class PuzzleRepositoryImp(private val database: Database) : PuzzleRepository {
         ) {
             PuzzleTable.selectAll().limit(limit).map { it.toPuzzle() }
         }
-    }
 
-    override fun selectPuzzles(query: String): Result<List<Puzzle>, Throwable> = runCatching {
+    override fun selectPuzzles(query: String) =
         transaction(
             db = database,
             readOnly = true,
@@ -38,7 +35,6 @@ class PuzzleRepositoryImp(private val database: Database) : PuzzleRepository {
                 generateSequence { if (result.next()) result.toPuzzle() else null }.toList()
             } ?: emptyList()
         }
-    }
 
     private fun ResultRow.toPuzzle(): Puzzle {
         return Puzzle(
