@@ -63,6 +63,15 @@ data object LlmServiceUnavailable : ApplicationError {
     override val message = "The LLM service is unavailable"
 }
 
+data object DangerousSqlError : ApplicationError {
+    override val status: HttpStatusCode = HttpStatusCode.UnprocessableEntity
+    override val code: String = "DANGEROUS_SQL_ERROR"
+    override val message: String = "SQL Statement is dangerous"
+
+    override val response: Map<String, String>
+        get() = mapOf("code" to code, "message" to "Cannot process search")
+}
+
 data object SqlGenerationError : ApplicationError {
     override val status: HttpStatusCode = HttpStatusCode.UnprocessableEntity
     override val code: String = "SQL_GENERATION_FAILED"
@@ -78,5 +87,5 @@ data object DatabaseConnectionError : ApplicationError {
     override val message: String = "Failed to connect to database"
 
     override val response: Map<String, String>
-        get() = mapOf("code" to SqlGenerationError.code, "message" to "The service is down")
+        get() = mapOf("code" to code, "message" to "The service is down")
 }

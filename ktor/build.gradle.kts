@@ -55,4 +55,5 @@ dependencies {
     implementation("com.michael-bull.kotlin-result:kotlin-result:2.0.1")
     implementation("com.michael-bull.kotlin-result:kotlin-result-coroutines:2.0.1")
     implementation("com.charleskorn.kaml:kaml-jvm:0.85.0")
+    implementation("io.github.oshai:kotlin-logging-jvm:7.0.3")
 }

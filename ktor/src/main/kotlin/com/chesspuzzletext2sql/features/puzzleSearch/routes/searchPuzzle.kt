@@ -10,6 +10,8 @@ import com.chesspuzzletext2sql.features.puzzleSearch.data.PuzzleRepository
 import com.chesspuzzletext2sql.features.puzzleSearch.data.TemplateRepository
 import com.github.michaelbull.result.coroutines.coroutineBinding
 import com.github.michaelbull.result.fold
+import com.github.michaelbull.result.onFailure
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.client.HttpClient
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.response.respond
@@ -22,6 +24,8 @@ fun Route.searchPuzzle(
     puzzleRepository: PuzzleRepository,
     client: HttpClient,
 ) {
+    val logger = KotlinLogging.logger {}
+
     get("/api/puzzles") {
         val search = call.request.queryParameters["search"]
         if (search == null) {
@@ -32,11 +36,37 @@ fun Route.searchPuzzle(
         val model = call.request.queryParameters["model"]
 
         val result = coroutineBinding {
-            val promptTemplate = getPromptTemplate(template, templateRepository).bind()
-            val modelConfig = getModelConfig(model, modelRepository).bind()
-            val sql = client.callModel(modelConfig, promptTemplate(search)).bind()
+            val promptTemplate =
+                getPromptTemplate(template, templateRepository)
+                    .onFailure { err ->
+                        logger.error { "Failed to get prompt template '$template'. Result: $err" }
+                    }
+                    .bind()
+            val modelConfig =
+                getModelConfig(model, modelRepository)
+                    .onFailure { err ->
+                        logger.error { "Failed to get model config '$model'. Result: $err" }
+                    }
+                    .bind()
+            val sql =
+                client
+                    .callModel(modelConfig, promptTemplate(search))
+                    .onFailure { err ->
+                        logger.error {
+                            "Failed to call model '$modelConfig' with '$search'. Result: $err"
+                        }
+                    }
+                    .bind()
             val cleaned = preprocessSqlStatement(sql)
-            val puzzles = selectPuzzles(cleaned, puzzleRepository).bind()
+            val puzzles =
+                selectPuzzles(cleaned, puzzleRepository)
+                    .onFailure { err ->
+                        logger.error {
+                            "Failed to select puzzles from database with '$cleaned'. Result: $err"
+                        }
+                    }
+                    .bind()
+            puzzles
         }
         result.fold(
             { puzzles -> call.respond(puzzles) },
