@@ -1,1 +1,0 @@
-{{text0}} {{sql0}} {{text1}} {{sql1}} {{text2}} {{sql2}} {{prompt}}
