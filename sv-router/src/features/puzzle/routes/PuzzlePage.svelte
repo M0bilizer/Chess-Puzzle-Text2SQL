@@ -16,7 +16,12 @@
 </script>
 
 <div class="container">
-	<Puzzle bind:this={p} {puzzle} />
+	<Puzzle
+		bind:this={p}
+		{puzzle}
+		onCorrectMove={() => console.log('ok')}
+		onWrongMove={() => console.log('oops')}
+	/>
 	<button onclick={() => p.reset()}>reset</button>
 	<button onclick={() => p.back()}>back</button>
 	<button onclick={() => p.forward()}>forward</button>
