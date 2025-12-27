@@ -3,26 +3,87 @@
 	import { onMount } from 'svelte';
 	import { Chess } from 'svelte-chess';
 	import type { Game } from '../types/puzzle';
-	import { getFirstMoveColor } from '../utils/getOrientation';
+	import { playSound } from '../utils/playSound';
+	import { getFirstMoveColor } from '../utils/getFirstMoveColor';
 
 	interface Props {
 		puzzle: Game;
+		onStart?: () => void;
+		onCorrectMove?: (move: Move) => void;
+		onWrongMove?: (move: Move) => void;
+		onEnd?: () => void;
 	}
-	let { puzzle }: Props = $props();
+	let { puzzle, onStart, onCorrectMove, onWrongMove, onEnd }: Props = $props();
 
 	let boardElement: HTMLElement;
 	let chess: Chess;
 	let isPlayerMove = $state(false);
 	let index = $state(0);
+	let isProgrammaticMove = $state(false);
 
 	onMount(() => {
 		chess.load(puzzle.fen);
 	});
 
+	export async function back() {
+		isProgrammaticMove = true;
+		if (index == -1) return;
+		if (isPlayerMove) {
+			chess.undo();
+			index -= 1;
+			isPlayerMove = false;
+		} else {
+			chess.undo();
+			isPlayerMove = true;
+		}
+		isProgrammaticMove = false;
+	}
+
+	export async function reset() {
+		isProgrammaticMove = true;
+		chess.load(puzzle.fen);
+		isPlayerMove = false;
+		index = -1;
+		isProgrammaticMove = false;
+	}
+
+	export async function forward() {
+		isProgrammaticMove = true;
+		if (isPlayerMove) {
+			chess.move(puzzle.moves[index].player);
+			isPlayerMove = false;
+		} else {
+			if (index >= puzzle.moves.length - 1) {
+				return;
+			}
+			index += 1;
+			chess.move(puzzle.moves[index].computer);
+			isPlayerMove = true;
+		}
+		isProgrammaticMove = false;
+	}
+
+	export async function end() {
+		isProgrammaticMove = true;
+		chess.load(puzzle.fen);
+		puzzle.moves.forEach((it) => {
+			chess.move(it.computer);
+			chess.move(it.player);
+		});
+		index = puzzle.moves.length - 1;
+		isPlayerMove = false;
+		isProgrammaticMove = false;
+	}
+
 	async function start() {
-		await waitForAnimations();
-		chess.move(puzzle.moves[index].computer);
-		isPlayerMove = true;
+		onStart?.();
+		index = -1;
+		await new Promise((resolve) => setTimeout(resolve, 500));
+		setTimeout(() => {
+			index += 1;
+			chess.move(puzzle.moves[index].computer);
+			isPlayerMove = true;
+		}, 250);
 	}
 
 	function waitForAnimations() {
@@ -40,19 +101,33 @@
 	}
 
 	async function moveListener(event: CustomEvent<Move>) {
-		if (!isPlayerMove) {
-			return;
-		}
 		const { detail } = event;
-		if (detail.lan == puzzle.moves[index].player) {
-			index += 1;
-			isPlayerMove = false;
-			await waitForAnimations();
-			chess.move(puzzle.moves[index].computer);
-			isPlayerMove = true;
+		playSound(!!detail.captured);
+		if (!isPlayerMove || isProgrammaticMove) {
+			return;
 		} else {
-			await waitForAnimations();
-			chess.undo();
+			if (detail.lan == puzzle.moves[index].player) {
+				onCorrectMove?.(detail);
+				index += 1;
+
+				if (index >= puzzle.moves.length) {
+					onEnd?.();
+					return;
+				}
+
+				isPlayerMove = false;
+				await waitForAnimations();
+				setTimeout(() => {
+					chess.move(puzzle.moves[index].computer);
+					isPlayerMove = true;
+				}, 250);
+			} else {
+				onWrongMove?.(detail);
+				await waitForAnimations();
+				setTimeout(() => {
+					chess.undo();
+				}, 100);
+			}
 		}
 	}
 </script>

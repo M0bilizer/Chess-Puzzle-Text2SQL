@@ -11,6 +11,14 @@
 			{ computer: 'b4c3', player: 'c6e5' }
 		]
 	};
+
+	let p: Puzzle;
 </script>
 
-<Puzzle {puzzle} />
+<div class="container">
+	<Puzzle bind:this={p} {puzzle} />
+	<button onclick={() => p.reset()}>reset</button>
+	<button onclick={() => p.back()}>back</button>
+	<button onclick={() => p.forward()}>forward</button>
+	<button onclick={() => p.end()}>end</button>
+</div>
