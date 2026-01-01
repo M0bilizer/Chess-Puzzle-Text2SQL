@@ -161,7 +161,7 @@
 	let boardElement: HTMLElement;
 	let chess: Chess;
 
-	let puzzleState = $state<PuzzleState | null>(null);
+	let puzzleState: PuzzleState;
 
 	onMount(() => {
 		puzzleState = new PuzzleState(chess, puzzle, boardElement, {
@@ -172,33 +172,30 @@
 		});
 	});
 
-	// Export methods for parent component
 	export async function back() {
-		await puzzleState?.back();
+		await puzzleState.back();
 	}
 
 	export async function reset() {
-		puzzleState?.reset();
+		puzzleState.reset();
 	}
 
 	export async function forward() {
-		await puzzleState?.forward();
+		await puzzleState.forward();
 	}
 
 	export async function end() {
-		await puzzleState?.end();
+		await puzzleState.end();
 	}
 
-	// Move listener
 	async function moveListener(event: CustomEvent<Move>) {
 		const { detail } = event;
 		playSound(!!detail.captured);
-		await puzzleState?.handlePlayerMove(detail);
+		await puzzleState.handlePlayerMove(detail);
 	}
 
-	// Start the puzzle when ready
 	function start() {
-		puzzleState?.start();
+		puzzleState.start();
 	}
 </script>
 
