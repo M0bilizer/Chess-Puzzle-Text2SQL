@@ -8,7 +8,8 @@
 
 	const DEFAULT_SETTINGS = {
 		computerMoveDelay: 250,
-		flipOrientation: false
+		flipOrientation: false,
+		muted: false
 	};
 
 	interface Props {
@@ -210,7 +211,7 @@
 		};
 
 		async handleMove(move: Move): Promise<boolean> {
-			if (this.shouldPlaySound) {
+			if (this.shouldPlaySound && !settings.muted) {
 				playSound(!!move.captured);
 			}
 			if (!this.isPlayerTurn || this.isProgrammaticMove) {
