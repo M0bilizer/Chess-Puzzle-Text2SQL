@@ -21,7 +21,9 @@
 		private boardElement: HTMLElement;
 
 		private _positionIndex: number = $state(-1);
+		private _jumpingIndex: number | null = $state(null);
 		private isProgrammaticMove: boolean = $state(false);
+		private shouldPlaySound: boolean = $state(true);
 
 		private onStart?: () => void;
 		private onCorrectMove?: (move: Move) => void;
@@ -46,14 +48,13 @@
 			this.onCorrectMove = callbacks.onCorrectMove;
 			this.onWrongMove = callbacks.onWrongMove;
 			this.onEnd = callbacks.onEnd;
-
-			this.reset();
 		}
 
 		public isPlayerTurn = $derived.by(() => this._positionIndex % 2 === 0);
 		public isComplete = $derived.by(() => this._positionIndex >= this.puzzle.moves.length * 2 - 1);
 		public canGoBack = $derived.by(() => this._positionIndex > -1);
 		public canGoForward = $derived.by(() => this._positionIndex < this.puzzle.moves.length * 2 - 1);
+		public isInJump = $derived.by(() => this._jumpingIndex != null);
 
 		private waitForAnimations(): Promise<void> {
 			return new Promise<void>((resolve) => {
@@ -69,92 +70,130 @@
 			});
 		}
 
-		private getExpectedMoveAtPosition(posIndex: number): string | null {
-			if (posIndex < 0 || posIndex >= this.puzzle.moves.length * 2) {
-				return null;
-			}
-			const pairIndex = Math.floor(posIndex / 2);
-			const isComputerMove = posIndex % 2 === 0;
-			const movePair = this.puzzle.moves[pairIndex];
-			if (!movePair) return null;
-			return isComputerMove ? movePair.computer : movePair.player;
-		}
+		game = {
+			start: async (): Promise<void> => {
+				this.onStart?.();
+				this.chess.load(this.puzzle.fen);
+				this._positionIndex = -1;
+				await new Promise((resolve) => setTimeout(resolve, 500));
+				await this.game.playComputerMove();
+			},
 
-		reset(): void {
-			this.isProgrammaticMove = true;
-			this.chess.load(this.puzzle.fen);
-			this._positionIndex = -1;
-			this.isProgrammaticMove = false;
-		}
-
-		async start(): Promise<void> {
-			this.onStart?.();
-			this.reset();
-			await new Promise((resolve) => setTimeout(resolve, 500));
-			await this.forward();
-		}
-
-		async back(): Promise<void> {
-			if (!this.canGoBack) return;
-
-			this.isProgrammaticMove = true;
-			this.chess.undo();
-			this._positionIndex--;
-			this.isProgrammaticMove = false;
-		}
-
-		async forward(): Promise<void> {
-			if (!this.canGoForward) return;
-
-			const nextMove = this.getExpectedMoveAtPosition(this._positionIndex + 1);
-			if (!nextMove) return;
-
-			this.isProgrammaticMove = true;
-			this.chess.move(nextMove);
-			this._positionIndex++;
-			this.isProgrammaticMove = false;
-		}
-
-		async end(): Promise<void> {
-			this.isProgrammaticMove = true;
-			this.chess.load(this.puzzle.fen);
-
-			for (let i = 0; i < this.puzzle.moves.length * 2; i++) {
-				const move = this.getExpectedMoveAtPosition(i);
-				if (move) {
-					this.chess.move(move);
-				}
-			}
-
-			this._positionIndex = this.puzzle.moves.length * 2 - 1;
-			this.isProgrammaticMove = false;
-		}
-
-		async handlePlayerMove(move: Move): Promise<boolean> {
-			if (!this.isPlayerTurn || this.isProgrammaticMove) {
-				return false;
-			}
-			const expectedMove = this.getExpectedMoveAtPosition(this._positionIndex + 1);
-			if (!expectedMove || move.lan !== expectedMove) {
+			handleWrongMove: async (move: Move): Promise<void> => {
 				this.onWrongMove?.(move);
 				await this.waitForAnimations();
 				setTimeout(() => {
 					this.chess.undo();
 				}, 100);
+			},
+
+			handleCorrectMove: async (move: Move): Promise<void> => {
+				this.onCorrectMove?.(move);
+				this._positionIndex++;
+
+				if (this.isComplete) {
+					this.onEnd?.();
+					return;
+				}
+
+				await this.waitForAnimations();
+				setTimeout(async () => {
+					await this.game.playComputerMove();
+				});
+			},
+
+			getExpectedMoveAtPosition: (posIndex: number): string | null => {
+				if (posIndex < 0 || posIndex >= this.puzzle.moves.length * 2) {
+					return null;
+				}
+				const pairIndex = Math.floor(posIndex / 2);
+				const isComputerMove = posIndex % 2 === 0;
+				const movePair = this.puzzle.moves[pairIndex];
+				if (!movePair) return null;
+				return isComputerMove ? movePair.computer : movePair.player;
+			},
+
+			playComputerMove: async (): Promise<void> => {
+				if (!this.canGoForward) return;
+
+				const nextMove = this.game.getExpectedMoveAtPosition(this._positionIndex + 1);
+				if (!nextMove) return;
+
+				this.isProgrammaticMove = true;
+				this.chess.move(nextMove);
+				this._positionIndex++;
+				this.isProgrammaticMove = false;
+			}
+		};
+
+		jump = {
+			config: {
+				init: () => {
+					this._jumpingIndex = this._positionIndex;
+				},
+
+				teardown: () => {
+					this._jumpingIndex = null;
+				}
+			},
+
+			first: () => {
+				if (!this.isInJump) this.jump.config.init();
+				this.isProgrammaticMove = true;
+				this.chess.load(this.puzzle.fen);
+				this._jumpingIndex = -1;
+				this.isProgrammaticMove = false;
+			},
+
+			back: () => {
+				if (!this.isInJump) this.jump.config.init();
+				if (this._jumpingIndex == -1) return;
+				this.isProgrammaticMove = true;
+				this.chess.undo();
+				this._jumpingIndex!--;
+				this.isProgrammaticMove = false;
+			},
+
+			forward: () => {
+				if (!this.isInJump) return;
+				this.isProgrammaticMove = true;
+				const move = this.game.getExpectedMoveAtPosition(this._jumpingIndex! + 1)!;
+				this.chess.move(move);
+				this._jumpingIndex!++;
+				this.isProgrammaticMove = false;
+				if (this._jumpingIndex == this._positionIndex) this.jump.config.teardown();
+			},
+			last: () => {
+				if (!this.isInJump) return;
+				this.isProgrammaticMove = true;
+				this.shouldPlaySound = false;
+				this.chess.load(this.puzzle.fen);
+				for (let i = -1; i < this._positionIndex - 1; i++) {
+					const move = this.game.getExpectedMoveAtPosition(i + 1)!;
+					this.chess.move(move);
+				}
+				this.shouldPlaySound = true;
+				const move = this.game.getExpectedMoveAtPosition(this._positionIndex);
+				this.chess.move(move!);
+				this.isProgrammaticMove = false;
+				this.jump.config.teardown();
+			}
+		};
+
+		async handleMove(move: Move): Promise<boolean> {
+			if (this.shouldPlaySound) playSound(!!move.captured);
+
+			if (!this.isPlayerTurn || this.isProgrammaticMove) {
 				return false;
 			}
-
-			this.onCorrectMove?.(move);
-			this._positionIndex++;
-			if (this.isComplete) {
-				this.onEnd?.();
+			const expectedMove = this.game.getExpectedMoveAtPosition(this._positionIndex + 1);
+			if (!expectedMove || move.lan !== expectedMove) {
+				await this.game.handleWrongMove(move);
+				return false;
+			} else {
+				await this.game.handleCorrectMove(move);
 				return true;
 			}
-			await this.waitForAnimations();
-			setTimeout(async () => {
-				await this.forward();
-			}, 100);
-			return true;
 		}
 	}
 
@@ -173,29 +212,28 @@
 	});
 
 	export async function back() {
-		await puzzleState.back();
+		puzzleState.jump.back();
 	}
 
 	export async function reset() {
-		puzzleState.reset();
+		puzzleState.jump.first();
 	}
 
 	export async function forward() {
-		await puzzleState.forward();
+		puzzleState.jump.forward();
 	}
 
 	export async function end() {
-		await puzzleState.end();
+		puzzleState.jump.last();
 	}
 
 	async function moveListener(event: CustomEvent<Move>) {
 		const { detail } = event;
-		playSound(!!detail.captured);
-		await puzzleState.handlePlayerMove(detail);
+		await puzzleState.handleMove(detail);
 	}
 
 	function start() {
-		puzzleState.start();
+		puzzleState.game.start();
 	}
 </script>
 
