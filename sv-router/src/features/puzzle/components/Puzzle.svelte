@@ -4,16 +4,27 @@
 	import { Chess } from 'svelte-chess';
 	import type { Game } from '../types/puzzle';
 	import { playSound } from '../utils/playSound';
-	import { getFirstMoveColor } from '../utils/getFirstMoveColor';
+	import { getPlayerColor } from '../utils/getPlayerColor';
 
 	interface Props {
 		puzzle: Game;
+		settings?: {
+			computerMoveDelay: number;
+			flipOrientation: boolean;
+		};
 		onStart?: () => void;
 		onCorrectMove?: (move: Move) => void;
 		onWrongMove?: (move: Move) => void;
 		onEnd?: () => void;
 	}
-	let { puzzle, onStart, onCorrectMove, onWrongMove, onEnd }: Props = $props();
+	let {
+		puzzle,
+		settings = { computerMoveDelay: 170, flipOrientation: false },
+		onStart,
+		onCorrectMove,
+		onWrongMove,
+		onEnd
+	}: Props = $props();
 
 	class PuzzleState {
 		private chess: Chess;
@@ -58,15 +69,24 @@
 
 		private waitForAnimations(): Promise<void> {
 			return new Promise<void>((resolve) => {
-				const checkAnimations = () => {
-					const hasAnimation = this.boardElement.querySelector('.anim');
-					if (!hasAnimation) {
+				const hasAnimation = this.boardElement.querySelector('.anim');
+				if (!hasAnimation) {
+					resolve();
+					return;
+				}
+				const observer = new MutationObserver(() => {
+					const currentAnimations = this.boardElement.querySelector('.anim');
+					if (!currentAnimations) {
+						observer.disconnect();
 						resolve();
-					} else {
-						requestAnimationFrame(checkAnimations);
 					}
-				};
-				requestAnimationFrame(checkAnimations);
+				});
+				observer.observe(this.boardElement, {
+					childList: true,
+					subtree: true,
+					attributes: true,
+					attributeFilter: ['class']
+				});
 			});
 		}
 
@@ -119,8 +139,10 @@
 				const nextMove = this.game.getExpectedMoveAtPosition(this._positionIndex + 1);
 				if (!nextMove) return;
 
+				await new Promise((resolve) => setTimeout(resolve, settings.computerMoveDelay));
 				this.isProgrammaticMove = true;
 				this.chess.move(nextMove);
+				await this.waitForAnimations();
 				this._positionIndex++;
 				this.isProgrammaticMove = false;
 			}
@@ -181,8 +203,9 @@
 		};
 
 		async handleMove(move: Move): Promise<boolean> {
-			if (this.shouldPlaySound) playSound(!!move.captured);
-
+			if (this.shouldPlaySound) {
+				playSound(!!move.captured);
+			}
 			if (!this.isPlayerTurn || this.isProgrammaticMove) {
 				return false;
 			}
@@ -241,7 +264,7 @@
 	<Chess
 		bind:this={chess}
 		on:ready={start}
-		orientation={getFirstMoveColor(puzzle.fen)}
+		orientation={getPlayerColor(puzzle.fen, settings.flipOrientation)}
 		on:move={moveListener}
 	/>
 </div>
