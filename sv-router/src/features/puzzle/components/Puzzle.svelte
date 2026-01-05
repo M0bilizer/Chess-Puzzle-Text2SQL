@@ -6,12 +6,14 @@
 	import { playSound } from '../utils/playSound';
 	import { getPlayerColor } from '../utils/getPlayerColor';
 
+	const DEFAULT_SETTINGS = {
+		computerMoveDelay: 250,
+		flipOrientation: false
+	};
+
 	interface Props {
 		puzzle: Game;
-		settings?: {
-			computerMoveDelay: number;
-			flipOrientation: boolean;
-		};
+		settings?: Partial<typeof DEFAULT_SETTINGS>;
 		onStart?: () => void;
 		onCorrectMove?: (move: Move) => void;
 		onWrongMove?: (move: Move) => void;
@@ -19,12 +21,17 @@
 	}
 	let {
 		puzzle,
-		settings = { computerMoveDelay: 170, flipOrientation: false },
+		settings: propSettings,
 		onStart,
 		onCorrectMove,
 		onWrongMove,
 		onEnd
 	}: Props = $props();
+
+	const settings = $derived({
+		...DEFAULT_SETTINGS,
+		...propSettings
+	});
 
 	class PuzzleState {
 		private chess: Chess;

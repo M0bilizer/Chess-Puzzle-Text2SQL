@@ -11,6 +11,7 @@
 	};
 
 	let p: Puzzle;
+	let c: Puzzle;
 </script>
 
 <div class="container">
@@ -24,4 +25,14 @@
 	<button onclick={() => p.back()}>back</button>
 	<button onclick={() => p.forward()}>forward</button>
 	<button onclick={() => p.end()}>end</button>
+	<Puzzle
+		bind:this={c}
+		settings={{
+			computerMoveDelay: 500,
+			flipOrientation: true
+		}}
+		{puzzle}
+		onCorrectMove={() => console.log('ok')}
+		onWrongMove={() => console.log('oops')}
+	/>
 </div>
