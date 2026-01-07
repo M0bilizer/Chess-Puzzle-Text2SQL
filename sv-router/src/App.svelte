@@ -5,5 +5,6 @@
 
 <a href={p('/')}>Home</a>
 <a href={p('/puzzle')}>Puzzle</a>
+<a href={p('/design')}>Design</a>
 
 <Router />
