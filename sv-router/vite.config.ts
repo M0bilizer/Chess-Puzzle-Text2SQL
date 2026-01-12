@@ -1,10 +1,10 @@
 import { defineConfig } from 'vitest/config';
 import { playwright } from '@vitest/browser-playwright';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
-import UnoCSS from 'unocss/vite'
+import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
-	plugins: [UnoCSS(), svelte()],
+	plugins: [tailwindcss(), svelte()],
 	test: {
 		expect: { requireAssertions: true },
 		projects: [

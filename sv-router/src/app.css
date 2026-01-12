@@ -1,11 +1,15 @@
 @import '@fontsource/average/400.css';
 @import '@fontsource/average-sans/400.css';
+@import 'tailwindcss';
 
 :root {
-  --un-font-sans: 'Average Sans', sans-serif;
-  --un-font-serif: 'Average', serif;
+	--un-font-sans: 'Average Sans', sans-serif;
+	--un-font-serif: 'Average', serif;
 }
 
 body {
-  font-family: 'Average Sans', sans-serif;
+	font-family: 'Average Sans', sans-serif;
 }
+@import '@skeletonlabs/skeleton';
+@import '@skeletonlabs/skeleton-svelte';
+@import '@skeletonlabs/skeleton/themes/pine';
