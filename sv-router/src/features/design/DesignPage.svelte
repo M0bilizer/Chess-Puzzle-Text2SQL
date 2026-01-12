@@ -3,6 +3,7 @@
 	import Color from './components/Color.svelte'; // Import your Color component
 	import { Accordion } from '@skeletonlabs/skeleton-svelte';
 	import { slide } from 'svelte/transition';
+	import { quintOut } from 'svelte/easing';
 
 	const items = [
 		{
@@ -19,7 +20,7 @@
 </script>
 
 <Accordion collapsible>
-	{#each items as item, i (item.id)}
+	{#each items as item, i (item)}
 		{#if i !== 0}
 			<hr class="hr" />
 		{/if}
@@ -31,9 +32,13 @@
 				</Accordion.ItemTrigger>
 			</h3>
 			<Accordion.ItemContent>
-				<div transition:slide={{ duration: 150 }}>
-					<svelte:component this={item.component} />
-				</div>
+				{#snippet element(attributes)}
+					{#if !attributes.hidden}
+						<div {...attributes} transition:slide={{ duration: 150, easing: quintOut }}>
+							<svelte:component this={item.component} />
+						</div>
+					{/if}
+				{/snippet}
 			</Accordion.ItemContent>
 		</Accordion.Item>
 	{/each}
