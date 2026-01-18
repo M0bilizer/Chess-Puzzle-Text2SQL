@@ -1,0 +1,56 @@
+class IOError extends Error {
+	readonly type = 'io-error';
+	readonly message =
+		'The request took too long to complete. Please check your internet connection and try again.';
+}
+
+import type { BaseIssue } from 'valibot';
+
+export class ConfigurationError extends Error {
+	readonly type = 'configuration-error';
+	readonly message = 'The configuration is not valid.';
+	public readonly issues?: BaseIssue[];
+
+	constructor(issues: BaseIssue[]) {
+		super(message);
+		this.name = 'ConfigurationError';
+		this.issues = issues;
+
+		if (Error.captureStackTrace) {
+			Error.captureStackTrace(this, ConfigurationError);
+		}
+	}
+
+	getFormattedMessages(): string[] {
+		if (!this.issues || this.issues.length === 0) {
+			return [this.message];
+		}
+
+		return this.issues.map((issue) => {
+			const path = issue.path?.map((p) => p.key).join('.') || 'config';
+			return `[${path}]: ${issue.message}`;
+		});
+	}
+
+	getIssuesForField(fieldName: string): BaseIssue[] {
+		return this.issues?.filter((issue) => issue.path?.some((p) => p.key === fieldName)) || [];
+	}
+
+	hasErrorForField(fieldName: string): boolean {
+		return this.getIssuesForField(fieldName).length > 0;
+	}
+
+	toJSON() {
+		return {
+			name: this.name,
+			type: this.type,
+			message: this.message,
+			issues: this.issues?.map((issue) => ({
+				message: issue.message,
+				path: issue.path?.map((p) => p.key),
+				input: issue.input
+			})),
+			formattedMessages: this.getFormattedMessages()
+		};
+	}
+}
