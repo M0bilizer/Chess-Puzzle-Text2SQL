@@ -1,9 +1,9 @@
 <script>
 	import Typography from './components/Typography.svelte';
-	import Color from './components/Color.svelte'; // Import your Color component
 	import { Accordion } from '@skeletonlabs/skeleton-svelte';
 	import { slide } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
+	import Iconography from './components/Iconography.svelte';
 
 	const items = [
 		{
@@ -13,8 +13,8 @@
 		},
 		{
 			id: '2',
-			title: 'Color',
-			component: Color
+			title: 'Icons',
+			component: Iconography
 		}
 	];
 </script>

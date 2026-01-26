@@ -1,10 +1,17 @@
 import { defineConfig } from 'vitest/config';
 import { playwright } from '@vitest/browser-playwright';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
+import Icons from 'unplugin-icons/vite';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
-	plugins: [tailwindcss(), svelte()],
+	plugins: [
+		tailwindcss(),
+		svelte(),
+		Icons({
+			compiler: 'svelte'
+		})
+	],
 	test: {
 		expect: { requireAssertions: true },
 		projects: [

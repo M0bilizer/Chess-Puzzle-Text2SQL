@@ -1,6 +1,5 @@
-<!-- In your layout file -->
 <div class="grid grid-cols-[1fr_3fr] gap-y-8">
-	<!-- First Row: Full Subgrid -->
+	<!-- First Row -->
 	<div class="contents">
 		<h2 class="font-extrabold">Primary typeface</h2>
 		<div class="flex flex-col gap-2">
@@ -14,7 +13,7 @@
 		</div>
 	</div>
 
-	<!-- Second Row: Full Subgrid -->
+	<!-- Second Row -->
 	<div class="contents">
 		<h2 class="font-extrabold">Secondary typeface</h2>
 		<div class="flex flex-col gap-2">
