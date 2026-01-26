@@ -20,7 +20,6 @@
 			<p>Average Sans is used for body text, descriptions, and captions.</p>
 			<div class="font-sans text-6xl">
 				<p>ABCDEFGHIJKLMNOPQRSTUVWXYZ</p>
-				<p>ABCDEFGHIJKLMNOPQRSTUVWXYZ</p>
 				<p>abcdefghijklmnopqrstuvwxyz</p>
 				<p>1234567890</p>
 				<p>&”/@!`^$</p>
