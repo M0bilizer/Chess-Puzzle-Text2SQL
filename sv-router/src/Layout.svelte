@@ -13,11 +13,9 @@
 			<AppBar.Toolbar class="grid-cols-[auto_1fr_auto]">
 				<AppBar.Lead>
 					<a href={p(ROUTES.HOME)} data-preload>
-						<button type="button" class="btn-icon btn-icon-lg hover:preset-tonal"
-						>
+						<button type="button" class="btn-icon btn-icon-lg hover:preset-tonal">
 							<TablerHome />
-						</button
-						>
+						</button>
 					</a>
 				</AppBar.Lead>
 				<AppBar.Headline>
