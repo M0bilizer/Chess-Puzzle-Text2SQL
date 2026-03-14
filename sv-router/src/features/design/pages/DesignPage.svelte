@@ -1,9 +1,9 @@
 <script>
-	import Typography from './components/Typography.svelte';
+	import Typography from '../components/Typography.svelte';
 	import { Accordion } from '@skeletonlabs/skeleton-svelte';
 	import { slide } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
-	import Iconography from './components/Iconography.svelte';
+	import Iconography from '../components/Iconography.svelte';
 
 	const items = [
 		{

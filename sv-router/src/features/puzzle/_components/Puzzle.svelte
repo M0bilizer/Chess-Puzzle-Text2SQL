@@ -2,9 +2,9 @@
 	import type { Move } from 'chess.js';
 	import { onMount } from 'svelte';
 	import { Chess } from 'svelte-chess';
-	import type { Game } from '../types/puzzle';
-	import { playSound } from '../utils/playSound';
-	import { getPlayerColor } from '../utils/getPlayerColor';
+	import type { Game } from '../_api/puzzle';
+	import { playSound } from './play-sound';
+	import { getPlayerColor } from './get-player-color';
 
 	const DEFAULT_SETTINGS = {
 		computerMoveDelay: 250,

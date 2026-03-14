@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Puzzle from '../components/Puzzle.svelte';
+	import Puzzle from './_components/Puzzle.svelte';
 
 	const puzzle = {
 		fen: '8/4K2k/2P2R2/6pp/8/6P1/2r5/8 b - - 1 53',

@@ -1,7 +1,8 @@
 import { Result } from 'typescript-result';
-import type { PuzzleDto } from '../types/puzzle';
+import type { PuzzleDto } from './puzzle';
+import { IOError } from '../../../common/types/error';
 
-export async function searchPuzzle(
+export async function searchPuzzleApi(
 	search: string,
 	baseUrl: string
 ): Promise<Result<PuzzleDto[], IOError>> {
