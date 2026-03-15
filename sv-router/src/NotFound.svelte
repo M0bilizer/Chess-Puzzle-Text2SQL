@@ -1,7 +1,7 @@
 <script>
-	import ThreeColumnPage from '@/common/components/ThreeColumnPage.svelte';
+	import CenteredPage from '@/common/components/CenteredPage.svelte';
 </script>
 
-<ThreeColumnPage>
-	<span>Not Found</span>
-</ThreeColumnPage>
+<CenteredPage>
+	Not Found
+</CenteredPage>
