@@ -2,7 +2,7 @@
 	import type { Move } from 'chess.js';
 	import { onMount } from 'svelte';
 	import { Chess } from 'svelte-chess';
-	import type { Game } from '../_api/puzzle';
+	import type { Game } from '@/features/puzzle/puzzle';
 	import { playSound } from './play-sound';
 	import { getPlayerColor } from './get-player-color';
 
@@ -20,6 +20,7 @@
 		onWrongMove?: (move: Move) => void;
 		onEnd?: () => void;
 	}
+
 	let {
 		puzzle,
 		settings: propSettings,

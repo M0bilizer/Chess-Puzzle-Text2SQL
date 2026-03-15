@@ -1,9 +1,10 @@
 <script>
 	import { searchParams } from 'sv-router';
 	import { onMount } from 'svelte';
-	import ThreeColumnPage from '../../common/components/ThreeColumnPage.svelte';
+	import ThreeColumnPage from '@/common/components/ThreeColumnPage.svelte';
+	import { searchPuzzleApi } from '@/features/puzzle/api/search-puzzle.api.ts';
 
-	let value = searchParams.get('q') || '';
+	let search = searchParams.get('q') || '';
 	let results = [];
 	let loading = false;
 	let error = null;
@@ -13,13 +14,7 @@
 		error = null;
 
 		try {
-			await new Promise((resolve) => setTimeout(resolve, 5000));
-
-			results = [
-				{ id: 1, title: `Result 1 for "${value}"`, description: 'This is a simulated result' },
-				{ id: 2, title: `Result 2 for "${value}"`, description: 'Another simulated result' },
-				{ id: 3, title: `Result 3 for "${value}"`, description: 'Yet another simulated result' }
-			];
+			results = await searchPuzzleApi(search);
 		} catch (e) {
 			error = e.message;
 			results = [];
@@ -27,6 +22,7 @@
 			loading = false;
 		}
 	}
+
 	onMount(fetchResults);
 </script>
 

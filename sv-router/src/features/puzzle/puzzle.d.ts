@@ -3,7 +3,7 @@ export type Game = {
 	moves: { computer: string; player: string }[];
 };
 
-export interface PuzzleDto {
+export interface Puzzle {
 	id: number;
 	puzzleId: string;
 	fen: string;

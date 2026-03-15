@@ -1,10 +1,10 @@
-class IOError extends Error {
+import type { BaseIssue } from 'valibot';
+
+export class IOError extends Error {
 	readonly type = 'io-error';
 	readonly message =
 		'The request took too long to complete. Please check your internet connection and try again.';
 }
-
-import type { BaseIssue } from 'valibot';
 
 export class ConfigurationError extends Error {
 	readonly type = 'configuration-error';
@@ -12,7 +12,7 @@ export class ConfigurationError extends Error {
 	public readonly issues?: BaseIssue[];
 
 	constructor(issues: BaseIssue[]) {
-		super(message);
+		super('The configuration is not valid.'); // Pass message to Error constructor
 		this.name = 'ConfigurationError';
 		this.issues = issues;
 

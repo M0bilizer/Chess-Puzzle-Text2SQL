@@ -1,23 +1,16 @@
 import { createRouter } from 'sv-router';
-import Home from './features/puzzle/Home.svelte';
-import DesignPage from './features/design/pages/DesignPage.svelte';
-import Layout from './Layout.svelte';
-import './app.css';
-import NotFound from './NotFound.svelte';
-import Search from './features/puzzle/Search.svelte';
-import Puzzle from './features/puzzle/Puzzle.svelte';
+import DesignPage from '@/features/design/pages/DesignPage.svelte';
+import NotFound from '@/NotFound.svelte';
+import Layout from '@/Layout.svelte';
+import { PUZZLE_ROUTES, puzzleRoutes } from '@/features/puzzle/routes';
 
 export const ROUTES = {
-	HOME: '/',
-	PUZZLE: `/puzzle/:puzzleId`,
-	SEARCH: `/search`,
+	...PUZZLE_ROUTES,
 	DESIGN: '/design'
 } as const;
 
 export const { p, navigate, isActive, route } = createRouter({
-	[ROUTES.HOME]: Home,
-	[ROUTES.PUZZLE]: Puzzle,
-	[ROUTES.SEARCH]: Search,
+	...puzzleRoutes,
 	[ROUTES.DESIGN]: DesignPage,
 	'*': NotFound,
 	layout: Layout

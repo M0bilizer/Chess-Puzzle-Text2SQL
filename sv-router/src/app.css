@@ -1,6 +1,7 @@
 @import '@fontsource/average/400.css';
 @import '@fontsource/average-sans/400.css';
 @import 'tailwindcss';
+
 @plugin '@tailwindcss/forms';
 
 :root {
@@ -8,9 +9,12 @@
 	--un-font-serif: 'Average', serif;
 }
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 body {
 	font-family: 'Average Sans', sans-serif;
 }
+
 @import '@skeletonlabs/skeleton';
 @import '@skeletonlabs/skeleton-svelte';
 @import '@skeletonlabs/skeleton/themes/pine';

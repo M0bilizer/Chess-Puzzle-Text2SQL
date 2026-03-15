@@ -2,7 +2,7 @@
 	import { AppBar } from '@skeletonlabs/skeleton-svelte';
 	import TablerHome from '~icons/tabler/home';
 	import TablerMenu2 from '~icons/tabler/menu-2';
-	import { p, ROUTES } from './router';
+	import { p, ROUTES } from '@/router';
 
 	let { children } = $props();
 </script>

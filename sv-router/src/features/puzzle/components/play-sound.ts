@@ -1,5 +1,5 @@
-import move_mp3 from '../_assets/Move.mp3';
-import capture_mp3 from '../_assets/Capture.mp3';
+import move_mp3 from '@/features/puzzle/assets/Move.mp3';
+import capture_mp3 from '@/features/puzzle/assets/Capture.mp3';
 
 export function playSound(isCapture: boolean) {
 	if (isCapture) playCaptureSound();

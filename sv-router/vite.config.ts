@@ -3,6 +3,7 @@ import { playwright } from '@vitest/browser-playwright';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 import Icons from 'unplugin-icons/vite';
 import tailwindcss from '@tailwindcss/vite';
+import * as path from 'node:path';
 
 export default defineConfig({
 	plugins: [
@@ -12,6 +13,11 @@ export default defineConfig({
 			compiler: 'svelte'
 		})
 	],
+	resolve: {
+		alias: {
+			'@': path.resolve(__dirname, './src')
+		}
+	},
 	test: {
 		expect: { requireAssertions: true },
 		projects: [

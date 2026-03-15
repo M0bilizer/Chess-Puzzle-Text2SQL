@@ -1,7 +1,7 @@
 package com.chesspuzzletext2sql.app
 
 import com.chesspuzzletext2sql.config.ApplicationConfigLoader
-import com.chesspuzzletext2sql.plugins.configureHTTP
+import com.chesspuzzletext2sql.plugins.configureCors
 import com.chesspuzzletext2sql.plugins.configureKoin
 import com.chesspuzzletext2sql.plugins.configureMonitoring
 import com.chesspuzzletext2sql.plugins.configureRouting
@@ -21,17 +21,17 @@ fun main() {
             exitProcess(1)
         }
     embeddedServer(
-            CIO,
-            port = 8080,
-            watchPaths = listOf("classes"),
-            host = "0.0.0.0",
-            module = {
-                configureHTTP()
-                configureSerialization()
-                configureKoin(appConfig)
-                configureRouting()
-                configureMonitoring()
-            },
-        )
+        CIO,
+        port = 8080,
+        watchPaths = listOf("classes"),
+        host = "0.0.0.0",
+        module = {
+            configureCors()
+            configureSerialization()
+            configureKoin(appConfig)
+            configureRouting()
+            configureMonitoring()
+        },
+    )
         .start(wait = true)
 }

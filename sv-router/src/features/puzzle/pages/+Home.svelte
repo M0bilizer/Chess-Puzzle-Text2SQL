@@ -1,7 +1,7 @@
 <script>
 	import TablerSearch from '~icons/tabler/search';
 	import { navigate, p, ROUTES } from '@/router.ts';
-	import CenteredPage from '../../common/components/CenteredPage.svelte';
+	import CenteredPage from '@/common/components/CenteredPage.svelte';
 
 	let searchQuery = '';
 </script>
