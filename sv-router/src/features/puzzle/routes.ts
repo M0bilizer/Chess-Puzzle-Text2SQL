@@ -1,13 +1,15 @@
-import Home from '@/features/puzzle/pages/+Home.svelte';
+import HomeSvelte from '@/features/puzzle/pages/+Home.svelte';
 import Puzzle from '@/features/puzzle/pages/+Puzzle.svelte';
+import PuzzleLayout from '@/features/puzzle/PuzzleLayout.svelte';
 
 export const PUZZLE_ROUTES = {
-	HOME: '/',
+	ROOT: '/',
 	PUZZLE: `/puzzle/:puzzleId`,
-	SEARCH: `/search`
+	SEARCH: `/search`,
+	layout: PuzzleLayout
 } as const;
 
 export const puzzleRoutes = {
-	[PUZZLE_ROUTES.HOME]: Home,
+	[PUZZLE_ROUTES.ROOT]: HomeSvelte,
 	[PUZZLE_ROUTES.PUZZLE]: Puzzle
 };

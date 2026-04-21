@@ -5,14 +5,15 @@
 @plugin '@tailwindcss/forms';
 
 :root {
-	--un-font-sans: 'Average Sans', sans-serif;
-	--un-font-serif: 'Average', serif;
+    --un-font-sans: 'Average Sans', sans-serif;
+    --un-font-serif: 'Average', serif;
 }
 
-@custom-variant dark (&:where(.dark, .dark *));
+@custom-variant dark (&:where([data-mode="dark"], [data-mode="dark"] *));
 
 body {
-	font-family: 'Average Sans', sans-serif;
+    font-family: 'Average Sans', sans-serif;
+    background-image: radial-gradient(at 0% 25%, color-mix(in oklab, var(--color-primary-500) 10%, transparent) 0px, transparent 30%), radial-gradient(at 15% 6%, color-mix(in oklab, var(--color-success-500) 5%, transparent) 0px, transparent 30%);
 }
 
 @import '@skeletonlabs/skeleton';

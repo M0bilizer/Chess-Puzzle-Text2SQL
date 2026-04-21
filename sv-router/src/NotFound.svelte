@@ -1,7 +1,7 @@
 <script>
-	import CenteredPage from '@/common/components/CenteredPage.svelte';
+	import MainOnlyPage from '@/common/components/MainOnlyPage.svelte';
 </script>
 
-<CenteredPage>
+<MainOnlyPage>
 	Not Found
-</CenteredPage>
+</MainOnlyPage>

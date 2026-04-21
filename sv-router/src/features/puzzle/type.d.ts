@@ -3,7 +3,7 @@ export type Game = {
 	moves: { computer: string; player: string }[];
 };
 
-export interface Puzzle {
+export type Puzzle = {
 	id: number;
 	puzzleId: string;
 	fen: string;
@@ -15,4 +15,4 @@ export interface Puzzle {
 	themes: string;
 	gameUrl: string;
 	openingTags: string;
-}
+};
