@@ -1,4 +1,3 @@
-<!-- SearchForm.svelte -->
 <script>
 	import TablerSearch from '~icons/tabler/search';
 	import SvgSpinnersRingResize from '~icons/svg-spinners/ring-resize';
@@ -20,7 +19,7 @@
 <search class="input-group flex w-full flex-row">
 	<form on:submit={handleSubmit} class="flex w-full">
 		<input
-			class="ig-input px-12 text-2xl break-normal disabled:cursor-progress flex-1"
+			class="ig-input flex-1 px-6 text-xl break-normal disabled:cursor-progress"
 			type="search"
 			disabled={loading}
 			placeholder="Find Dutch Defense Puzzle..."
@@ -30,14 +29,14 @@
 		<button
 			type="submit"
 			disabled={loading || !searchQuery.trim()}
-			class="w-64 ig-btn inline-flex items-center gap-2 preset-filled px-12 py-8 disabled:cursor-progress"
+			class="ig-btn inline-flex w-48 items-center gap-2 preset-filled px-4 py-2 disabled:cursor-progress"
 		>
 			{#if loading}
 				<SvgSpinnersRingResize />
 			{:else}
-				<TablerSearch class="size-6" />
+				<TablerSearch class="size-4" />
 			{/if}
-			<span class="text-2xl">{loading ? 'Searching...' : 'Search'}</span>
+			<span class="text-xl">{loading ? 'Searching...' : 'Search'}</span>
 		</button>
 	</form>
 </search>

@@ -7,18 +7,18 @@
 </div>
 
 <style>
-    .container {
-        display: flex;
-        justify-content: center;
-        width: 100%;
-        min-height: 90vh;
-        overflow: hidden;
-        margin: 0 auto;
-    }
+	.container {
+		display: flex;
+		justify-content: center;
+		width: 100%;
+		min-height: calc(100vh - 77px - 60px);
+		overflow: hidden;
+		margin: 0 auto;
+	}
 
-    .container > :global(main) {
-        max-width: 1200px;
-        width: 100%;
-        min-height: 100%
-    }
+	.container > :global(main) {
+		max-width: 1200px;
+		width: 100%;
+		min-height: 100%;
+	}
 </style>

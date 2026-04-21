@@ -11,7 +11,7 @@
 
 <a
 	href={p(ROUTES.PUZZLE, { params: { puzzleId: puzzle.id } })}
-	class="group block max-w-64 overflow-hidden card border border-surface-200-800 preset-filled-surface-100-900 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg"
+	class="group block max-w-64 overflow-hidden card border border-surface-200-800 preset-filled-surface-100-900 transition-all duration-200 hover:-translate-y-1 hover:shadow-md"
 >
 	<!-- Chess board placeholder -->
 	<header class="relative h-64 w-64">
@@ -21,7 +21,7 @@
 		<div
 			class="absolute inset-0 z-10 flex items-center justify-center bg-black/60 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
 		>
-			View Puzzle
+			<span class="text-primary-50"> View Puzzle </span>
 		</div>
 	</header>
 

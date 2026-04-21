@@ -51,7 +51,7 @@
 </script>
 
 <WideMainOnlyPage>
-	<main class="space-y-16">
+	<main class="space-y-12">
 		<section class="mx-auto w-[900px] space-y-2">
 			<SearchBanner />
 			<SearchForm

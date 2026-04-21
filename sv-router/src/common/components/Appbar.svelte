@@ -6,7 +6,7 @@
 	import LightSwitch from '@/common/components/LightSwitch.svelte';
 </script>
 
-<AppBar>
+<AppBar class="h-[77px]">
 	<AppBar.Toolbar class="grid-cols-[auto_1fr_auto]">
 		<AppBar.Lead>
 			<a href={p(ROUTES.ROOT)} data-preload>
