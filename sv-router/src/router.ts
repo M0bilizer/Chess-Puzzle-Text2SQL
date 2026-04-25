@@ -1,17 +1,19 @@
 import { createRouter } from 'sv-router';
-import DesignPage from '@/features/design/pages/DesignPage.svelte';
-import NotFound from '@/NotFound.svelte';
-import PuzzleLayout from '@/features/puzzle/PuzzleLayout.svelte';
+import NotFound from '@/+NotFound.svelte';
 import { PUZZLE_ROUTES, puzzleRoutes } from '@/features/puzzle/routes';
+import { ABOUT_PATHS, aboutRoutes } from './features/about/route';
+import { SETTINGS_PATHS, settingsRoutes } from './features/settings/route';
 
-export const ROUTES = {
+export const PATHS = {
 	...PUZZLE_ROUTES,
-	DESIGN: '/design'
-} as const;
+	...ABOUT_PATHS,
+	...SETTINGS_PATHS
+};
 
-export const { p, navigate, isActive, route } = createRouter({
+// don't export { p }, use Paths instead
+export const { navigate, isActive, route } = createRouter({
 	...puzzleRoutes,
-	[ROUTES.DESIGN]: DesignPage,
-	'*': NotFound,
-	layout: PuzzleLayout
+	...aboutRoutes,
+	...settingsRoutes,
+	'*': NotFound
 });

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Chessground } from 'svelte-chessground';
-	import { p, ROUTES } from '@/router';
+	import { PATHS } from '@/router';
 	import type { Puzzle } from '@/features/puzzle/type';
 
 	type Props = {
@@ -10,7 +10,7 @@
 </script>
 
 <a
-	href={p(ROUTES.PUZZLE, { params: { puzzleId: puzzle.id } })}
+	href={PATHS.PUZZLE(puzzle.puzzleId)}
 	class="group block max-w-64 overflow-hidden card border border-surface-200-800 preset-filled-surface-100-900 transition-all duration-200 hover:-translate-y-1 hover:shadow-md"
 >
 	<!-- Chess board placeholder -->

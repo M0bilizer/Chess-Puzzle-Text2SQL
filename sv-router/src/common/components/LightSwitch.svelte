@@ -25,7 +25,7 @@
 	</script>
 </svelte:head>
 
-<Switch {checked} {onCheckedChange}>
+<Switch {checked} {onCheckedChange} class="btn">
 	<Switch.Control>
 		<Switch.Thumb>
 			<Switch.Context>
