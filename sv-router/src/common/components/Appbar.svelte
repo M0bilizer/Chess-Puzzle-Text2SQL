@@ -1,7 +1,8 @@
 <script>
 	import { AppBar } from '@skeletonlabs/skeleton-svelte';
 	import TablerHome from '~icons/tabler/home';
-	import TablerMenu2 from '~icons/tabler/menu-2';
+	import TablerSettings from '~icons/tabler/settings';
+	import TablerInfoCircle from '~icons/tabler/info-circle';
 	import { p, ROUTES } from '@/router';
 	import LightSwitch from '@/common/components/LightSwitch.svelte';
 </script>
@@ -20,9 +21,14 @@
 		</AppBar.Headline>
 		<AppBar.Trail>
 			<LightSwitch />
-			<button type="button" class="btn-icon hover:preset-tonal">
-				<TablerMenu2 />
-			</button>
+			<a href={p(ROUTES.ROOT)} class="btn flex items-center gap-2 hover:underline">
+				<TablerInfoCircle class="size-4" />
+				<span>About</span>
+			</a>
+			<a href={p(ROUTES.ROOT)} class="btn flex items-center gap-2 hover:underline">
+				<TablerSettings class="size-4" />
+				<span>Settings</span>
+			</a>
 		</AppBar.Trail>
 	</AppBar.Toolbar>
 </AppBar>
