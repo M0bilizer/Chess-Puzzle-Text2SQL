@@ -21,11 +21,11 @@
 		</AppBar.Headline>
 		<AppBar.Trail>
 			<a href={PATHS.ABOUT} class="btn flex items-center gap-2 hover:underline">
-				<TablerInfoCircle class="size-4" />
+				<TablerInfoCircle class="size-icon" />
 				<span>About</span>
 			</a>
 			<a href={PATHS.SETTINGS} class="btn flex items-center gap-2 hover:underline">
-				<TablerSettings class="size-4" />
+				<TablerSettings class="size-icon" />
 				<span>Settings</span>
 			</a>
 			<span class="vr h-8"></span>

@@ -1,30 +1,28 @@
 <script lang="ts">
 	import Game from '@/features/puzzle/components/Game.svelte';
 	import MainWithAsidePage from '@/common/components/MainWithAsidePage.svelte';
+	import ChessDescription from '../components/ChessDescription.svelte';
+	import { puzzle as puzzleStub } from '../api/puzzle-stub';
+	import { puzzleToGame } from '../utils';
 
-	const puzzle = {
-		fen: '8/4K2k/2P2R2/6pp/8/6P1/2r5/8 b - - 1 53',
-		moves: [
-			{ computer: 'c2c3', player: 'e7d7' },
-			{ computer: 'h5h4', player: 'g3h4' },
-			{ computer: 'g5g4', player: 'c6c7' }
-		]
-	};
+	const puzzle = puzzleStub[3];
+	const game = puzzleToGame(puzzle);
 
 	let p: Game;
 </script>
 
-<MainWithAsidePage>
-	<main>
+<MainWithAsidePage class="py-4">
+	<main class="space-y-4">
 		<Game
 			bind:this={p}
-			game={puzzle}
+			{game}
 			onCorrectMove={() => console.log('ok')}
 			onWrongMove={() => console.log('oops')}
 		/>
-		<button onclick={() => p.reset()}>reset</button>
+		<ChessDescription {puzzle} />
+		<!-- <button onclick={() => p.reset()}>reset</button>
 		<button onclick={() => p.back()}>back</button>
 		<button onclick={() => p.forward()}>forward</button>
-		<button onclick={() => p.end()}>end</button>
+		<button onclick={() => p.end()}>end</button> -->
 	</main>
 </MainWithAsidePage>

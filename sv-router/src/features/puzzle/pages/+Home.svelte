@@ -8,8 +8,9 @@
 	import WideMainOnlyPage from '@/common/components/WideMainOnlyPage.svelte';
 	import type { Puzzle } from '@/features/puzzle/type';
 	import ChessCard from '@/features/puzzle/components/ChessCard.svelte';
+	import { searchParams } from 'sv-router';
 
-	let query = $state('');
+	let query = $state((searchParams.get('q') as string) || '');
 	let loading = $state(false);
 	let error: string | null = $state(null);
 	let results: Puzzle[] = $state([]);
@@ -24,8 +25,8 @@
 				error = err.message;
 			}
 			results = data!;
-		} catch (e) {
-			error = e.message;
+		} catch (e: Error | unknown) {
+			error = e instanceof Error ? e.message : 'unknown error';
 			results = [];
 		} finally {
 			loading = false;
@@ -36,9 +37,17 @@
 		error = null;
 	}
 
+	// Update URL when query changes
+	$effect(() => {
+		if (query) {
+			searchParams.set('q', query);
+		} else {
+			searchParams.delete('q');
+		}
+	});
+
 	onMount(() => {
-		const urlParams = new URLSearchParams(window.location.search);
-		const q = urlParams.get('q');
+		const q = (searchParams.get('q') as string) || '';
 		if (q) {
 			handleSearch(q);
 		}

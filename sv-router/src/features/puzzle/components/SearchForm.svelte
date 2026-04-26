@@ -10,7 +10,9 @@
 
 	let { query = $bindable(), onSubmit, loading = $bindable() }: Props = $props();
 
-	function handleSubmit() {
+	// Could consider using navigate instead
+	function handleSubmit(event: SubmitEvent) {
+		event.preventDefault();
 		onSubmit();
 	}
 </script>

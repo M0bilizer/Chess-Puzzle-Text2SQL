@@ -4,18 +4,36 @@
 
 @plugin '@tailwindcss/forms';
 
-:root {
-    --un-font-sans: 'Average Sans', sans-serif;
-    --un-font-serif: 'Average', serif;
-}
-
 @custom-variant dark (&:where([data-mode="dark"], [data-mode="dark"] *));
-
 body {
-    font-family: 'Average Sans', sans-serif;
-    background-image: radial-gradient(at 0% 25%, color-mix(in oklab, var(--color-primary-500) 10%, transparent) 0px, transparent 30%), radial-gradient(at 15% 6%, color-mix(in oklab, var(--color-success-500) 5%, transparent) 0px, transparent 30%);
+	font-family: 'Average Sans', sans-serif;
+	background-image:
+		radial-gradient(
+			at 0% 25%,
+			color-mix(in oklab, var(--color-primary-500) 10%, transparent) 0px,
+			transparent 30%
+		),
+		radial-gradient(
+			at 15% 6%,
+			color-mix(in oklab, var(--color-success-500) 5%, transparent) 0px,
+			transparent 30%
+		);
 }
 
 @import '@skeletonlabs/skeleton';
 @import '@skeletonlabs/skeleton-svelte';
 @import '@skeletonlabs/skeleton/themes/pine';
+
+:root {
+	--un-font-sans: 'Average Sans', sans-serif;
+	--un-font-serif: 'Average', serif;
+}
+
+@layer components {
+	.size-icon {
+		@apply size-4 shrink-0;
+	}
+	.size-icon-big {
+		@apply size-8 shrink-0;
+	}
+}
