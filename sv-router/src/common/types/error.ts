@@ -9,9 +9,9 @@ export class IOError extends Error {
 export class ConfigurationError extends Error {
 	readonly type = 'configuration-error';
 	readonly message = 'The configuration is not valid.';
-	public readonly issues?: BaseIssue[];
+	public readonly issues?: BaseIssue<unknown>[];
 
-	constructor(issues: BaseIssue[]) {
+	constructor(issues: BaseIssue<unknown>[]) {
 		super('The configuration is not valid.'); // Pass message to Error constructor
 		this.name = 'ConfigurationError';
 		this.issues = issues;
@@ -32,7 +32,7 @@ export class ConfigurationError extends Error {
 		});
 	}
 
-	getIssuesForField(fieldName: string): BaseIssue[] {
+	getIssuesForField(fieldName: string): BaseIssue<unknown>[] {
 		return this.issues?.filter((issue) => issue.path?.some((p) => p.key === fieldName)) || [];
 	}
 

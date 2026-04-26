@@ -2,7 +2,7 @@
 	import type { Move } from 'chess.js';
 	import { onMount } from 'svelte';
 	import { Chess } from 'svelte-chess';
-	import type { Game } from '@/features/puzzle/puzzle';
+	import type { Game } from '@/features/puzzle/type';
 	import { playSound } from './play-sound';
 	import { getPlayerColor } from './get-player-color';
 
@@ -13,7 +13,7 @@
 	};
 
 	interface Props {
-		puzzle: Game;
+		game: Game;
 		settings?: Partial<typeof DEFAULT_SETTINGS>;
 		onStart?: () => void;
 		onCorrectMove?: (move: Move) => void;
@@ -22,7 +22,7 @@
 	}
 
 	let {
-		puzzle,
+		game,
 		settings: propSettings,
 		onStart,
 		onCorrectMove,
@@ -52,7 +52,7 @@
 
 		constructor(
 			chess: Chess,
-			puzzle: Game,
+			game: Game,
 			boardElement: HTMLElement,
 			callbacks: {
 				onStart?: () => void;
@@ -62,7 +62,7 @@
 			}
 		) {
 			this.chess = chess;
-			this.puzzle = puzzle;
+			this.puzzle = game;
 			this.boardElement = boardElement;
 			this.onStart = callbacks.onStart;
 			this.onCorrectMove = callbacks.onCorrectMove;
@@ -235,7 +235,7 @@
 	let puzzleState: PuzzleState;
 
 	onMount(() => {
-		puzzleState = new PuzzleState(chess, puzzle, boardElement, {
+		puzzleState = new PuzzleState(chess, game, boardElement, {
 			onStart,
 			onCorrectMove,
 			onWrongMove,
@@ -273,7 +273,7 @@
 	<Chess
 		bind:this={chess}
 		on:ready={start}
-		orientation={getPlayerColor(puzzle.fen, settings.flipOrientation)}
+		orientation={getPlayerColor(game.fen, settings.flipOrientation)}
 		on:move={moveListener}
 	/>
 </div>

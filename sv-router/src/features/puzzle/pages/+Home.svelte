@@ -9,15 +9,19 @@
 	import type { Puzzle } from '@/features/puzzle/puzzle';
 	import ChessCard from '@/features/puzzle/components/ChessCard.svelte';
 
-	let searchQuery = '';
+	let query = '';
 	let loading = false;
 	let error: string | null = null;
 	let results: Puzzle[] = [];
 
-	async function handleSearch(query: string): Promise<void> {
-		searchQuery = query;
+	async function handleSearch(): Promise<void> {
 		loading = true;
 		error = null;
+
+		// update search param
+		const url = new URL(window.location);
+		url.searchParams.set('q', query);
+		window.history.pushState({}, '', url);
 
 		try {
 			const [data, err] = await searchPuzzleApi(query).toTuple();
@@ -25,10 +29,6 @@
 				error = err.message;
 			}
 			results = data!;
-			// update search param
-			const url = new URL(window.location);
-			url.searchParams.set('q', query);
-			window.history.pushState({}, '', url);
 		} catch (e) {
 			error = e.message;
 			results = [];
@@ -54,11 +54,7 @@
 	<main class="space-y-12">
 		<section class="mx-auto w-[900px] space-y-2">
 			<SearchBanner />
-			<SearchForm
-				on:search={({ detail }) => handleSearch(detail)}
-				{loading}
-				initialQuery={searchQuery}
-			/>
+			<SearchForm bind:query onSubmit={() => handleSearch(query)} bind:loading />
 			{#if error}
 				<ErrorAlert {error} title="Search Failed" onDismiss={dismissError} />
 			{/if}
@@ -76,7 +72,7 @@
 					<ChessCard key={puzzle.id} {puzzle} />
 				{/each}
 			</div>
-		{:else if searchQuery}
+		{:else if query}
 			<div class="text-center text-gray-500">No puzzles found</div>
 		{/if}
 	</main>

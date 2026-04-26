@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	let { children, class: className } = $props();
 </script>
 
@@ -13,6 +13,7 @@
 		width: 100%;
 		min-height: calc(100vh - 77px - 60px);
 		gap: 1rem;
+		margin: 0 auto;
 	}
 
 	.container > :global(main) {

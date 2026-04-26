@@ -1,5 +1,6 @@
 <script lang="ts">
-	import Puzzle from '@/features/puzzle/components/Puzzle.svelte';
+	import Game from '@/features/puzzle/components/Game.svelte';
+	import MainWithAsidePage from '@/common/components/MainWithAsidePage.svelte';
 
 	const puzzle = {
 		fen: '8/4K2k/2P2R2/6pp/8/6P1/2r5/8 b - - 1 53',
@@ -10,14 +11,13 @@
 		]
 	};
 
-	let p: Puzzle;
-	let c: Puzzle;
+	let p: Game;
 </script>
 
-<div class="container">
-	<Puzzle
+<MainWithAsidePage>
+	<Game
 		bind:this={p}
-		{puzzle}
+		game={puzzle}
 		onCorrectMove={() => console.log('ok')}
 		onWrongMove={() => console.log('oops')}
 	/>
@@ -25,14 +25,4 @@
 	<button onclick={() => p.back()}>back</button>
 	<button onclick={() => p.forward()}>forward</button>
 	<button onclick={() => p.end()}>end</button>
-	<Puzzle
-		bind:this={c}
-		settings={{
-			computerMoveDelay: 500,
-			flipOrientation: true
-		}}
-		{puzzle}
-		onCorrectMove={() => console.log('ok')}
-		onWrongMove={() => console.log('oops')}
-	/>
-</div>
+</MainWithAsidePage>

@@ -11,6 +11,6 @@ export const puzzleRoutes = {
 	'/': {
 		layout: PuzzleLayout,
 		'/': Home,
-		'/puzzle/:puzzleId': Puzzle
+		'/puzzle/:id': Puzzle
 	}
 };

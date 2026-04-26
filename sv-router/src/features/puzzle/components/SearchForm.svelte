@@ -1,18 +1,18 @@
-<script>
+<script lang="ts">
 	import TablerSearch from '~icons/tabler/search';
-	import SvgSpinnersRingResize from '~icons/svg-spinners/ring-resize';
-	import { createEventDispatcher } from 'svelte';
+	import Spinner from '@/common/components/Spinner.svelte';
 
-	export let loading = false;
-	export let initialQuery = '';
+	type Props = {
+		query: string;
+		onSubmit: () => void;
+		loading: boolean;
+	};
 
-	const dispatch = createEventDispatcher();
-	let searchQuery = initialQuery;
+	let { query = $bindable(), onSubmit, loading = $bindable() }: Props = $props();
 
 	function handleSubmit(e) {
 		e.preventDefault();
-		if (!searchQuery.trim() || loading) return;
-		dispatch('search', searchQuery);
+		onSubmit(query);
 	}
 </script>
 
@@ -23,16 +23,16 @@
 			type="search"
 			disabled={loading}
 			placeholder="Find Dutch Defense Puzzle..."
-			bind:value={searchQuery}
+			bind:value={query}
 			aria-label="Search puzzles"
 		/>
 		<button
 			type="submit"
-			disabled={loading || !searchQuery.trim()}
-			class="ig-btn inline-flex w-48 items-center gap-2 preset-filled px-4 py-2 disabled:cursor-progress"
+			disabled={loading || !query.trim()}
+			class="ig-btn inline-flex w-48 items-center gap-2 preset-filled px-4 py-2"
 		>
 			{#if loading}
-				<SvgSpinnersRingResize />
+				<Spinner />
 			{:else}
 				<TablerSearch class="size-4" />
 			{/if}

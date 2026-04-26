@@ -11,7 +11,7 @@ export const PATHS = {
 };
 
 // don't export { p }, use Paths instead
-export const { navigate, isActive, route } = createRouter({
+export const { p, navigate, isActive, route } = createRouter({
 	...puzzleRoutes,
 	...aboutRoutes,
 	...settingsRoutes,
