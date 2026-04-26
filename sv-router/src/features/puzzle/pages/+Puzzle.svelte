@@ -15,14 +15,16 @@
 </script>
 
 <MainWithAsidePage>
-	<Game
-		bind:this={p}
-		game={puzzle}
-		onCorrectMove={() => console.log('ok')}
-		onWrongMove={() => console.log('oops')}
-	/>
-	<button onclick={() => p.reset()}>reset</button>
-	<button onclick={() => p.back()}>back</button>
-	<button onclick={() => p.forward()}>forward</button>
-	<button onclick={() => p.end()}>end</button>
+	<main>
+		<Game
+			bind:this={p}
+			game={puzzle}
+			onCorrectMove={() => console.log('ok')}
+			onWrongMove={() => console.log('oops')}
+		/>
+		<button onclick={() => p.reset()}>reset</button>
+		<button onclick={() => p.back()}>back</button>
+		<button onclick={() => p.forward()}>forward</button>
+		<button onclick={() => p.end()}>end</button>
+	</main>
 </MainWithAsidePage>

@@ -10,7 +10,10 @@ export const PUZZLE_ROUTES = {
 export const puzzleRoutes = {
 	'/': {
 		layout: PuzzleLayout,
-		'/': Home,
-		'/puzzle/:id': Puzzle
+		'/': Home
+	},
+	'/puzzle': {
+		'/:id': Puzzle,
+		layout: PuzzleLayout
 	}
 };
