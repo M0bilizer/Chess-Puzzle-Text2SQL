@@ -6,6 +6,7 @@ import { puzzle } from '@/features/puzzle/api/puzzle-stub';
 export function searchPuzzleApi(search: string): AsyncResult<Puzzle[], IOError> {
 	// Stub mode - returns mock data after 1 second delay
 	return Result.fromAsync(async () => {
+		console.log(`Looking for ${search}`);
 		await new Promise((resolve) => setTimeout(resolve, 1000));
 		return Result.ok(puzzle);
 	});

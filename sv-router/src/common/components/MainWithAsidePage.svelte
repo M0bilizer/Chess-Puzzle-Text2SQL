@@ -1,9 +1,15 @@
 <script lang="ts">
-	let { children, class: className } = $props();
+	import type { Snippet } from 'svelte';
+
+	type Props = {
+		children?: Snippet;
+		class?: string;
+	};
+	let { children, class: className }: Props = $props();
 </script>
 
 <div class={['container', className]}>
-	{@render children()}
+	{@render children?.()}
 </div>
 
 <style>

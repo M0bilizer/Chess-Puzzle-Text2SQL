@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { AppBar } from '@skeletonlabs/skeleton-svelte';
 	import TablerHome from '~icons/tabler/home';
 	import TablerSettings from '~icons/tabler/settings';

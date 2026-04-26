@@ -6,22 +6,17 @@
 	import ErrorAlert from '@/common/components/ErrorAlert.svelte';
 	import ChessSkeleton from '@/features/puzzle/components/ChessSkeleton.svelte';
 	import WideMainOnlyPage from '@/common/components/WideMainOnlyPage.svelte';
-	import type { Puzzle } from '@/features/puzzle/puzzle';
+	import type { Puzzle } from '@/features/puzzle/type';
 	import ChessCard from '@/features/puzzle/components/ChessCard.svelte';
 
-	let query = '';
-	let loading = false;
-	let error: string | null = null;
-	let results: Puzzle[] = [];
+	let query = $state('');
+	let loading = $state(false);
+	let error: string | null = $state(null);
+	let results: Puzzle[] = $state([]);
 
-	async function handleSearch(): Promise<void> {
+	async function handleSearch(query: string): Promise<void> {
 		loading = true;
 		error = null;
-
-		// update search param
-		const url = new URL(window.location);
-		url.searchParams.set('q', query);
-		window.history.pushState({}, '', url);
 
 		try {
 			const [data, err] = await searchPuzzleApi(query).toTuple();
@@ -62,14 +57,14 @@
 
 		{#if loading}
 			<div class="grid grid-cols-4 place-items-center gap-2">
-				{#each Array(16) as _, i}
-					<ChessSkeleton key={i} />
+				{#each Array(16) as _, i (i)}
+					<ChessSkeleton />
 				{/each}
 			</div>
 		{:else if results.length > 0}
 			<div class="grid grid-cols-4 place-items-center gap-2">
-				{#each results as puzzle, i}
-					<ChessCard key={puzzle.id} {puzzle} />
+				{#each results as puzzle, _i (puzzle.id)}
+					<ChessCard {puzzle} />
 				{/each}
 			</div>
 		{:else if query}

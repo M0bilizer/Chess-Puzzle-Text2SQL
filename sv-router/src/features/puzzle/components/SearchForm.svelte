@@ -10,14 +10,13 @@
 
 	let { query = $bindable(), onSubmit, loading = $bindable() }: Props = $props();
 
-	function handleSubmit(e) {
-		e.preventDefault();
-		onSubmit(query);
+	function handleSubmit() {
+		onSubmit();
 	}
 </script>
 
 <search class="input-group flex w-full flex-row">
-	<form on:submit={handleSubmit} class="flex w-full">
+	<form onsubmit={handleSubmit} class="flex w-full">
 		<input
 			class="ig-input flex-1 px-6 text-xl break-normal disabled:cursor-progress"
 			type="search"

@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import TablerChessKnight from '~icons/tabler/chess-knight';
 </script>
 

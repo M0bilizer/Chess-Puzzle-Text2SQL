@@ -1,7 +1,5 @@
-<script>
+<script lang="ts">
 	import MainOnlyPage from '@/common/components/MainOnlyPage.svelte';
 </script>
 
-<MainOnlyPage>
-	Not Found
-</MainOnlyPage>
+<MainOnlyPage>Not Found</MainOnlyPage>
