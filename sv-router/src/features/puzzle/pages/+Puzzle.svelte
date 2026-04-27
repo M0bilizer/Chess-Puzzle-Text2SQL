@@ -11,7 +11,7 @@
 	let p: Game;
 </script>
 
-<MainWithAsidePage class="py-4">
+<MainWithAsidePage>
 	<main class="space-y-4">
 		<Game
 			bind:this={p}

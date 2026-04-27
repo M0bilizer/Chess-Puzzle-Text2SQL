@@ -17,13 +17,13 @@
 		display: flex;
 		flex-direction: column;
 		width: 100%;
-		min-height: calc(100vh - 77px - 60px);
+		min-height: calc(100vh - 85px);
 		gap: 1rem;
 		margin: 0 auto;
 	}
 
 	.container > :global(main) {
-		max-width: 900px;
+		max-width: 700px;
 		width: 100%;
 	}
 

@@ -4,6 +4,10 @@
 	import TablerChevronUp from '~icons/tabler/chevron-up';
 	import type { Puzzle } from '../type';
 	import CopyFenButton from './CopyFenButton.svelte';
+	import OpenInLichess from './OpenInLichess.svelte';
+	import OpeningBadges from './OpeningBadges.svelte';
+	import ThemesBadges from './ThemesBadges.svelte';
+	import ShareButton from './ShareButton.svelte';
 
 	type Props = {
 		puzzle: Puzzle;
@@ -25,25 +29,29 @@
 			>
 		</h3>
 		<Accordion.ItemContent
-			class="gap-4 divide-y divide-surface-200-800 preset-filled-surface-100-900 p-4"
+			class="mb-2 gap-4 divide-y divide-surface-200-800 preset-filled-surface-100-900 p-4"
 		>
-			<article class="space-y-4 p-4">
-				<div>
-					<h2 class="h6">Announcements</h2>
-					<h3 class="h3">Skeleton is Awesome</h3>
-				</div>
-				<p class="opacity-60">
-					Lorem ipsum dolor sit amet consectetur adipisicing elit. Numquam aspernatur provident
-					eveniet eligendi cumque consequatur tempore sint nisi sapiente. Iste beatae laboriosam
-					iure molestias cum expedita architecto itaque quae rem.
-				</p>
-			</article>
-			<!--  -->
-			<footer class="flex items-center justify-between gap-4 p-4">
+			<section class="space-x-2">
+				<small class="opacity-50">
+					Rating: {puzzle.rating}
+				</small>
+				<small class="opacity-50">
+					Played {puzzle.nbPlays} times
+				</small>
+			</section>
+			<dl class="flex flex-col gap-1 p-2">
+				<dt class="font-semibold">Openings</dt>
+				<OpeningBadges openings={puzzle.openingTags} />
+			</dl>
+			<dl class="flex flex-col gap-1 p-2">
+				<dt class="font-semibold">Themes</dt>
+				<ThemesBadges themes={puzzle.themes} />
+			</dl>
+			<nav class="flex items-center gap-4 p-2">
 				<CopyFenButton fen={puzzle.fen} />
-				<small class="opacity-60">By Alex</small>
-				<small class="opacity-60">On {new Date().toLocaleDateString()}</small>
-			</footer>
+				<OpenInLichess gameUrl={puzzle.gameUrl} />
+				<ShareButton />
+			</nav>
 		</Accordion.ItemContent>
 	</Accordion.Item>
 </Accordion>

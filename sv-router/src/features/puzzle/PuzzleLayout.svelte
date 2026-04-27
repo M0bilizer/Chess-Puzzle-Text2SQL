@@ -7,4 +7,4 @@
 
 <Appbar />
 {@render children()}
-<Footer />
+<!-- <Footer /> -->
