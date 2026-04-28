@@ -21,7 +21,7 @@
 	}
 </script>
 
-{#if navigator.share}
+{#if navigator.canShare() && navigator.canShare({ title, text, url })}
 	<!-- Use native share on mobile -->
 	<button onclick={handleShare} class="btn gap-2 active:scale-95">
 		<TablerShare class="size-icon" />

@@ -1,5 +1,5 @@
 import { derived, type Readable, writable } from 'svelte/store';
-import type { Puzzle } from '@/features/puzzle/type';
+import type { Puzzle } from '../type.svelte';
 
 export type PuzzleStore = ReturnType<typeof createPuzzleStore>;
 

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Chessground } from 'svelte-chessground';
 	import { PATHS } from '@/router';
-	import type { Puzzle } from '@/features/puzzle/type';
+	import type { Puzzle } from '../type.svelte';
 
 	type Props = {
 		puzzle: Puzzle;

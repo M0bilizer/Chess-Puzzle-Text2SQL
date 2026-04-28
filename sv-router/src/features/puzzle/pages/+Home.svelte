@@ -6,9 +6,9 @@
 	import ErrorAlert from '@/common/components/ErrorAlert.svelte';
 	import ChessSkeleton from '@/features/puzzle/components/ChessSkeleton.svelte';
 	import WideMainOnlyPage from '@/common/components/WideMainOnlyPage.svelte';
-	import type { Puzzle } from '@/features/puzzle/type';
 	import ChessCard from '@/features/puzzle/components/ChessCard.svelte';
 	import { searchParams } from 'sv-router';
+	import type { Puzzle } from '../type.svelte';
 
 	let query = $state((searchParams.get('q') as string) || '');
 	let loading = $state(false);

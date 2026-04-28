@@ -1,4 +1,4 @@
-import type { Game, Puzzle } from './type';
+import type { Game, Puzzle } from './type.svelte';
 
 export function puzzleToGame(puzzle: Puzzle): Game {
 	const moveList = puzzle.moves.split(' ');

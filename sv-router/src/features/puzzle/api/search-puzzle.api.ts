@@ -1,7 +1,7 @@
 import { AsyncResult, Result } from 'typescript-result';
-import type { Puzzle } from '@/features/puzzle/type';
 import { IOError } from '@/common/types/error';
 import { puzzle } from '@/features/puzzle/api/puzzle-stub';
+import type { Puzzle } from '../type.svelte';
 
 export function searchPuzzleApi(search: string): AsyncResult<Puzzle[], IOError> {
 	// Stub mode - returns mock data after 1 second delay
