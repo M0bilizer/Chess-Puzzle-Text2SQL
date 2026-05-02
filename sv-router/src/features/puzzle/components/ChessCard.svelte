@@ -14,7 +14,7 @@
 	class="group block max-w-64 overflow-hidden card border border-surface-200-800 preset-filled-surface-100-900 transition-all duration-200 hover:-translate-y-1 hover:shadow-md"
 >
 	<!-- Chess board placeholder -->
-	<header class="relative h-64 w-64">
+	<header class="thumbnail relative h-64 w-64">
 		<Chessground fen={puzzle.fen} />
 
 		<!-- Overlay -->
@@ -35,10 +35,8 @@
 
 <style>
 	/* hide the coordinates */
-	:global(.ranks) {
-		visibility: hidden;
-	}
-	:global(.files) {
+	.thumbnail :global(.ranks),
+	.thumbnail :global(.files) {
 		visibility: hidden;
 	}
 </style>

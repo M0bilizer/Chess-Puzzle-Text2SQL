@@ -11,10 +11,8 @@
 <AppBar class="mb-2 h-[77px]">
 	<AppBar.Toolbar class="grid-cols-[auto_1fr_auto]">
 		<AppBar.Lead>
-			<a href={PATHS.HOME} data-preload>
-				<button type="button" class="btn-icon btn-icon-lg hover:preset-tonal">
-					<TablerHome />
-				</button>
+			<a href={PATHS.HOME} class="btn-icon btn-icon-lg hover:preset-tonal" data-preload>
+				<TablerHome />
 			</a>
 		</AppBar.Lead>
 		<AppBar.Headline>
