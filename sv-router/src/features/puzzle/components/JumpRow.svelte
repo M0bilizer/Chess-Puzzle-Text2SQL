@@ -11,8 +11,8 @@
 </script>
 
 <div>
-	<button onclick={onReset} disabled={!canGoBack}>Reset</button>
-	<button onclick={onBack} disabled={!canGoBack}>Back</button>
-	<button onclick={onForward} disabled={!canGoForward}>Forward</button>
-	<button onclick={onEnd} disabled={!canGoForward}>End</button>
+	<button class="btn" onclick={onReset} disabled={!canGoBack}>Reset</button>
+	<button class="btn" onclick={onBack} disabled={!canGoBack}>Back</button>
+	<button class="btn" onclick={onForward} disabled={!canGoForward}>Forward</button>
+	<button class="btn" onclick={onEnd} disabled={!canGoForward}>End</button>
 </div>

@@ -38,9 +38,19 @@ export class GameState {
 	// Reactive derivations
 	public isPlayerTurn = $derived.by(() => this._positionIndex % 2 === 0);
 	public isComplete = $derived.by(() => this._positionIndex >= this.game.moves.length * 2 - 1);
-	public canGoBack = $derived.by(() => this._positionIndex > -1);
-	public canGoForward = $derived.by(() => this._positionIndex < this.game.moves.length * 2 - 1);
+	public canGoBackInGame = $derived.by(() => this._positionIndex > -1);
+	public canGoForwardInGame = $derived.by(
+		() => this._positionIndex < this.game.moves.length * 2 - 1
+	);
 	public isInJump = $derived.by(() => this._jumpingIndex != null);
+	public canGoBackInJump = $derived.by(() => {
+		// Can go back in jump mode if we're not at the first position (-1)
+		return this._jumpingIndex > -1;
+	});
+	public canGoForwardInJump = $derived.by(() => {
+		// Can go forward in jump mode if we're not at the last position but make sure we don't let player go beyond the moves that they have played
+		return this._jumpingIndex !== null && this._jumpingIndex < this.game.moves.length * 2 - 1;
+	});
 
 	// Getters
 	public get positionIndex(): number {
@@ -184,10 +194,10 @@ export class Engine {
 		return this.state.isComplete;
 	}
 	public get canGoBack() {
-		return this.state.canGoBack;
+		return this.state.canGoBackInGame;
 	}
 	public get canGoForward() {
-		return this.state.canGoForward;
+		return this.state.canGoForwardInGame;
 	}
 	public get isInJump() {
 		return this.state.isInJump;
@@ -261,7 +271,7 @@ export class Engine {
 		},
 
 		playComputerMove: async (): Promise<void> => {
-			if (!this.state.canGoForward) return;
+			if (!this.state.canGoForwardInGame) return;
 
 			const nextMove = this.state.getExpectedMoveAtPosition(this.state.positionIndex + 1);
 			if (!nextMove) return;

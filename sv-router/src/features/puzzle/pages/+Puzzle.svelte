@@ -10,7 +10,7 @@
 	import MoveTable from '../components/MoveTable.svelte';
 	import JumpRow from '../components/JumpRow.svelte';
 
-	const puzzle = puzzleStub[2];
+	const puzzle = puzzleStub[3];
 	const game = puzzleToGame(puzzle);
 
 	// Engine will be init by Game
@@ -40,8 +40,8 @@
 	let gameState = $derived(engine?.getState());
 	let isPlayerTurn = $derived(gameState?.isPlayerTurn);
 	let isComplete = $derived(gameState?.isComplete);
-	let canGoBack = $derived(gameState?.canGoBack);
-	let canGoForward = $derived(gameState?.canGoForward);
+	let canGoBack = $derived(gameState?.canGoBackInJump);
+	let canGoForward = $derived(gameState?.canGoForwardInJump);
 	let positionIndex = $derived(gameState?.positionIndex);
 
 	function onReset() {
