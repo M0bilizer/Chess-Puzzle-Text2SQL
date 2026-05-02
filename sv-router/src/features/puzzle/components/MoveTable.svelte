@@ -15,12 +15,11 @@
 	let currentPositionIndex = $derived(gameState.positionIndex);
 	let moves = $derived(gameState.gameData.moves);
 
-	// TODO: move this out, moveTable should be only presentation
 	let tableCells = $derived(() => {
 		const cells: Array<Move | null> = [];
 		const color = getPlayerColor(gameState.gameData.fen, false);
 
-		// Lichess recommends using a chess library to convert LAN to SAN
+		// Lichess recommends using a chess library to convert IAN to SAN
 		const chess = new Chess();
 		chess.load(gameState.gameData.fen);
 		function toMove(lan: string | null): Move | null {
@@ -28,21 +27,41 @@
 			return chess.move(lan);
 		}
 
+		let positionIdx = 0;
+
+		// Add initial empty cell if needed (always visible since it's the starting position)
 		if (color === 'w') {
 			cells.push(null);
 		}
-		for (const move of moves) {
-			cells.push(toMove(move.computer));
-			cells.push(toMove(move.player));
+
+		for (let i = 0; i < moves.length; i++) {
+			// Add computer move if played
+			if (positionIdx <= currentPositionIndex) {
+				cells.push(toMove(moves[i].computer));
+				positionIdx++;
+			} else {
+				break; // Stop adding once we reach unplayed moves
+			}
+
+			// Add player move if played
+			if (positionIdx <= currentPositionIndex) {
+				cells.push(toMove(moves[i].player));
+				positionIdx++;
+			} else {
+				break; // Stop adding once we reach unplayed moves
+			}
 		}
-		if (color === 'w') {
-			cells.push(null);
-		}
+
 		return cells;
 	});
 </script>
 
-<table class="table">
+<table class="table w-full table-fixed">
+	<colgroup>
+		<col class="w-16" />
+		<col class="w-1/2" />
+		<col class="w-1/2" />
+	</colgroup>
 	<thead>
 		<tr>
 			<th>Move</th>
@@ -60,5 +79,13 @@
 				</tr>
 			{/if}
 		{/each}
+
+		{#if tableCells().length === 0}
+			<tr class="[&>td]:hover:preset-filled-primary-50-950">
+				<th scope="row">1</th>
+				<MoveCell move={undefined} />
+				<MoveCell move={undefined} />
+			</tr>
+		{/if}
 	</tbody>
 </table>

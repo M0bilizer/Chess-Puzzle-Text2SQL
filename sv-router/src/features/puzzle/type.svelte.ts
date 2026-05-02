@@ -45,6 +45,8 @@ export class GameState {
 	public isInJump = $derived.by(() => this._jumpingIndex != null);
 	public canGoBackInJump = $derived.by(() => {
 		// Can go back in jump mode if we're not at the first position (-1)
+		// Return true if not in jump mode (null) so that users can init the jump
+		if (this._jumpingIndex === null) return true;
 		return this._jumpingIndex > -1;
 	});
 	public canGoForwardInJump = $derived.by(() => {

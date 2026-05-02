@@ -14,7 +14,7 @@
 	import type { Move } from 'chess.js';
 
 	type Props = {
-		move: Move | null;
+		move: Move | null | undefined;
 	};
 	const { move }: Props = $props();
 
@@ -48,8 +48,11 @@
 			<span>
 				{move.san}
 			</span>
-		{:else}
+		{:else if move === null}
 			<span class="text-surface-500">—</span>
+		{:else}
+			<!-- undefined -->
+			<span></span>
 		{/if}
 	</div>
 </td>
