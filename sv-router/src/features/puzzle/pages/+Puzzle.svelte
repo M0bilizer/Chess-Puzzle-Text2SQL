@@ -60,6 +60,10 @@
 		engine?.jump.last();
 	}
 
+	function onJumpToIndex(index: number) {
+		engine?.jump.to(index);
+	}
+
 	const settings: Record<string, unknown> = {} as Record<string, unknown>;
 
 	const playerColor = getPlayerColor(game.fen, (settings?.flipOrientation as boolean) || false);
@@ -72,7 +76,7 @@
 	</main>
 	<aside>
 		{#if gameState}
-			<MoveTable {gameState} {wrongAttempts} />
+			<MoveTable {gameState} {onJumpToIndex} />
 		{/if}
 		<MoveFeedback {playerColor} isComplete={isComplete ?? false} {moveResult} />
 		<JumpRow

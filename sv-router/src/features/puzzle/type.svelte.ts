@@ -106,19 +106,6 @@ export class GameState {
 		return isComputerMove ? movePair.computer : movePair.player;
 	}
 
-	public getCurrentFEN(): string {
-		return this.chess.fen();
-	}
-
-	public getMoveHistory(): string[] {
-		const moves: string[] = [];
-		for (let i = 0; i <= this._latestIndex; i++) {
-			const move = this.getExpectedMoveAtPosition(i);
-			if (move) moves.push(move);
-		}
-		return moves;
-	}
-
 	public resetToInitialState(): void {
 		this.chess.load(this.game.fen);
 		this._latestIndex = -1;
@@ -350,6 +337,35 @@ export class Engine {
 			this.state.setProgrammaticMove(false);
 			this.jump.config.teardown();
 			this.onJump?.(this.state.latestIndex);
+		},
+
+		to: (index: number) => {
+			if (!this.state.isInJump) {
+				this.jump.config.init();
+			}
+			const currentIndex = this.state.jumpingIndex!;
+			if (currentIndex === index) return;
+
+			this.state.setProgrammaticMove(true);
+			this.state.setShouldPlaySound(false);
+
+			// Jump directly by reloading from FEN and replaying moves
+			this.state.chessBoard.load(this.state.gameData.fen);
+			this.state.setJumpingIndex(-1);
+
+			for (let i = 0; i <= index; i++) {
+				const move = this.state.getExpectedMoveAtPosition(i);
+				if (move) {
+					this.state.chessBoard.move(move);
+					this.state.setJumpingIndex(i);
+				}
+			}
+			this.state.setProgrammaticMove(false);
+			this.state.setShouldPlaySound(true);
+			if (this.state.jumpingIndex === this.state.latestIndex) {
+				this.jump.config.teardown();
+			}
+			this.onJump?.(this.state.jumpingIndex!);
 		}
 	};
 

@@ -7,10 +7,10 @@
 
 	interface Props {
 		gameState: GameState;
-		wrongAttempts: Map<number, string>;
+		onJumpToIndex?: (index: number) => void;
 	}
 
-	let { gameState, wrongAttempts }: Props = $props();
+	let { gameState, onJumpToIndex }: Props = $props();
 
 	let playerColor = $derived(getPlayerColor(gameState.gameData.fen, false));
 	let jumpingIndex = $derived(gameState.jumpingIndex);
@@ -80,29 +80,35 @@
 				{#if index % 2 === 0}
 					{@const whiteCell = cell}
 					{@const blackCell = tableCells()[index + 1]}
-					<tr class="[&>td]:hover:preset-filled-primary-50-950">
+					<tr>
 						<th scope="row" class="border-e bg-surface-100-900">{Math.floor(index / 2) + 1}</th>
 						<MoveCell
 							move={whiteCell.move}
 							isActive={jumpingIndex === whiteCell.index ||
 								(jumpingIndex === null && latestIndex === whiteCell.index)}
 							isLatest={latestIndex === whiteCell.index}
+							onClick={() => onJumpToIndex?.(whiteCell.index)}
+							disabled={jumpingIndex === whiteCell.index ||
+								(jumpingIndex === null && latestIndex === whiteCell.index)}
 						/>
 						<MoveCell
 							move={blackCell?.move}
 							isActive={jumpingIndex === blackCell?.index ||
 								(jumpingIndex === null && latestIndex === blackCell?.index)}
 							isLatest={latestIndex === blackCell?.index}
+							onClick={() => onJumpToIndex?.(blackCell?.index)}
+							disabled={jumpingIndex === blackCell?.index ||
+								(jumpingIndex === null && latestIndex === blackCell?.index)}
 						/>
 					</tr>
 				{/if}
 			{/each}
 
 			{#if tableCells().length === 0}
-				<tr class="[&>td]:hover:preset-filled-primary-50-950">
+				<tr>
 					<th scope="row">1</th>
-					<MoveCell move={undefined} />
-					<MoveCell move={undefined} />
+					<MoveCell move={undefined} disabled={true} />
+					<MoveCell move={undefined} disabled={true} />
 				</tr>
 			{/if}
 		</tbody>

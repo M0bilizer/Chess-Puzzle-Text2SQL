@@ -17,8 +17,10 @@
 		move: Move | null | undefined;
 		isActive?: boolean;
 		isLatest?: boolean;
+		onClick?: () => void;
+		disabled?: boolean;
 	};
-	const { move, isActive, isLatest }: Props = $props();
+	const { move, isActive, isLatest, onClick, disabled }: Props = $props();
 
 	const pieceIcons = {
 		p: { outline: TablerChess, filled: TablerChessFilled },
@@ -31,9 +33,14 @@
 </script>
 
 <td
+	class="relative"
 	class:bg-secondary-50-950={isActive}
 	class:border-secondary-50-950={isLatest}
 	class:border-2={isLatest}
+	class:cursor-pointer={!disabled && move}
+	class:cursor-default={disabled}
+	class:hover:preset-filled-primary-50-950={!disabled && move}
+	onclick={onClick}
 >
 	<div class="flex items-center gap-1">
 		{#if move}
