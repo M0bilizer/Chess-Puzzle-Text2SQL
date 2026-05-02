@@ -13,6 +13,12 @@
 		onStart?: () => void;
 		onCorrectMove?: (move: Move) => void;
 		onWrongMove?: (move: Move) => void;
+		onMoveMade?: (move: {
+			move: string;
+			isComputer: boolean;
+			isCorrect?: boolean;
+			positionIndex: number;
+		}) => void;
 		onEnd?: () => void;
 	}
 
@@ -23,6 +29,7 @@
 		onStart,
 		onCorrectMove,
 		onWrongMove,
+		onMoveMade,
 		onEnd
 	}: Props = $props();
 
@@ -40,6 +47,7 @@
 			onStart,
 			onCorrectMove,
 			onWrongMove,
+			onMoveMade,
 			onEnd
 		});
 		engineProp = internalEngine;

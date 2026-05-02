@@ -7,19 +7,33 @@
 	import type { Engine } from '../type.svelte';
 	import { getPlayerColor } from '../components/get-player-color';
 	import MoveFeedback from '../components/MoveFeedback.svelte';
+	import MoveTable from '../components/MoveTable.svelte';
+	import JumpRow from '../components/JumpRow.svelte';
 
-	const puzzle = puzzleStub[3];
+	const puzzle = puzzleStub[2];
 	const game = puzzleToGame(puzzle);
 
 	// Engine will be init by Game
 	let engine: Engine | undefined = $state();
 	let moveResult = $state<'correct' | 'wrong' | null>(null);
+	let wrongAttempts = $state<Map<number, string>>(new Map());
 
 	function onCorrectMove() {
 		moveResult = 'correct';
 	}
 	function onWrongMove() {
 		moveResult = 'wrong';
+	}
+
+	function onMoveMade(move: {
+		move: string;
+		isComputer: boolean;
+		isCorrect?: boolean;
+		positionIndex: number;
+	}) {
+		if (!move.isCorrect) {
+			wrongAttempts.set(move.positionIndex, move.move);
+		}
 	}
 
 	// Reactive state from engine (ready for future use)
@@ -30,19 +44,19 @@
 	let canGoForward = $derived(gameState?.canGoForward);
 	let positionIndex = $derived(gameState?.positionIndex);
 
-	function reset() {
+	function onReset() {
 		engine?.jump.first();
 	}
 
-	function back() {
+	function onBack() {
 		engine?.jump.back();
 	}
 
-	function forward() {
+	function onForward() {
 		engine?.jump.forward();
 	}
 
-	function end() {
+	function onEnd() {
 		engine?.jump.last();
 	}
 
@@ -53,10 +67,21 @@
 
 <MainWithAsidePage>
 	<main class="space-y-4">
-		<Game {game} bind:engine {onCorrectMove} {onWrongMove} />
+		<Game {game} bind:engine {onCorrectMove} {onWrongMove} {onMoveMade} />
 		<ChessDescription {puzzle} />
 	</main>
 	<aside>
+		{#if gameState}
+			<MoveTable {gameState} {wrongAttempts} />
+		{/if}
 		<MoveFeedback {playerColor} isComplete={isComplete ?? false} {moveResult} />
+		<JumpRow
+			{onReset}
+			{onBack}
+			{onForward}
+			{onEnd}
+			canGoBack={canGoBack || false}
+			canGoForward={canGoForward || false}
+		/>
 	</aside>
 </MainWithAsidePage>
