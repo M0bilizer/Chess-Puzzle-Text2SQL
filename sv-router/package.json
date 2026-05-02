@@ -6,7 +6,7 @@
 		"dev": "vite",
 		"build": "vite build",
 		"preview": "vite preview",
-		"check": "svelte-check",
+		"check": "tsc && svelte-check",
 		"lint": "eslint . && prettier --check .",
 		"format": "prettier --write .",
 		"test:unit": "vitest",

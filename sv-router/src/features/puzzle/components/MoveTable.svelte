@@ -12,7 +12,8 @@
 
 	let { gameState, wrongAttempts }: Props = $props();
 
-	let currentPositionIndex = $derived(gameState.positionIndex);
+	let jumpingIndex = $derived(gameState.jumpingIndex);
+	let latestIndex = $derived(gameState.latestIndex);
 	let moves = $derived(gameState.gameData.moves);
 
 	let tableCells = $derived(() => {
@@ -36,7 +37,7 @@
 
 		for (let i = 0; i < moves.length; i++) {
 			// Add computer move if played
-			if (positionIdx <= currentPositionIndex) {
+			if (positionIdx <= latestIndex) {
 				cells.push(toMove(moves[i].computer));
 				positionIdx++;
 			} else {
@@ -44,7 +45,7 @@
 			}
 
 			// Add player move if played
-			if (positionIdx <= currentPositionIndex) {
+			if (positionIdx <= latestIndex) {
 				cells.push(toMove(moves[i].player));
 				positionIdx++;
 			} else {
@@ -54,6 +55,8 @@
 
 		return cells;
 	});
+
+	$inspect(latestIndex, jumpingIndex);
 </script>
 
 <table class="table w-full table-fixed">
@@ -69,13 +72,22 @@
 			<th>Black</th>
 		</tr>
 	</thead>
-	<tbody>
+	<tbody class="[&>tr]:border-transparent!">
 		{#each tableCells() as cell, index (index)}
 			{#if index % 2 === 0}
 				<tr class="[&>td]:hover:preset-filled-primary-50-950">
-					<th scope="row">{Math.floor(index / 2) + 1}</th>
-					<MoveCell move={cell} />
-					<MoveCell move={tableCells()[index + 1]} />
+					<th scope="row" class="border-e bg-surface-100-900">{Math.floor(index / 2) + 1}</th>
+					<MoveCell
+						move={cell}
+						isActive={jumpingIndex === index || (jumpingIndex === null && latestIndex === index)}
+						isLatest={latestIndex === index}
+					/>
+					<MoveCell
+						move={tableCells()[index + 1]}
+						isActive={jumpingIndex === index + 1 ||
+							(jumpingIndex === null && latestIndex === index + 1)}
+						isLatest={latestIndex === index + 1}
+					/>
 				</tr>
 			{/if}
 		{/each}

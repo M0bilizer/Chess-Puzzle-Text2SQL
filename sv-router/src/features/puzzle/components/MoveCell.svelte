@@ -15,8 +15,10 @@
 
 	type Props = {
 		move: Move | null | undefined;
+		isActive?: boolean;
+		isLatest?: boolean;
 	};
-	const { move }: Props = $props();
+	const { move, isActive, isLatest }: Props = $props();
 
 	const pieceIcons = {
 		p: { outline: TablerChess, filled: TablerChessFilled },
@@ -28,7 +30,11 @@
 	};
 </script>
 
-<td>
+<td
+	class:bg-secondary-50-950={isActive}
+	class:border-secondary-50-950={isLatest}
+	class:border-2={isLatest}
+>
 	<div class="flex items-center gap-1">
 		{#if move}
 			{@const Icon = pieceIcons[move.piece as keyof typeof pieceIcons]}

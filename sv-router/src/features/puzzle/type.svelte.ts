@@ -25,7 +25,7 @@ export class GameState {
 	private chess: Chess;
 	private game: Game;
 
-	private _positionIndex: number = $state(-1);
+	private _latestIndex: number = $state(-1);
 	private _jumpingIndex: number | null = $state(null);
 	private _isProgrammaticMove: boolean = $state(false);
 	private _shouldPlaySound: boolean = $state(true);
@@ -36,12 +36,10 @@ export class GameState {
 	}
 
 	// Reactive derivations
-	public isPlayerTurn = $derived.by(() => this._positionIndex % 2 === 0);
-	public isComplete = $derived.by(() => this._positionIndex >= this.game.moves.length * 2 - 1);
-	public canGoBackInGame = $derived.by(() => this._positionIndex > -1);
-	public canGoForwardInGame = $derived.by(
-		() => this._positionIndex < this.game.moves.length * 2 - 1
-	);
+	public isPlayerTurn = $derived.by(() => this._latestIndex % 2 === 0);
+	public isComplete = $derived.by(() => this._latestIndex >= this.game.moves.length * 2 - 1);
+	public canGoBackInGame = $derived.by(() => this._latestIndex > -1);
+	public canGoForwardInGame = $derived.by(() => this._latestIndex < this.game.moves.length * 2 - 1);
 	public isInJump = $derived.by(() => this._jumpingIndex != null);
 	public canGoBackInJump = $derived.by(() => {
 		// Can go back in jump mode if we're not at the first position (-1)
@@ -55,8 +53,8 @@ export class GameState {
 	});
 
 	// Getters
-	public get positionIndex(): number {
-		return this._positionIndex;
+	public get latestIndex(): number {
+		return this._latestIndex;
 	}
 
 	public get jumpingIndex(): number | null {
@@ -81,7 +79,7 @@ export class GameState {
 
 	// State mutators (for Engine use)
 	public setPositionIndex(value: number): void {
-		this._positionIndex = value;
+		this._latestIndex = value;
 	}
 
 	public setJumpingIndex(value: number | null): void {
@@ -114,7 +112,7 @@ export class GameState {
 
 	public getMoveHistory(): string[] {
 		const moves: string[] = [];
-		for (let i = 0; i <= this._positionIndex; i++) {
+		for (let i = 0; i <= this._latestIndex; i++) {
 			const move = this.getExpectedMoveAtPosition(i);
 			if (move) moves.push(move);
 		}
@@ -123,7 +121,7 @@ export class GameState {
 
 	public resetToInitialState(): void {
 		this.chess.load(this.game.fen);
-		this._positionIndex = -1;
+		this._latestIndex = -1;
 		this._jumpingIndex = null;
 		this._isProgrammaticMove = false;
 		this._shouldPlaySound = true;
@@ -242,7 +240,7 @@ export class Engine {
 				move: move.lan,
 				isComputer: false,
 				isCorrect: false,
-				positionIndex: this.state.positionIndex + 1
+				positionIndex: this.state.latestIndex + 1
 			});
 			await this.waitForAnimations();
 			setTimeout(() => {
@@ -256,10 +254,10 @@ export class Engine {
 				move: move.lan,
 				isComputer: false,
 				isCorrect: true,
-				positionIndex: this.state.positionIndex + 1
+				positionIndex: this.state.latestIndex + 1
 			});
 
-			this.state.setPositionIndex(this.state.positionIndex + 1);
+			this.state.setPositionIndex(this.state.latestIndex + 1);
 
 			if (this.state.isComplete) {
 				this.onEnd?.();
@@ -275,7 +273,7 @@ export class Engine {
 		playComputerMove: async (): Promise<void> => {
 			if (!this.state.canGoForwardInGame) return;
 
-			const nextMove = this.state.getExpectedMoveAtPosition(this.state.positionIndex + 1);
+			const nextMove = this.state.getExpectedMoveAtPosition(this.state.latestIndex + 1);
 			if (!nextMove) return;
 
 			await new Promise((resolve) => setTimeout(resolve, this.settings.computerMoveDelay));
@@ -286,11 +284,11 @@ export class Engine {
 				move: nextMove,
 				isComputer: false,
 				isCorrect: false,
-				positionIndex: this.state.positionIndex + 1
+				positionIndex: this.state.latestIndex + 1
 			});
 
 			await this.waitForAnimations();
-			this.state.setPositionIndex(this.state.positionIndex + 1);
+			this.state.setPositionIndex(this.state.latestIndex + 1);
 			this.state.setProgrammaticMove(false);
 		}
 	};
@@ -298,7 +296,7 @@ export class Engine {
 	public jump = {
 		config: {
 			init: () => {
-				this.state.setJumpingIndex(this.state.positionIndex);
+				this.state.setJumpingIndex(this.state.latestIndex);
 			},
 
 			teardown: () => {
@@ -332,7 +330,7 @@ export class Engine {
 			this.state.chessBoard.move(move);
 			this.state.setJumpingIndex(this.state.jumpingIndex! + 1);
 			this.state.setProgrammaticMove(false);
-			if (this.state.jumpingIndex === this.state.positionIndex) this.jump.config.teardown();
+			if (this.state.jumpingIndex === this.state.latestIndex) this.jump.config.teardown();
 
 			this.onJump?.(this.state.jumpingIndex!);
 		},
@@ -342,16 +340,16 @@ export class Engine {
 			this.state.setProgrammaticMove(true);
 			this.state.setShouldPlaySound(false);
 			this.state.chessBoard.load(this.state.gameData.fen);
-			for (let i = -1; i < this.state.positionIndex - 1; i++) {
+			for (let i = -1; i < this.state.latestIndex - 1; i++) {
 				const move = this.state.getExpectedMoveAtPosition(i + 1)!;
 				this.state.chessBoard.move(move);
 			}
 			this.state.setShouldPlaySound(true);
-			const move = this.state.getExpectedMoveAtPosition(this.state.positionIndex);
+			const move = this.state.getExpectedMoveAtPosition(this.state.latestIndex);
 			this.state.chessBoard.move(move!);
 			this.state.setProgrammaticMove(false);
 			this.jump.config.teardown();
-			this.onJump?.(this.state.positionIndex);
+			this.onJump?.(this.state.latestIndex);
 		}
 	};
 
@@ -362,7 +360,7 @@ export class Engine {
 		if (!this.state.isPlayerTurn || this.state.isProgrammaticMove) {
 			return false;
 		}
-		const expectedMove = this.state.getExpectedMoveAtPosition(this.state.positionIndex + 1);
+		const expectedMove = this.state.getExpectedMoveAtPosition(this.state.latestIndex + 1);
 		if (!expectedMove || move.lan !== expectedMove) {
 			await this.actions.handleWrongMove(move);
 			return false;

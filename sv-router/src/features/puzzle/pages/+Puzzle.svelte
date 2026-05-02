@@ -42,7 +42,7 @@
 	let isComplete = $derived(gameState?.isComplete);
 	let canGoBack = $derived(gameState?.canGoBackInJump);
 	let canGoForward = $derived(gameState?.canGoForwardInJump);
-	let positionIndex = $derived(gameState?.positionIndex);
+	let latestIndex = $derived(gameState?.latestIndex);
 
 	function onReset() {
 		engine?.jump.first();
