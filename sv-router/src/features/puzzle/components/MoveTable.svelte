@@ -12,15 +12,14 @@
 
 	let { gameState, wrongAttempts }: Props = $props();
 
+	let playerColor = $derived(getPlayerColor(gameState.gameData.fen, false));
 	let jumpingIndex = $derived(gameState.jumpingIndex);
 	let latestIndex = $derived(gameState.latestIndex);
 	let moves = $derived(gameState.gameData.moves);
 
 	let tableCells = $derived(() => {
-		const cells: Array<Move | null> = [];
-		const color = getPlayerColor(gameState.gameData.fen, false);
+		const cells: Array<{ move: Move | null; index: number }> = [];
 
-		// Lichess recommends using a chess library to convert IAN to SAN
 		const chess = new Chess();
 		chess.load(gameState.gameData.fen);
 		function toMove(lan: string | null): Move | null {
@@ -28,76 +27,84 @@
 			return chess.move(lan);
 		}
 
-		let positionIdx = 0;
+		let actualPositionIdx = 0;
 
-		// Add initial empty cell if needed (always visible since it's the starting position)
-		if (color === 'w') {
-			cells.push(null);
+		// if player's color is white, then the first computer move is black.
+		// However we don't know the corresponding white move, so we add a null cell for the starting position.
+		if (playerColor === 'w') {
+			cells.push({ move: null, index: -1 });
 		}
 
 		for (let i = 0; i < moves.length; i++) {
 			// Add computer move if played
-			if (positionIdx <= latestIndex) {
-				cells.push(toMove(moves[i].computer));
-				positionIdx++;
+			if (actualPositionIdx <= latestIndex) {
+				cells.push({ move: toMove(moves[i].computer), index: actualPositionIdx });
+				actualPositionIdx++;
 			} else {
-				break; // Stop adding once we reach unplayed moves
+				break;
 			}
 
 			// Add player move if played
-			if (positionIdx <= latestIndex) {
-				cells.push(toMove(moves[i].player));
-				positionIdx++;
+			if (actualPositionIdx <= latestIndex) {
+				cells.push({ move: toMove(moves[i].player), index: actualPositionIdx });
+				actualPositionIdx++;
 			} else {
-				break; // Stop adding once we reach unplayed moves
+				break;
 			}
 		}
 
 		return cells;
 	});
-
-	$inspect(latestIndex, jumpingIndex);
 </script>
 
-<table class="table w-full table-fixed">
-	<colgroup>
-		<col class="w-16" />
-		<col class="w-1/2" />
-		<col class="w-1/2" />
-	</colgroup>
-	<thead>
-		<tr>
-			<th>Move</th>
-			<th>White</th>
-			<th>Black</th>
-		</tr>
-	</thead>
-	<tbody class="[&>tr]:border-transparent!">
-		{#each tableCells() as cell, index (index)}
-			{#if index % 2 === 0}
+<div class="table-wrap rounded-t-lg">
+	<table class="table w-full table-fixed">
+		<colgroup>
+			<col class="w-16" />
+			<col class="w-1/2" />
+			<col class="w-1/2" />
+		</colgroup>
+		<thead class="bg-surface-100-900">
+			<tr class="[&>th]:text-surface-400-600">
+				<th>Move</th>
+				<th
+					>White {#if playerColor === 'w'}(you){/if}</th
+				>
+				<th
+					>Black {#if playerColor === 'b'}(you){/if}</th
+				>
+			</tr>
+		</thead>
+		<tbody class="[&>tr]:border-transparent!">
+			{#each tableCells() as cell, index (index)}
+				{#if index % 2 === 0}
+					{@const whiteCell = cell}
+					{@const blackCell = tableCells()[index + 1]}
+					<tr class="[&>td]:hover:preset-filled-primary-50-950">
+						<th scope="row" class="border-e bg-surface-100-900">{Math.floor(index / 2) + 1}</th>
+						<MoveCell
+							move={whiteCell.move}
+							isActive={jumpingIndex === whiteCell.index ||
+								(jumpingIndex === null && latestIndex === whiteCell.index)}
+							isLatest={latestIndex === whiteCell.index}
+						/>
+						<MoveCell
+							move={blackCell?.move}
+							isActive={jumpingIndex === blackCell?.index ||
+								(jumpingIndex === null && latestIndex === blackCell?.index)}
+							isLatest={latestIndex === blackCell?.index}
+						/>
+					</tr>
+				{/if}
+			{/each}
+
+			{#if tableCells().length === 0}
 				<tr class="[&>td]:hover:preset-filled-primary-50-950">
-					<th scope="row" class="border-e bg-surface-100-900">{Math.floor(index / 2) + 1}</th>
-					<MoveCell
-						move={cell}
-						isActive={jumpingIndex === index || (jumpingIndex === null && latestIndex === index)}
-						isLatest={latestIndex === index}
-					/>
-					<MoveCell
-						move={tableCells()[index + 1]}
-						isActive={jumpingIndex === index + 1 ||
-							(jumpingIndex === null && latestIndex === index + 1)}
-						isLatest={latestIndex === index + 1}
-					/>
+					<th scope="row">1</th>
+					<MoveCell move={undefined} />
+					<MoveCell move={undefined} />
 				</tr>
 			{/if}
-		{/each}
-
-		{#if tableCells().length === 0}
-			<tr class="[&>td]:hover:preset-filled-primary-50-950">
-				<th scope="row">1</th>
-				<MoveCell move={undefined} />
-				<MoveCell move={undefined} />
-			</tr>
-		{/if}
-	</tbody>
-</table>
+		</tbody>
+	</table>
+</div>
