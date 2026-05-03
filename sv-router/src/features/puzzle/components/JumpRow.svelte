@@ -3,6 +3,7 @@
 	import TablerChevronLeft from '~icons/tabler/chevron-left';
 	import TablerChevronRight from '~icons/tabler/chevron-right';
 	import TablerChevronRightPipe from '~icons/tabler/chevron-right-pipe';
+	import QuickSettings from './QuickSettings.svelte';
 
 	type Props = {
 		onReset: () => void;
@@ -28,4 +29,5 @@
 	<button class="btn-icon" onclick={onEnd} disabled={!canGoForward}
 		><TablerChevronRightPipe class="size-icon-big" /></button
 	>
+	<QuickSettings />
 </div>

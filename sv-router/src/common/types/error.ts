@@ -15,10 +15,6 @@ export class ConfigurationError extends Error {
 		super('The configuration is not valid.'); // Pass message to Error constructor
 		this.name = 'ConfigurationError';
 		this.issues = issues;
-
-		if (Error.captureStackTrace) {
-			Error.captureStackTrace(this, ConfigurationError);
-		}
 	}
 
 	getFormattedMessages(): string[] {

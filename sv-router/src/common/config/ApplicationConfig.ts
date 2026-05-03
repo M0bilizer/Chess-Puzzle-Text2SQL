@@ -2,7 +2,7 @@ import { Result } from 'typescript-result';
 import * as v from 'valibot';
 import { ConfigurationError } from '@/common/types/error';
 
-export const EnvSchema = v.object({
+const EnvSchema = v.object({
 	nodeEnv: v.optional(v.picklist(['development', 'production'])),
 	baseUrl: v.string(),
 	apiUrl: v.pipe(
