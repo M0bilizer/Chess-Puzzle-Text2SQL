@@ -10,8 +10,6 @@
 		moveResult?: 'correct' | 'wrong' | null;
 	};
 	let { playerColor, isComplete, moveResult = null }: Props = $props();
-
-	const playerColorName = $derived(playerColor === 'w' ? 'white' : 'black');
 </script>
 
 <div

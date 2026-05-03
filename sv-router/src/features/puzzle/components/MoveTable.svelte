@@ -8,9 +8,10 @@
 	interface Props {
 		gameState: GameState;
 		onJumpToIndex?: (index: number) => void;
+		class?: string;
 	}
 
-	let { gameState, onJumpToIndex }: Props = $props();
+	let { gameState, onJumpToIndex, class: className }: Props = $props();
 
 	let playerColor = $derived(getPlayerColor(gameState.gameData.fen, false));
 	let jumpingIndex = $derived(gameState.jumpingIndex);
@@ -57,7 +58,7 @@
 	});
 </script>
 
-<div class="table-wrap rounded-t-lg">
+<div class="table-wrap rounded-t-lg {className}">
 	<table class="table w-full table-fixed">
 		<colgroup>
 			<col class="w-16" />

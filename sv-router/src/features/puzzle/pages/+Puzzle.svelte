@@ -67,13 +67,13 @@
 </script>
 
 <MainWithAsidePage>
-	<main class="space-y-4">
+	<main class="space-y-0 lg:space-y-4">
 		<Game {game} bind:engine {onCorrectMove} {onWrongMove} {onMoveMade} />
-		<ChessDescription {puzzle} />
+		<ChessDescription {puzzle} class="hidden md:block" />
 	</main>
 	<aside>
 		{#if gameState}
-			<MoveTable {gameState} {onJumpToIndex} />
+			<MoveTable {gameState} {onJumpToIndex} class="hidden md:block" />
 		{/if}
 		<MoveFeedback {playerColor} isComplete={isComplete ?? false} {moveResult} />
 		<JumpRow

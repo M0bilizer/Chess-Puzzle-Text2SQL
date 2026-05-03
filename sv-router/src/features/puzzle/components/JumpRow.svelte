@@ -1,4 +1,9 @@
 <script lang="ts">
+	import TablerChevronLeftPipe from '~icons/tabler/chevron-left-pipe';
+	import TablerChevronLeft from '~icons/tabler/chevron-left';
+	import TablerChevronRight from '~icons/tabler/chevron-right';
+	import TablerChevronRightPipe from '~icons/tabler/chevron-right-pipe';
+
 	type Props = {
 		onReset: () => void;
 		onBack: () => void;
@@ -10,9 +15,17 @@
 	let { onReset, onBack, onForward, onEnd, canGoBack, canGoForward }: Props = $props();
 </script>
 
-<div>
-	<button class="btn" onclick={onReset} disabled={!canGoBack}>Reset</button>
-	<button class="btn" onclick={onBack} disabled={!canGoBack}>Back</button>
-	<button class="btn" onclick={onForward} disabled={!canGoForward}>Forward</button>
-	<button class="btn" onclick={onEnd} disabled={!canGoForward}>End</button>
+<div class="btn-group w-full justify-around">
+	<button class="btn-icon" onclick={onReset} disabled={!canGoBack}
+		><TablerChevronLeftPipe class="size-icon-big" /></button
+	>
+	<button class="btn-icon" onclick={onBack} disabled={!canGoBack}
+		><TablerChevronLeft class="size-icon-big" /></button
+	>
+	<button class="btn-icon" onclick={onForward} disabled={!canGoForward}
+		><TablerChevronRight class="size-icon-big" /></button
+	>
+	<button class="btn-icon" onclick={onEnd} disabled={!canGoForward}
+		><TablerChevronRightPipe class="size-icon-big" /></button
+	>
 </div>

@@ -11,11 +11,12 @@
 
 	type Props = {
 		puzzle: Puzzle;
+		class?: string;
 	};
-	let { puzzle }: Props = $props();
+	let { puzzle, class: className }: Props = $props();
 </script>
 
-<Accordion collapsible>
+<Accordion collapsible class={className}>
 	<Accordion.Item value={puzzle.puzzleId}>
 		<h3>
 			<Accordion.ItemTrigger
