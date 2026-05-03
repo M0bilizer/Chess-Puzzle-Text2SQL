@@ -56,7 +56,7 @@
 
 <WideMainOnlyPage>
 	<main class="space-y-12">
-		<section class="mx-auto w-[900px] space-y-2">
+		<section class="mx-auto space-y-2 px-4 lg:w-[900px] lg:px-0">
 			<SearchBanner />
 			<SearchForm bind:query onSubmit={() => handleSearch(query)} bind:loading />
 			{#if error}
@@ -65,13 +65,13 @@
 		</section>
 
 		{#if loading}
-			<div class="grid grid-cols-4 place-items-center gap-2">
+			<div class="grid grid-cols-2 place-items-center gap-2 lg:grid-cols-4">
 				{#each Array(16) as _, i (i)}
 					<ChessSkeleton />
 				{/each}
 			</div>
 		{:else if results.length > 0}
-			<div class="grid grid-cols-4 place-items-center gap-2">
+			<div class="grid grid-cols-2 place-items-center gap-2 lg:grid-cols-4">
 				{#each results as puzzle, _i (puzzle.id)}
 					<ChessCard {puzzle} />
 				{/each}

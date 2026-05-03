@@ -25,18 +25,16 @@
 	<div
 		in:fade={{ duration: 200 }}
 		out:fade={{ duration: 150 }}
-		class="card preset-tonal-error grid grid-cols-1 items-center gap-4 p-4 lg:grid-cols-[auto_1fr_auto]"
+		class="grid grid-cols-[auto_1fr_auto] items-center gap-4 card border border-error-400-600 preset-tonal-error p-4"
 		role="alert"
 	>
-		<TablerAlertTriangleFilled class="size-4 text-error-500" />
-		<div>
-			<p class="font-bold">{title}</p>
-			<p class="text-xs opacity-60">{error}</p>
+		<TablerAlertTriangleFilled class="size-icon-big text-error-500" />
+		<div class="flex flex-col gap-1">
+			<strong>{title}</strong>
+			<em class="opacity-60">{error}</em>
 		</div>
 		{#if dismissible}
-			<button onclick={dismiss} class="btn preset-tonal hover:preset-filled">
-				Dismiss
-			</button>
+			<button onclick={dismiss} class="btn preset-filled-error-500"> Dismiss </button>
 		{/if}
 	</div>
 {/if}

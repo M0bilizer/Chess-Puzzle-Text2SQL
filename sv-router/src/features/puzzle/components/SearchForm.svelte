@@ -17,7 +17,7 @@
 	}
 </script>
 
-<search class="input-group flex w-full flex-row">
+<search class="input-group">
 	<form onsubmit={handleSubmit} class="flex w-full">
 		<input
 			class="ig-input flex-1 px-6 text-xl break-normal disabled:cursor-progress"

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import MainOnlyPage from '@/common/components/MainOnlyPage.svelte';
 </script>
 
-settings
+<MainOnlyPage>settings</MainOnlyPage>

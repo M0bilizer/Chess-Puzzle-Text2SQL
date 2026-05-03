@@ -11,10 +11,10 @@
 
 <a
 	href={PATHS.PUZZLE(puzzle.puzzleId)}
-	class="group block max-w-64 overflow-hidden card border border-surface-200-800 preset-filled-surface-100-900 transition-all duration-200 hover:-translate-y-1 hover:shadow-md"
+	class="group block w-80 overflow-hidden card border border-surface-200-800 preset-filled-surface-100-900 transition-all duration-200 hover:-translate-y-1 hover:shadow-md lg:w-64"
 >
 	<!-- Chess board placeholder -->
-	<header class="thumbnail relative h-64 w-64">
+	<header class="thumbnail relative h-80 w-80 lg:h-64 lg:w-64">
 		<Chessground fen={puzzle.fen} />
 
 		<!-- Overlay -->
