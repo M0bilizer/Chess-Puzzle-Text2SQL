@@ -17,6 +17,7 @@
 	let engine: Engine | undefined = $state();
 	let moveResult = $state<'correct' | 'wrong' | null>(null);
 	let wrongAttempts = $state<Map<number, string>>(new Map());
+	const settings: Record<string, unknown> = {} as Record<string, unknown>;
 
 	function onCorrectMove() {
 		moveResult = 'correct';
@@ -36,13 +37,13 @@
 		}
 	}
 
-	// Reactive state from engine (ready for future use)
 	let gameState = $derived(engine?.getState());
-	let isPlayerTurn = $derived(gameState?.isPlayerTurn);
 	let isComplete = $derived(gameState?.isComplete);
 	let canGoBack = $derived(gameState?.canGoBackInJump);
 	let canGoForward = $derived(gameState?.canGoForwardInJump);
-	let latestIndex = $derived(gameState?.latestIndex);
+	let playerColor = $derived(
+		getPlayerColor(game.fen, (settings?.flipOrientation as boolean) || false)
+	);
 
 	function onReset() {
 		engine?.jump.first();
@@ -63,10 +64,6 @@
 	function onJumpToIndex(index: number) {
 		engine?.jump.to(index);
 	}
-
-	const settings: Record<string, unknown> = {} as Record<string, unknown>;
-
-	const playerColor = getPlayerColor(game.fen, (settings?.flipOrientation as boolean) || false);
 </script>
 
 <MainWithAsidePage>

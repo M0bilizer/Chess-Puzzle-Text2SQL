@@ -37,8 +37,10 @@
 		...DEFAULT_SETTINGS,
 		...propSettings
 	});
+	let playerColor = $derived(getPlayerColor(game.fen, false));
 
 	let boardElement: HTMLElement;
+	// BIG TODO: use chessground instead of svelte-chess
 	let chess: Chess;
 	let internalEngine: Engine | null = null;
 
