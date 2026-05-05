@@ -1,0 +1,39 @@
+@import '@fontsource/average/400.css';
+@import '@fontsource/average-sans/400.css';
+@import 'tailwindcss';
+
+@plugin '@tailwindcss/forms';
+
+@custom-variant dark (&:where([data-mode="dark"], [data-mode="dark"] *));
+
+@theme {
+	--spacing-icon: 1rem;
+	--spacing-icon-big: 2rem;
+
+	/* Fonts */
+	--font-sans: 'Average Sans', sans-serif;
+	--font-serif: 'Average', serif;
+
+	/* Semantic colors based on your existing theme */
+	--color-primary-muted: color-mix(in oklab, var(--color-primary-500) 10%, transparent);
+	--color-success-muted: color-mix(in oklab, var(--color-success-500) 5%, transparent);
+}
+
+body {
+	font-family: var(--font-sans);
+	background-image:
+		radial-gradient(
+			at 0% 25%,
+			color-mix(in oklab, var(--color-primary-500) 10%, transparent) 0px,
+			transparent 30%
+		),
+		radial-gradient(
+			at 15% 6%,
+			color-mix(in oklab, var(--color-success-500) 5%, transparent) 0px,
+			transparent 30%
+		);
+}
+
+@import '@skeletonlabs/skeleton';
+@import '@skeletonlabs/skeleton-svelte';
+@import '@skeletonlabs/skeleton/themes/pine';
