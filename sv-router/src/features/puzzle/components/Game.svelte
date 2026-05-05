@@ -2,14 +2,14 @@
 	import type { Move } from 'chess.js';
 	import { onMount } from 'svelte';
 	import { Chess } from 'svelte-chess';
-	import { getPlayerColor } from './get-player-color';
 	import { Engine, type Game as GameType } from '../type.svelte';
-	import { DEFAULT_SETTINGS } from '../type.svelte';
+	import { getPlayerColor } from '../utils';
+	import type { Preferences } from '@/features/settings/preferences-state';
 
 	interface Props {
 		game: GameType;
 		engine?: Engine;
-		settings?: Partial<typeof DEFAULT_SETTINGS>;
+		settings?: Partial<Preferences>;
 		onStart?: () => void;
 		onCorrectMove?: (move: Move) => void;
 		onWrongMove?: (move: Move) => void;
@@ -25,7 +25,7 @@
 	let {
 		game,
 		engine: engineProp = $bindable(),
-		settings: propSettings,
+		settings,
 		onStart,
 		onCorrectMove,
 		onWrongMove,
@@ -33,11 +33,13 @@
 		onEnd
 	}: Props = $props();
 
-	const settings = $derived({
-		...DEFAULT_SETTINGS,
-		...propSettings
-	});
-	let playerColor = $derived(getPlayerColor(game.fen, false));
+	let orientation = $derived(
+		settings?.flipOrientation
+			? getPlayerColor(game.fen) === 'w'
+				? 'b'
+				: 'w'
+			: getPlayerColor(game.fen)
+	);
 
 	let boardElement: HTMLElement;
 	// BIG TODO: use chessground instead of svelte-chess
@@ -63,9 +65,5 @@
 </script>
 
 <div bind:this={boardElement}>
-	<Chess
-		bind:this={chess}
-		orientation={getPlayerColor(game.fen, settings.flipOrientation)}
-		on:move={moveListener}
-	/>
+	<Chess bind:this={chess} {orientation} on:move={moveListener} />
 </div>

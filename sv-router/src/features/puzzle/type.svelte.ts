@@ -1,6 +1,7 @@
 import type { Move } from 'chess.js';
 import type { Chess } from 'svelte-chess';
-import { playSound } from './components/play-sound';
+import type { Preferences } from '../settings/preferences-state';
+import { playSound } from './utils';
 
 export type Game = {
 	fen: string;
@@ -115,16 +116,10 @@ export class GameState {
 	}
 }
 
-export const DEFAULT_SETTINGS = {
-	computerMoveDelay: 250,
-	flipOrientation: false,
-	muted: false
-};
-
 export class Engine {
 	private state: GameState;
 	private boardElement: HTMLElement;
-	private settings: Partial<typeof DEFAULT_SETTINGS>;
+	private settings: Partial<Preferences>;
 
 	private onStart?: () => void;
 	private onCorrectMove?: (move: Move) => void;
@@ -142,7 +137,7 @@ export class Engine {
 		chess: Chess,
 		game: Game,
 		boardElement: HTMLElement,
-		settings: Partial<typeof DEFAULT_SETTINGS>,
+		settings: Partial<Preferences>,
 		callbacks: {
 			onStart?: () => void;
 			onCorrectMove?: (move: Move) => void;
@@ -159,7 +154,7 @@ export class Engine {
 	) {
 		this.state = new GameState(chess, game);
 		this.boardElement = boardElement;
-		this.settings = { ...DEFAULT_SETTINGS, ...settings };
+		this.settings = settings;
 		this.onStart = callbacks.onStart;
 		this.onCorrectMove = callbacks.onCorrectMove;
 		this.onWrongMove = callbacks.onWrongMove;

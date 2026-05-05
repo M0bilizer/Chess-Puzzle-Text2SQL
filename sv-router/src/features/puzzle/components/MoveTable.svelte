@@ -2,8 +2,8 @@
 <script lang="ts">
 	import { Chess, Move } from 'chess.js';
 	import type { GameState } from '../type.svelte';
-	import { getPlayerColor } from './get-player-color';
 	import MoveCell from './MoveCell.svelte';
+	import { getPlayerColor } from '../utils';
 
 	interface Props {
 		gameState: GameState;
@@ -13,7 +13,7 @@
 
 	let { gameState, onJumpToIndex, class: className }: Props = $props();
 
-	let playerColor = $derived(getPlayerColor(gameState.gameData.fen, false));
+	let playerColor = $derived(getPlayerColor(gameState.gameData.fen));
 	let jumpingIndex = $derived(gameState.jumpingIndex);
 	let latestIndex = $derived(gameState.latestIndex);
 	let moves = $derived(gameState.gameData.moves);

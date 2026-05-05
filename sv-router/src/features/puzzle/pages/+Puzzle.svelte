@@ -3,12 +3,12 @@
 	import MainWithAsidePage from '@/common/components/MainWithAsidePage.svelte';
 	import ChessDescription from '../components/ChessDescription.svelte';
 	import { puzzle as puzzleStub } from '../api/puzzle-stub';
-	import { puzzleToGame } from '../utils';
+	import { getPlayerColor, puzzleToGame } from '../utils';
 	import type { Engine } from '../type.svelte';
-	import { getPlayerColor } from '../components/get-player-color';
 	import MoveFeedback from '../components/MoveFeedback.svelte';
 	import MoveTable from '../components/MoveTable.svelte';
 	import JumpRow from '../components/JumpRow.svelte';
+	import { preferencesStore } from '@/features/settings/preferences-state';
 
 	const puzzle = puzzleStub[3];
 	const game = puzzleToGame(puzzle);
@@ -17,7 +17,6 @@
 	let engine: Engine | undefined = $state();
 	let moveResult = $state<'correct' | 'wrong' | null>(null);
 	let wrongAttempts = $state<Map<number, string>>(new Map());
-	const settings: Record<string, unknown> = {} as Record<string, unknown>;
 
 	function onCorrectMove() {
 		moveResult = 'correct';
@@ -41,9 +40,7 @@
 	let isComplete = $derived(gameState?.isComplete);
 	let canGoBack = $derived(gameState?.canGoBackInJump);
 	let canGoForward = $derived(gameState?.canGoForwardInJump);
-	let playerColor = $derived(
-		getPlayerColor(game.fen, (settings?.flipOrientation as boolean) || false)
-	);
+	let playerColor = $derived(getPlayerColor(game.fen));
 
 	function onReset() {
 		engine?.jump.first();
@@ -68,7 +65,14 @@
 
 <MainWithAsidePage>
 	<main class="space-y-0 lg:space-y-4">
-		<Game {game} bind:engine {onCorrectMove} {onWrongMove} {onMoveMade} />
+		<Game
+			{game}
+			bind:engine
+			settings={preferencesStore.current}
+			{onCorrectMove}
+			{onWrongMove}
+			{onMoveMade}
+		/>
 		<ChessDescription {puzzle} class="hidden md:block" />
 	</main>
 	<aside>
