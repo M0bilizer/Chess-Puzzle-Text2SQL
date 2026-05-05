@@ -12,6 +12,7 @@
 	<Portal>
 		<Popover.Positioner>
 			<Popover.Content class="flex min-w-[310px] flex-col gap-4 card bg-surface-200-800 p-4">
+				<!-- [TODO]: switch orientation and store in localStorage -->
 				<Switch>
 					<Switch.Control class="data-[state=unchecked]:bg-surface-300-700">
 						<Switch.Thumb />

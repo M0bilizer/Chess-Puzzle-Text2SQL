@@ -5,8 +5,22 @@
 @plugin '@tailwindcss/forms';
 
 @custom-variant dark (&:where([data-mode="dark"], [data-mode="dark"] *));
+
+@theme {
+	--spacing-icon: 1rem;
+	--spacing-icon-big: 2rem;
+
+	/* Fonts */
+	--font-sans: 'Average Sans', sans-serif;
+	--font-serif: 'Average', serif;
+
+	/* Semantic colors based on your existing theme */
+	--color-primary-muted: color-mix(in oklab, var(--color-primary-500) 10%, transparent);
+	--color-success-muted: color-mix(in oklab, var(--color-success-500) 5%, transparent);
+}
+
 body {
-	font-family: 'Average Sans', sans-serif;
+	font-family: var(--font-sans);
 	background-image:
 		radial-gradient(
 			at 0% 25%,
@@ -23,17 +37,3 @@ body {
 @import '@skeletonlabs/skeleton';
 @import '@skeletonlabs/skeleton-svelte';
 @import '@skeletonlabs/skeleton/themes/pine';
-
-:root {
-	--un-font-sans: 'Average Sans', sans-serif;
-	--un-font-serif: 'Average', serif;
-}
-
-@layer components {
-	.size-icon {
-		@apply size-4 shrink-0;
-	}
-	.size-icon-big {
-		@apply size-8 shrink-0;
-	}
-}

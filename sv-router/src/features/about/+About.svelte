@@ -1,4 +1,5 @@
 <script lang="ts">
 </script>
 
-about
+<!-- [TODO]: about page -->
+<MainOnlyPage>about</MainOnlyPage>
