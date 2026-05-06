@@ -3,42 +3,35 @@
 	import { onMount } from 'svelte';
 	import { Chess } from 'svelte-chess';
 	import { Engine, type Game as GameType } from '../type.svelte';
-	import { getPlayerColor } from '../utils';
+	import { getPlayerColor, playSound } from '../utils';
 	import type { Preferences } from '@/features/settings/preferences-state';
+	import { watch } from 'runed';
 
 	interface Props {
 		game: GameType;
 		engine?: Engine;
-		settings?: Partial<Preferences>;
+		settings: Preferences;
 		onStart?: () => void;
-		onCorrectMove?: (move: Move) => void;
-		onWrongMove?: (move: Move) => void;
-		onMoveMade?: (move: {
-			move: string;
-			isComputer: boolean;
-			isCorrect?: boolean;
-			positionIndex: number;
-		}) => void;
 		onEnd?: () => void;
 	}
 
 	let {
 		game,
 		engine: engineProp = $bindable(),
-		settings,
+		settings = $bindable(),
 		onStart,
-		onCorrectMove,
-		onWrongMove,
-		onMoveMade,
 		onEnd
 	}: Props = $props();
 
-	let orientation = $derived(
-		settings?.flipOrientation
-			? getPlayerColor(game.fen) === 'w'
-				? 'b'
-				: 'w'
-			: getPlayerColor(game.fen)
+	let orientation = $derived(getPlayerColor(game.fen));
+	watch(
+		() => settings.flipOrientation,
+		(curr, prev) => {
+			if (curr !== prev) {
+				chess.toggleOrientation();
+			}
+		},
+		{ lazy: true }
 	);
 
 	let boardElement: HTMLElement;
@@ -46,11 +39,20 @@
 	let chess: Chess;
 	let internalEngine: Engine | null = null;
 
+	function onMoveMade(move: {
+		raw: Move;
+		isComputer: boolean;
+		isCorrect?: boolean;
+		positionIndex: number;
+	}) {
+		if (!settings.muted) {
+			playSound(!!move.raw.captured);
+		}
+	}
+
 	onMount(() => {
 		internalEngine = new Engine(chess, game, boardElement, settings, {
 			onStart,
-			onCorrectMove,
-			onWrongMove,
 			onMoveMade,
 			onEnd
 		});

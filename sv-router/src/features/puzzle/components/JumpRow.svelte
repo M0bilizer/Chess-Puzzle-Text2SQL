@@ -4,6 +4,7 @@
 	import TablerChevronRight from '~icons/tabler/chevron-right';
 	import TablerChevronRightPipe from '~icons/tabler/chevron-right-pipe';
 	import QuickSettings from './QuickSettings.svelte';
+	import type { Preferences } from '@/features/settings/preferences-state';
 
 	type Props = {
 		onReset: () => void;
@@ -12,8 +13,17 @@
 		onEnd: () => void;
 		canGoBack: boolean;
 		canGoForward: boolean;
+		preferences: Preferences;
 	};
-	let { onReset, onBack, onForward, onEnd, canGoBack, canGoForward }: Props = $props();
+	let {
+		onReset,
+		onBack,
+		onForward,
+		onEnd,
+		canGoBack,
+		canGoForward,
+		preferences = $bindable()
+	}: Props = $props();
 </script>
 
 <div class="btn-group w-full justify-around">
@@ -29,5 +39,5 @@
 	<button class="btn-icon" onclick={onEnd} disabled={!canGoForward}
 		><TablerChevronRightPipe class="size-icon-big" /></button
 	>
-	<QuickSettings />
+	<QuickSettings bind:preferences />
 </div>

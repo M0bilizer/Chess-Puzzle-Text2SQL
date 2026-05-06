@@ -1,14 +1,15 @@
 import type { Game, Puzzle } from './type.svelte';
 import move_mp3 from '@/features/puzzle/assets/Move.mp3';
 import capture_mp3 from '@/features/puzzle/assets/Capture.mp3';
+import { Sound } from 'svelte-sound';
 
+const captured = new Sound(capture_mp3);
+const move = new Sound(move_mp3);
 export function playSound(isCapture: boolean) {
 	if (isCapture) {
-		const audio = new Audio(capture_mp3);
-		audio.play().catch();
+		captured.play();
 	} else {
-		const audio = new Audio(move_mp3);
-		audio.play().catch();
+		move.play();
 	}
 }
 

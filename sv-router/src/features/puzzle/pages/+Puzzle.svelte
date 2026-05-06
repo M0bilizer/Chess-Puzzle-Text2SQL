@@ -8,7 +8,7 @@
 	import MoveFeedback from '../components/MoveFeedback.svelte';
 	import MoveTable from '../components/MoveTable.svelte';
 	import JumpRow from '../components/JumpRow.svelte';
-	import { preferencesStore } from '@/features/settings/preferences-state';
+	import { preferencesState } from '@/features/settings/preferences-state';
 
 	const puzzle = puzzleStub[3];
 	const game = puzzleToGame(puzzle);
@@ -17,24 +17,6 @@
 	let engine: Engine | undefined = $state();
 	let moveResult = $state<'correct' | 'wrong' | null>(null);
 	let wrongAttempts = $state<Map<number, string>>(new Map());
-
-	function onCorrectMove() {
-		moveResult = 'correct';
-	}
-	function onWrongMove() {
-		moveResult = 'wrong';
-	}
-
-	function onMoveMade(move: {
-		move: string;
-		isComputer: boolean;
-		isCorrect?: boolean;
-		positionIndex: number;
-	}) {
-		if (!move.isCorrect) {
-			wrongAttempts.set(move.positionIndex, move.move);
-		}
-	}
 
 	let gameState = $derived(engine?.getState());
 	let isComplete = $derived(gameState?.isComplete);
@@ -65,14 +47,7 @@
 
 <MainWithAsidePage>
 	<main class="space-y-0 lg:space-y-4">
-		<Game
-			{game}
-			bind:engine
-			settings={preferencesStore.current}
-			{onCorrectMove}
-			{onWrongMove}
-			{onMoveMade}
-		/>
+		<Game {game} bind:engine bind:settings={preferencesState.current} />
 		<ChessDescription {puzzle} class="hidden md:block" />
 	</main>
 	<aside>
@@ -87,6 +62,7 @@
 			{onEnd}
 			canGoBack={canGoBack || false}
 			canGoForward={canGoForward || false}
+			bind:preferences={preferencesState.current}
 		/>
 	</aside>
 </MainWithAsidePage>

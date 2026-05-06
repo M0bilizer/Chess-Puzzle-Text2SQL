@@ -6,7 +6,7 @@ export type Preferences = {
 	computerMoveDelay: number;
 	muted: boolean;
 };
-export const preferencesStore = new PersistedState('preferences', {
+export const preferencesState = new PersistedState<Preferences>('preferences', {
 	theme: 'dark',
 	flipOrientation: false,
 	computerMoveDelay: 250,

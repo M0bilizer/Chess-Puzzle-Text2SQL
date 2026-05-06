@@ -1,7 +1,6 @@
 import type { Move } from 'chess.js';
 import type { Chess } from 'svelte-chess';
 import type { Preferences } from '../settings/preferences-state';
-import { playSound } from './utils';
 
 export type Game = {
 	fen: string;
@@ -29,7 +28,6 @@ export class GameState {
 	private _latestIndex: number = $state(-1);
 	private _jumpingIndex: number | null = $state(null);
 	private _isProgrammaticMove: boolean = $state(false);
-	private _shouldPlaySound: boolean = $state(true);
 
 	constructor(chess: Chess, game: Game) {
 		this.chess = chess;
@@ -66,10 +64,6 @@ export class GameState {
 		return this._isProgrammaticMove;
 	}
 
-	public get shouldPlaySound(): boolean {
-		return this._shouldPlaySound;
-	}
-
 	public get chessBoard(): Chess {
 		return this.chess;
 	}
@@ -91,10 +85,6 @@ export class GameState {
 		this._isProgrammaticMove = value;
 	}
 
-	public setShouldPlaySound(value: boolean): void {
-		this._shouldPlaySound = value;
-	}
-
 	// Query methods
 	public getExpectedMoveAtPosition(posIndex: number): string | null {
 		if (posIndex < 0 || posIndex >= this.game.moves.length * 2) {
@@ -112,7 +102,6 @@ export class GameState {
 		this._latestIndex = -1;
 		this._jumpingIndex = null;
 		this._isProgrammaticMove = false;
-		this._shouldPlaySound = true;
 	}
 }
 
@@ -126,7 +115,7 @@ export class Engine {
 	private onWrongMove?: (move: Move) => void;
 	private onEnd?: () => void;
 	private onMoveMade?: (move: {
-		move: string;
+		raw: Move;
 		isComputer: boolean;
 		isCorrect?: boolean;
 		positionIndex: number;
@@ -144,7 +133,7 @@ export class Engine {
 			onWrongMove?: (move: Move) => void;
 			onEnd?: () => void;
 			onMoveMade?: (move: {
-				move: string;
+				raw: Move;
 				isComputer: boolean;
 				isCorrect?: boolean;
 				positionIndex: number;
@@ -219,7 +208,7 @@ export class Engine {
 		handleWrongMove: async (move: Move): Promise<void> => {
 			this.onWrongMove?.(move);
 			this.onMoveMade?.({
-				move: move.lan,
+				raw: move,
 				isComputer: false,
 				isCorrect: false,
 				positionIndex: this.state.latestIndex + 1
@@ -233,7 +222,7 @@ export class Engine {
 		handleCorrectMove: async (move: Move): Promise<void> => {
 			this.onCorrectMove?.(move);
 			this.onMoveMade?.({
-				move: move.lan,
+				raw: move,
 				isComputer: false,
 				isCorrect: true,
 				positionIndex: this.state.latestIndex + 1
@@ -263,7 +252,8 @@ export class Engine {
 			this.state.chessBoard.move(nextMove);
 
 			this.onMoveMade?.({
-				move: nextMove,
+				// TODO: revamp this.state.getExpectedMoveAtPosition()
+				raw: nextMove,
 				isComputer: false,
 				isCorrect: false,
 				positionIndex: this.state.latestIndex + 1
@@ -320,13 +310,11 @@ export class Engine {
 		last: () => {
 			if (!this.state.isInJump) return;
 			this.state.setProgrammaticMove(true);
-			this.state.setShouldPlaySound(false);
 			this.state.chessBoard.load(this.state.gameData.fen);
 			for (let i = -1; i < this.state.latestIndex - 1; i++) {
 				const move = this.state.getExpectedMoveAtPosition(i + 1)!;
 				this.state.chessBoard.move(move);
 			}
-			this.state.setShouldPlaySound(true);
 			const move = this.state.getExpectedMoveAtPosition(this.state.latestIndex);
 			this.state.chessBoard.move(move!);
 			this.state.setProgrammaticMove(false);
@@ -342,7 +330,6 @@ export class Engine {
 			if (currentIndex === index) return;
 
 			this.state.setProgrammaticMove(true);
-			this.state.setShouldPlaySound(false);
 
 			// Jump directly by reloading from FEN and replaying moves
 			this.state.chessBoard.load(this.state.gameData.fen);
@@ -356,7 +343,6 @@ export class Engine {
 				}
 			}
 			this.state.setProgrammaticMove(false);
-			this.state.setShouldPlaySound(true);
 			if (this.state.jumpingIndex === this.state.latestIndex) {
 				this.jump.config.teardown();
 			}
@@ -365,9 +351,6 @@ export class Engine {
 	};
 
 	async handleMove(move: Move): Promise<boolean> {
-		if (this.state.shouldPlaySound && !this.settings.muted) {
-			playSound(!!move.captured);
-		}
 		if (!this.state.isPlayerTurn || this.state.isProgrammaticMove) {
 			return false;
 		}
