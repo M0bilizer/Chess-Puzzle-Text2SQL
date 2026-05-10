@@ -2,6 +2,8 @@ import type { Game, Puzzle } from './type.svelte';
 import move_mp3 from '@/features/puzzle/assets/Move.mp3';
 import capture_mp3 from '@/features/puzzle/assets/Capture.mp3';
 import { Sound } from 'svelte-sound';
+import { SQUARES, type Chess, type Square } from 'chess.js';
+import type { Api, Chessground, Key } from 'svelte5-chessground';
 
 const captured = new Sound(capture_mp3);
 const move = new Sound(move_mp3);

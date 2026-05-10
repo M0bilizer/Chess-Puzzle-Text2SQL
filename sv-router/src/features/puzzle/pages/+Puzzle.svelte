@@ -1,5 +1,4 @@
 <script lang="ts">
-	import Game from '@/features/puzzle/components/Game.svelte';
 	import MainWithAsidePage from '@/common/components/MainWithAsidePage.svelte';
 	import ChessDescription from '../components/ChessDescription.svelte';
 	import { puzzle as puzzleStub } from '../api/puzzle-stub';
@@ -9,6 +8,7 @@
 	import MoveTable from '../components/MoveTable.svelte';
 	import JumpRow from '../components/JumpRow.svelte';
 	import { preferencesState } from '@/features/settings/preferences-state';
+	import Chessboard from '../components/Chessboard.svelte';
 
 	const puzzle = puzzleStub[3];
 	const game = puzzleToGame(puzzle);
@@ -16,7 +16,6 @@
 	// Engine will be init by Game
 	let engine: Engine | undefined = $state();
 	let moveResult = $state<'correct' | 'wrong' | null>(null);
-	let wrongAttempts = $state<Map<number, string>>(new Map());
 
 	let gameState = $derived(engine?.getState());
 	let isComplete = $derived(gameState?.isComplete);
@@ -47,7 +46,8 @@
 
 <MainWithAsidePage>
 	<main class="space-y-0 lg:space-y-4">
-		<Game {game} bind:engine bind:settings={preferencesState.current} />
+		<Chessboard />
+		<!-- <Game {game} bind:engine bind:settings={preferencesState.current} /> -->
 		<ChessDescription {puzzle} class="hidden md:block" />
 	</main>
 	<aside>
