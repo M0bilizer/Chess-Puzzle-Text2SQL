@@ -1,60 +1,122 @@
-<!-- MoveTable.svelte -->
 <script lang="ts">
-	import { Chess, Move } from 'chess.js';
-	import type { GameState } from '../type.svelte';
+	import { Move } from 'chess.js';
 	import MoveCell from './MoveCell.svelte';
-	import { getPlayerColor } from '../utils';
 
-	interface Props {
-		gameState: GameState;
+	let {
+		movesPlayed,
+		playerColor,
+		currentIndex = $bindable(),
+		latestIndex = $bindable(),
+		onJumpToIndex,
+		class: className
+	}: {
+		movesPlayed: (
+			| {
+					index: number;
+					move: Move;
+					isComputer: boolean;
+					isCorrect: boolean;
+			  }
+			| undefined
+		)[];
+		playerColor: 'w' | 'b';
+		currentIndex: number;
+		latestIndex: number;
 		onJumpToIndex?: (index: number) => void;
 		class?: string;
-	}
+	} = $props();
 
-	let { gameState, onJumpToIndex, class: className }: Props = $props();
+	let moveRows = $derived.by(() => {
+		const rows: Array<{
+			rowNumber: number;
+			white: {
+				move: Move | null | undefined;
+				index: number;
+				feedback?: 'correct' | 'wrong';
+			} | null;
+			black: {
+				move: Move | null | undefined;
+				index: number;
+				feedback?: 'correct' | 'wrong';
+			} | null;
+		}> = [];
 
-	let playerColor = $derived(getPlayerColor(gameState.gameData.fen));
-	let jumpingIndex = $derived(gameState.jumpingIndex);
-	let latestIndex = $derived(gameState.latestIndex);
-	let moves = $derived(gameState.gameData.moves);
+		let rowCounter = 1;
+		let currentRow: {
+			rowNumber: number;
+			white: {
+				move: Move | null | undefined;
+				index: number;
+				feedback?: 'correct' | 'wrong';
+			} | null;
+			black: {
+				move: Move | null | undefined;
+				index: number;
+				feedback?: 'correct' | 'wrong';
+			} | null;
+		} = {
+			rowNumber: rowCounter++,
+			white: null,
+			black: null
+		};
 
-	let tableCells = $derived(() => {
-		const cells: Array<{ move: Move | null; index: number }> = [];
-
-		const chess = new Chess();
-		chess.load(gameState.gameData.fen);
-		function toMove(lan: string | null): Move | null {
-			if (!lan) return null;
-			return chess.move(lan);
-		}
-
-		let actualPositionIdx = 0;
-
-		// if player's color is white, then the first computer move is black.
-		// However we don't know the corresponding white move, so we add a null cell for the starting position.
-		if (playerColor === 'w') {
-			cells.push({ move: null, index: -1 });
-		}
-
-		for (let i = 0; i < moves.length; i++) {
-			// Add computer move if played
-			if (actualPositionIdx <= latestIndex) {
-				cells.push({ move: toMove(moves[i].computer), index: actualPositionIdx });
-				actualPositionIdx++;
+		for (let i = 0; i < movesPlayed.length; i++) {
+			const entry = movesPlayed[i];
+			// if entry was undefined then it must be initial state
+			if (!entry) {
+				// it must be the player's color
+				const isWhite = playerColor === 'w';
+				if (isWhite) {
+					currentRow = {
+						...currentRow,
+						white: { move: null, index: 0 }
+					};
+				} else {
+					currentRow = {
+						...currentRow,
+						white: { move: undefined, index: -1 },
+						black: { move: null, index: 0 }
+					};
+				}
 			} else {
-				break;
+				if (!entry.isCorrect) continue;
+				const feedback = entry.isComputer ? undefined : entry.isCorrect ? 'correct' : 'wrong';
+				const isWhite = entry.move.color === 'w';
+				if (isWhite) {
+					currentRow = {
+						...currentRow,
+						white: {
+							move: entry.move,
+							index: entry.index + 1,
+							feedback: feedback
+						}
+					};
+				} else {
+					currentRow = {
+						...currentRow,
+						black: {
+							move: entry.move,
+							index: entry.index + 1,
+							feedback: feedback
+						}
+					};
+				}
 			}
-
-			// Add player move if played
-			if (actualPositionIdx <= latestIndex) {
-				cells.push({ move: toMove(moves[i].player), index: actualPositionIdx });
-				actualPositionIdx++;
-			} else {
-				break;
+			if (currentRow.black != null && currentRow.white !== null) {
+				rows.push(currentRow);
+				currentRow = {
+					rowNumber: rowCounter++,
+					white: null,
+					black: null
+				};
 			}
 		}
 
-		return cells;
+		// Push incomplete row if exists (last move without response)
+		if (currentRow.white || currentRow.black) {
+			rows.push(currentRow);
+		}
+		return rows;
 	});
 </script>
 
@@ -77,39 +139,33 @@
 			</tr>
 		</thead>
 		<tbody class="[&>tr]:border-transparent!">
-			{#each tableCells() as cell, index (index)}
-				{#if index % 2 === 0}
-					{@const whiteCell = cell}
-					{@const blackCell = tableCells()[index + 1]}
-					<tr>
-						<th scope="row" class="border-e bg-surface-100-900">{Math.floor(index / 2) + 1}</th>
-						<MoveCell
-							move={whiteCell.move}
-							isActive={jumpingIndex === whiteCell.index ||
-								(jumpingIndex === null && latestIndex === whiteCell.index)}
-							isLatest={latestIndex === whiteCell.index}
-							onClick={() => onJumpToIndex?.(whiteCell.index)}
-							disabled={jumpingIndex === whiteCell.index ||
-								(jumpingIndex === null && latestIndex === whiteCell.index)}
-						/>
-						<MoveCell
-							move={blackCell?.move}
-							isActive={jumpingIndex === blackCell?.index ||
-								(jumpingIndex === null && latestIndex === blackCell?.index)}
-							isLatest={latestIndex === blackCell?.index}
-							onClick={() => onJumpToIndex?.(blackCell?.index)}
-							disabled={jumpingIndex === blackCell?.index ||
-								(jumpingIndex === null && latestIndex === blackCell?.index)}
-						/>
-					</tr>
-				{/if}
+			{#each moveRows as row, index (index)}
+				<tr>
+					<th class="border-e bg-surface-100-900">{row.rowNumber}</th>
+					<MoveCell
+						move={row.white?.move}
+						isActive={currentIndex === row.white?.index}
+						isLatest={latestIndex === row.white?.index}
+						onClick={() => row.white && onJumpToIndex?.(row.white.index)}
+						feedback={row.white?.feedback}
+						disabled={row.white?.index === -1}
+					/>
+					<MoveCell
+						move={row.black?.move}
+						isActive={currentIndex === row.black?.index}
+						isLatest={latestIndex === row.black?.index}
+						onClick={() => row.black && onJumpToIndex?.(row.black.index)}
+						feedback={row.black?.feedback}
+						disabled={row.black?.index === -1}
+					/>
+				</tr>
 			{/each}
 
-			{#if tableCells().length === 0}
+			{#if moveRows.length === 0}
 				<tr>
-					<th scope="row">1</th>
-					<MoveCell move={undefined} disabled={true} />
-					<MoveCell move={undefined} disabled={true} />
+					<th class="border-e bg-surface-100-900">1</th>
+					<MoveCell move={null} disabled={true} />
+					<MoveCell move={null} disabled={true} />
 				</tr>
 			{/if}
 		</tbody>

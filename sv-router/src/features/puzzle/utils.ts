@@ -1,9 +1,6 @@
-import type { Game, Puzzle } from './type.svelte';
 import move_mp3 from '@/features/puzzle/assets/Move.mp3';
 import capture_mp3 from '@/features/puzzle/assets/Capture.mp3';
 import { Sound } from 'svelte-sound';
-import { SQUARES, type Chess, type Square } from 'chess.js';
-import type { Api, Chessground, Key } from 'svelte5-chessground';
 
 const captured = new Sound(capture_mp3);
 const move = new Sound(move_mp3);
@@ -13,24 +10,6 @@ export function playSound(isCapture: boolean) {
 	} else {
 		move.play();
 	}
-}
-
-export function puzzleToGame(puzzle: Puzzle): Game {
-	const moveList = puzzle.moves.split(' ');
-
-	const moves: { computer: string; player: string }[] = [];
-
-	for (let i = 0; i < moveList.length; i += 2) {
-		moves.push({
-			computer: moveList[i],
-			player: moveList[i + 1] || ''
-		});
-	}
-
-	return {
-		fen: puzzle.fen,
-		moves
-	};
 }
 
 export function getPlayerColor(fen: string): 'w' | 'b' {

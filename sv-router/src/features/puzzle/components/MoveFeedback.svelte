@@ -7,9 +7,9 @@
 	type Props = {
 		playerColor: 'w' | 'b';
 		isComplete: boolean;
-		moveResult?: 'correct' | 'wrong' | null;
+		moveResult?: 'correct' | 'wrong';
 	};
-	let { playerColor, isComplete, moveResult = null }: Props = $props();
+	let { playerColor, isComplete, moveResult = undefined }: Props = $props();
 </script>
 
 <div

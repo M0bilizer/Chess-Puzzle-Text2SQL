@@ -80,7 +80,7 @@
 											if (e.key === 'Escape') handleBackdropClick(e);
 										}}
 										title={piece.label}
-									/>
+									></piece>
 								</button>
 							{/if}
 						{/each}

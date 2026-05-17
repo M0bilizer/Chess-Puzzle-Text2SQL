@@ -8,23 +8,21 @@
 	import PromotionDialog from './PromotionDialog.svelte';
 	import { SvelteMap } from 'svelte/reactivity';
 
-	let {
-		fen = $bindable(),
-		orientation = 'white',
-		onMove
-	}: {
-		fen?: string;
+	type Props = {
+		fen: string;
 		orientation?: 'white' | 'black';
-		onMove?: (move: Move) => void;
-	} = $props();
+		onMove?: (move: Move) => Promise<void>;
+	};
 
-	let cgApi: Api;
+	let { fen = $bindable(), orientation = 'white', onMove }: Props = $props();
+
+	let cgApi: Api | undefined = $state();
 	// Internal chess instance for move validation and dests calculation
 	let chess = new Chess(fen);
-	// Store pending promotion data
 	let showPromotion = $state(false);
 	let promotionSquare = $state<string | null>(null);
 	let resolvePromotion: ((piece: string | null) => void) | null = null;
+	let containerElement = $state<HTMLElement | null>(null);
 
 	function toDests(chess: Chess): Map<Square, Square[]> {
 		const dests = new SvelteMap();
@@ -55,12 +53,16 @@
 		});
 	}
 
-	$effect(() => {
-		if (fen) {
-			chess.load(fen);
-			refreshBoard();
+	// When parent update fen, update the chess instance and refresh the board
+	watch(
+		() => fen,
+		(newFen) => {
+			if (chess.fen() !== newFen) {
+				chess.load(newFen);
+				refreshBoard();
+			}
 		}
-	});
+	);
 
 	watch(
 		() => orientation,
@@ -80,7 +82,7 @@
 	}
 
 	async function waitForPromotion(): Promise<string | null> {
-		return new Promise((resolve, reject) => {
+		return new Promise((resolve) => {
 			resolvePromotion = resolve;
 		});
 	}
@@ -111,27 +113,27 @@
 			showPromotion = true;
 			const result = await waitForPromotion();
 			if (result === null) {
-				cgApi.set({ fen: chess.fen() });
+				cgApi?.set({ fen: chess.fen() });
 				refreshBoard();
 				return;
 			}
 			promotion = result;
-			cgApi.playPremove();
+			cgApi?.playPremove();
 		}
 
 		const move = chess.move({ from: orig, to: dest, promotion });
 		if (move) {
+			fen = chess.fen();
 			refreshBoard();
 			playSound(!!move.captured);
-			onMove?.(move);
+			await onMove?.(move);
 		}
-		cgApi.playPremove();
+		cgApi?.playPremove();
 	}
 
 	onMount(() => {
 		refreshBoard();
-
-		cgApi.set({
+		cgApi?.set({
 			movable: {
 				free: false,
 				dests: toDests(chess),
@@ -141,9 +143,66 @@
 			}
 		});
 	});
+
+	export function getElement(): HTMLElement | null {
+		return containerElement;
+	}
+
+	export async function makeMove(from: string, to: string, promotion?: string): Promise<boolean> {
+		const move = chess.move({ from, to, promotion });
+		if (!move) return false;
+
+		// Update UI with animation
+		fen = chess.fen();
+		refreshBoard();
+		playSound(!!move.captured);
+
+		// Wait for animation to complete
+		await waitForAnimations();
+
+		return true;
+	}
+
+	export async function undo(): Promise<boolean> {
+		const previousMove = chess.undo();
+		if (!previousMove) return false;
+
+		fen = chess.fen();
+		playSound(false);
+		refreshBoard();
+		await waitForAnimations();
+
+		return true;
+	}
+
+	export function waitForAnimations(): Promise<void> {
+		return new Promise<void>((resolve) => {
+			if (!containerElement) {
+				return Promise.resolve();
+			}
+			const hasAnimation = containerElement.querySelector('.anim');
+			if (!hasAnimation) {
+				resolve();
+				return;
+			}
+			const observer = new MutationObserver(() => {
+				const currentAnimations = containerElement?.querySelector('.anim');
+				if (!currentAnimations) {
+					observer.disconnect();
+					resolve();
+				}
+			});
+			observer.observe(containerElement, {
+				childList: true,
+				subtree: true,
+				attributes: true,
+				attributeFilter: ['class']
+			});
+		});
+	}
 </script>
 
-<div class="relative w-full">
+<div bind:this={containerElement} class="relative">
 	<Chessground bind:api={cgApi} />
 
 	<PromotionDialog
