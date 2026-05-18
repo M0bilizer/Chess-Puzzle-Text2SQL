@@ -134,7 +134,7 @@
 			rows.push({
 				rowNumber: i / 2 + 1,
 				white: moves[i],
-				black: moves[i + 1],
+				black: moves[i + 1] ?? null,
 				attempts: playerColor === 'w' ? moves[i]?.attempts : moves[i + 1]?.attempts
 			});
 		}

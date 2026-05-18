@@ -32,9 +32,11 @@
 	);
 
 	let fen = $state(session.getFenAt(0));
-	let orientation = $derived(session.getPlayerColor() === 'w' ? 'white' : 'black') as
-		| 'white'
-		| 'black';
+	let orientation = $derived.by(() => {
+		const playerColor = session.getPlayerColor() === 'w' ? 'white' : 'black';
+		const flip = preferencesState.current.flipOrientation;
+		return flip ? (playerColor === 'white' ? 'black' : 'white') : playerColor;
+	}) as 'white' | 'black';
 
 	async function onMove(move: Move) {
 		if (!chessboard) return;
@@ -50,7 +52,7 @@
 			currentIndex++;
 			latestIndex++;
 			await chessboard.waitForAnimations();
-			await chessboard.undo();
+			chessboard.undo();
 			currentIndex--;
 			latestIndex--;
 			await chessboard.waitForAnimations();
@@ -74,9 +76,10 @@
 				isComputer: true,
 				isCorrect: true
 			};
-			await chessboard.makeMove(computerMove.from, computerMove.to);
 			currentIndex++;
 			latestIndex++;
+			chessboard.makeMove(computerMove.from, computerMove.to);
+			await chessboard.waitForAnimations();
 			return;
 		}
 	}

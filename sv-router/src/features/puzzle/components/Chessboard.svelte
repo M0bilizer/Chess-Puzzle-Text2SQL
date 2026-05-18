@@ -148,7 +148,7 @@
 		return containerElement;
 	}
 
-	export async function makeMove(from: string, to: string, promotion?: string): Promise<boolean> {
+	export function makeMove(from: string, to: string, promotion?: string) {
 		const move = chess.move({ from, to, promotion });
 		if (!move) return false;
 
@@ -156,23 +156,15 @@
 		fen = chess.fen();
 		refreshBoard();
 		playSound(!!move.captured);
-
-		// Wait for animation to complete
-		await waitForAnimations();
-
-		return true;
 	}
 
-	export async function undo(): Promise<boolean> {
+	export async function undo() {
 		const previousMove = chess.undo();
 		if (!previousMove) return false;
 
 		fen = chess.fen();
 		playSound(false);
 		refreshBoard();
-		await waitForAnimations();
-
-		return true;
 	}
 
 	export function waitForAnimations(): Promise<void> {
