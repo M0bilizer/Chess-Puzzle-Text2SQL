@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Move } from 'chess.js';
 	import MoveCell from './MoveCell.svelte';
+	import { SvelteMap } from 'svelte/reactivity';
 
 	let {
 		movesPlayed,
@@ -26,95 +27,116 @@
 		class?: string;
 	} = $props();
 
+	type Row = {
+		white:
+			| {
+					correct: {
+						move: Move;
+						index: number;
+						feedback?: 'correct' | 'wrong';
+					} | null;
+					wrong: {
+						move: Move;
+						index: number;
+						feedback?: 'correct' | 'wrong';
+					}[];
+			  }
+			| null
+			| undefined;
+		black:
+			| {
+					correct: {
+						move: Move;
+						index: number;
+						feedback?: 'correct' | 'wrong';
+					} | null;
+					wrong: {
+						move: Move;
+						index: number;
+						feedback?: 'correct' | 'wrong';
+					}[];
+			  }
+			| null
+			| undefined;
+	};
 	let moveRows = $derived.by(() => {
-		const rows: Array<{
-			rowNumber: number;
-			white: {
-				move: Move | null | undefined;
-				index: number;
-				feedback?: 'correct' | 'wrong';
-			} | null;
-			black: {
-				move: Move | null | undefined;
-				index: number;
-				feedback?: 'correct' | 'wrong';
-			} | null;
-		}> = [];
-
-		let rowCounter = 1;
-		let currentRow: {
-			rowNumber: number;
-			white: {
-				move: Move | null | undefined;
-				index: number;
-				feedback?: 'correct' | 'wrong';
-			} | null;
-			black: {
-				move: Move | null | undefined;
-				index: number;
-				feedback?: 'correct' | 'wrong';
-			} | null;
-		} = {
-			rowNumber: rowCounter++,
-			white: null,
-			black: null
-		};
-
-		for (let i = 0; i < movesPlayed.length; i++) {
-			const entry = movesPlayed[i];
-			// if entry was undefined then it must be initial state
-			if (!entry) {
-				// it must be the player's color
-				const isWhite = playerColor === 'w';
-				if (isWhite) {
-					currentRow = {
-						...currentRow,
-						white: { move: null, index: 0 }
-					};
-				} else {
-					currentRow = {
-						...currentRow,
-						white: { move: undefined, index: -1 },
-						black: { move: null, index: 0 }
-					};
-				}
-			} else {
-				if (!entry.isCorrect) continue;
-				const feedback = entry.isComputer ? undefined : entry.isCorrect ? 'correct' : 'wrong';
-				const isWhite = entry.move.color === 'w';
-				if (isWhite) {
-					currentRow = {
-						...currentRow,
-						white: {
-							move: entry.move,
-							index: entry.index + 1,
-							feedback: feedback
-						}
-					};
-				} else {
-					currentRow = {
-						...currentRow,
-						black: {
-							move: entry.move,
-							index: entry.index + 1,
-							feedback: feedback
-						}
-					};
-				}
+		// 1. first, we gotta group up the wrong moves and correct move together
+		const grouped: Map<
+			number,
+			{
+				correct: {
+					move: Move;
+					index: number;
+				} | null;
+				wrong: {
+					move: Move;
+					index: number;
+				}[];
 			}
-			if (currentRow.black != null && currentRow.white !== null) {
-				rows.push(currentRow);
-				currentRow = {
-					rowNumber: rowCounter++,
-					white: null,
-					black: null
-				};
+		> = new SvelteMap();
+		for (const entry of movesPlayed) {
+			if (!entry) continue;
+			if (!grouped.has(entry.index)) {
+				grouped.set(entry.index, { correct: null, wrong: [] });
+			}
+			const group = grouped.get(entry.index)!;
+			const moveInfo = {
+				move: entry.move,
+				index: entry.index
+			};
+
+			if (entry.isCorrect) {
+				group.correct = moveInfo;
+			} else {
+				group.wrong.push(moveInfo);
+			}
+		}
+		// Sort wrong moves chronologically
+		for (const group of grouped.values()) {
+			group.wrong.sort((a, b) => a.index - b.index);
+		}
+
+		// 2. now we can reduce it
+		let moves = [];
+		moves.push({
+			move: null,
+			index: 0,
+			attempts: []
+		});
+		for (const [index, group] of Array.from(grouped)) {
+			const jumpIndex = index + 1;
+			const isPlayerMove = jumpIndex % 2 === 0;
+			if (group.correct) {
+				moves.push({
+					move: group.correct.move,
+					index: jumpIndex,
+					feedback: isPlayerMove ? 'correct' : undefined,
+					attempts: group.wrong.map((w) => w.move)
+				});
+			} else {
+				const latestWrong = group.wrong[group.wrong.length - 1];
+				const attempts = group.wrong.slice(0, -1).map((w) => w.move);
+				moves.push({
+					move: latestWrong.move,
+					index: jumpIndex,
+					feedback: 'wrong',
+					attempts: attempts
+				});
 			}
 		}
 
-		// Push incomplete row if exists (last move without response)
-		if (currentRow.white || currentRow.black) {
-			rows.push(currentRow);
+		// 3. now we can build the row
+		if (playerColor === 'b') {
+			moves.unshift(null);
+		}
+		let rows = [];
+		for (let i = 0; i < moves.length; i += 2) {
+			rows.push({
+				rowNumber: i / 2 + 1,
+				white: moves[i],
+				black: moves[i + 1],
+				attempts: playerColor === 'w' ? moves[i]?.attempts : moves[i + 1]?.attempts
+			});
 		}
 		return rows;
 	});
@@ -141,24 +163,33 @@
 		<tbody class="[&>tr]:border-transparent!">
 			{#each moveRows as row, index (index)}
 				<tr>
-					<th class="border-e bg-surface-100-900">{row.rowNumber}</th>
+					<th class="border-e bg-surface-100-900">{index}</th>
 					<MoveCell
 						move={row.white?.move}
 						isActive={currentIndex === row.white?.index}
 						isLatest={latestIndex === row.white?.index}
-						onClick={() => row.white && onJumpToIndex?.(row.white.index)}
-						feedback={row.white?.feedback}
-						disabled={row.white?.index === -1}
+						onClick={() => row.white?.index !== undefined && onJumpToIndex?.(row.white.index)}
+						feedback={row.white?.feedback as 'correct' | 'wrong'}
+						disabled={row.white === null}
 					/>
 					<MoveCell
-						move={row.black?.move}
+						move={row?.black?.move}
 						isActive={currentIndex === row.black?.index}
 						isLatest={latestIndex === row.black?.index}
-						onClick={() => row.black && onJumpToIndex?.(row.black.index)}
-						feedback={row.black?.feedback}
-						disabled={row.black?.index === -1}
+						onClick={() => row.black?.index !== undefined && onJumpToIndex?.(row.black.index)}
+						feedback={row.black?.feedback as 'correct' | 'wrong'}
+						disabled={row.black === null}
 					/>
 				</tr>
+				{#if row.attempts && row.attempts.length > 0}
+					<tr class="bg-surface-100-900">
+						<td colspan="3" class="text-xs">
+							{row.attempts
+								.map((it) => `${index}. ${playerColor === 'b' ? '...' : ''}${it.san}`)
+								.join(', ')}
+						</td>
+					</tr>
+				{/if}
 			{/each}
 
 			{#if moveRows.length === 0}
