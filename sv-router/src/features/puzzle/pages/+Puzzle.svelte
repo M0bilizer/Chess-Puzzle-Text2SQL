@@ -19,6 +19,7 @@
 	let currentIndex = $state(0);
 	let latestIndex = $state(0);
 	let isComplete = $derived(latestIndex >= session.getTotalMoves());
+	let settings = preferencesState.current;
 
 	let movePlayed = $state<{
 		index: number;
@@ -120,7 +121,7 @@
 	const onForward = () => {
 		if (canGoForward) {
 			const move = session.getCorrectMoveAt(currentIndex);
-			playSound(move.captured !== undefined);
+			if (!settings.muted) playSound(move.captured !== undefined);
 			currentIndex++;
 			fen = session.getFenAt(currentIndex)!;
 		}
@@ -141,7 +142,7 @@
 
 <MainWithAsidePage>
 	<main class="space-y-0 lg:space-y-4">
-		<Chessboard bind:this={chessboard} bind:fen {onMove} {orientation} />
+		<Chessboard bind:this={chessboard} bind:fen {onMove} {orientation} {settings} />
 		<ChessDescription {puzzle} class="hidden md:block" />
 	</main>
 	<aside>

@@ -1,13 +1,11 @@
 import move_mp3 from '@/features/puzzle/assets/Move.mp3';
 import capture_mp3 from '@/features/puzzle/assets/Capture.mp3';
 import { Sound } from 'svelte-sound';
-import { preferencesState } from '../settings/preferences-state';
 
 const captured = new Sound(capture_mp3);
 const move = new Sound(move_mp3);
 export function playSound(isCapture: boolean) {
 	// todo: should take in as a function prop instead
-	if (preferencesState.current.muted) return;
 	if (isCapture) {
 		captured.play();
 	} else {

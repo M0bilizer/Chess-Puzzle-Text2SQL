@@ -7,14 +7,16 @@
 	import { watch } from 'runed';
 	import PromotionDialog from './PromotionDialog.svelte';
 	import { SvelteMap } from 'svelte/reactivity';
+	import { type Preferences } from '@/features/settings/preferences-state';
 
 	type Props = {
 		fen: string;
+		settings: Preferences;
 		orientation?: 'white' | 'black';
 		onMove?: (move: Move) => Promise<void>;
 	};
 
-	let { fen = $bindable(), orientation = 'white', onMove }: Props = $props();
+	let { fen = $bindable(), settings, orientation = 'white', onMove }: Props = $props();
 
 	let cgApi: Api | undefined = $state();
 	// Internal chess instance for move validation and dests calculation
@@ -125,7 +127,7 @@
 		if (move) {
 			fen = chess.fen();
 			refreshBoard();
-			playSound(!!move.captured);
+			if (!settings.muted) playSound(!!move.captured);
 			await onMove?.(move);
 		}
 		cgApi?.playPremove();
@@ -155,7 +157,7 @@
 		// Update UI with animation
 		fen = chess.fen();
 		refreshBoard();
-		playSound(!!move.captured);
+		if (!settings.muted) playSound(!!move.captured);
 	}
 
 	export async function undo() {
@@ -163,7 +165,7 @@
 		if (!previousMove) return false;
 
 		fen = chess.fen();
-		playSound(false);
+		if (!settings.muted) playSound(false);
 		refreshBoard();
 	}
 
