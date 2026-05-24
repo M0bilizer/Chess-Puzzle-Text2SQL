@@ -14,12 +14,10 @@
 	<main class="space-y-6 pt-12">
 		<header class="space-y-4">
 			<h1 class="text-left h1">Settings</h1>
-			<p>Adjust your preferences for gameplay, interface, and site features.</p>
+			<p>Adjust your preferences</p>
 		</header>
 		<hr class="hr border-surface-200-800" />
 		<fieldset class="space-y-4">
-			<legend class="h2">Gameplay</legend>
-			<legend class="h2">Interface</legend>
 			<FlipOrientationSwitch bind:flipOrientation={preferences.flipOrientation} />
 			<MutedSwitch bind:muted={preferences.muted} />
 			<ComputerMoveDelayRadio bind:computerMoveDelay={preferences.computerMoveDelay} />
