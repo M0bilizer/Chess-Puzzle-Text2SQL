@@ -1,81 +1,193 @@
 <script lang="ts">
-	import Game from '@/features/puzzle/components/Game.svelte';
 	import MainWithAsidePage from '@/common/components/MainWithAsidePage.svelte';
 	import ChessDescription from '../components/ChessDescription.svelte';
 	import { puzzle as puzzleStub } from '../api/puzzle-stub';
-	import { puzzleToGame } from '../utils';
-	import type { Engine } from '../type.svelte';
-	import { getPlayerColor } from '../components/get-player-color';
+	import { playSound } from '../utils';
 	import MoveFeedback from '../components/MoveFeedback.svelte';
 	import MoveTable from '../components/MoveTable.svelte';
 	import JumpRow from '../components/JumpRow.svelte';
+	import Chessboard from '../components/Chessboard.svelte';
+	import { PuzzleSession } from '../type.svelte';
+	import type { Move } from 'chess.js';
+	import { onMount } from 'svelte';
+	import { preferencesState } from '@/features/settings/preferences-state';
+	import { StateHistory } from 'runed';
 
 	const puzzle = puzzleStub[3];
-	const game = puzzleToGame(puzzle);
+	let session = new PuzzleSession(puzzle);
+	let chessboard = $state<Chessboard | null>(null);
+	let currentIndex = $state(0);
+	let latestIndex = $state(0);
+	let isComplete = $derived(latestIndex >= session.getTotalMoves());
+	let settings = preferencesState.current;
 
-	// Engine will be init by Game
-	let engine: Engine | undefined = $state();
-	let moveResult = $state<'correct' | 'wrong' | null>(null);
-	let wrongAttempts = $state<Map<number, string>>(new Map());
-	const settings: Record<string, unknown> = {} as Record<string, unknown>;
-
-	function onCorrectMove() {
-		moveResult = 'correct';
-	}
-	function onWrongMove() {
-		moveResult = 'wrong';
-	}
-
-	function onMoveMade(move: {
-		move: string;
+	let movePlayed = $state<{
+		index: number;
+		move: Move;
 		isComputer: boolean;
-		isCorrect?: boolean;
-		positionIndex: number;
-	}) {
-		if (!move.isCorrect) {
-			wrongAttempts.set(move.positionIndex, move.move);
+		isCorrect: boolean;
+	}>();
+	let movesPlayed = new StateHistory(
+		() => movePlayed,
+		(mP) => (movePlayed = mP)
+	);
+
+	let fen = $state(session.getFenAt(0));
+	let orientation = $derived.by(() => {
+		const playerColor = session.getPlayerColor() === 'w' ? 'white' : 'black';
+		const flip = preferencesState.current.flipOrientation;
+		return flip ? (playerColor === 'white' ? 'black' : 'white') : playerColor;
+	}) as 'white' | 'black';
+
+	async function onMove(move: Move) {
+		if (!chessboard) return;
+		const isCorrect = session.makeMove(currentIndex, move);
+
+		if (!isCorrect) {
+			movePlayed = {
+				index: currentIndex,
+				move: move,
+				isComputer: false,
+				isCorrect: false
+			};
+			currentIndex++;
+			latestIndex++;
+			if (settings.waitForAnimation) {
+				await chessboard.waitForAnimations();
+			}
+			chessboard.undo();
+			currentIndex--;
+			latestIndex--;
+			if (settings.waitForAnimation) {
+				await chessboard.waitForAnimations();
+			}
+			return;
+		}
+		movePlayed = {
+			index: currentIndex,
+			move: move,
+			isComputer: false,
+			isCorrect: true
+		};
+		currentIndex++;
+		latestIndex++;
+		if (settings.waitForAnimation) {
+			await chessboard.waitForAnimations();
+		}
+		// Make the computer move
+		if (!isComplete) {
+			await new Promise((resolve) => setTimeout(resolve, settings.computerMoveDelay));
+			const computerMove = session.getCorrectMoveAt(currentIndex);
+			movePlayed = {
+				index: currentIndex,
+				move: computerMove,
+				isComputer: true,
+				isCorrect: true
+			};
+			currentIndex++;
+			latestIndex++;
+			chessboard.makeMove(computerMove.from, computerMove.to);
+			if (settings.waitForAnimation) {
+				await chessboard.waitForAnimations();
+			}
+			return;
 		}
 	}
 
-	let gameState = $derived(engine?.getState());
-	let isComplete = $derived(gameState?.isComplete);
-	let canGoBack = $derived(gameState?.canGoBackInJump);
-	let canGoForward = $derived(gameState?.canGoForwardInJump);
-	let playerColor = $derived(
-		getPlayerColor(game.fen, (settings?.flipOrientation as boolean) || false)
-	);
+	onMount(async () => {
+		if (settings.waitForAnimation) await chessboard?.waitForAnimations();
+		// make the first computer move
+		movePlayed = {
+			index: currentIndex,
+			move: session.getCorrectMoveAt(currentIndex),
+			isComputer: true,
+			isCorrect: true
+		};
+		currentIndex++;
+		latestIndex++;
 
-	function onReset() {
-		engine?.jump.first();
-	}
+		// don't use programmtic move since sound might crash
+		fen = session.getFenAt(currentIndex)!;
+	});
 
-	function onBack() {
-		engine?.jump.back();
-	}
+	const onHint = () => {
+		const move = session.getCorrectMoveAt(currentIndex);
+		chessboard?.selectSquare(move.from);
+	};
 
-	function onForward() {
-		engine?.jump.forward();
-	}
+	const onSolution = async () => {
+		const move = session.getCorrectMoveAt(currentIndex);
+		chessboard?.makeMove(move.from, move.to);
+		if (settings.waitForAnimation) await chessboard?.waitForAnimations();
+		onMove(move);
+	};
 
-	function onEnd() {
-		engine?.jump.last();
-	}
+	const onJumpToIndex = (index: number) => {
+		currentIndex = index;
+		fen = session.getFenAt(index)!;
+	};
 
-	function onJumpToIndex(index: number) {
-		engine?.jump.to(index);
-	}
+	const canGoBack = $derived(currentIndex > 0);
+	const canGoForward = $derived(currentIndex < latestIndex);
+	const onReset = () => {
+		currentIndex = 0;
+		fen = session.getFenAt(0)!;
+	};
+	const onBack = () => {
+		if (canGoBack) {
+			currentIndex--;
+			fen = session.getFenAt(currentIndex)!;
+		}
+	};
+	const onForward = () => {
+		if (canGoForward) {
+			const move = session.getCorrectMoveAt(currentIndex);
+			if (!settings.muted) playSound(move.captured !== undefined);
+			currentIndex++;
+			fen = session.getFenAt(currentIndex)!;
+		}
+	};
+	const onEnd = () => {
+		currentIndex = latestIndex;
+		fen = session.getFenAt(currentIndex);
+	};
+
+	let playerMoveResult = $derived.by(() => {
+		const lastPlayerMove = movesPlayed.log
+			.map((it) => it.snapshot)
+			.findLast((it) => !it?.isComputer);
+		if (!lastPlayerMove) return undefined;
+		return (lastPlayerMove.isCorrect ? 'correct' : 'wrong') as 'correct' | 'wrong';
+	});
 </script>
 
 <MainWithAsidePage>
 	<main class="space-y-0 lg:space-y-4">
-		<Game {game} bind:engine {onCorrectMove} {onWrongMove} {onMoveMade} />
+		<Chessboard
+			bind:this={chessboard}
+			bind:fen
+			{onMove}
+			{orientation}
+			bind:settings={preferencesState.current}
+		/>
 		<ChessDescription {puzzle} class="hidden md:block" />
 	</main>
 	<aside>
-		{#if gameState}
-			<MoveTable {gameState} {onJumpToIndex} class="hidden md:block" />
-		{/if}
-		<MoveFeedback {playerColor} isComplete={isComplete ?? false} {moveResult} />
+		<MoveTable
+			bind:currentIndex
+			bind:latestIndex
+			movesPlayed={movesPlayed.log.map((it) => it.snapshot)}
+			playerColor={session.getPlayerColor()}
+			{onJumpToIndex}
+			class="hidden md:block"
+		/>
+		<MoveFeedback
+			playerColor={session.getPlayerColor()}
+			{isComplete}
+			moveResult={playerMoveResult}
+			{onHint}
+			{onSolution}
+		/>
 		<JumpRow
 			{onReset}
 			{onBack}
@@ -83,6 +195,7 @@
 			{onEnd}
 			canGoBack={canGoBack || false}
 			canGoForward={canGoForward || false}
+			bind:preferences={preferencesState.current}
 		/>
 	</aside>
 </MainWithAsidePage>

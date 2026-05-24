@@ -55,8 +55,8 @@
 </script>
 
 <WideMainOnlyPage>
-	<main class="space-y-12">
-		<section class="mx-auto space-y-2 px-4 lg:w-[900px] lg:px-0">
+	<main class="space-y-12 pt-12">
+		<section class="mx-auto space-y-12 px-4 lg:w-[900px] lg:px-0">
 			<SearchBanner />
 			<SearchForm bind:query onSubmit={() => handleSearch(query)} bind:loading />
 			{#if error}

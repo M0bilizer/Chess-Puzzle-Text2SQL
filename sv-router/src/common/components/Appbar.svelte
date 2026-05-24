@@ -19,11 +19,9 @@
 		<AppBar.Trail>
 			<a href={PATHS.ABOUT} class="btn flex items-center gap-2 hover:underline">
 				<span>About</span>
-				<TablerArrowUpRight class="size-icon" />
 			</a>
 			<a href={PATHS.SETTINGS} class="btn flex items-center gap-2 hover:underline">
 				<span>Settings</span>
-				<TablerArrowUpRight class="size-icon" />
 			</a>
 			<span class="vr h-8"></span>
 			<LightSwitch />

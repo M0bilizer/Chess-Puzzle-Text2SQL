@@ -7,13 +7,15 @@
 	type Props = {
 		playerColor: 'w' | 'b';
 		isComplete: boolean;
-		moveResult?: 'correct' | 'wrong' | null;
+		moveResult?: 'correct' | 'wrong';
+		onHint: () => void;
+		onSolution: () => void;
 	};
-	let { playerColor, isComplete, moveResult = null }: Props = $props();
+	let { playerColor, isComplete, moveResult = undefined, onHint, onSolution }: Props = $props();
 </script>
 
 <div
-	class="flex h-[100px] w-full items-center justify-center rounded-b-lg preset-filled-surface-100-900 p-4"
+	class="flex h-[140px] w-full flex-col items-center justify-center gap-4 rounded-b-lg preset-filled-surface-100-900 p-4"
 >
 	{#if isComplete}
 		<div class="feedback">
@@ -54,6 +56,14 @@
 				<strong class="text-xl">Your turn</strong>
 				<em class="text-sm">It's your turn!</em>
 			</div>
+		</div>
+	{/if}
+	{#if !isComplete}
+		<div class="flex w-full justify-around">
+			<button class="btn-small btn preset-filled-surface-100-900" onclick={onHint}> Hint </button>
+			<button class="btn-small btn preset-filled-surface-100-900" onclick={onSolution}>
+				Solution
+			</button>
 		</div>
 	{/if}
 </div>

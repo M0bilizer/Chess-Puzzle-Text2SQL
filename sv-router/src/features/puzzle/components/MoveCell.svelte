@@ -11,16 +11,19 @@
 	import TablerChessQueenFilled from '~icons/tabler/chess-queen-filled';
 	import TablerChessRook from '~icons/tabler/chess-rook';
 	import TablerChessRookFilled from '~icons/tabler/chess-rook-filled';
+	import TablerCheck from '~icons/tabler/check';
+	import TablerX from '~icons/tabler/x';
 	import type { Move } from 'chess.js';
 
 	type Props = {
 		move: Move | null | undefined;
 		isActive?: boolean;
 		isLatest?: boolean;
+		feedback?: 'correct' | 'wrong';
 		onClick?: () => void;
 		disabled?: boolean;
 	};
-	const { move, isActive, isLatest, onClick, disabled }: Props = $props();
+	const { move, isActive, isLatest, onClick, feedback, disabled }: Props = $props();
 
 	const pieceIcons = {
 		p: { outline: TablerChess, filled: TablerChessFilled },
@@ -37,10 +40,10 @@
 	class:bg-secondary-50-950={isActive}
 	class:border-secondary-50-950={isLatest}
 	class:border-2={isLatest}
-	class:cursor-pointer={!disabled && move}
+	class:cursor-pointer={!disabled}
 	class:cursor-default={disabled}
-	class:hover:preset-filled-primary-50-950={!disabled && move}
-	onclick={onClick}
+	class:hover:preset-filled-primary-50-950={!disabled && move !== undefined}
+	onclick={disabled ? undefined : onClick}
 >
 	<div class="flex items-center gap-1">
 		{#if move}
@@ -61,6 +64,11 @@
 			<span>
 				{move.san}
 			</span>
+			{#if feedback === 'correct'}
+				<TablerCheck />
+			{:else if feedback === 'wrong'}
+				<TablerX />
+			{/if}
 		{:else if move === null}
 			<span class="text-surface-500">—</span>
 		{:else}

@@ -1,12 +1,12 @@
-import type { Move } from 'chess.js';
-import type { Chess } from 'svelte-chess';
-import { playSound } from './components/play-sound';
+import { Chess, type Move } from 'chess.js';
+import { getPlayerColor } from './utils';
 
 export type Game = {
 	fen: string;
 	moves: { computer: string; player: string }[];
 };
 
+/* This is the dto from the backend */
 export type Puzzle = {
 	id: number;
 	puzzleId: string;
@@ -21,368 +21,91 @@ export type Puzzle = {
 	openingTags: string;
 };
 
-export class GameState {
-	private chess: Chess;
-	private game: Game;
+/* This acts as the move validation, kinda like a clientside dto */
+export class PuzzleEngine {
+	private solutionMoves: string[];
 
-	private _latestIndex: number = $state(-1);
-	private _jumpingIndex: number | null = $state(null);
-	private _isProgrammaticMove: boolean = $state(false);
-	private _shouldPlaySound: boolean = $state(true);
-
-	constructor(chess: Chess, game: Game) {
-		this.chess = chess;
-		this.game = game;
+	constructor(puzzle: Puzzle) {
+		this.solutionMoves = puzzle.moves.trim().split(/\s+/);
 	}
 
-	// Reactive derivations
-	public isPlayerTurn = $derived.by(() => this._latestIndex % 2 === 0);
-	public isComplete = $derived.by(() => this._latestIndex >= this.game.moves.length * 2 - 1);
-	public canGoBackInGame = $derived.by(() => this._latestIndex > -1);
-	public canGoForwardInGame = $derived.by(() => this._latestIndex < this.game.moves.length * 2 - 1);
-	public isInJump = $derived.by(() => this._jumpingIndex != null);
-	public canGoBackInJump = $derived.by(() => {
-		// Can go back in jump mode if we're not at the first position (-1)
-		// Return true if not in jump mode (null) so that users can init the jump
-		if (this._jumpingIndex === null) return true;
-		return this._jumpingIndex > -1;
-	});
-	public canGoForwardInJump = $derived.by(() => {
-		// Can go forward in jump mode if we're not at the last position but make sure we don't let player go beyond the moves that they have played
-		return this._jumpingIndex !== null && this._jumpingIndex < this.game.moves.length * 2 - 1;
-	});
-
-	// Getters
-	public get latestIndex(): number {
-		return this._latestIndex;
+	getSolutionMoveAt(index: number): string | undefined {
+		return this.solutionMoves[index] || undefined;
 	}
 
-	public get jumpingIndex(): number | null {
-		return this._jumpingIndex;
+	getTotalMoves(): number {
+		return this.solutionMoves.length;
 	}
 
-	public get isProgrammaticMove(): boolean {
-		return this._isProgrammaticMove;
-	}
-
-	public get shouldPlaySound(): boolean {
-		return this._shouldPlaySound;
-	}
-
-	public get chessBoard(): Chess {
-		return this.chess;
-	}
-
-	public get gameData(): Game {
-		return this.game;
-	}
-
-	// State mutators (for Engine use)
-	public setPositionIndex(value: number): void {
-		this._latestIndex = value;
-	}
-
-	public setJumpingIndex(value: number | null): void {
-		this._jumpingIndex = value;
-	}
-
-	public setProgrammaticMove(value: boolean): void {
-		this._isProgrammaticMove = value;
-	}
-
-	public setShouldPlaySound(value: boolean): void {
-		this._shouldPlaySound = value;
-	}
-
-	// Query methods
-	public getExpectedMoveAtPosition(posIndex: number): string | null {
-		if (posIndex < 0 || posIndex >= this.game.moves.length * 2) {
-			return null;
-		}
-		const pairIndex = Math.floor(posIndex / 2);
-		const isComputerMove = posIndex % 2 === 0;
-		const movePair = this.game.moves[pairIndex];
-		if (!movePair) return null;
-		return isComputerMove ? movePair.computer : movePair.player;
-	}
-
-	public resetToInitialState(): void {
-		this.chess.load(this.game.fen);
-		this._latestIndex = -1;
-		this._jumpingIndex = null;
-		this._isProgrammaticMove = false;
-		this._shouldPlaySound = true;
+	validateMove(move: Move, expectedMove: string): boolean {
+		const uciMove = `${move.from}${move.to}${move.promotion || ''}`;
+		return uciMove === expectedMove;
 	}
 }
 
-export const DEFAULT_SETTINGS = {
-	computerMoveDelay: 250,
-	flipOrientation: false,
-	muted: false
-};
+export class PuzzleSession {
+	private engine: PuzzleEngine;
+	private fens: string[];
+	private playerColor: 'w' | 'b';
 
-export class Engine {
-	private state: GameState;
-	private boardElement: HTMLElement;
-	private settings: Partial<typeof DEFAULT_SETTINGS>;
+	constructor(puzzle: Puzzle) {
+		this.engine = new PuzzleEngine(puzzle);
+		this.fens = this.computeAllFens(puzzle, this.engine);
+		this.playerColor = getPlayerColor(puzzle.fen);
+	}
 
-	private onStart?: () => void;
-	private onCorrectMove?: (move: Move) => void;
-	private onWrongMove?: (move: Move) => void;
-	private onEnd?: () => void;
-	private onMoveMade?: (move: {
-		move: string;
-		isComputer: boolean;
-		isCorrect?: boolean;
-		positionIndex: number;
-	}) => void;
-	private onJump?: (positionIndex: number) => void;
+	private computeAllFens(puzzle: Puzzle, engine: PuzzleEngine): string[] {
+		const chess = new Chess(puzzle.fen);
+		const fens: string[] = [puzzle.fen];
 
-	constructor(
-		chess: Chess,
-		game: Game,
-		boardElement: HTMLElement,
-		settings: Partial<typeof DEFAULT_SETTINGS>,
-		callbacks: {
-			onStart?: () => void;
-			onCorrectMove?: (move: Move) => void;
-			onWrongMove?: (move: Move) => void;
-			onEnd?: () => void;
-			onMoveMade?: (move: {
-				move: string;
-				isComputer: boolean;
-				isCorrect?: boolean;
-				positionIndex: number;
-			}) => void;
-			onJump?: (positionIndex: number) => void;
+		for (let i = 0; i < engine.getTotalMoves(); i++) {
+			const move = engine.getSolutionMoveAt(i)!;
+			chess.move(move);
+			fens.push(chess.fen());
 		}
-	) {
-		this.state = new GameState(chess, game);
-		this.boardElement = boardElement;
-		this.settings = { ...DEFAULT_SETTINGS, ...settings };
-		this.onStart = callbacks.onStart;
-		this.onCorrectMove = callbacks.onCorrectMove;
-		this.onWrongMove = callbacks.onWrongMove;
-		this.onEnd = callbacks.onEnd;
-		this.onMoveMade = callbacks.onMoveMade;
-		this.onJump = callbacks.onJump;
+		return fens;
 	}
 
-	// Expose state for components to read
-	public getState(): GameState {
-		return this.state;
+	getTotalMoves(): number {
+		return this.engine.getTotalMoves();
 	}
 
-	// Convenience getters for common state access
-	public get isPlayerTurn() {
-		return this.state.isPlayerTurn;
-	}
-	public get isComplete() {
-		return this.state.isComplete;
-	}
-	public get canGoBack() {
-		return this.state.canGoBackInGame;
-	}
-	public get canGoForward() {
-		return this.state.canGoForwardInGame;
-	}
-	public get isInJump() {
-		return this.state.isInJump;
+	getPlayerColor(): 'w' | 'b' {
+		return this.playerColor;
 	}
 
-	private waitForAnimations(): Promise<void> {
-		return new Promise<void>((resolve) => {
-			const hasAnimation = this.boardElement.querySelector('.anim');
-			if (!hasAnimation) {
-				resolve();
-				return;
-			}
-			const observer = new MutationObserver(() => {
-				const currentAnimations = this.boardElement.querySelector('.anim');
-				if (!currentAnimations) {
-					observer.disconnect();
-					resolve();
-				}
-			});
-			observer.observe(this.boardElement, {
-				childList: true,
-				subtree: true,
-				attributes: true,
-				attributeFilter: ['class']
-			});
-		});
-	}
-
-	public actions = {
-		start: async (): Promise<void> => {
-			this.onStart?.();
-			this.state.resetToInitialState();
-			await new Promise((resolve) => setTimeout(resolve, 500));
-			await this.actions.playComputerMove();
-		},
-
-		handleWrongMove: async (move: Move): Promise<void> => {
-			this.onWrongMove?.(move);
-			this.onMoveMade?.({
-				move: move.lan,
-				isComputer: false,
-				isCorrect: false,
-				positionIndex: this.state.latestIndex + 1
-			});
-			await this.waitForAnimations();
-			setTimeout(() => {
-				this.state.chessBoard.undo();
-			}, 100);
-		},
-
-		handleCorrectMove: async (move: Move): Promise<void> => {
-			this.onCorrectMove?.(move);
-			this.onMoveMade?.({
-				move: move.lan,
-				isComputer: false,
-				isCorrect: true,
-				positionIndex: this.state.latestIndex + 1
-			});
-
-			this.state.setPositionIndex(this.state.latestIndex + 1);
-
-			if (this.state.isComplete) {
-				this.onEnd?.();
-				return;
-			}
-
-			await this.waitForAnimations();
-			setTimeout(async () => {
-				await this.actions.playComputerMove();
-			});
-		},
-
-		playComputerMove: async (): Promise<void> => {
-			if (!this.state.canGoForwardInGame) return;
-
-			const nextMove = this.state.getExpectedMoveAtPosition(this.state.latestIndex + 1);
-			if (!nextMove) return;
-
-			await new Promise((resolve) => setTimeout(resolve, this.settings.computerMoveDelay));
-			this.state.setProgrammaticMove(true);
-			this.state.chessBoard.move(nextMove);
-
-			this.onMoveMade?.({
-				move: nextMove,
-				isComputer: false,
-				isCorrect: false,
-				positionIndex: this.state.latestIndex + 1
-			});
-
-			await this.waitForAnimations();
-			this.state.setPositionIndex(this.state.latestIndex + 1);
-			this.state.setProgrammaticMove(false);
+	getFenAt(index: number): string {
+		if (index < 0 || index >= this.fens.length) {
+			throw new Error(`Index ${index} is out of bounds`);
 		}
-	};
+		return this.fens[index];
+	}
 
-	public jump = {
-		config: {
-			init: () => {
-				this.state.setJumpingIndex(this.state.latestIndex);
-			},
-
-			teardown: () => {
-				this.state.setJumpingIndex(null);
-			}
-		},
-
-		first: () => {
-			if (!this.state.isInJump) this.jump.config.init();
-			this.state.setProgrammaticMove(true);
-			this.state.chessBoard.load(this.state.gameData.fen);
-			this.state.setJumpingIndex(-1);
-			this.state.setProgrammaticMove(false);
-			this.onJump?.(-1);
-		},
-
-		back: () => {
-			if (!this.state.isInJump) this.jump.config.init();
-			if (this.state.jumpingIndex === -1) return;
-			this.state.setProgrammaticMove(true);
-			this.state.chessBoard.undo();
-			this.state.setJumpingIndex(this.state.jumpingIndex! - 1);
-			this.state.setProgrammaticMove(false);
-			this.onJump?.(this.state.jumpingIndex!);
-		},
-
-		forward: () => {
-			if (!this.state.isInJump) return;
-			this.state.setProgrammaticMove(true);
-			const move = this.state.getExpectedMoveAtPosition(this.state.jumpingIndex! + 1)!;
-			this.state.chessBoard.move(move);
-			this.state.setJumpingIndex(this.state.jumpingIndex! + 1);
-			this.state.setProgrammaticMove(false);
-			if (this.state.jumpingIndex === this.state.latestIndex) this.jump.config.teardown();
-
-			this.onJump?.(this.state.jumpingIndex!);
-		},
-
-		last: () => {
-			if (!this.state.isInJump) return;
-			this.state.setProgrammaticMove(true);
-			this.state.setShouldPlaySound(false);
-			this.state.chessBoard.load(this.state.gameData.fen);
-			for (let i = -1; i < this.state.latestIndex - 1; i++) {
-				const move = this.state.getExpectedMoveAtPosition(i + 1)!;
-				this.state.chessBoard.move(move);
-			}
-			this.state.setShouldPlaySound(true);
-			const move = this.state.getExpectedMoveAtPosition(this.state.latestIndex);
-			this.state.chessBoard.move(move!);
-			this.state.setProgrammaticMove(false);
-			this.jump.config.teardown();
-			this.onJump?.(this.state.latestIndex);
-		},
-
-		to: (index: number) => {
-			if (!this.state.isInJump) {
-				this.jump.config.init();
-			}
-			const currentIndex = this.state.jumpingIndex!;
-			if (currentIndex === index) return;
-
-			this.state.setProgrammaticMove(true);
-			this.state.setShouldPlaySound(false);
-
-			// Jump directly by reloading from FEN and replaying moves
-			this.state.chessBoard.load(this.state.gameData.fen);
-			this.state.setJumpingIndex(-1);
-
-			for (let i = 0; i <= index; i++) {
-				const move = this.state.getExpectedMoveAtPosition(i);
-				if (move) {
-					this.state.chessBoard.move(move);
-					this.state.setJumpingIndex(i);
-				}
-			}
-			this.state.setProgrammaticMove(false);
-			this.state.setShouldPlaySound(true);
-			if (this.state.jumpingIndex === this.state.latestIndex) {
-				this.jump.config.teardown();
-			}
-			this.onJump?.(this.state.jumpingIndex!);
+	getCorrectMoveAt(index: number): Move {
+		if (index < 0 || index >= this.fens.length) {
+			throw new Error(`Index ${index} is out of bounds`);
 		}
-	};
+		const chess = new Chess(this.fens[index]);
+		const move = chess.move(this.engine.getSolutionMoveAt(index)!);
+		return move;
+	}
 
-	async handleMove(move: Move): Promise<boolean> {
-		if (this.state.shouldPlaySound && !this.settings.muted) {
-			playSound(!!move.captured);
-		}
-		if (!this.state.isPlayerTurn || this.state.isProgrammaticMove) {
+	makeMove(index: number, move: Move): boolean {
+		const expectedMove = this.engine.getSolutionMoveAt(index);
+		if (!expectedMove) {
 			return false;
 		}
-		const expectedMove = this.state.getExpectedMoveAtPosition(this.state.latestIndex + 1);
-		if (!expectedMove || move.lan !== expectedMove) {
-			await this.actions.handleWrongMove(move);
+		const isCorrect = this.engine.validateMove(move, expectedMove);
+		if (!isCorrect) {
 			return false;
-		} else {
-			await this.actions.handleCorrectMove(move);
-			return true;
 		}
+		return true;
+	}
+
+	fenAt(index: number): string {
+		if (index < 0 || index >= this.fens.length) {
+			throw new Error(`Index ${index} is out of bounds`);
+		}
+		return this.fens[index];
 	}
 }

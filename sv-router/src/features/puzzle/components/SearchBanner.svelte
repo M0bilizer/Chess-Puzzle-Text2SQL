@@ -2,9 +2,7 @@
 	import TablerChessKnight from '~icons/tabler/chess-knight';
 </script>
 
-<header
-	class="my-12 grid grid-cols-1 place-items-center space-y-6 space-x-12 lg:grid-cols-[256px_1fr]"
->
+<header class="grid grid-cols-1 place-items-center space-y-6 space-x-12 lg:grid-cols-[256px_1fr]">
 	<!-- Left side with tilted rectangle -->
 	<section class="place-self-center">
 		<div class="relative aspect-square size-48 lg:size-64">

@@ -1,4 +1,5 @@
 import About from '@/features/about/+About.svelte';
+import AboutLayout from './AboutLayout.svelte';
 
 export const ABOUT_PATHS = {
 	ABOUT: '/about'
@@ -6,6 +7,7 @@ export const ABOUT_PATHS = {
 
 export const aboutRoutes = {
 	'/about': {
-		'/': About
+		'/': About,
+		layout: AboutLayout
 	}
 };
