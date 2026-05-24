@@ -16,7 +16,12 @@
 		onMove?: (move: Move) => Promise<void>;
 	};
 
-	let { fen = $bindable(), settings, orientation = 'white', onMove }: Props = $props();
+	let {
+		fen = $bindable(),
+		settings = $bindable(),
+		orientation = 'white',
+		onMove
+	}: Props = $props();
 
 	let cgApi: Api | undefined = $state();
 	// Internal chess instance for move validation and dests calculation
@@ -51,6 +56,10 @@
 			movable: {
 				color: color,
 				dests: toDests(chess)
+			},
+			animation: {
+				enabled: true,
+				duration: settings.animationSpeed
 			}
 		});
 	}
@@ -193,6 +202,10 @@
 				attributeFilter: ['class']
 			});
 		});
+	}
+
+	export function selectSquare(key: Key | null) {
+		cgApi?.selectSquare(key);
 	}
 </script>
 

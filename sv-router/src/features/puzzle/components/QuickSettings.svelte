@@ -4,6 +4,7 @@
 	import TablerMenu2 from '~icons/tabler/menu-2';
 	import TablerArrowUpRight from '~icons/tabler/arrow-up-right';
 	import type { Preferences } from '@/features/settings/preferences-state';
+	import { fade } from 'svelte/transition';
 
 	type Props = {
 		preferences: Preferences;
@@ -12,7 +13,7 @@
 </script>
 
 <Popover positioning={{ placement: 'top-end' }}>
-	<Popover.Trigger class="btn-icon data-[state=open]:bg-surface-200-800">
+	<Popover.Trigger class=" btn-icon data-[state=open]:bg-surface-200-800">
 		<TablerMenu2 />
 	</Popover.Trigger>
 	<Portal>

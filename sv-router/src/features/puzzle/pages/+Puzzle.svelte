@@ -52,11 +52,15 @@
 			};
 			currentIndex++;
 			latestIndex++;
-			await chessboard.waitForAnimations();
+			if (settings.waitForAnimation) {
+				await chessboard.waitForAnimations();
+			}
 			chessboard.undo();
 			currentIndex--;
 			latestIndex--;
-			await chessboard.waitForAnimations();
+			if (settings.waitForAnimation) {
+				await chessboard.waitForAnimations();
+			}
 			return;
 		}
 		movePlayed = {
@@ -67,9 +71,12 @@
 		};
 		currentIndex++;
 		latestIndex++;
-		await chessboard.waitForAnimations();
+		if (settings.waitForAnimation) {
+			await chessboard.waitForAnimations();
+		}
 		// Make the computer move
 		if (!isComplete) {
+			await new Promise((resolve) => setTimeout(resolve, settings.computerMoveDelay));
 			const computerMove = session.getCorrectMoveAt(currentIndex);
 			movePlayed = {
 				index: currentIndex,
@@ -80,13 +87,15 @@
 			currentIndex++;
 			latestIndex++;
 			chessboard.makeMove(computerMove.from, computerMove.to);
-			await chessboard.waitForAnimations();
+			if (settings.waitForAnimation) {
+				await chessboard.waitForAnimations();
+			}
 			return;
 		}
 	}
 
 	onMount(async () => {
-		await chessboard?.waitForAnimations();
+		if (settings.waitForAnimation) await chessboard?.waitForAnimations();
 		// make the first computer move
 		movePlayed = {
 			index: currentIndex,
@@ -100,6 +109,18 @@
 		// don't use programmtic move since sound might crash
 		fen = session.getFenAt(currentIndex)!;
 	});
+
+	const onHint = () => {
+		const move = session.getCorrectMoveAt(currentIndex);
+		chessboard?.selectSquare(move.from);
+	};
+
+	const onSolution = async () => {
+		const move = session.getCorrectMoveAt(currentIndex);
+		chessboard?.makeMove(move.from, move.to);
+		if (settings.waitForAnimation) await chessboard?.waitForAnimations();
+		onMove(move);
+	};
 
 	const onJumpToIndex = (index: number) => {
 		currentIndex = index;
@@ -142,7 +163,13 @@
 
 <MainWithAsidePage>
 	<main class="space-y-0 lg:space-y-4">
-		<Chessboard bind:this={chessboard} bind:fen {onMove} {orientation} {settings} />
+		<Chessboard
+			bind:this={chessboard}
+			bind:fen
+			{onMove}
+			{orientation}
+			bind:settings={preferencesState.current}
+		/>
 		<ChessDescription {puzzle} class="hidden md:block" />
 	</main>
 	<aside>
@@ -158,6 +185,8 @@
 			playerColor={session.getPlayerColor()}
 			{isComplete}
 			moveResult={playerMoveResult}
+			{onHint}
+			{onSolution}
 		/>
 		<JumpRow
 			{onReset}

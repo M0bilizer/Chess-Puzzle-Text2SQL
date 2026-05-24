@@ -25,6 +25,6 @@
 	.container > :global(main) {
 		max-width: 900px;
 		width: 100%;
-		min-height: 100%;
+		height: 100%;
 	}
 </style>
