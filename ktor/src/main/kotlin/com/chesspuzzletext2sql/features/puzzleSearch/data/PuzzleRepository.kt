@@ -3,10 +3,10 @@ package com.chesspuzzletext2sql.features.puzzleSearch.data
 import com.chesspuzzletext2sql.features.puzzleSearch.models.Puzzle
 import java.sql.Connection
 import java.sql.ResultSet
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.selectAll
-import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.v1.core.ResultRow
+import org.jetbrains.exposed.v1.jdbc.Database
+import org.jetbrains.exposed.v1.jdbc.selectAll
+import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 
 interface PuzzleRepository {
     fun getPuzzles(limit: Int): List<Puzzle>

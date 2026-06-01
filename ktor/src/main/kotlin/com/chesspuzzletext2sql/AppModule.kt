@@ -1,4 +1,4 @@
-package com.chesspuzzletext2sql.app.di
+package com.chesspuzzletext2sql
 
 import com.chesspuzzletext2sql.config.ApplicationConfig
 import com.chesspuzzletext2sql.features.puzzleSearch.data.ModelRepository

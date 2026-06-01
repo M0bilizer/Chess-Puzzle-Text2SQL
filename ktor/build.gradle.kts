@@ -2,8 +2,8 @@ plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.ktor)
     alias(libs.plugins.kotlin.plugin.serialization)
-    id("com.ncorti.ktfmt.gradle") version "0.22.0"
-    id("io.kotest") version "6.0.0"
+    id("com.ncorti.ktfmt.gradle") version "0.26.0"
+    id("io.kotest") version "6.1.11"
 }
 
 group = "com.chesspuzzletext2sql"
@@ -44,16 +44,15 @@ dependencies {
     implementation(libs.ktor.client.cio)
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.logback.classic)
-    testImplementation("io.kotest:kotest-framework-engine:6.0.0")
-    testImplementation("io.kotest:kotest-property:6.0.0")
-    testImplementation("io.strikt:strikt-core:0.34.0")
-    testImplementation("io.mockk:mockk:1.14.5")
-    implementation("mysql:mysql-connector-java:8.0.33")
-    implementation("io.github.oshai:kotlin-logging-jvm:7.0.3")
+    testImplementation("io.kotest:kotest-framework-engine:6.1.11")
+    testImplementation("io.kotest:kotest-property:6.1.11")
+    testImplementation("io.strikt:strikt-core:0.35.1")
+    testImplementation("io.mockk:mockk:1.14.11")
+    implementation("org.postgresql:postgresql:42.7.3")
     implementation("io.github.cdimascio:dotenv-kotlin:6.5.1")
-    implementation("com.github.jsqlparser:jsqlparser:5.1")
-    implementation("com.michael-bull.kotlin-result:kotlin-result:2.0.1")
-    implementation("com.michael-bull.kotlin-result:kotlin-result-coroutines:2.0.1")
-    implementation("com.charleskorn.kaml:kaml-jvm:0.85.0")
-    implementation("io.github.oshai:kotlin-logging-jvm:7.0.3")
+    implementation("com.github.jsqlparser:jsqlparser:5.3")
+    implementation("com.michael-bull.kotlin-result:kotlin-result:2.3.1")
+    implementation("com.michael-bull.kotlin-result:kotlin-result-coroutines:2.3.1")
+    implementation("com.charleskorn.kaml:kaml-jvm:0.104.0")
+    implementation("io.github.oshai:kotlin-logging-jvm:8.0.4")
 }

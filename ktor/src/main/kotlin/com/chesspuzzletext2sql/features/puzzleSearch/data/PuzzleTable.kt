@@ -1,6 +1,6 @@
 package com.chesspuzzletext2sql.features.puzzleSearch.data
 
-import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.v1.core.Table
 
 object PuzzleTable : Table("T_Puzzle") {
     val id = integer("id").autoIncrement()

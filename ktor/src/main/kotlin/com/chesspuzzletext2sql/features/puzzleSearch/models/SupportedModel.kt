@@ -14,7 +14,8 @@ sealed class SupportedModel {
     companion object {
         internal val entries = setOf(DeepSeek, Mistral)
 
-        fun fromProviderName(name: String): SupportedModel? =
-            entries.find { it.providerName == name.lowercase() }
+        fun fromProviderName(name: String): SupportedModel? = entries.find {
+            it.providerName == name.lowercase()
+        }
     }
 }

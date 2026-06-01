@@ -20,10 +20,7 @@ data class ChatCompletionRequest(
 )
 
 @Serializable
-data class Message(
-    @SerialName("role") val role: String,
-    @SerialName("content") val content: String,
-)
+data class Message(@SerialName("role") val role: String, @SerialName("content") val content: String)
 
 @Serializable
 data class ChatCompletionResponse(

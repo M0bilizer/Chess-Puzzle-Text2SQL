@@ -10,11 +10,11 @@ import com.chesspuzzletext2sql.features.puzzleSearch.models.Puzzle
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
-import com.mysql.cj.jdbc.exceptions.CommunicationsException
 import net.sf.jsqlparser.JSQLParserException
 import net.sf.jsqlparser.parser.CCJSqlParserUtil
 import net.sf.jsqlparser.statement.select.Select
-import org.jetbrains.exposed.exceptions.ExposedSQLException
+import org.jetbrains.exposed.v1.exceptions.ExposedSQLException
+import org.postgresql.util.PSQLException
 
 fun selectPuzzles(
     sql: String,
@@ -24,11 +24,11 @@ fun selectPuzzles(
     return try {
         Ok(repository.selectPuzzles(sql))
     } catch (e: Exception) {
-        println(e::class.simpleName)
         when (e) {
             is ExposedSQLException -> {
                 when (e.cause) {
-                    is CommunicationsException -> Err(DatabaseConnectionError)
+                    // TODO: should check SQLState
+                    is PSQLException -> Err(DatabaseConnectionError)
                     else -> Err(SqlGenerationError)
                 }
             }
