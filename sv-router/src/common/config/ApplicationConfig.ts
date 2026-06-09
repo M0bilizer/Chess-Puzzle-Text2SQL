@@ -4,7 +4,6 @@ import { ConfigurationError } from '@/common/types/error';
 
 const EnvSchema = v.object({
 	nodeEnv: v.optional(v.picklist(['development', 'production'])),
-	baseUrl: v.string(),
 	apiUrl: v.pipe(
 		v.string(),
 		v.url('Base URL must be a valid URL'),
@@ -15,7 +14,6 @@ export type Env = v.InferOutput<typeof EnvSchema>;
 
 export function loadConfigFromVite(): Record<string, string> {
 	return {
-		baseUrl: import.meta.env.BASE_URL,
 		apiUrl: import.meta.env.VITE_API_URL
 	};
 }
