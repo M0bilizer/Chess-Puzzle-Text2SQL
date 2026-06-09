@@ -1,13 +1,13 @@
 package com.chesspuzzletext2sql
 
-import com.chesspuzzletext2sql.config.ApplicationConfig
-import com.chesspuzzletext2sql.features.puzzleSearch.data.ModelRepository
-import com.chesspuzzletext2sql.features.puzzleSearch.data.ModelRepositoryImp
-import com.chesspuzzletext2sql.features.puzzleSearch.data.PuzzleRepository
-import com.chesspuzzletext2sql.features.puzzleSearch.data.PuzzleRepositoryImp
-import com.chesspuzzletext2sql.features.puzzleSearch.data.TemplateRepository
-import com.chesspuzzletext2sql.features.puzzleSearch.data.TemplateRepositoryImp
+import com.chesspuzzletext2sql.features.puzzles.data.ModelRepositoryImp
+import com.chesspuzzletext2sql.features.puzzles.data.PuzzleRepositoryImp
+import com.chesspuzzletext2sql.features.puzzles.data.TemplateRepositoryImp
+import com.chesspuzzletext2sql.shared.config.ApplicationConfig
 import com.chesspuzzletext2sql.shared.data.DatabaseFactory.createDatabase
+import com.chesspuzzletext2sql.shared.data.repositories.ModelRepository
+import com.chesspuzzletext2sql.shared.data.repositories.PuzzleRepository
+import com.chesspuzzletext2sql.shared.data.repositories.TemplateRepository
 import com.chesspuzzletext2sql.shared.http.HttpClientFactory.createHttpClient
 import org.koin.dsl.module
 

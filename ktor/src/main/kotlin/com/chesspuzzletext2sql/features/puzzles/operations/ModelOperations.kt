@@ -1,14 +1,18 @@
-package com.chesspuzzletext2sql.features.puzzleSearch.core
+package com.chesspuzzletext2sql.features.puzzles.operations
 
-import com.chesspuzzletext2sql.errors.ApplicationError
-import com.chesspuzzletext2sql.errors.LlmRequestTimeout
-import com.chesspuzzletext2sql.errors.LlmServiceUnavailable
-import com.chesspuzzletext2sql.errors.LlmTooManyRequests
-import com.chesspuzzletext2sql.errors.UnknownError
-import com.chesspuzzletext2sql.features.puzzleSearch.models.ChatCompletionRequest
-import com.chesspuzzletext2sql.features.puzzleSearch.models.ChatCompletionResponse
-import com.chesspuzzletext2sql.features.puzzleSearch.models.LLMConfig
-import com.chesspuzzletext2sql.features.puzzleSearch.models.Message
+import com.chesspuzzletext2sql.features.puzzles.domains.ChatCompletionRequest
+import com.chesspuzzletext2sql.features.puzzles.domains.ChatCompletionResponse
+import com.chesspuzzletext2sql.features.puzzles.domains.LLMConfig
+import com.chesspuzzletext2sql.features.puzzles.domains.Message
+import com.chesspuzzletext2sql.features.puzzles.domains.SupportedModel
+import com.chesspuzzletext2sql.shared.data.repositories.ModelRepository
+import com.chesspuzzletext2sql.shared.errors.ApplicationError
+import com.chesspuzzletext2sql.shared.errors.LlmRequestTimeout
+import com.chesspuzzletext2sql.shared.errors.LlmServiceUnavailable
+import com.chesspuzzletext2sql.shared.errors.LlmTooManyRequests
+import com.chesspuzzletext2sql.shared.errors.NoModelConfigFound
+import com.chesspuzzletext2sql.shared.errors.UnknownError
+import com.chesspuzzletext2sql.shared.errors.UnsupportedModel
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
@@ -58,5 +62,20 @@ suspend fun HttpClient.callModel(
         when (e) {
             is HttpRequestTimeoutException -> Err(LlmRequestTimeout)
             else -> Err(UnknownError(e))
+        }
+    }
+
+fun getModelConfig(
+    model: String?,
+    repository: ModelRepository,
+): Result<LLMConfig, ApplicationError> =
+    when (model) {
+        null -> Ok(repository.getDefault())
+        is String -> {
+            val supportedModel =
+                SupportedModel.fromProviderName(model) ?: return Err(UnsupportedModel(model))
+            val result =
+                repository.getConfig(supportedModel) ?: return Err(NoModelConfigFound(model))
+            Ok(result)
         }
     }

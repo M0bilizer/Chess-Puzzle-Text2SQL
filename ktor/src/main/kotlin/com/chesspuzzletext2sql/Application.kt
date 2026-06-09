@@ -1,11 +1,11 @@
 package com.chesspuzzletext2sql
 
-import com.chesspuzzletext2sql.config.ApplicationConfigLoader
 import com.chesspuzzletext2sql.plugins.configureCors
 import com.chesspuzzletext2sql.plugins.configureKoin
 import com.chesspuzzletext2sql.plugins.configureMonitoring
 import com.chesspuzzletext2sql.plugins.configureRouting
 import com.chesspuzzletext2sql.plugins.configureSerialization
+import com.chesspuzzletext2sql.shared.config.ApplicationConfigLoader
 import com.github.michaelbull.result.getOrElse
 import io.github.cdimascio.dotenv.dotenv
 import io.ktor.server.cio.CIO

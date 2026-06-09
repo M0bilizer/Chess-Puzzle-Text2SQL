@@ -1,4 +1,4 @@
-package com.chesspuzzletext2sql.features.puzzleSearch.models
+package com.chesspuzzletext2sql.features.puzzles.domains
 
 import kotlinx.serialization.Serializable
 
@@ -10,7 +10,7 @@ data class PromptTemplate(
     val input: String,
 ) {
     init {
-        require(input.contains("\${input}"))
+        require(input.contains($$"${input}"))
     }
 
     operator fun invoke(userInput: String): String =
@@ -25,7 +25,7 @@ data class PromptTemplate(
         | ${demonstrations.joinToString("\n")}
         | 
         | #Input
-        | ${input.replace("\${input}", userInput)}
+        | ${input.replace($$"${input}", userInput)}
     """
             .trimMargin("| ")
 }

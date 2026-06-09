@@ -1,9 +1,9 @@
 package com.chesspuzzletext2sql.plugins
 
-import com.chesspuzzletext2sql.features.puzzleSearch.data.ModelRepository
-import com.chesspuzzletext2sql.features.puzzleSearch.data.PuzzleRepository
-import com.chesspuzzletext2sql.features.puzzleSearch.data.TemplateRepository
-import com.chesspuzzletext2sql.features.puzzleSearch.routes.searchPuzzle
+import com.chesspuzzletext2sql.features.puzzles.puzzles
+import com.chesspuzzletext2sql.shared.data.repositories.ModelRepository
+import com.chesspuzzletext2sql.shared.data.repositories.PuzzleRepository
+import com.chesspuzzletext2sql.shared.data.repositories.TemplateRepository
 import io.ktor.client.HttpClient
 import io.ktor.server.application.Application
 import io.ktor.server.response.respondText
@@ -20,6 +20,6 @@ fun Application.configureRouting() {
     routing {
         get("/hello") { call.respondText("Hello World from Ktor") }
 
-        searchPuzzle(templateRepository, modelRepository, puzzleRepository, client)
+        puzzles(templateRepository, modelRepository, puzzleRepository, client)
     }
 }

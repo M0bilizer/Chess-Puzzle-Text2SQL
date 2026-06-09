@@ -1,6 +1,6 @@
 package com.chesspuzzletext2sql.shared.data
 
-import com.chesspuzzletext2sql.config.EnvironmentConfig
+import com.chesspuzzletext2sql.shared.config.EnvironmentConfig
 import org.jetbrains.exposed.v1.jdbc.Database
 
 object DatabaseFactory {

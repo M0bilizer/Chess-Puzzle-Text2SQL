@@ -1,9 +1,9 @@
-package com.chesspuzzletext2sql.features.puzzleSearch.core
+package com.chesspuzzletext2sql.features.puzzles.operations
 
-import com.chesspuzzletext2sql.errors.ApplicationError
-import com.chesspuzzletext2sql.errors.NoTemplateFound
-import com.chesspuzzletext2sql.features.puzzleSearch.data.TemplateRepository
-import com.chesspuzzletext2sql.features.puzzleSearch.models.PromptTemplate
+import com.chesspuzzletext2sql.features.puzzles.domains.PromptTemplate
+import com.chesspuzzletext2sql.shared.data.repositories.TemplateRepository
+import com.chesspuzzletext2sql.shared.errors.ApplicationError
+import com.chesspuzzletext2sql.shared.errors.NoTemplateFound
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result

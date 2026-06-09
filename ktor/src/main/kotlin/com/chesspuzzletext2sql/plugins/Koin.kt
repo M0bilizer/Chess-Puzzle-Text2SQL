@@ -1,7 +1,7 @@
 package com.chesspuzzletext2sql.plugins
 
-import com.chesspuzzletext2sql.config.ApplicationConfig
 import com.chesspuzzletext2sql.createAppModule
+import com.chesspuzzletext2sql.shared.config.ApplicationConfig
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import org.koin.ktor.plugin.Koin

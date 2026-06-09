@@ -1,31 +1,35 @@
-package com.chesspuzzletext2sql.features.puzzleSearch.data
+package com.chesspuzzletext2sql.shared.data.repositories
 
-import com.chesspuzzletext2sql.features.puzzleSearch.models.Puzzle
+import com.chesspuzzletext2sql.features.puzzles.domains.Puzzle
+import com.chesspuzzletext2sql.shared.data.Puzzles
 import java.sql.Connection
 import java.sql.ResultSet
 import org.jetbrains.exposed.v1.core.ResultRow
+import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.selectAll
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 
-interface PuzzleRepository {
-    fun getPuzzles(limit: Int): List<Puzzle>
-
-    fun selectPuzzles(query: String): List<Puzzle>
-}
-
-class PuzzleRepositoryImp(private val database: Database) : PuzzleRepository {
-
-    override fun getPuzzles(limit: Int) =
+class PuzzleRepository(private val database: Database) {
+    fun getPuzzles(limit: Int) =
         transaction(
             db = database,
             readOnly = true,
             transactionIsolation = Connection.TRANSACTION_READ_UNCOMMITTED,
         ) {
-            PuzzleTable.selectAll().limit(limit).map { it.toPuzzle() }
+            Puzzles.selectAll().limit(limit).map { it.toPuzzle() }
         }
 
-    override fun selectPuzzles(query: String) =
+    fun getPuzzleById(id: String): Puzzle? =
+        transaction(
+            db = database,
+            readOnly = true,
+            transactionIsolation = Connection.TRANSACTION_READ_UNCOMMITTED,
+        ) {
+            Puzzles.selectAll().where { Puzzles.puzzleId eq id }.singleOrNull()?.toPuzzle()
+        }
+
+    fun selectPuzzles(query: String) =
         transaction(
             db = database,
             readOnly = true,
@@ -38,23 +42,21 @@ class PuzzleRepositoryImp(private val database: Database) : PuzzleRepository {
 
     private fun ResultRow.toPuzzle(): Puzzle {
         return Puzzle(
-            id = this[PuzzleTable.id],
-            puzzleId = this[PuzzleTable.puzzleId],
-            fen = this[PuzzleTable.fen],
-            moves = this[PuzzleTable.moves],
-            rating = this[PuzzleTable.rating],
-            ratingDeviation = this[PuzzleTable.ratingDeviation],
-            popularity = this[PuzzleTable.popularity],
-            nbPlays = this[PuzzleTable.nbPlays],
-            themes = this[PuzzleTable.themes],
-            gameUrl = this[PuzzleTable.gameUrl],
-            openingTags = this[PuzzleTable.openingTags],
+            puzzleId = this[Puzzles.puzzleId],
+            fen = this[Puzzles.fen],
+            moves = this[Puzzles.moves],
+            rating = this[Puzzles.rating],
+            ratingDeviation = this[Puzzles.ratingDeviation],
+            popularity = this[Puzzles.popularity],
+            nbPlays = this[Puzzles.nbPlays],
+            themes = this[Puzzles.themes],
+            gameUrl = this[Puzzles.gameUrl],
+            openingTags = this[Puzzles.openingTags],
         )
     }
 
     private fun ResultSet.toPuzzle(): Puzzle {
         return Puzzle(
-            id = getInt("id"),
             puzzleId = getString("puzzle_id"),
             fen = getString("fen"),
             moves = getString("moves"),
