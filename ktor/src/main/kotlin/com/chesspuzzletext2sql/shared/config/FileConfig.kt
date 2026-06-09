@@ -1,8 +1,8 @@
-package com.chesspuzzletext2sql.config
+package com.chesspuzzletext2sql.shared.config
 
 import com.charleskorn.kaml.Yaml
-import com.chesspuzzletext2sql.errors.StartupError
-import com.chesspuzzletext2sql.features.puzzleSearch.models.PromptTemplate
+import com.chesspuzzletext2sql.features.puzzles.domains.PromptTemplate
+import com.chesspuzzletext2sql.shared.errors.StartupError
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.mapError
 import com.github.michaelbull.result.runCatching

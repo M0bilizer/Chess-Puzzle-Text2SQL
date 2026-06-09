@@ -72,7 +72,7 @@
 			</div>
 		{:else if results.length > 0}
 			<div class="grid grid-cols-2 place-items-center gap-2 lg:grid-cols-4">
-				{#each results as puzzle, _i (puzzle.id)}
+				{#each results as puzzle, _i (puzzle.puzzleId)}
 					<ChessCard {puzzle} />
 				{/each}
 			</div>

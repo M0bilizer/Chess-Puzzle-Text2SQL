@@ -1,4 +1,4 @@
-package com.chesspuzzletext2sql.errors
+package com.chesspuzzletext2sql.shared.errors
 
 import io.ktor.http.HttpStatusCode
 
@@ -31,6 +31,12 @@ data class NoTemplateFound(val template: String) : ApplicationError {
     override val code = "NO_TEMPLATE_FOUND"
 
     override val message = "No template found for: $template"
+}
+
+data class NotFoundError(override val message: String = "Resource cannot be found") :
+    ApplicationError {
+    override val status = HttpStatusCode.NotFound
+    override val code = "NOT_FOUND"
 }
 
 data class UnsupportedModel(val model: String) : ApplicationError {

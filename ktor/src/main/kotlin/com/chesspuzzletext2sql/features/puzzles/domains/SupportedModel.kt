@@ -1,4 +1,4 @@
-package com.chesspuzzletext2sql.features.puzzleSearch.models
+package com.chesspuzzletext2sql.features.puzzles.domains
 
 sealed class SupportedModel {
     abstract val providerName: String
@@ -14,7 +14,8 @@ sealed class SupportedModel {
     companion object {
         internal val entries = setOf(DeepSeek, Mistral)
 
-        fun fromProviderName(name: String): SupportedModel? =
-            entries.find { it.providerName == name.lowercase() }
+        fun fromProviderName(name: String): SupportedModel? = entries.find {
+            it.providerName == name.lowercase()
+        }
     }
 }

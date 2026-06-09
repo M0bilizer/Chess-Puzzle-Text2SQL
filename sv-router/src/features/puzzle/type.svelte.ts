@@ -8,7 +8,6 @@ export type Game = {
 
 /* This is the dto from the backend */
 export type Puzzle = {
-	id: number;
 	puzzleId: string;
 	fen: string;
 	moves: string;

@@ -14,9 +14,8 @@ fun Application.configureCors() {
 
         allowHeader(HttpHeaders.ContentType)
         allowHeader(HttpHeaders.Accept)
-        
+
         allowHost("localhost:3000")
         allowHost("localhost:5173") // Vite
-
     }
 }

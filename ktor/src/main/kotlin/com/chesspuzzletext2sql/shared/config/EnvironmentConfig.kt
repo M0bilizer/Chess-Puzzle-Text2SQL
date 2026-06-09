@@ -1,8 +1,8 @@
-package com.chesspuzzletext2sql.config
+package com.chesspuzzletext2sql.shared.config
 
-import com.chesspuzzletext2sql.errors.StartupError
-import com.chesspuzzletext2sql.features.puzzleSearch.models.LLMConfig
-import com.chesspuzzletext2sql.features.puzzleSearch.models.SupportedModel
+import com.chesspuzzletext2sql.features.puzzles.domains.LLMConfig
+import com.chesspuzzletext2sql.features.puzzles.domains.SupportedModel
+import com.chesspuzzletext2sql.shared.errors.StartupError
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
