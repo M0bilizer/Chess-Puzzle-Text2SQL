@@ -1,10 +1,10 @@
 <script lang="ts">
 	type Props = {
-		openings: string;
+		openings: string | null;
 	};
 	let { openings }: Props = $props();
 
-	const badges = $derived(openings.split(' ').map((it) => it.replace(/_/g, ' ')));
+	const badges = $derived(openings?.split(' ').map((it) => it.replace(/_/g, ' ')));
 </script>
 
 <dd class="space-x-2">

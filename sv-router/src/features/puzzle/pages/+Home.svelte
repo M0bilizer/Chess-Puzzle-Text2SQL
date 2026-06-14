@@ -1,6 +1,5 @@
 <script lang="ts">
 	import SearchForm from '@/features/puzzle/components/SearchForm.svelte';
-	import { searchPuzzleApi } from '@/features/puzzle/api/search-puzzle.api';
 	import { onMount } from 'svelte';
 	import SearchBanner from '@/features/puzzle/components/SearchBanner.svelte';
 	import ErrorAlert from '@/common/components/ErrorAlert.svelte';
@@ -9,6 +8,7 @@
 	import ChessCard from '@/features/puzzle/components/ChessCard.svelte';
 	import { searchParams } from 'sv-router';
 	import type { Puzzle } from '../type.svelte';
+	import { searchPuzzle as searchPuzzle } from '../api/search-puzzle';
 
 	let query = $state((searchParams.get('q') as string) || '');
 	let loading = $state(false);
@@ -20,7 +20,7 @@
 		error = null;
 
 		try {
-			const [data, err] = await searchPuzzleApi(query).toTuple();
+			const [data, err] = await searchPuzzle(query).toTuple();
 			if (err) {
 				error = err.message;
 			}

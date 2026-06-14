@@ -17,7 +17,7 @@ export type Puzzle = {
 	nbPlays: number;
 	themes: string;
 	gameUrl: string;
-	openingTags: string;
+	openingTags: string | null;
 };
 
 /* This acts as the move validation, kinda like a clientside dto */
