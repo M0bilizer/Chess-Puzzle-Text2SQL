@@ -2,10 +2,24 @@ import ky from 'ky';
 import type { BeforeRequestHook, AfterResponseHook } from 'ky';
 import type { AppCache } from './cache';
 
-export function createCacheClient(baseUrl: string, cache: AppCache, defaultTTL: number = 300000) {
+export interface HttpClient {
+	get<T>(
+		url: string,
+		options?: {
+			headers?: Record<string, string>;
+			context?: Record<string, unknown>;
+		}
+	): Promise<T>;
+}
+
+export function createCacheClient(
+	baseUrl: string,
+	cache: AppCache,
+	defaultTTL: number = 300000
+): HttpClient {
 	const beforeRequest: BeforeRequestHook = async (request) => {
-		const cacheKey = request.options.context.cacheKey as string;
-		const skipCache = request.options.context.skipCache as number;
+		const cacheKey = request.options.context?.cacheKey as string;
+		const skipCache = request.options.context?.skipCache as boolean;
 
 		if (!cacheKey || skipCache) {
 			return;
@@ -27,8 +41,8 @@ export function createCacheClient(baseUrl: string, cache: AppCache, defaultTTL: 
 	};
 
 	const afterResponse: AfterResponseHook = async (state) => {
-		const cacheKey = state.options.context.cacheKey as string;
-		const cacheTTL = state.options.context.cacheTTL as number;
+		const cacheKey = state.options.context?.cacheKey as string;
+		const cacheTTL = state.options.context?.cacheTTL as number;
 		const response = state.response;
 
 		if (cacheKey && response.ok && !response.headers.get('X-Cache')) {
@@ -39,11 +53,23 @@ export function createCacheClient(baseUrl: string, cache: AppCache, defaultTTL: 
 		return response;
 	};
 
-	return ky.extend({
+	const kyInstance = ky.extend({
 		hooks: {
 			beforeRequest: [beforeRequest],
 			afterResponse: [afterResponse]
 		},
 		baseUrl: baseUrl
 	});
+
+	return {
+		get: async <T>(
+			url: string,
+			options?: {
+				headers?: Record<string, string>;
+				context?: Record<string, unknown>;
+			}
+		): Promise<T> => {
+			return kyInstance.get(url, options).json<T>();
+		}
+	};
 }

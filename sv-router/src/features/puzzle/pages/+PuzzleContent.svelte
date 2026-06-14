@@ -57,6 +57,7 @@
 			latestIndex++;
 			if (settings.waitForAnimation) {
 				await chessboard.waitForAnimations();
+				await new Promise((resolve) => setTimeout(resolve, 33));
 			}
 			chessboard.undo();
 			currentIndex--;
@@ -98,7 +99,10 @@
 	}
 
 	onMount(async () => {
-		if (settings.waitForAnimation) await chessboard?.waitForAnimations();
+		if (settings.waitForAnimation) {
+			await chessboard?.waitForAnimations();
+			await new Promise((resolve) => setTimeout(resolve, 33));
+		}
 		// make the first computer move
 		movePlayed = {
 			index: currentIndex,
