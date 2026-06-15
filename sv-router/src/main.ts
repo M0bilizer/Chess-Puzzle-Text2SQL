@@ -6,8 +6,8 @@ import {
 	loadApplicationConfiguration,
 	loadConfigFromVite
 } from '@/common/config/ApplicationConfig';
-import { IndexedDbCache } from './lib/cache';
-import { createCacheClient } from './lib/fetch';
+import { createStore } from 'idb-keyval';
+import ky from 'ky';
 
 // [FIXME] unnecessary to verify env
 export const env: Env = loadApplicationConfiguration(loadConfigFromVite()).getOrElse((issues) => {
@@ -15,9 +15,10 @@ export const env: Env = loadApplicationConfiguration(loadConfigFromVite()).getOr
 	throw new Error('Error loading application configuration.');
 });
 
-const cache = new IndexedDbCache();
-const httpClient = createCacheClient(env.apiUrl, cache);
+const api = ky.create({ baseUrl: env.apiUrl });
+const searchDb = createStore('search', 'keyval');
+const puzzleDb = createStore('puzzleId', 'keyval');
 
 mount(App, { target: document.querySelector('#app')! });
 
-export { cache, httpClient };
+export { api, searchDb, puzzleDb };

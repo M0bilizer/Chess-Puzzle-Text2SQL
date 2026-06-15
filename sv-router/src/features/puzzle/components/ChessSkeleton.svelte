@@ -3,7 +3,7 @@
 </script>
 
 <div
-	class="group block w-80 overflow-hidden card border border-surface-200-800 preset-filled-surface-100-900 lg:w-64"
+	class="group block w-80 animate-pulse overflow-hidden card border border-surface-200-800 preset-filled-surface-100-900 lg:w-64"
 >
 	<div class="thumbnail relative h-80 w-80 lg:h-64 lg:w-64">
 		<Chessground fen="8/8/8/8/8/8/8/8" />

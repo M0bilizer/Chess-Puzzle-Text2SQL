@@ -8,9 +8,8 @@
 	import ChessCard from '@/features/puzzle/components/ChessCard.svelte';
 	import { searchParams } from 'sv-router';
 	import type { Puzzle } from '../type.svelte';
-	import { searchPuzzle as searchPuzzle } from '../api/puzzle.api';
 	import { searchStore } from '../store/search.store';
-	import { httpClient } from '@/main';
+	import { searchPuzzle } from '../api/puzzle.api';
 
 	let query = $state((searchParams.get('q') as string) || '');
 	let loading = $state(false);
@@ -22,12 +21,12 @@
 		error = null;
 
 		try {
-			const [data, err] = await searchPuzzle(httpClient, query).toTuple();
+			const [data, err] = await searchPuzzle(query).toTuple();
 			if (err) {
 				error = err.message;
 			}
 			results = data!;
-			searchStore.set(query);
+			searchStore.set({ search: query, result: data! });
 		} catch (e: Error | unknown) {
 			error = e instanceof Error ? e.message : 'unknown error';
 			results = [];
@@ -50,8 +49,15 @@
 	});
 
 	onMount(() => {
-		const q = (searchParams.get('q') as string) || $searchStore || '';
-		if (q) {
+		// Get from store first, to avoid loading
+		const store = $searchStore;
+		if (store.result.length > 0) {
+			results = store.result;
+			query = store.search;
+			return;
+		}
+		const q = (searchParams.get('q') as string) || '';
+		if (q !== '') {
 			query = q;
 			handleSearch(q);
 		}
