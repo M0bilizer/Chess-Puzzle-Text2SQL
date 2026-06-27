@@ -16,10 +16,9 @@
 
 	<!-- Right side -->
 	<section class="text-center lg:space-y-6 lg:text-left">
-		<h1 class=" text-5xl font-bold">Chess Puzzle Finder</h1>
+		<h1 class=" text-5xl font-bold">Chess Puzzle</h1>
 		<p class="max-w-2xl text-xl text-tertiary-800-200">
-			Search thousands of chess puzzles by opening, theme, or position. Find your next challenge
-			from our database of tactical puzzles.
+			Search chess puzzles with natural language.
 		</p>
 	</section>
 </header>

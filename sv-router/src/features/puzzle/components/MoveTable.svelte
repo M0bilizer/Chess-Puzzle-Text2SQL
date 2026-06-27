@@ -142,7 +142,7 @@
 	});
 </script>
 
-<div class="table-wrap rounded-t-lg {className}">
+<section class="table-wrap rounded-t-lg {className}">
 	<table class="table w-full table-fixed">
 		<colgroup>
 			<col class="w-16" />
@@ -201,4 +201,4 @@
 			{/if}
 		</tbody>
 	</table>
-</div>
+</section>

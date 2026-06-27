@@ -2,20 +2,22 @@
 	import MainWithAsidePage from '@/common/components/MainWithAsidePage.svelte';
 	import ChessDescription from '../components/ChessDescription.svelte';
 	import { playSound } from '../utils';
-	import MoveFeedback from '../components/MoveFeedback.svelte';
 	import MoveTable from '../components/MoveTable.svelte';
 	import JumpRow from '../components/JumpRow.svelte';
 	import Chessboard from '../components/Chessboard.svelte';
 	import { PuzzleSession, type Puzzle } from '../type.svelte';
 	import type { Move } from 'chess.js';
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { preferencesState } from '@/features/settings/preferences-state';
 	import { StateHistory } from 'runed';
+	import Playlist from '../components/Playlist.svelte';
+	import MoveFeedback from '../components/MoveFeedback.svelte';
 
 	type Props = {
 		puzzle: Puzzle;
+		hasNext: boolean;
 	};
-	let { puzzle }: Props = $props();
+	let { puzzle, hasNext }: Props = $props();
 
 	let session = $derived(new PuzzleSession(puzzle));
 	let chessboard = $state<Chessboard | null>(null);
@@ -54,14 +56,13 @@
 				isCorrect: false
 			};
 			currentIndex++;
-			latestIndex++;
+			// don't update latestIndex so that isCompleted don't get flipped to true if this is last move
 			if (settings.waitForAnimation) {
 				await chessboard.waitForAnimations();
 				await new Promise((resolve) => setTimeout(resolve, 33));
 			}
 			chessboard.undo();
 			currentIndex--;
-			latestIndex--;
 			if (settings.waitForAnimation) {
 				await chessboard.waitForAnimations();
 			}
@@ -166,9 +167,31 @@
 		if (!lastPlayerMove) return undefined;
 		return (lastPlayerMove.isCorrect ? 'correct' : 'wrong') as 'correct' | 'wrong';
 	});
+
+	/** This sets the aside to always be the same height as the chessboard */
+	let height: number | undefined = $state(0);
+	let resizeObserver: ResizeObserver;
+	onMount(() => {
+		function updateHeight() {
+			height = chessboard?.getElement()?.clientHeight;
+		}
+		updateHeight();
+		resizeObserver = new ResizeObserver(() => {
+			updateHeight();
+		});
+		if (chessboard?.getElement() !== null) {
+			resizeObserver.observe(chessboard?.getElement() as Element);
+		}
+	});
+	onDestroy(() => {
+		resizeObserver?.disconnect();
+	});
 </script>
 
 <MainWithAsidePage>
+	<aside style:height="{height}px">
+		<Playlist />
+	</aside>
 	<main class="space-y-0 lg:space-y-4">
 		<Chessboard
 			bind:this={chessboard}
@@ -194,6 +217,7 @@
 			moveResult={playerMoveResult}
 			{onHint}
 			{onSolution}
+			{hasNext}
 		/>
 		<JumpRow
 			{onReset}

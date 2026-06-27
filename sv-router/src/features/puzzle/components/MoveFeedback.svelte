@@ -14,7 +14,7 @@
 	let { playerColor, isComplete, moveResult = undefined, onHint, onSolution }: Props = $props();
 </script>
 
-<div
+<section
 	class="flex h-[140px] w-full flex-col items-center justify-center gap-4 rounded-b-lg preset-filled-surface-100-900 p-4"
 >
 	{#if isComplete}
@@ -66,7 +66,7 @@
 			</button>
 		</div>
 	{/if}
-</div>
+</section>
 
 <style>
 	.feedback {
