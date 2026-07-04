@@ -1,5 +1,6 @@
 import { Chess, type Move } from 'chess.js';
 import { getPlayerColor } from './utils';
+import { StateHistory } from 'runed';
 
 export type Game = {
 	fen: string;
@@ -42,15 +43,40 @@ export class PuzzleEngine {
 	}
 }
 
-export class PuzzleSession {
+export class PuzzleGame {
 	private engine: PuzzleEngine;
 	private fens: string[];
 	private playerColor: 'w' | 'b';
+
+	public movePlayed = $state<{
+		index: number;
+		move: Move;
+		isComputer: boolean;
+		isCorrect: boolean;
+	}>();
+
+	public movesPlayed: StateHistory<
+		| {
+				index: number;
+				move: Move;
+				isComputer: boolean;
+				isCorrect: boolean;
+		  }
+		| undefined
+	>;
+
+	public currentIndex = $state(0);
+	public latestIndex = $state(0);
 
 	constructor(puzzle: Puzzle) {
 		this.engine = new PuzzleEngine(puzzle);
 		this.fens = this.computeAllFens(puzzle, this.engine);
 		this.playerColor = getPlayerColor(puzzle.fen);
+		this.movePlayed = undefined;
+		this.movesPlayed = new StateHistory(
+			() => this.movePlayed,
+			(mP) => (this.movePlayed = mP)
+		);
 	}
 
 	private computeAllFens(puzzle: Puzzle, engine: PuzzleEngine): string[] {
@@ -96,8 +122,23 @@ export class PuzzleSession {
 		}
 		const isCorrect = this.engine.validateMove(move, expectedMove);
 		if (!isCorrect) {
+			this.movePlayed = {
+				index: this.currentIndex,
+				move: move,
+				isComputer: false,
+				isCorrect: false
+			};
+			this.currentIndex++;
 			return false;
 		}
+		this.movePlayed = {
+			index: this.currentIndex,
+			move: move,
+			isComputer: false,
+			isCorrect: true
+		};
+		this.currentIndex++;
+		this.latestIndex++;
 		return true;
 	}
 

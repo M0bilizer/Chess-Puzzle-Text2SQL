@@ -5,7 +5,7 @@
 	import SearchForm from '@/features/puzzle/components/SearchForm.svelte';
 	import { searchPuzzle } from '../api/puzzle.api';
 	import { navigate } from '@/router';
-	import { currentPlaylistStore } from '../store/currentSession.store';
+	import { playlistStore } from '../store/playlist.store';
 	import { getPlayerColor, getStartingFen } from '../utils';
 
 	let query = $state('');
@@ -22,7 +22,7 @@
 				error = err.message;
 				return;
 			}
-			currentPlaylistStore.set({
+			playlistStore.set({
 				name: query,
 				currentIndex: 0,
 				puzzles: data.map((it) => ({
@@ -58,9 +58,5 @@
 				<ErrorAlert {error} title="Search Failed" onDismiss={dismissError} />
 			{/if}
 		</section>
-
-		{#if query}
-			<div class="text-center text-gray-500">No puzzles found</div>
-		{/if}
 	</main>
 </WideMainOnlyPage>

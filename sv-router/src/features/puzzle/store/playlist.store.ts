@@ -14,6 +14,13 @@ function createPlaylistStore() {
 		set,
 		update,
 
+		getCurrent() {
+			const session = get({ subscribe });
+			const puzzle = session?.puzzles[session.currentIndex];
+			if (!puzzle) throw new Error('No current puzzle');
+			return puzzle;
+		},
+
 		setCurrentPuzzleResult(result: boolean) {
 			update((session) => {
 				if (!session) return session;
@@ -43,4 +50,4 @@ function createPlaylistStore() {
 	};
 }
 
-export const currentPlaylistStore = createPlaylistStore();
+export const playlistStore = createPlaylistStore();

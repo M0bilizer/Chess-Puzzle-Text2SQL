@@ -1,17 +1,45 @@
 <script lang="ts">
 	import PuzzleContent from './+PuzzleContent.svelte';
-	import { route } from '@/router';
+	import { navigate, route } from '@/router';
 	import { getPuzzle } from '../api/puzzle.api';
 	import PuzzleSkeleton from './+PuzzleSkeleton.svelte';
-	import { currentPlaylistStore } from '../store/currentSession.store';
+	import { playlistStore } from '../store/playlist.store';
+	import MainWithAsidePage from '@/common/components/MainWithAsidePage.svelte';
+	import Playlist from '../components/Playlist.svelte';
+	import { PuzzleGame } from '../type.svelte';
 
-	const { id } = route.getParams('/puzzle/:id');
-	const hasNext = currentPlaylistStore.hasNext();
+	let currentId = $state('');
+	let hasNext = $state(false);
+
+	$effect(() => {
+		const { id } = route.getParams('/puzzle/:id');
+		if (id && id !== currentId) {
+			currentId = id;
+			hasNext = playlistStore.hasNext();
+		}
+	});
+
+	const onComplete = () => {
+		playlistStore.setCurrentPuzzleResult(true);
+	};
+
+	const onNext = () => {
+		if (hasNext) {
+			playlistStore.incrementCurrentIndex();
+			navigate(`/puzzle/:id`, { params: { id: playlistStore.getCurrent().puzzleId } });
+		}
+	};
 </script>
 
-{#await getPuzzle(id)}
-	<PuzzleSkeleton />
-{:then value}
-	{@const puzzle = value.getOrThrow()}
-	<PuzzleContent {puzzle} {hasNext} />
-{/await}
+<MainWithAsidePage>
+	<aside class="max-h-[calc(100vh-85px)] overflow-auto">
+		<Playlist />
+	</aside>
+	{#await getPuzzle(currentId)}
+		<PuzzleSkeleton />
+	{:then value}
+		{@const puzzle = value.getOrThrow()}
+		{@const game = new PuzzleGame(puzzle)}
+		<PuzzleContent {puzzle} {game} {hasNext} {onComplete} {onNext} />
+	{/await}
+</MainWithAsidePage>
