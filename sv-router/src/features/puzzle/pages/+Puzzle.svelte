@@ -7,15 +7,18 @@
 	import MainWithAsidePage from '@/common/components/MainWithAsidePage.svelte';
 	import Playlist from '../components/Playlist.svelte';
 	import { PuzzleGame } from '../type.svelte';
+	import { onMount } from 'svelte';
 
 	let currentId = $state('');
 	let hasNext = $state(false);
+	let playlist: Playlist;
 
 	$effect(() => {
 		const { id } = route.getParams('/puzzle/:id');
 		if (id && id !== currentId) {
 			currentId = id;
 			hasNext = playlistStore.hasNext();
+			playlist.scrollToCurrent();
 		}
 	});
 
@@ -33,7 +36,7 @@
 
 <MainWithAsidePage>
 	<aside class="max-h-[calc(100vh-85px)] overflow-auto">
-		<Playlist />
+		<Playlist bind:this={playlist} />
 	</aside>
 	{#await getPuzzle(currentId)}
 		<PuzzleSkeleton />

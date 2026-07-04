@@ -4,6 +4,32 @@
 	import TablerArrowBarLeft from '~icons/tabler/arrow-bar-left';
 	import TablerPlay from '~icons/tabler/play';
 	import TablerCheck from '~icons/tabler/check';
+	import { SvelteMap } from 'svelte/reactivity';
+
+	let listElement: HTMLUListElement | undefined;
+	let itemElements = new SvelteMap<number, HTMLLIElement>();
+
+	export function scrollToCurrent() {
+		console.log('scrolling');
+		if (!listElement || !$playlistStore) return;
+
+		const currentIndex = $playlistStore.currentIndex;
+		if (currentIndex === undefined) return;
+
+		const currentItem = itemElements.get(currentIndex);
+		if (!currentItem) return;
+
+		currentItem.scrollIntoView({
+			behavior: 'smooth',
+			block: 'center'
+		});
+	}
+
+	function setItemRef(el: HTMLLIElement, index: number) {
+		if (el) {
+			itemElements.set(index, el);
+		}
+	}
 </script>
 
 {#if $playlistStore !== null}
@@ -19,10 +45,11 @@
 				<TablerArrowBarLeft />
 			</button>
 		</header>
-		<ul class="flex flex-1 flex-col overflow-y-auto">
+		<ul bind:this={listElement} class="flex flex-1 flex-col overflow-y-auto">
 			{#each $playlistStore.puzzles as puzzle, index (puzzle.puzzleId)}
 				{@const result = puzzle.result}
 				<li
+					use:setItemRef={index}
 					class="btn flex flex-row items-center rounded-none px-0 py-1"
 					class:preset-tonal-primary={result === true}
 				>
