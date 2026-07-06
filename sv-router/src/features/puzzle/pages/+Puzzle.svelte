@@ -7,18 +7,32 @@
 	import MainWithAsidePage from '@/common/components/MainWithAsidePage.svelte';
 	import Playlist from '../components/Playlist.svelte';
 	import { PuzzleGame } from '../type.svelte';
-	import { onMount } from 'svelte';
+	import { resource } from 'runed';
 
-	let currentId = $state('');
-	let hasNext = $state(false);
+	let hasNext = $derived(playlistStore.hasNext());
 	let playlist: Playlist;
+	let content: PuzzleContent = $state();
+
+	// Using resource from runed library
+	const puzzleResource = resource(
+		() => route.getParams('/puzzle/:id').id,
+		async (id) => {
+			const result = await getPuzzle(id);
+			return result.getOrThrow();
+		}
+	);
+
+	let game = $derived(puzzleResource.current ? new PuzzleGame(puzzleResource.current) : null);
 
 	$effect(() => {
-		const { id } = route.getParams('/puzzle/:id');
-		if (id && id !== currentId) {
-			currentId = id;
-			hasNext = playlistStore.hasNext();
+		if (route.getParams('/puzzle/:id').id) {
 			playlist.scrollToCurrent();
+		}
+	});
+
+	$effect(() => {
+		if (game) {
+			new Promise((resolve) => setTimeout(resolve, 100)).then(() => content.startGame());
 		}
 	});
 
@@ -38,11 +52,13 @@
 	<aside class="max-h-[calc(100vh-85px)] overflow-auto">
 		<Playlist bind:this={playlist} />
 	</aside>
-	{#await getPuzzle(currentId)}
+
+	{#if puzzleResource.current === undefined}
 		<PuzzleSkeleton />
-	{:then value}
-		{@const puzzle = value.getOrThrow()}
-		{@const game = new PuzzleGame(puzzle)}
-		<PuzzleContent {puzzle} {game} {hasNext} {onComplete} {onNext} />
-	{/await}
+	{:else if puzzleResource.error}
+		<div>Error loading puzzle: {puzzleResource.error.message}</div>
+	{:else if puzzleResource.current && game}
+		{@const puzzle = puzzleResource.current}
+		<PuzzleContent bind:this={content} {puzzle} {game} {hasNext} {onComplete} {onNext} />
+	{/if}
 </MainWithAsidePage>

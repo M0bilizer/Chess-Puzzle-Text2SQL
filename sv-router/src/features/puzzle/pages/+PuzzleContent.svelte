@@ -6,7 +6,6 @@
 	import Chessboard from '../components/Chessboard.svelte';
 	import { PuzzleGame, type Puzzle } from '../type.svelte';
 	import type { Move } from 'chess.js';
-	import { onMount } from 'svelte';
 	import { preferencesState } from '@/features/settings/preferences-state';
 	import MoveFeedback from '../components/MoveFeedback.svelte';
 
@@ -67,18 +66,20 @@
 		}
 	}
 
-	onMount(async () => {
+	export async function startGame() {
 		if (settings.waitForAnimation) {
 			await chessboard?.waitForAnimations();
 			await new Promise((resolve) => setTimeout(resolve, 33));
 		}
 		// make the first computer move
+		console.log('starting');
+		console.log(game.currentIndex);
 		const computerMove = game.getCorrectMoveAt(game.currentIndex);
 		game.makeMove(game.currentIndex, computerMove);
 
 		// don't use programmtic move since sound might crash
 		fen = game.getFenAt(game.currentIndex)!;
-	});
+	}
 
 	const onHint = () => {
 		const move = game.getCorrectMoveAt(game.currentIndex);

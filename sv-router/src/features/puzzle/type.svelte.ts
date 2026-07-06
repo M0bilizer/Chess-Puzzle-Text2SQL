@@ -48,14 +48,14 @@ export class PuzzleGame {
 	private fens: string[];
 	private playerColor: 'w' | 'b';
 
-	public movePlayed = $state<{
+	private movePlayed = $state<{
 		index: number;
 		move: Move;
 		isComputer: boolean;
 		isCorrect: boolean;
 	}>();
 
-	public movesPlayed: StateHistory<
+	private _movesPlayed: StateHistory<
 		| {
 				index: number;
 				move: Move;
@@ -66,14 +66,14 @@ export class PuzzleGame {
 	>;
 
 	public currentIndex = $state(0);
-	public latestIndex = $state(0);
+	readonly latestIndex = $state(0);
 
 	constructor(puzzle: Puzzle) {
 		this.engine = new PuzzleEngine(puzzle);
 		this.fens = this.computeAllFens(puzzle, this.engine);
 		this.playerColor = getPlayerColor(puzzle.fen);
 		this.movePlayed = undefined;
-		this.movesPlayed = new StateHistory(
+		this._movesPlayed = new StateHistory(
 			() => this.movePlayed,
 			(mP) => (this.movePlayed = mP)
 		);
@@ -113,6 +113,18 @@ export class PuzzleGame {
 		const chess = new Chess(this.fens[index]);
 		const move = chess.move(this.engine.getSolutionMoveAt(index)!);
 		return move;
+	}
+
+	public get movesPlayed(): StateHistory<
+		| {
+				index: number;
+				move: Move;
+				isComputer: boolean;
+				isCorrect: boolean;
+		  }
+		| undefined
+	> {
+		return this._movesPlayed;
 	}
 
 	makeMove(index: number, move: Move): boolean {

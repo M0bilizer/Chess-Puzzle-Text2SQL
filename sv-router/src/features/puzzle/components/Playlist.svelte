@@ -10,7 +10,6 @@
 	let itemElements = new SvelteMap<number, HTMLLIElement>();
 
 	export function scrollToCurrent() {
-		console.log('scrolling');
 		if (!listElement || !$playlistStore) return;
 
 		const currentIndex = $playlistStore.currentIndex;
