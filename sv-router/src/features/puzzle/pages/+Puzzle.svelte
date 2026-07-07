@@ -11,7 +11,7 @@
 
 	let hasNext = $derived(playlistStore.hasNext());
 	let playlist: Playlist;
-	let content: PuzzleContent = $state();
+	let content: PuzzleContent | undefined = $state();
 
 	// Using resource from runed library
 	const puzzleResource = resource(
@@ -32,7 +32,7 @@
 
 	$effect(() => {
 		if (game) {
-			new Promise((resolve) => setTimeout(resolve, 100)).then(() => content.startGame());
+			new Promise((resolve) => setTimeout(resolve, 100)).then(() => content?.startGame());
 		}
 	});
 

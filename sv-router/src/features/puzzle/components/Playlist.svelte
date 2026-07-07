@@ -5,9 +5,10 @@
 	import TablerPlay from '~icons/tabler/play';
 	import TablerCheck from '~icons/tabler/check';
 	import { SvelteMap } from 'svelte/reactivity';
+	import { p } from '@/router';
 
 	let listElement: HTMLUListElement | undefined;
-	let itemElements = new SvelteMap<number, HTMLLIElement>();
+	let itemElements = new SvelteMap<number, HTMLAnchorElement>();
 
 	export function scrollToCurrent() {
 		if (!listElement || !$playlistStore) return;
@@ -24,7 +25,7 @@
 		});
 	}
 
-	function setItemRef(el: HTMLLIElement, index: number) {
+	function setItemRef(el: HTMLAnchorElement, index: number) {
 		if (el) {
 			itemElements.set(index, el);
 		}
@@ -47,9 +48,10 @@
 		<ul bind:this={listElement} class="flex flex-1 flex-col overflow-y-auto">
 			{#each $playlistStore.puzzles as puzzle, index (puzzle.puzzleId)}
 				{@const result = puzzle.result}
-				<li
+				<a
+					href={p('/puzzle/:id', { params: { id: puzzle.puzzleId } })}
 					use:setItemRef={index}
-					class="btn flex flex-row items-center rounded-none px-0 py-1"
+					class="btn flex cursor-pointer flex-row items-center rounded-none px-0 py-1"
 					class:preset-tonal-primary={result === true}
 				>
 					<div class="flex min-w-10 items-center justify-center">
@@ -62,9 +64,9 @@
 						{/if}
 					</div>
 					<div class="thumbnail mr-1 overflow-hidden rounded-sm">
-						<Chessground fen={puzzle.fen} orientation={puzzle.orientation} />
+						<Chessground fen={puzzle.fen} orientation={puzzle.orientation} viewOnly={true} />
 					</div>
-				</li>
+				</a>
 			{/each}
 		</ul>
 	</div>
