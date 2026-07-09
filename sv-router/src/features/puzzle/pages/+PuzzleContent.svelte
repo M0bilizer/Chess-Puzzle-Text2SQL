@@ -24,7 +24,7 @@
 
 	let movesPlayed = $derived(game.movesPlayed);
 
-	let fen = $derived(game.getFenAt(game.currentIndex));
+	let fen = $derived(game.getFenAt(0));
 	let orientation = $derived.by(() => {
 		const playerColor = game.getPlayerColor() === 'w' ? 'white' : 'black';
 		const flip = preferencesState.current.flipOrientation;

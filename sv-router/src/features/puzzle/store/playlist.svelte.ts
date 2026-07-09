@@ -1,3 +1,5 @@
+import { PersistedState } from "runed";
+
 export type Playlist = {
 	name: string;
 	puzzles: { puzzleId: string; fen: string; orientation: 'white' | 'black'; result?: boolean }[];
@@ -5,52 +7,50 @@ export type Playlist = {
 };
 
 class PlaylistStore {
-	private state = $state<{ playlist: Playlist | null }>({
-		playlist: null
-  });
-	public isActive = $derived(this.state.playlist !== null);
-  public currentIndex = $derived(this.state.playlist?.currentIndex ?? null);
-	public name = $derived(this.state.playlist?.name ?? null);
-	public puzzles = $derived(this.state.playlist?.puzzles ?? []);
-	public currentPuzzle = $derived(this.state.playlist?.puzzles[this.state.playlist?.currentIndex ?? 0]);
+	private state = new PersistedState<Playlist | null>("playlist", null);
+	public isActive = $derived(this.state.current !== null);
+  public currentIndex = $derived(this.state.current?.currentIndex ?? null);
+  public name = $derived(this.state.current?.name ?? null);
+  public puzzles = $derived(this.state.current?.puzzles ?? []);
+  public currentPuzzle = $derived(this.state.current?.puzzles[this.state.current?.currentIndex ?? 0]);
 	public hasNext = $derived(
-		this.state.playlist
-			? this.state.playlist.currentIndex < this.state.playlist.puzzles.length - 1
+		this.state.current
+		? this.state.current.currentIndex < this.state.current.puzzles.length - 1
 			: false
 	);
-	public totalPuzzles = $derived(this.state.playlist?.puzzles.length ?? 0);
+	public totalPuzzles = $derived(this.state.current?.puzzles.length ?? 0);
 
 
 	set(playlist: Playlist | null) {
-		this.state.playlist = playlist;
+		this.state.current = playlist;
 	}
 
 	setCurrentPuzzleResult(result: boolean) {
-		if (!this.state.playlist) throw new Error('No playlist');
-		const currentPuzzle = this.state.playlist.puzzles[this.state.playlist.currentIndex];
+		if (!this.state.current) throw new Error('No playlist');
+		const currentPuzzle = this.state.current.puzzles[this.state.current.currentIndex];
 		if (currentPuzzle) {
 			currentPuzzle.result = result;
 		}
 	}
 
 	incrementCurrentIndex() {
-		if (!this.state.playlist) throw new Error('No playlist');
-		if (this.state.playlist.currentIndex < this.state.playlist.puzzles.length - 1) {
-			this.state.playlist.currentIndex += 1;
+		if (!this.state.current) throw new Error('No playlist');
+		if (this.state.current.currentIndex < this.state.current.puzzles.length - 1) {
+		this.state.current.currentIndex += 1;
 		}
 	}
 
 	decrementCurrentIndex() {
-		if (!this.state.playlist) throw new Error('No playlist');
-		if (this.state.playlist.currentIndex > 0) {
-			this.state.playlist.currentIndex -= 1;
+		if (!this.state.current) throw new Error('No playlist');
+		if (this.state.current.currentIndex > 0) {
+		this.state.current.currentIndex -= 1;
 		}
 	}
 
 	goToPuzzle(index: number) {
-		if (!this.state.playlist) throw new Error('No playlist');
-		if (index >= 0 && index < this.state.playlist.puzzles.length) {
-			this.state.playlist.currentIndex = index;
+		if (!this.state.current) throw new Error('No playlist');
+		if (index >= 0 && index < this.state.current.puzzles.length) {
+		this.state.current.currentIndex = index;
 		}
 	}
 
