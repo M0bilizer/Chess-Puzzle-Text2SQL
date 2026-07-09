@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Chessground } from 'svelte5-chessground';
-	import { playlistStore } from '../store/playlist.store';
+	import { playlist } from '../store/playlist.svelte';
 	import TablerArrowBarLeft from '~icons/tabler/arrow-bar-left';
 	import TablerPlay from '~icons/tabler/play';
 	import TablerCheck from '~icons/tabler/check';
@@ -11,9 +11,9 @@
 	let itemElements = new SvelteMap<number, HTMLAnchorElement>();
 
 	export function scrollToCurrent() {
-		if (!listElement || !$playlistStore) return;
+		if (!listElement || !playlist.isActive) return;
 
-		const currentIndex = $playlistStore.currentIndex;
+		const currentIndex = playlist.currentIndex;
 		if (currentIndex === undefined) return;
 
 		const currentItem = itemElements.get(currentIndex);
@@ -32,13 +32,13 @@
 	}
 </script>
 
-{#if $playlistStore !== null}
+{#if playlist.isActive}
 	<div
 		class="flex h-full w-full max-w-md flex-col space-y-2 divide-y divide-surface-200-800 card preset-filled-surface-100-900 py-2"
 	>
 		<header class="flex shrink-0 flex-row items-center justify-between px-2 pb-1">
 			<h2 class="preset-typo-subtitle">
-				{$playlistStore.name}
+				{playlist.name}
 			</h2>
 
 			<button class="btn-icon">
@@ -46,7 +46,7 @@
 			</button>
 		</header>
 		<ul bind:this={listElement} class="flex flex-1 flex-col overflow-y-auto">
-			{#each $playlistStore.puzzles as puzzle, index (puzzle.puzzleId)}
+			{#each playlist.puzzles as puzzle, index (puzzle.puzzleId)}
 				{@const result = puzzle.result}
 				<a
 					href={p('/puzzle/:id', { params: { id: puzzle.puzzleId } })}
@@ -55,7 +55,7 @@
 					class:preset-tonal-primary={result === true}
 				>
 					<div class="flex min-w-10 items-center justify-center">
-						{#if $playlistStore.currentIndex == index}
+						{#if playlist.currentIndex == index}
 							<TablerPlay />
 						{:else if result === true}
 							<TablerCheck />

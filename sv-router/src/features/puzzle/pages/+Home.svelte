@@ -5,7 +5,7 @@
 	import SearchForm from '@/features/puzzle/components/SearchForm.svelte';
 	import { searchPuzzle } from '../api/puzzle.api';
 	import { navigate } from '@/router';
-	import { playlistStore } from '../store/playlist.store';
+	import { playlist } from '../store/playlist.svelte';
 	import { getPlayerColor, getStartingFen } from '../utils';
 
 	let query = $state('');
@@ -22,7 +22,7 @@
 				error = err.message;
 				return;
 			}
-			playlistStore.set({
+			playlist.set({
 				name: query,
 				currentIndex: 0,
 				puzzles: data.map((it) => ({

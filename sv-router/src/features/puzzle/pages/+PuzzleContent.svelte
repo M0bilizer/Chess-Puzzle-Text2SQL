@@ -24,7 +24,7 @@
 
 	let movesPlayed = $derived(game.movesPlayed);
 
-	let fen = $derived(game.getFenAt(0));
+	let fen = $derived(game.getFenAt(game.currentIndex));
 	let orientation = $derived.by(() => {
 		const playerColor = game.getPlayerColor() === 'w' ? 'white' : 'black';
 		const flip = preferencesState.current.flipOrientation;
@@ -72,8 +72,6 @@
 			await new Promise((resolve) => setTimeout(resolve, 33));
 		}
 		// make the first computer move
-		console.log('starting');
-		console.log(game.currentIndex);
 		const computerMove = game.getCorrectMoveAt(game.currentIndex);
 		game.makeMove(game.currentIndex, computerMove);
 

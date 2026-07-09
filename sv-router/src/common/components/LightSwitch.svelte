@@ -2,7 +2,7 @@
 	import TablerSunHighFilled from '~icons/tabler/sun-high-filled';
 	import TablerMoonFilled from '~icons/tabler/moon-filled';
 	import { Switch } from '@skeletonlabs/skeleton-svelte';
-	import { isDarkMode, setTheme } from '@/features/settings/theme.store';
+	import { theme } from '@/features/settings/theme.svelte';
 
 	type Props = {
 		id?: string;
@@ -11,11 +11,11 @@
 	let { id, name }: Props = $props();
 
 	const onCheckedChange = (event: { checked: boolean }) => {
-		setTheme(event.checked);
+		theme.setTheme(event.checked);
 	};
 </script>
 
-<Switch {name} checked={$isDarkMode} {onCheckedChange} class="btn">
+<Switch {name} checked={theme.isDarkMode} {onCheckedChange} class="btn">
 	<Switch.Control {id}>
 		<Switch.Thumb>
 			<Switch.Context>
