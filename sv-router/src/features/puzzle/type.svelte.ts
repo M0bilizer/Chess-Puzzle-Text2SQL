@@ -66,7 +66,7 @@ export class PuzzleGame {
 	>;
 
 	public currentIndex = $state(0);
-	readonly latestIndex = $state(0);
+	public latestIndex = $state(0);
 
 	constructor(puzzle: Puzzle) {
 		this.engine = new PuzzleEngine(puzzle);
