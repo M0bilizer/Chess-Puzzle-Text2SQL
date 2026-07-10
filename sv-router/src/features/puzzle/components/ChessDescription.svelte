@@ -24,8 +24,8 @@
 			>
 				<h2 class="h2">#{puzzle.puzzleId}</h2>
 				<Accordion.ItemIndicator class="group">
-					<TablerChevronUp class="size-icon-big hidden group-data-[state=open]:block" />
-					<TablerChevronDown class="size-icon-big block group-data-[state=open]:hidden" />
+					<TablerChevronUp class="hidden size-icon-big group-data-[state=open]:block" />
+					<TablerChevronDown class="block size-icon-big group-data-[state=open]:hidden" />
 				</Accordion.ItemIndicator></Accordion.ItemTrigger
 			>
 		</h3>

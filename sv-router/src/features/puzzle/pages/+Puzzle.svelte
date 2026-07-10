@@ -58,6 +58,13 @@
 		<div>Error loading puzzle: {puzzleResource.error.message}</div>
 	{:else if puzzleResource.current && game}
 		{@const puzzle = puzzleResource.current}
-		<PuzzleContent bind:this={content} {puzzle} {game} hasNext={currentPlaylist.hasNext} {onComplete} {onNext} />
+		<PuzzleContent
+			bind:this={content}
+			{puzzle}
+			{game}
+			hasNext={currentPlaylist.hasNext}
+			{onComplete}
+			{onNext}
+		/>
 	{/if}
 </MainWithAsidePage>

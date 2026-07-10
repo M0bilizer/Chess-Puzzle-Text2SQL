@@ -1,17 +1,17 @@
 class ThemeStore {
-    private initialMode = $state();
-    isDarkMode = $derived(this.initialMode === 'dark');
+	private initialMode = $state();
+	isDarkMode = $derived(this.initialMode === 'dark');
 
-    constructor(theme: "light" | "dark") {
-      this.initialMode = theme;
-    }
+	constructor(theme: 'light' | 'dark') {
+		this.initialMode = theme;
+	}
 
-    setTheme(isDark: boolean) {
-        const mode = isDark ? 'dark' : 'light';
-        document.documentElement.setAttribute('data-mode', mode);
-        localStorage.setItem('mode', mode);
-        this.initialMode = mode;
-    }
+	setTheme(isDark: boolean) {
+		const mode = isDark ? 'dark' : 'light';
+		document.documentElement.setAttribute('data-mode', mode);
+		localStorage.setItem('mode', mode);
+		this.initialMode = mode;
+	}
 }
 
-export const theme = new ThemeStore(localStorage.getItem('mode') as "light" | "dark" || 'dark');
+export const theme = new ThemeStore((localStorage.getItem('mode') as 'light' | 'dark') || 'dark');

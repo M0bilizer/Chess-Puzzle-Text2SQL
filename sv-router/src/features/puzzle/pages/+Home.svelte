@@ -6,7 +6,7 @@
 	import { searchPuzzle } from '../api/puzzle.api';
 	import { navigate } from '@/router';
 	import { currentPlaylist } from '../store/current-playlist.svelte';
-	import { getPlayerColor, getStartingFen } from '../utils';
+	import RecentPlaylist from '../components/RecentPlaylist.svelte';
 
 	let query = $state('');
 	let loading = $state(false);
@@ -48,6 +48,7 @@
 			{#if error}
 				<ErrorAlert {error} title="Search Failed" onDismiss={dismissError} />
 			{/if}
+			<RecentPlaylist />
 		</section>
 	</main>
 </WideMainOnlyPage>
