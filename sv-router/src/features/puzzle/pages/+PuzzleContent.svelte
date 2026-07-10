@@ -96,6 +96,7 @@
 		fen = game.getFenAt(index)!;
 	};
 
+	const interactive = $derived(game.currentIndex === game.latestIndex);
 	const canGoBack = $derived(game.currentIndex > 0);
 	const canGoForward = $derived(game.currentIndex < game.latestIndex);
 	const onReset = () => {
@@ -128,6 +129,8 @@
 		if (!lastPlayerMove) return undefined;
 		return (lastPlayerMove.isCorrect ? 'correct' : 'wrong') as 'correct' | 'wrong';
 	});
+
+	$inspect(interactive)
 </script>
 
 <main class="space-y-0 lg:space-y-4">
@@ -137,6 +140,7 @@
 		{onMove}
 		{orientation}
 		bind:settings={preferencesState.current}
+		{interactive}
 	/>
 	<ChessDescription {puzzle} class="hidden md:block" />
 </main>

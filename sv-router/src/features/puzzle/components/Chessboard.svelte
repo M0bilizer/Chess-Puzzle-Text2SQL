@@ -14,13 +14,15 @@
 		settings: Preferences;
 		orientation?: 'white' | 'black';
 		onMove?: (move: Move) => Promise<void>;
+		interactive?: boolean;
 	};
 
 	let {
 		fen = $bindable(),
 		settings = $bindable(),
 		orientation = 'white',
-		onMove
+		onMove,
+		interactive = $bindable(true),
 	}: Props = $props();
 
 	let cgApi: Api | undefined = $state();
@@ -60,7 +62,7 @@
 			animation: {
 				enabled: true,
 				duration: settings.animationSpeed
-			}
+			},
 		});
 	}
 
@@ -75,11 +77,12 @@
 		}
 	);
 
+	// This sync the chessboard's props with the cgApi
 	watch(
-		() => orientation,
-		(newOrientation) => {
+		[() => orientation, () => interactive],
+		([newOrientation, newInteractive]) => {
 			if (cgApi) {
-				cgApi.set({ orientation: newOrientation });
+				cgApi.set({ orientation: newOrientation, viewOnly: !newInteractive });
 			}
 		}
 	);
@@ -151,7 +154,7 @@
 				events: {
 					after: handleMove
 				}
-			}
+			},
 		});
 	});
 
