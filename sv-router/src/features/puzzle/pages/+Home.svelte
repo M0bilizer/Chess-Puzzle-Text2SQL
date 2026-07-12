@@ -6,7 +6,7 @@
 	import { searchPuzzle } from '../api/puzzle.api';
 	import { navigate } from '@/router';
 	import { currentPlaylist } from '../store/current-playlist.svelte';
-	import RecentPlaylist from '../components/RecentPlaylist.svelte';
+	import SearchTagline from '../components/SearchTagline.svelte';
 
 	let query = $state('');
 	let loading = $state(false);
@@ -41,14 +41,14 @@
 </script>
 
 <WideMainOnlyPage>
-	<main class="space-y-12 pt-12">
-		<section class="mx-auto space-y-12 px-4 lg:w-[900px] lg:px-0">
-			<SearchBanner />
+	<main>
+		<section class="mx-auto px-4 lg:w-[900px]">
+			<SearchBanner class="my-32"/>
 			<SearchForm bind:query onSubmit={() => handleSearch(query)} bind:loading />
 			{#if error}
 				<ErrorAlert {error} title="Search Failed" onDismiss={dismissError} />
 			{/if}
-			<RecentPlaylist />
+			<SearchTagline class="my-12"/>
 		</section>
 	</main>
 </WideMainOnlyPage>

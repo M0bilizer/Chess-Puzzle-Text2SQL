@@ -6,9 +6,10 @@
 		query: string;
 		onSubmit: () => void;
 		loading: boolean;
+		class?: string;
 	};
 
-	let { query = $bindable(), onSubmit, loading = $bindable() }: Props = $props();
+	let { query = $bindable(), onSubmit, loading = $bindable(), class: className = '' }: Props = $props();
 
 	function handleSubmit(event: SubmitEvent) {
 		event.preventDefault();
@@ -16,15 +17,16 @@
 	}
 </script>
 
-<search class="input-group">
-	<form onsubmit={handleSubmit} class="flex w-full">
+<search class={`${className}`}>
+	<form onsubmit={handleSubmit} class="space-y-1">
+	<p>Create a collection from your results</p>
+	<div class="input-group flex w-full">
 		<input
+		    id="search"
 			class="ig-input flex-1 px-6 text-xl break-normal disabled:cursor-progress"
 			type="search"
 			disabled={loading}
-			placeholder="Find Dutch Defense Puzzle..."
 			bind:value={query}
-			aria-label="Search puzzles"
 		/>
 		<button
 			type="submit"
@@ -38,5 +40,6 @@
 			{/if}
 			<span class="text-xl">{loading ? 'Searching...' : 'Search'}</span>
 		</button>
+	</div>
 	</form>
 </search>
