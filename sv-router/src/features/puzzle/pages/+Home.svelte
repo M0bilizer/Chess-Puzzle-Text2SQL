@@ -1,12 +1,15 @@
 <script lang="ts">
 	import ErrorAlert from '@/common/components/ErrorAlert.svelte';
-	import WideMainOnlyPage from '@/common/components/WideMainOnlyPage.svelte';
 	import SearchBanner from '@/features/puzzle/components/SearchBanner.svelte';
 	import SearchForm from '@/features/puzzle/components/SearchForm.svelte';
 	import { searchPuzzle } from '../api/puzzle.api';
 	import { navigate } from '@/router';
 	import { currentPlaylist } from '../store/current-playlist.svelte';
 	import SearchTagline from '../components/SearchTagline.svelte';
+	import HomeHeader from '@/common/components/HomeHeader.svelte';
+	import SimplePage from '@/common/components/SimplePage.svelte';
+	import ContinueLink from '../components/ContinueLink.svelte';
+	import { playlistCollection } from '../store/playlist-collection.svelte';
 
 	let query = $state('');
 	let loading = $state(false);
@@ -40,15 +43,19 @@
 	}
 </script>
 
-<WideMainOnlyPage>
-	<main>
-		<section class="mx-auto px-4 lg:w-[900px]">
-			<SearchBanner class="my-32"/>
-			<SearchForm bind:query onSubmit={() => handleSearch(query)} bind:loading />
-			{#if error}
-				<ErrorAlert {error} title="Search Failed" onDismiss={dismissError} />
-			{/if}
-			<SearchTagline class="my-12"/>
-		</section>
-	</main>
-</WideMainOnlyPage>
+<HomeHeader />
+<SimplePage>
+	<section class="mx-auto pt-32 lg:w-[900px]">
+		<SearchBanner class="py-2" />
+		<SearchForm bind:query onSubmit={() => handleSearch(query)} bind:loading />
+		<div class="flex flex-wrap gap-8 px-6 py-2">
+			{#each Object.values(playlistCollection.all) as playlist (playlist.name)}
+				<ContinueLink {playlist} />
+			{/each}
+		</div>
+		{#if error}
+			<ErrorAlert {error} title="Search Failed" onDismiss={dismissError} />
+		{/if}
+		<SearchTagline class="py-16" />
+	</section>
+</SimplePage>

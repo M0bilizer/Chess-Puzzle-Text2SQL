@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { AppBar } from '@skeletonlabs/skeleton-svelte';
 	import TablerHome from '~icons/tabler/home';
-	import TablerArrowUpRight from '~icons/tabler/arrow-up-right';
 	import { PATHS } from '@/router';
 	import LightSwitch from '@/common/components/LightSwitch.svelte';
 </script>

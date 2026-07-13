@@ -1,18 +1,21 @@
 <script lang="ts">
+	import HeaderIcon from '@/common/components/HeaderIcon.svelte';
 	import TablerChessKnight from '~icons/tabler/chess-knight';
 
 	type Props = {
 		class?: string;
-	}
-	let {class: className = ''}: Props = $props();
+	};
+	let { class: className = '' }: Props = $props();
 </script>
 
-<header class={`flex items-center space-x-4 justify-center my-12 ${className}`}>
-		<div class="relative aspect-square size-12 lg:size-16">
-			<div class="absolute inset-0 -z-10 rotate-6 rounded-sm preset-filled-surface-100-900"></div>
-			<div class="absolute inset-0 -z-20 -rotate-3 rounded-sm preset-filled-surface-200-800"></div>
-			<TablerChessKnight class="relative z-10 size-12 text-success-900-100 lg:size-16" />
-		</div>
-
-	<h1 class="h1">Search Puzzle</h1>
+<header class={`my-6 flex flex-col space-y-4 ${className}`}>
+	<div class="flex gap-4">
+		<HeaderIcon icon={TablerChessKnight} />
+		<h1 class="h1">Search Puzzle</h1>
+	</div>
+	<p>
+		A chess puzzle tool that allows you to search with natural language. The search results become a
+		collection which is a list of puzzles you can play through, track, and come back to. Kinda like
+		a Spotify or Youtube playlist but for chess puzzles.
+	</p>
 </header>

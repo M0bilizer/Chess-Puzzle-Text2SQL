@@ -130,10 +130,10 @@
 		return (lastPlayerMove.isCorrect ? 'correct' : 'wrong') as 'correct' | 'wrong';
 	});
 
-	$inspect(interactive)
+	$inspect(interactive);
 </script>
 
-<main class="space-y-0 lg:space-y-4">
+<section class="space-y-0 lg:space-y-4">
 	<Chessboard
 		bind:this={chessboard}
 		bind:fen
@@ -143,7 +143,7 @@
 		{interactive}
 	/>
 	<ChessDescription {puzzle} class="hidden md:block" />
-</main>
+</section>
 <aside>
 	<MoveTable
 		bind:currentIndex={game.currentIndex}

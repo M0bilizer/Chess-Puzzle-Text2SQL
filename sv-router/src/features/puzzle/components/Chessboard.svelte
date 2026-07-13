@@ -22,7 +22,7 @@
 		settings = $bindable(),
 		orientation = 'white',
 		onMove,
-		interactive = $bindable(true),
+		interactive = $bindable(true)
 	}: Props = $props();
 
 	let cgApi: Api | undefined = $state();
@@ -62,7 +62,7 @@
 			animation: {
 				enabled: true,
 				duration: settings.animationSpeed
-			},
+			}
 		});
 	}
 
@@ -78,14 +78,11 @@
 	);
 
 	// This sync the chessboard's props with the cgApi
-	watch(
-		[() => orientation, () => interactive],
-		([newOrientation, newInteractive]) => {
-			if (cgApi) {
-				cgApi.set({ orientation: newOrientation, viewOnly: !newInteractive });
-			}
+	watch([() => orientation, () => interactive], ([newOrientation, newInteractive]) => {
+		if (cgApi) {
+			cgApi.set({ orientation: newOrientation, viewOnly: !newInteractive });
 		}
-	);
+	});
 
 	function isPawnPromotion(from: string, to: string): boolean {
 		const piece = chess.get(from as Square);
@@ -154,7 +151,7 @@
 				events: {
 					after: handleMove
 				}
-			},
+			}
 		});
 	});
 
