@@ -36,8 +36,7 @@
 </script>
 
 <td
-	class="relative"
-	class:bg-secondary-50-950={isActive}
+	class={['relative', { 'bg-primary-50-950/75': isActive }]}
 	class:border-secondary-50-950={isLatest}
 	class:border-2={isLatest}
 	class:cursor-pointer={!disabled}

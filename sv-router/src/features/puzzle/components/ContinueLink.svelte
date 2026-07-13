@@ -1,7 +1,8 @@
 <script lang="ts">
 	import ArrowRightIcon from '~icons/tabler/arrow-right';
-	import { p } from '@/router';
+	import { navigate } from '@/router';
 	import type { Playlist } from '../store/current-playlist.svelte';
+	import { playlistCollection } from '../store/playlist-collection.svelte';
 
 	type Props = {
 		class?: string;
@@ -13,12 +14,17 @@
 	const id = $derived(playlist.puzzles[playlist.currentIndex]!.puzzleId);
 	const current = $derived(playlist.currentIndex + 1);
 	const total = $derived(playlist.puzzles.length);
+
+	const onClick = (playlist: Playlist) => {
+		playlistCollection.setActive(playlist.name);
+		navigate('/puzzle/:id', { params: { id: id } });
+	};
 </script>
 
-<a
-	href={p('/puzzle/:id', { params: { id: id } })}
-	class="content-center anchor {className} opacity-50 transition-opacity duration-100 hover:opacity-100"
+<button
+	onclick={() => onClick(playlist)}
+	class="anchor {className} opacity-50 transition-opacity duration-100 hover:opacity-100"
 >
 	Continue '{name}' — {current} / {total}
 	<ArrowRightIcon class="inline" />
-</a>
+</button>

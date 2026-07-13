@@ -77,8 +77,8 @@
 	{/if}
 	{#if !isComplete}
 		<div class="flex w-full justify-around">
-			<button class="btn-small btn preset-filled-surface-100-900" onclick={onHint}> Hint </button>
-			<button class="btn-small btn preset-filled-surface-100-900" onclick={onSolution}>
+			<button class="btn-small btn" onclick={onHint}> Hint </button>
+			<button class="btn-small btn" onclick={onSolution}>
 				Solution
 			</button>
 		</div>

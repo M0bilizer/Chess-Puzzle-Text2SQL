@@ -54,7 +54,7 @@
 			{/each}
 		</div>
 		{#if error}
-			<ErrorAlert {error} title="Search Failed" onDismiss={dismissError} />
+			<ErrorAlert {error} title="Search Failed" onDismiss={dismissError} class="py-2" />
 		{/if}
 		<SearchTagline class="py-16" />
 	</section>
