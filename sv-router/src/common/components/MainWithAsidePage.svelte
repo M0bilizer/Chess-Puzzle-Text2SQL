@@ -16,7 +16,7 @@
 	main {
 		display: flex;
 		flex-direction: column;
-		width: 100%;
+		width: auto;
 		min-height: calc(100vh - 85px);
 		gap: 0rem;
 		margin: 0 auto;

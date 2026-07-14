@@ -14,7 +14,7 @@
 
 <style>
 	main {
-		width: 100%;
+		width: auto;
 		min-height: calc(100vh - 85px);
 		overflow: hidden;
 		margin: 0 auto;

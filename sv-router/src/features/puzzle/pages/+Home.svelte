@@ -44,7 +44,7 @@
 </script>
 
 <HomeHeader />
-<SimplePage>
+<SimplePage class="px-4">
 	<section class="mx-auto pt-32 lg:w-[900px]">
 		<SearchBanner class="py-2" />
 		<SearchForm bind:query onSubmit={() => handleSearch(query)} bind:loading />
