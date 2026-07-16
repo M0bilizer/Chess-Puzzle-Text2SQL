@@ -2,17 +2,21 @@
 	import TablerAlertTriangleFilled from 'virtual:icons/tabler/alert-triangle-filled';
 	import { fade } from 'svelte/transition';
 
-	let {
-		error = null,
-		title = 'Error',
-		dismissible = true,
-		onDismiss
-	}: {
+	type Props = {
 		error?: string | null;
 		title?: string;
 		dismissible?: boolean;
 		onDismiss?: () => void;
-	} = $props();
+		class?: string;
+	};
+
+	let {
+		error = null,
+		title = 'Error',
+		dismissible = true,
+		onDismiss,
+		class: className = ''
+	}: Props = $props();
 
 	function dismiss() {
 		if (onDismiss) {
@@ -25,7 +29,7 @@
 	<div
 		in:fade={{ duration: 200 }}
 		out:fade={{ duration: 150 }}
-		class="grid grid-cols-[auto_1fr_auto] items-center gap-4 card border border-error-400-600 preset-tonal-error p-4"
+		class={`grid grid-cols-[auto_1fr_auto] items-center gap-4 card border border-error-400-600 preset-tonal-error p-4 ${className}`}
 		role="alert"
 	>
 		<TablerAlertTriangleFilled class="size-icon-big text-error-500" />

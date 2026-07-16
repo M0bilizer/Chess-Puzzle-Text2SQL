@@ -20,6 +20,8 @@
 		"@iconify-json/tabler": "^1.2.35",
 		"@tailwindcss/vite": "^4.3.0",
 		"chess.js": "^1.4.0",
+		"idb-keyval": "^6.2.5",
+		"ky": "^2.0.2",
 		"runed": "^0.37.1",
 		"sv-router": "latest",
 		"svelte-sound": "^0.6.0",

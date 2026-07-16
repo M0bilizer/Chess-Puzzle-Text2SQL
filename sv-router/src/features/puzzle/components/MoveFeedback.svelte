@@ -4,27 +4,44 @@
 	import TablerChessKing from '~icons/tabler/chess-king';
 	import TablerChessKingFilled from '~icons/tabler/chess-king-filled';
 	import TablerTrophy from '~icons/tabler/trophy';
+	import TablerPlay from '~icons/tabler/play';
 	type Props = {
 		playerColor: 'w' | 'b';
 		isComplete: boolean;
 		moveResult?: 'correct' | 'wrong';
 		onHint: () => void;
 		onSolution: () => void;
+		hasNext: boolean;
+		onNext: () => void;
 	};
-	let { playerColor, isComplete, moveResult = undefined, onHint, onSolution }: Props = $props();
+	let {
+		playerColor,
+		isComplete,
+		moveResult = undefined,
+		onHint,
+		onSolution,
+		hasNext,
+		onNext
+	}: Props = $props();
 </script>
 
-<div
-	class="flex h-[140px] w-full flex-col items-center justify-center gap-4 rounded-b-lg preset-filled-surface-100-900 p-4"
+<section
+	class="flex h-[140px] w-full flex-col items-center justify-center gap-4 rounded-b-lg preset-filled-surface-100-900"
 >
 	{#if isComplete}
-		<div class="feedback">
-			<TablerTrophy class="size-16 text-success-950-50" />
-			<div class="instruction">
-				<strong class="text-2xl">Success</strong>
-				<em class="mt-1 text-sm">Puzzle completed</em>
+		{#if hasNext}
+			<button onclick={onNext} class="btn h-[100px] w-full rounded-none preset-tonal-primary">
+				<TablerPlay class="size-12" /><span class="text-2xl">Next Puzzle </span>
+			</button>
+		{:else}
+			<div class="feedback">
+				<TablerTrophy class="size-16 text-success-950-50" />
+				<div class="instruction">
+					<strong class="text-2xl">Success</strong>
+					<em class="mt-1 text-sm">Puzzle completed</em>
+				</div>
 			</div>
-		</div>
+		{/if}
 	{:else if moveResult === 'wrong'}
 		<div class="feedback">
 			<TablerX class="size-16 text-error-950-50" />
@@ -60,13 +77,11 @@
 	{/if}
 	{#if !isComplete}
 		<div class="flex w-full justify-around">
-			<button class="btn-small btn preset-filled-surface-100-900" onclick={onHint}> Hint </button>
-			<button class="btn-small btn preset-filled-surface-100-900" onclick={onSolution}>
-				Solution
-			</button>
+			<button class="btn-small btn" onclick={onHint}> Hint </button>
+			<button class="btn-small btn" onclick={onSolution}> Solution </button>
 		</div>
 	{/if}
-</div>
+</section>
 
 <style>
 	.feedback {

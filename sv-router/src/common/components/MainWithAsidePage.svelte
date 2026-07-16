@@ -8,28 +8,28 @@
 	let { children, class: className }: Props = $props();
 </script>
 
-<div class={['container', className]}>
+<main class={className}>
 	{@render children?.()}
-</div>
+</main>
 
 <style>
-	.container {
+	main {
 		display: flex;
 		flex-direction: column;
-		width: 100%;
+		width: auto;
 		min-height: calc(100vh - 85px);
 		gap: 0rem;
 		margin: 0 auto;
 	}
 
 	/* Mobile: main takes full width */
-	.container > :global(main) {
+	main > :global(section) {
 		width: 100%;
 		max-width: 100%;
 	}
 
 	/* Mobile: aside takes full width */
-	.container > :global(main + aside) {
+	main > :global(section + aside) {
 		width: 100%;
 		max-width: 100%;
 		flex-shrink: 0;
@@ -37,21 +37,21 @@
 
 	/* lg */
 	@media (min-width: 1024px) {
-		.container {
+		main {
 			flex-direction: row;
 			gap: 2rem;
 			justify-content: center;
 		}
 
 		/* Desktop: main fixed at 700px max */
-		.container > :global(main) {
+		main > :global(section) {
 			max-width: 700px;
 			width: 100%;
 			flex: 1;
 		}
 
 		/* Desktop: aside fixed at 330px */
-		.container > :global(main + aside) {
+		main > :global(section + aside) {
 			width: 330px;
 			max-width: 330px;
 			flex-shrink: 0;

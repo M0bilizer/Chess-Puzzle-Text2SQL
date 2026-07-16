@@ -8,23 +8,18 @@
 	let { children, class: className }: Props = $props();
 </script>
 
-<div class={['container', className]}>
+<main class={className}>
 	{@render children?.()}
-</div>
+</main>
 
 <style>
-	.container {
-		display: flex;
-		justify-content: center;
-		width: 100%;
-		min-height: calc(100vh - 85px);
-		overflow: hidden;
+	main {
+		width: auto;
+		max-width: 900px;
+		height: 100%;
 		margin: 0 auto;
-	}
-
-	.container > :global(main) {
-		max-width: 1200px;
-		width: 100%;
-		min-height: 100%;
+		min-height: calc(100vh - 85px);
+		padding: 48px 16px 0px 16px;
+		overflow: hidden;
 	}
 </style>

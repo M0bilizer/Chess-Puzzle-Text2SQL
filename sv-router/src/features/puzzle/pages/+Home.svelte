@@ -1,33 +1,38 @@
 <script lang="ts">
-	import SearchForm from '@/features/puzzle/components/SearchForm.svelte';
-	import { searchPuzzleApi } from '@/features/puzzle/api/search-puzzle.api';
-	import { onMount } from 'svelte';
-	import SearchBanner from '@/features/puzzle/components/SearchBanner.svelte';
 	import ErrorAlert from '@/common/components/ErrorAlert.svelte';
-	import ChessSkeleton from '@/features/puzzle/components/ChessSkeleton.svelte';
-	import WideMainOnlyPage from '@/common/components/WideMainOnlyPage.svelte';
-	import ChessCard from '@/features/puzzle/components/ChessCard.svelte';
-	import { searchParams } from 'sv-router';
-	import type { Puzzle } from '../type.svelte';
+	import SearchBanner from '@/features/puzzle/components/SearchBanner.svelte';
+	import SearchForm from '@/features/puzzle/components/SearchForm.svelte';
+	import { searchPuzzle } from '../api/puzzle.api';
+	import { navigate } from '@/router';
+	import { currentPlaylist } from '../store/current-playlist.svelte';
+	import SearchTagline from '../components/SearchTagline.svelte';
+	import HomeHeader from '@/common/components/HomeHeader.svelte';
+	import SimplePage from '@/common/components/SimplePage.svelte';
+	import ContinueLink from '../components/ContinueLink.svelte';
+	import { playlistCollection } from '../store/playlist-collection.svelte';
 
-	let query = $state((searchParams.get('q') as string) || '');
+	let query = $state('');
 	let loading = $state(false);
 	let error: string | null = $state(null);
-	let results: Puzzle[] = $state([]);
 
 	async function handleSearch(query: string): Promise<void> {
 		loading = true;
 		error = null;
 
 		try {
-			const [data, err] = await searchPuzzleApi(query).toTuple();
+			const [data, err] = await searchPuzzle(query).toTuple();
 			if (err) {
 				error = err.message;
+				return;
 			}
-			results = data!;
+			currentPlaylist.init(query, data);
+			navigate('/puzzle/:id', {
+				params: {
+					id: data![0].puzzleId
+				}
+			});
 		} catch (e: Error | unknown) {
 			error = e instanceof Error ? e.message : 'unknown error';
-			results = [];
 		} finally {
 			loading = false;
 		}
@@ -36,48 +41,21 @@
 	function dismissError() {
 		error = null;
 	}
-
-	// Update URL when query changes
-	$effect(() => {
-		if (query) {
-			searchParams.set('q', query);
-		} else {
-			searchParams.delete('q');
-		}
-	});
-
-	onMount(() => {
-		const q = (searchParams.get('q') as string) || '';
-		if (q) {
-			handleSearch(q);
-		}
-	});
 </script>
 
-<WideMainOnlyPage>
-	<main class="space-y-12 pt-12">
-		<section class="mx-auto space-y-12 px-4 lg:w-[900px] lg:px-0">
-			<SearchBanner />
-			<SearchForm bind:query onSubmit={() => handleSearch(query)} bind:loading />
-			{#if error}
-				<ErrorAlert {error} title="Search Failed" onDismiss={dismissError} />
-			{/if}
-		</section>
-
-		{#if loading}
-			<div class="grid grid-cols-2 place-items-center gap-2 lg:grid-cols-4">
-				{#each Array(16) as _, i (i)}
-					<ChessSkeleton />
-				{/each}
-			</div>
-		{:else if results.length > 0}
-			<div class="grid grid-cols-2 place-items-center gap-2 lg:grid-cols-4">
-				{#each results as puzzle, _i (puzzle.puzzleId)}
-					<ChessCard {puzzle} />
-				{/each}
-			</div>
-		{:else if query}
-			<div class="text-center text-gray-500">No puzzles found</div>
+<HomeHeader />
+<SimplePage class="px-4">
+	<section class="mx-auto pt-32 lg:w-[900px]">
+		<SearchBanner class="py-2" />
+		<SearchForm bind:query onSubmit={() => handleSearch(query)} bind:loading />
+		<div class="flex flex-wrap gap-8 px-6 py-2">
+			{#each Object.values(playlistCollection.all) as playlist (playlist.name)}
+				<ContinueLink {playlist} />
+			{/each}
+		</div>
+		{#if error}
+			<ErrorAlert {error} title="Search Failed" onDismiss={dismissError} class="py-2" />
 		{/if}
-	</main>
-</WideMainOnlyPage>
+		<SearchTagline class="py-16" />
+	</section>
+</SimplePage>

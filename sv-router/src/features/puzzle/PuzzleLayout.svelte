@@ -1,7 +1,7 @@
 <script lang="ts">
-	import Appbar from '@/common/components/Appbar.svelte';
+	import Header from '@/common/components/Header.svelte';
 	let { children } = $props();
 </script>
 
-<Appbar />
+<Header />
 {@render children()}

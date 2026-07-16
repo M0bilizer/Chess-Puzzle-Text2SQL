@@ -1,6 +1,6 @@
-import Home from '@/features/puzzle/pages/+Home.svelte';
 import Puzzle from '@/features/puzzle/pages/+Puzzle.svelte';
 import PuzzleLayout from '@/features/puzzle/PuzzleLayout.svelte';
+import Home from './pages/+Home.svelte';
 
 export const PUZZLE_ROUTES = {
 	HOME: '/',
@@ -9,7 +9,6 @@ export const PUZZLE_ROUTES = {
 
 export const puzzleRoutes = {
 	'/': {
-		layout: PuzzleLayout,
 		'/': Home
 	},
 	'/puzzle': {

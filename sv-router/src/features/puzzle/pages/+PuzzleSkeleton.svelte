@@ -1,0 +1,14 @@
+<script lang="ts">
+	import { Chessground } from 'svelte5-chessground';
+</script>
+
+<section class="space-y-0 lg:space-y-4">
+	<!-- Add a div so the space-y-4 would work properly -->
+	<div>
+		<Chessground fen="8/8/8/8/8/8/8/8" />
+	</div>
+	<div class="hidden h-20 placeholder animate-pulse md:block"></div>
+</section>
+<aside>
+	<div class="aspect-square placeholder animate-pulse"></div>
+</aside>

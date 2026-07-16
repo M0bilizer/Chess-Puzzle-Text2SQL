@@ -26,7 +26,7 @@
 	}: Props = $props();
 </script>
 
-<div class="btn-group w-full justify-around">
+<section class="btn-group w-full justify-around">
 	<button class="btn-icon" onclick={onReset} disabled={!canGoBack}
 		><TablerChevronLeftPipe class="size-icon-big" /></button
 	>
@@ -40,4 +40,4 @@
 		><TablerChevronRightPipe class="size-icon-big" /></button
 	>
 	<QuickSettings bind:preferences />
-</div>
+</section>

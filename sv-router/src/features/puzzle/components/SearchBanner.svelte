@@ -1,25 +1,21 @@
 <script lang="ts">
+	import HeaderIcon from '@/common/components/HeaderIcon.svelte';
 	import TablerChessKnight from '~icons/tabler/chess-knight';
+
+	type Props = {
+		class?: string;
+	};
+	let { class: className = '' }: Props = $props();
 </script>
 
-<header class="grid grid-cols-1 place-items-center space-y-6 space-x-12 lg:grid-cols-[256px_1fr]">
-	<!-- Left side with tilted rectangle -->
-	<section class="place-self-center">
-		<div class="relative aspect-square size-48 lg:size-64">
-			<!-- Tilted rectangle background -->
-			<div class="absolute inset-0 -z-10 rotate-6 rounded-2xl preset-filled-surface-100-900"></div>
-			<!-- Second layer for depth -->
-			<div class="absolute inset-0 -z-20 -rotate-3 rounded-2xl preset-filled-surface-200-800"></div>
-			<TablerChessKnight class="relative z-10 size-48 text-success-900-100 lg:size-64" />
-		</div>
-	</section>
-
-	<!-- Right side -->
-	<section class="text-center lg:space-y-6 lg:text-left">
-		<h1 class=" text-5xl font-bold">Chess Puzzle Finder</h1>
-		<p class="max-w-2xl text-xl text-tertiary-800-200">
-			Search thousands of chess puzzles by opening, theme, or position. Find your next challenge
-			from our database of tactical puzzles.
-		</p>
-	</section>
+<header class={`my-6 flex flex-col space-y-4 ${className}`}>
+	<div class="flex justify-center gap-4 md:justify-start">
+		<HeaderIcon icon={TablerChessKnight} />
+		<h1 class="text-center h1">Search Puzzles</h1>
+	</div>
+	<p>
+		A chess puzzle tool that allows you to search with natural language. The search results become a
+		collection which is a list of puzzles you can play through, track, and come back to. Kinda like
+		a Spotify or Youtube playlist but for chess puzzles.
+	</p>
 </header>

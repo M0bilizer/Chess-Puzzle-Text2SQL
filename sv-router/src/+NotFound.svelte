@@ -1,6 +1,6 @@
 <script lang="ts">
-	import MainOnlyPage from '@/common/components/MainOnlyPage.svelte';
+	import ContentPage from './common/components/ContentPage.svelte';
 </script>
 
 <!-- [TODO]: not found page -->
-<MainOnlyPage>Not Found</MainOnlyPage>
+<ContentPage>Not Found</ContentPage>

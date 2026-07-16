@@ -27,38 +27,6 @@
 		class?: string;
 	} = $props();
 
-	type Row = {
-		white:
-			| {
-					correct: {
-						move: Move;
-						index: number;
-						feedback?: 'correct' | 'wrong';
-					} | null;
-					wrong: {
-						move: Move;
-						index: number;
-						feedback?: 'correct' | 'wrong';
-					}[];
-			  }
-			| null
-			| undefined;
-		black:
-			| {
-					correct: {
-						move: Move;
-						index: number;
-						feedback?: 'correct' | 'wrong';
-					} | null;
-					wrong: {
-						move: Move;
-						index: number;
-						feedback?: 'correct' | 'wrong';
-					}[];
-			  }
-			| null
-			| undefined;
-	};
 	let moveRows = $derived.by(() => {
 		// 1. first, we gotta group up the wrong moves and correct move together
 		const grouped: Map<
@@ -142,7 +110,7 @@
 	});
 </script>
 
-<div class="table-wrap rounded-t-lg {className}">
+<section class="table-wrap rounded-t-lg {className}">
 	<table class="table w-full table-fixed">
 		<colgroup>
 			<col class="w-16" />
@@ -201,4 +169,4 @@
 			{/if}
 		</tbody>
 	</table>
-</div>
+</section>
