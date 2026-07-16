@@ -1,13 +1,13 @@
 <script lang="ts">
-	import PuzzleContent from './+PuzzleContent.svelte';
-	import { navigate, route } from '@/router';
-	import { getPuzzle } from '../api/puzzle.api';
-	import PuzzleSkeleton from './+PuzzleSkeleton.svelte';
-	import { currentPlaylist } from '../store/current-playlist.svelte';
 	import MainWithAsidePage from '@/common/components/MainWithAsidePage.svelte';
-	import { PuzzleGame } from '../type.svelte';
+	import { navigate, route } from '@/router';
 	import { resource } from 'runed';
+	import { getPuzzle } from '../api/puzzle.api';
 	import CurrentPlaylistView from '../components/CurrentPlaylistView.svelte';
+	import { currentPlaylist } from '../store/current-playlist.svelte';
+	import { PuzzleGame } from '../type.svelte';
+	import PuzzleContent from './+PuzzleContent.svelte';
+	import PuzzleSkeleton from './+PuzzleSkeleton.svelte';
 
 	let currentPlaylistViewEl: CurrentPlaylistView | undefined = $state();
 	let content: PuzzleContent | undefined = $state();
@@ -47,8 +47,8 @@
 	};
 </script>
 
-<MainWithAsidePage>
-	<aside class="max-h-[calc(100vh-85px)] overflow-auto">
+<MainWithAsidePage class="px-1">
+	<aside class="hidden max-h-[calc(100vh-85px)] overflow-auto lg:block">
 		<CurrentPlaylistView bind:this={currentPlaylistViewEl} />
 	</aside>
 

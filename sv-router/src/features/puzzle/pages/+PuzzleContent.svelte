@@ -1,13 +1,14 @@
 <script lang="ts">
-	import ChessDescription from '../components/ChessDescription.svelte';
-	import { playSound } from '../utils';
-	import MoveTable from '../components/MoveTable.svelte';
-	import JumpRow from '../components/JumpRow.svelte';
-	import Chessboard from '../components/Chessboard.svelte';
-	import { PuzzleGame, type Puzzle } from '../type.svelte';
-	import type { Move } from 'chess.js';
 	import { preferencesState } from '@/features/settings/preferences-state';
+	import type { Move } from 'chess.js';
+	import Chessboard from '../components/Chessboard.svelte';
+	import ChessDescription from '../components/ChessDescription.svelte';
+	import JumpRow from '../components/JumpRow.svelte';
+	import MobileCurrentCollectionView from '../components/MobileCurrentCollectionView.svelte';
 	import MoveFeedback from '../components/MoveFeedback.svelte';
+	import MoveTable from '../components/MoveTable.svelte';
+	import { PuzzleGame, type Puzzle } from '../type.svelte';
+	import { playSound } from '../utils';
 
 	type Props = {
 		puzzle: Puzzle;
@@ -129,8 +130,6 @@
 		if (!lastPlayerMove) return undefined;
 		return (lastPlayerMove.isCorrect ? 'correct' : 'wrong') as 'correct' | 'wrong';
 	});
-
-	$inspect(interactive);
 </script>
 
 <section class="space-y-0 lg:space-y-4">
@@ -171,4 +170,5 @@
 		canGoForward={canGoForward || false}
 		bind:preferences={preferencesState.current}
 	/>
+	<MobileCurrentCollectionView class="block md:hidden" />
 </aside>

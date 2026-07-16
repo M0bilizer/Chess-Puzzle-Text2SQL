@@ -9,9 +9,9 @@
 </script>
 
 <header class={`my-6 flex flex-col space-y-4 ${className}`}>
-	<div class="flex gap-4 justify-center md:justify-start">
+	<div class="flex justify-center gap-4 md:justify-start">
 		<HeaderIcon icon={TablerChessKnight} />
-		<h1 class="h1 text-center">Search Puzzles</h1>
+		<h1 class="text-center h1">Search Puzzles</h1>
 	</div>
 	<p>
 		A chess puzzle tool that allows you to search with natural language. The search results become a

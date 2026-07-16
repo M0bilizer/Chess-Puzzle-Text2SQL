@@ -1,10 +1,9 @@
 <script lang="ts">
+	import type { Preferences } from '@/features/settings/preferences-state';
 	import { SETTINGS_PATHS } from '@/features/settings/route';
 	import { Popover, Portal, Switch } from '@skeletonlabs/skeleton-svelte';
-	import TablerMenu2 from '~icons/tabler/menu-2';
 	import TablerArrowUpRight from '~icons/tabler/arrow-up-right';
-	import type { Preferences } from '@/features/settings/preferences-state';
-	import { fade } from 'svelte/transition';
+	import TablerMenu2 from '~icons/tabler/menu-2';
 
 	type Props = {
 		preferences: Preferences;

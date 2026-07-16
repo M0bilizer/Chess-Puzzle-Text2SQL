@@ -8,7 +8,7 @@
 		dismissible?: boolean;
 		onDismiss?: () => void;
 		class?: string;
-	}
+	};
 
 	let {
 		error = null,

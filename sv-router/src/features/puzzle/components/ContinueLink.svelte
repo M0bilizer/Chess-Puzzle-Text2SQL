@@ -1,6 +1,6 @@
 <script lang="ts">
-	import ArrowRightIcon from '~icons/tabler/arrow-right';
 	import { navigate } from '@/router';
+	import ArrowRightIcon from '~icons/tabler/arrow-right';
 	import type { Playlist } from '../store/current-playlist.svelte';
 	import { playlistCollection } from '../store/playlist-collection.svelte';
 
@@ -12,7 +12,7 @@
 
 	const name = $derived(playlist.name);
 	const id = $derived(playlist.puzzles[playlist.currentIndex]!.puzzleId);
-	const current = $derived(playlist.currentIndex + 1);
+	const current = $derived(playlist.currentIndex);
 	const total = $derived(playlist.puzzles.length);
 
 	const onClick = (playlist: Playlist) => {

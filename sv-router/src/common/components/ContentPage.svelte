@@ -9,7 +9,7 @@
 </script>
 
 <main class={className}>
-		{@render children?.()}
+	{@render children?.()}
 </main>
 
 <style>

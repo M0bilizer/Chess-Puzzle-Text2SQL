@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Clipboard from '@/common/components/Clipboard.svelte';
-	import TablerShare from '~icons/tabler/share';
 	import TablerCheck from '~icons/tabler/check';
+	import TablerShare from '~icons/tabler/share';
 
 	type Props = {
 		url?: string;
@@ -14,7 +14,7 @@
 		if (navigator.share) {
 			try {
 				await navigator.share({ title, text, url });
-			} catch (err) {
+			} catch (_err) {
 				// User cancelled or error
 			}
 		}

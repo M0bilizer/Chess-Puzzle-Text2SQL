@@ -9,7 +9,7 @@
 	<AppBar.Toolbar class="grid-cols-[auto_1fr_auto]">
 		<AppBar.Lead>
 			<a href={PATHS.HOME} class="btn-icon btn-icon-lg hover:preset-tonal" data-preload>
-				<TablerHome class="text-surface-700-300"/>
+				<TablerHome class="text-surface-700-300" />
 			</a>
 		</AppBar.Lead>
 		<AppBar.Headline>

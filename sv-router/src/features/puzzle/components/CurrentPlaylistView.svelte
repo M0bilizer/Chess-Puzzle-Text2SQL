@@ -1,11 +1,10 @@
 <script lang="ts">
-	import { Chessground } from 'svelte5-chessground';
-	import { currentPlaylist } from '../store/current-playlist.svelte';
-	import TablerArrowBarLeft from '~icons/tabler/arrow-bar-left';
-	import TablerPlay from '~icons/tabler/play';
-	import TablerCheck from '~icons/tabler/check';
-	import { SvelteMap } from 'svelte/reactivity';
 	import { p } from '@/router';
+	import { SvelteMap } from 'svelte/reactivity';
+	import { Chessground } from 'svelte5-chessground';
+	import TablerCheck from '~icons/tabler/check';
+	import TablerPlay from '~icons/tabler/play';
+	import { currentPlaylist } from '../store/current-playlist.svelte';
 
 	let listElement: HTMLUListElement | undefined;
 	let itemElements = new SvelteMap<number, HTMLAnchorElement>();
@@ -40,10 +39,6 @@
 			<h2 class="preset-typo-subtitle">
 				{currentPlaylist.name}
 			</h2>
-
-			<button class="btn-icon">
-				<TablerArrowBarLeft />
-			</button>
 		</header>
 		<ul bind:this={listElement} class="flex flex-1 flex-col overflow-y-auto">
 			{#each currentPlaylist.puzzles as puzzle, index (puzzle.puzzleId)}
