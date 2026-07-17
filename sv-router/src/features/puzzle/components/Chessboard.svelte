@@ -1,13 +1,14 @@
 <script lang="ts">
-	import { Chessground, type Api, type Key } from 'svelte5-chessground';
-	import 'svelte5-chessground/style.css';
-	import { Chess, Move, SQUARES, type Square } from 'chess.js';
-	import { onMount } from 'svelte';
-	import { playSound } from '../utils';
-	import { watch } from 'runed';
-	import PromotionDialog from './PromotionDialog.svelte';
-	import { SvelteMap } from 'svelte/reactivity';
 	import { type Preferences } from '@/features/settings/preferences-state';
+	import { Chess, Move, SQUARES, type Square } from 'chess.js';
+	import { watch } from 'runed';
+	import { onMount } from 'svelte';
+	import { type Api, Chessground, type Key } from 'svelte5-chessground';
+	import 'svelte5-chessground/style.css';
+	import { SvelteMap } from 'svelte/reactivity';
+
+	import { playSound } from '../utils';
+	import PromotionDialog from './PromotionDialog.svelte';
 
 	type Props = {
 		fen: string;

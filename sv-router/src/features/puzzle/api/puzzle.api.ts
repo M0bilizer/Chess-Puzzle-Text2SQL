@@ -1,8 +1,9 @@
 import { IOError } from '@/common/types/error';
-import { AsyncResult, Result } from 'typescript-result';
-import type { Puzzle } from '../type.svelte';
-import { get, set, setMany } from 'idb-keyval';
 import { api, puzzleDb, searchDb } from '@/main';
+import { get, set, setMany } from 'idb-keyval';
+import { AsyncResult, Result } from 'typescript-result';
+
+import type { Puzzle } from '../type.svelte';
 
 export function searchPuzzle(search: string): AsyncResult<Puzzle[], IOError> {
 	return Result.fromAsync(async () => {

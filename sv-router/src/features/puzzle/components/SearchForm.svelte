@@ -1,6 +1,6 @@
 <script lang="ts">
-	import TablerSearch from '~icons/tabler/search';
 	import Spinner from '@/common/components/Spinner.svelte';
+	import TablerSearch from '~icons/tabler/search';
 
 	type Props = {
 		query: string;

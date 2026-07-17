@@ -1,6 +1,6 @@
 <script lang="ts">
-	import 'svelte5-chessground/style.css';
 	import type { Role } from 'svelte5-chessground';
+	import 'svelte5-chessground/style.css';
 
 	type Props = {
 		isOpen?: boolean;

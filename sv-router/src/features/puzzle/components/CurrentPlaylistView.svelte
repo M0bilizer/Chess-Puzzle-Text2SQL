@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { p } from '@/router';
-	import { SvelteMap } from 'svelte/reactivity';
 	import { Chessground } from 'svelte5-chessground';
+	import { SvelteMap } from 'svelte/reactivity';
 	import TablerCheck from '~icons/tabler/check';
 	import TablerPlay from '~icons/tabler/play';
+
 	import { currentPlaylist } from '../store/current-playlist.svelte';
 
 	let listElement: HTMLUListElement | undefined;

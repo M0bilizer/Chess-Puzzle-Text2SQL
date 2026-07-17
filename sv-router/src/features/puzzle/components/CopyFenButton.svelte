@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Clipboard from '@/common/components/Clipboard.svelte';
-	import TablerClipboard from '~icons/tabler/clipboard';
 	import TablerCheck from '~icons/tabler/check';
+	import TablerClipboard from '~icons/tabler/clipboard';
 
 	type Props = {
 		fen: string;

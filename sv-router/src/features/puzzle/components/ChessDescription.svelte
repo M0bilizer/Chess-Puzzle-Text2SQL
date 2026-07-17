@@ -2,12 +2,13 @@
 	import { Accordion } from '@skeletonlabs/skeleton-svelte';
 	import TablerChevronDown from '~icons/tabler/chevron-down';
 	import TablerChevronUp from '~icons/tabler/chevron-up';
+
+	import type { Puzzle } from '../type.svelte';
 	import CopyFenButton from './CopyFenButton.svelte';
 	import OpenInLichess from './OpenInLichess.svelte';
 	import OpeningBadges from './OpeningBadges.svelte';
-	import ThemesBadges from './ThemesBadges.svelte';
 	import ShareButton from './ShareButton.svelte';
-	import type { Puzzle } from '../type.svelte';
+	import ThemesBadges from './ThemesBadges.svelte';
 
 	type Props = {
 		puzzle: Puzzle;

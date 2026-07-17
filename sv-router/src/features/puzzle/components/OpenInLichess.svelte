@@ -1,5 +1,6 @@
 <script lang="ts">
 	import TablerExternalLink from '~icons/tabler/external-link';
+
 	type Props = {
 		gameUrl: string;
 	};

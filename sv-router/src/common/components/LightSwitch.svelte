@@ -1,8 +1,8 @@
 <script lang="ts">
-	import TablerSunHighFilled from '~icons/tabler/sun-high-filled';
-	import TablerMoonFilled from '~icons/tabler/moon-filled';
-	import { Switch } from '@skeletonlabs/skeleton-svelte';
 	import { theme } from '@/features/settings/theme.svelte';
+	import { Switch } from '@skeletonlabs/skeleton-svelte';
+	import TablerMoonFilled from '~icons/tabler/moon-filled';
+	import TablerSunHighFilled from '~icons/tabler/sun-high-filled';
 
 	type Props = {
 		id?: string;

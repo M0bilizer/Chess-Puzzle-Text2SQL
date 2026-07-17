@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { AppBar } from '@skeletonlabs/skeleton-svelte';
-	import { PATHS } from '@/router';
 	import LightSwitch from '@/common/components/LightSwitch.svelte';
+	import { PATHS } from '@/router';
+	import { AppBar } from '@skeletonlabs/skeleton-svelte';
 </script>
 
 <AppBar class="mb-2 h-[77px] bg-transparent">

@@ -1,10 +1,11 @@
 <script lang="ts">
 	import TablerCheck from '~icons/tabler/check';
-	import TablerX from '~icons/tabler/x';
 	import TablerChessKing from '~icons/tabler/chess-king';
 	import TablerChessKingFilled from '~icons/tabler/chess-king-filled';
-	import TablerTrophy from '~icons/tabler/trophy';
 	import TablerPlay from '~icons/tabler/play';
+	import TablerTrophy from '~icons/tabler/trophy';
+	import TablerX from '~icons/tabler/x';
+
 	type Props = {
 		playerColor: 'w' | 'b';
 		isComplete: boolean;

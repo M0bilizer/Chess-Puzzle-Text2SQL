@@ -1,6 +1,5 @@
-import '@/app.css';
-import { mount } from 'svelte';
 import App from '@/App.svelte';
+import '@/app.css';
 import {
 	type Env,
 	loadApplicationConfiguration,
@@ -8,6 +7,7 @@ import {
 } from '@/common/config/ApplicationConfig';
 import { createStore } from 'idb-keyval';
 import ky from 'ky';
+import { mount } from 'svelte';
 
 // [FIXME] unnecessary to verify env
 export const env: Env = loadApplicationConfiguration(loadConfigFromVite()).getOrElse((issues) => {

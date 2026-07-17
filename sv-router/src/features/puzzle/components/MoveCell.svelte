@@ -1,8 +1,10 @@
 <script lang="ts">
+	import type { Move } from 'chess.js';
+	import TablerCheck from '~icons/tabler/check';
 	import TablerChess from '~icons/tabler/chess';
-	import TablerChessFilled from '~icons/tabler/chess-filled';
 	import TablerChessBishop from '~icons/tabler/chess-bishop';
 	import TablerChessBishopFilled from '~icons/tabler/chess-bishop-filled';
+	import TablerChessFilled from '~icons/tabler/chess-filled';
 	import TablerChessKing from '~icons/tabler/chess-king';
 	import TablerChessKingFilled from '~icons/tabler/chess-king-filled';
 	import TablerChessKnight from '~icons/tabler/chess-knight';
@@ -11,9 +13,7 @@
 	import TablerChessQueenFilled from '~icons/tabler/chess-queen-filled';
 	import TablerChessRook from '~icons/tabler/chess-rook';
 	import TablerChessRookFilled from '~icons/tabler/chess-rook-filled';
-	import TablerCheck from '~icons/tabler/check';
 	import TablerX from '~icons/tabler/x';
-	import type { Move } from 'chess.js';
 
 	type Props = {
 		move: Move | null | undefined;

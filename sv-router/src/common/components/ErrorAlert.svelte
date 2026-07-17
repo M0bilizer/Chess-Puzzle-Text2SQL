@@ -1,6 +1,6 @@
 <script lang="ts">
-	import TablerAlertTriangleFilled from 'virtual:icons/tabler/alert-triangle-filled';
 	import { fade } from 'svelte/transition';
+	import TablerAlertTriangleFilled from 'virtual:icons/tabler/alert-triangle-filled';
 
 	type Props = {
 		error?: string | null;

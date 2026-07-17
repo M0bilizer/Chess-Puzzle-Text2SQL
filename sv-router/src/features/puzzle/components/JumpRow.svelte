@@ -1,10 +1,11 @@
 <script lang="ts">
-	import TablerChevronLeftPipe from '~icons/tabler/chevron-left-pipe';
+	import type { Preferences } from '@/features/settings/preferences-state';
 	import TablerChevronLeft from '~icons/tabler/chevron-left';
+	import TablerChevronLeftPipe from '~icons/tabler/chevron-left-pipe';
 	import TablerChevronRight from '~icons/tabler/chevron-right';
 	import TablerChevronRightPipe from '~icons/tabler/chevron-right-pipe';
+
 	import QuickSettings from './QuickSettings.svelte';
-	import type { Preferences } from '@/features/settings/preferences-state';
 
 	type Props = {
 		onReset: () => void;

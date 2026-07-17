@@ -2,6 +2,7 @@
 	import MainWithAsidePage from '@/common/components/MainWithAsidePage.svelte';
 	import { navigate, route } from '@/router';
 	import { resource } from 'runed';
+
 	import { getPuzzle } from '../api/puzzle.api';
 	import CurrentPlaylistView from '../components/CurrentPlaylistView.svelte';
 	import { currentPlaylist } from '../store/current-playlist.svelte';

@@ -1,14 +1,15 @@
 <script lang="ts">
 	import ErrorAlert from '@/common/components/ErrorAlert.svelte';
-	import SearchBanner from '@/features/puzzle/components/SearchBanner.svelte';
-	import SearchForm from '@/features/puzzle/components/SearchForm.svelte';
-	import { searchPuzzle } from '../api/puzzle.api';
-	import { navigate } from '@/router';
-	import { currentPlaylist } from '../store/current-playlist.svelte';
-	import SearchTagline from '../components/SearchTagline.svelte';
 	import HomeHeader from '@/common/components/HomeHeader.svelte';
 	import SimplePage from '@/common/components/SimplePage.svelte';
+	import SearchBanner from '@/features/puzzle/components/SearchBanner.svelte';
+	import SearchForm from '@/features/puzzle/components/SearchForm.svelte';
+	import { navigate } from '@/router';
+
+	import { searchPuzzle } from '../api/puzzle.api';
 	import ContinueLink from '../components/ContinueLink.svelte';
+	import SearchTagline from '../components/SearchTagline.svelte';
+	import { currentPlaylist } from '../store/current-playlist.svelte';
 	import { playlistCollection } from '../store/playlist-collection.svelte';
 
 	let query = $state('');

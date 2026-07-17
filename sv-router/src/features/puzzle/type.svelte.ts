@@ -1,11 +1,7 @@
 import { Chess, type Move } from 'chess.js';
-import { getPlayerColor } from './utils';
 import { StateHistory } from 'runed';
 
-export type Game = {
-	fen: string;
-	moves: { computer: string; player: string }[];
-};
+import { getPlayerColor } from './utils';
 
 /* This is the dto from the backend */
 export type Puzzle = {

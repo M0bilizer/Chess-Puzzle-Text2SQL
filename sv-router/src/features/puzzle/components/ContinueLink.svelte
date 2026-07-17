@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { navigate } from '@/router';
 	import ArrowRightIcon from '~icons/tabler/arrow-right';
+
 	import type { Playlist } from '../store/current-playlist.svelte';
 	import { playlistCollection } from '../store/playlist-collection.svelte';
 

@@ -1,13 +1,14 @@
 <script lang="ts">
 	import { preferencesState } from '@/features/settings/preferences-state';
 	import type { Move } from 'chess.js';
-	import Chessboard from '../components/Chessboard.svelte';
+
 	import ChessDescription from '../components/ChessDescription.svelte';
+	import Chessboard from '../components/Chessboard.svelte';
 	import JumpRow from '../components/JumpRow.svelte';
 	import MobileCurrentCollectionView from '../components/MobileCurrentCollectionView.svelte';
 	import MoveFeedback from '../components/MoveFeedback.svelte';
 	import MoveTable from '../components/MoveTable.svelte';
-	import { PuzzleGame, type Puzzle } from '../type.svelte';
+	import { type Puzzle, PuzzleGame } from '../type.svelte';
 	import { playSound } from '../utils';
 
 	type Props = {

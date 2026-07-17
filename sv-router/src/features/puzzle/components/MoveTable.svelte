@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { Move } from 'chess.js';
-	import MoveCell from './MoveCell.svelte';
 	import { SvelteMap } from 'svelte/reactivity';
+
+	import MoveCell from './MoveCell.svelte';
 
 	let {
 		movesPlayed,

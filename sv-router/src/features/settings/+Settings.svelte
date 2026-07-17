@@ -1,11 +1,12 @@
 <script lang="ts">
-	import { preferencesState } from './preferences-state';
-	import ComputerMoveDelayRadio from './components/ComputerMoveDelayRadio.svelte';
+	import ContentPage from '@/common/components/ContentPage.svelte';
+
 	import AnimationSpeedRadio from './components/AnimationSpeedRadio.svelte';
+	import ComputerMoveDelayRadio from './components/ComputerMoveDelayRadio.svelte';
+	import FlipOrientationSwitch from './components/FlipOrientationSwitch.svelte';
 	import MutedSwitch from './components/MutedSwitch.svelte';
 	import WaitForAnimationSwitch from './components/WaitForAnimationSwitch.svelte';
-	import FlipOrientationSwitch from './components/FlipOrientationSwitch.svelte';
-	import ContentPage from '@/common/components/ContentPage.svelte';
+	import { preferencesState } from './preferences-state';
 
 	const preferences = preferencesState.current;
 </script>

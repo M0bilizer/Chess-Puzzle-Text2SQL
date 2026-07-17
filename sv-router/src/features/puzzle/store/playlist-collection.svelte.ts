@@ -1,7 +1,8 @@
 import { PersistedState } from 'runed';
+
 import type { Playlist } from './current-playlist.svelte';
 
-export type PlaylistCollection = {
+type PlaylistCollection = {
 	playlists: Record<string, Playlist>;
 	active: string | null;
 };

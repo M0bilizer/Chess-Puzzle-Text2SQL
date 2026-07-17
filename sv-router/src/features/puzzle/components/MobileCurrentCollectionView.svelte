@@ -3,6 +3,7 @@
 	import { Progress } from '@skeletonlabs/skeleton-svelte';
 	import TablerChevronLeft from '~icons/tabler/chevron-left';
 	import TablerChevronRight from '~icons/tabler/chevron-right';
+
 	import { currentPlaylist } from '../store/current-playlist.svelte';
 
 	type Props = {

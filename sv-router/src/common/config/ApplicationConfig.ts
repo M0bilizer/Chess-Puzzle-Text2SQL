@@ -1,6 +1,6 @@
+import { ConfigurationError } from '@/common/types/error';
 import { Result } from 'typescript-result';
 import * as v from 'valibot';
-import { ConfigurationError } from '@/common/types/error';
 
 const EnvSchema = v.object({
 	nodeEnv: v.optional(v.picklist(['development', 'production'])),

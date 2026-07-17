@@ -1,8 +1,8 @@
 <script lang="ts">
+	import LightSwitch from '@/common/components/LightSwitch.svelte';
+	import { PATHS } from '@/router';
 	import { AppBar } from '@skeletonlabs/skeleton-svelte';
 	import TablerHome from '~icons/tabler/home';
-	import { PATHS } from '@/router';
-	import LightSwitch from '@/common/components/LightSwitch.svelte';
 </script>
 
 <AppBar class="mb-2 h-[77px]">
