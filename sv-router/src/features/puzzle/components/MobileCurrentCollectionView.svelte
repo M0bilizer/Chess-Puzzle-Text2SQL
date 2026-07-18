@@ -7,21 +7,26 @@
 	import { currentPlaylist } from '../store/current-playlist.svelte';
 
 	type Props = {
+		currentId: string;
 		class?: string;
 	};
 
-	let { class: className }: Props = $props();
+	let { class: className, currentId }: Props = $props();
 
 	let solved = $derived(currentPlaylist.puzzles.filter((p) => p.result).length);
-	let prev = $derived(currentPlaylist.puzzles[currentPlaylist.currentIndex - 1].puzzleId);
-	let next = $derived(currentPlaylist.puzzles[currentPlaylist.currentIndex + 1].puzzleId);
+	let prevId = $derived(currentPlaylist.getPrev(currentId)?.puzzleId);
+	let nextId = $derived(currentPlaylist.getNext(currentId)?.puzzleId);
 </script>
 
 <div class="preset-filled-surface-100-900 p-4 {className}">
 	<Progress value={solved} class="grid grid-cols-[auto_auto_1fr_auto_auto] items-center gap-4">
-		<a href={p('/puzzle/:id', { params: { id: prev } })} class="btn-icon btn">
-			<TablerChevronLeft /></a
-		>
+		{#if prevId}
+			<a href={p('/puzzle/:id', { params: { id: prevId } })} class="btn-icon btn">
+				<TablerChevronLeft /></a
+			>
+		{:else}
+			<button class="btn-icon btn" disabled><TablerChevronLeft /></button>
+		{/if}
 		<div class="flex gap-2">
 			<span class="badge preset-filled">
 				#{currentPlaylist.currentPuzzle?.puzzleId}
@@ -32,8 +37,12 @@
 			<Progress.Range />
 		</Progress.Track>
 		<div>{solved}/{currentPlaylist.totalPuzzles} solved</div>
-		<a href={p('/puzzle/:id', { params: { id: next } })} class="btn-icon btn">
-			<TablerChevronRight /></a
-		>
+		{#if nextId}
+			<a href={p('/puzzle/:id', { params: { id: nextId } })} class="btn-icon btn">
+				<TablerChevronRight /></a
+			>
+		{:else}
+			<button class="btn-icon btn" disabled><TablerChevronRight /></button>
+		{/if}
 	</Progress>
 </div>

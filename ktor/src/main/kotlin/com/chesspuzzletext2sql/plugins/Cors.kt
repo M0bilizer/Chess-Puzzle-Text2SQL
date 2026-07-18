@@ -17,5 +17,6 @@ fun Application.configureCors() {
 
         allowHost("localhost:3000")
         allowHost("localhost:5173") // Vite
+        allowHost("localhost:4173") // Vite preview
     }
 }

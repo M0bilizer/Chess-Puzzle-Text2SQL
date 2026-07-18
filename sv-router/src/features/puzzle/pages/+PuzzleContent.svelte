@@ -171,5 +171,5 @@
 		canGoForward={canGoForward || false}
 		bind:preferences={preferencesState.current}
 	/>
-	<MobileCurrentCollectionView class="block md:hidden" />
+	<MobileCurrentCollectionView currentId={puzzle.puzzleId} class="block md:hidden" />
 </aside>

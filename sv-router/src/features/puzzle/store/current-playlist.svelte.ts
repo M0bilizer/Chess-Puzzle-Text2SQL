@@ -19,17 +19,33 @@ class CurrentPlaylistStore {
 	}
 
 	public isActive = $derived(this.playlist !== null);
-	public currentIndex = $derived.by(() => {
-		console.log(this.playlist?.currentIndex);
-		return this.playlist?.currentIndex ?? 0;
-	});
+	public currentIndex = $derived(this.playlist?.currentIndex ?? 0);
 	public name = $derived(this.playlist?.name ?? null);
 	public puzzles = $derived(this.playlist?.puzzles ?? []);
 	public currentPuzzle = $derived(this.playlist?.puzzles[this.playlist?.currentIndex ?? 0] ?? null);
+	public hasPrev = $derived(this.playlist ? this.playlist.currentIndex > 0 : false);
 	public hasNext = $derived(
 		this.playlist ? this.playlist.currentIndex < this.playlist.puzzles.length - 1 : false
 	);
 	public totalPuzzles = $derived(this.playlist?.puzzles.length ?? 0);
+
+	getPrev(id: string) {
+		const playlist = this.playlist;
+		if (!playlist) throw new Error('No playlist');
+		const index = playlist.puzzles.findIndex((it) => it.puzzleId === id);
+		if (index === -1) throw new Error('Puzzle not found');
+		if (index === 0) return undefined;
+		return playlist.puzzles[index - 1];
+	}
+
+	getNext(id: string) {
+		const playlist = this.playlist;
+		if (!playlist) throw new Error('No playlist');
+		const index = playlist.puzzles.findIndex((it) => it.puzzleId === id);
+		if (index === -1) throw new Error('Puzzle not found');
+		if (index === playlist.puzzles.length - 1) return undefined;
+		return playlist.puzzles[index + 1];
+	}
 
 	init(name: string, data: Puzzle[]) {
 		playlistCollection.set({
