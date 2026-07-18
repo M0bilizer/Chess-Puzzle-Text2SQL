@@ -7,8 +7,13 @@
 
 	import { currentPlaylist } from '../store/current-playlist.svelte';
 
+	type Props = {
+		currentId: string;
+	};
+	let { currentId }: Props = $props();
+
 	let listElement: HTMLUListElement | undefined;
-	let itemElements = new SvelteMap<number, HTMLAnchorElement>();
+	let itemElements = new SvelteMap<string, HTMLAnchorElement>();
 
 	export function scrollToCurrent() {
 		if (!listElement || !currentPlaylist.isActive) return;
@@ -16,7 +21,7 @@
 		const currentIndex = currentPlaylist.currentIndex;
 		if (currentIndex === undefined) return;
 
-		const currentItem = itemElements.get(currentIndex!);
+		const currentItem = itemElements.get(currentId);
 		if (!currentItem) return;
 
 		currentItem.scrollIntoView({
@@ -25,9 +30,9 @@
 		});
 	}
 
-	function setItemRef(el: HTMLAnchorElement, index: number) {
+	function setItemRef(el: HTMLAnchorElement, id: string) {
 		if (el) {
-			itemElements.set(index, el);
+			itemElements.set(id, el);
 		}
 	}
 </script>
@@ -46,12 +51,12 @@
 				{@const result = puzzle.result}
 				<a
 					href={p('/puzzle/:id', { params: { id: puzzle.puzzleId } })}
-					use:setItemRef={index}
+					use:setItemRef={puzzle.puzzleId}
 					class="btn flex cursor-pointer flex-row items-center rounded-none px-0 py-1"
 					class:preset-tonal-primary={result === true}
 				>
 					<div class="flex min-w-10 items-center justify-center">
-						{#if currentPlaylist.currentIndex == index}
+						{#if puzzle.puzzleId == currentId}
 							<TablerPlay />
 						{:else if result === true}
 							<TablerCheck />

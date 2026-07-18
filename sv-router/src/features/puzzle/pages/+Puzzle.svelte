@@ -14,8 +14,9 @@
 	let content: PuzzleContent | undefined = $state();
 
 	// Using resource from runed library
+	let id = $derived(route.getParams('/puzzle/:id').id);
 	const puzzleResource = resource(
-		() => route.getParams('/puzzle/:id').id,
+		() => id,
 		async (id) => {
 			const result = await getPuzzle(id);
 			return result.getOrThrow();
@@ -25,7 +26,7 @@
 	let game = $derived(puzzleResource.current ? new PuzzleGame(puzzleResource.current) : null);
 
 	$effect(() => {
-		if (route.getParams('/puzzle/:id').id) {
+		if (id) {
 			currentPlaylistViewEl?.scrollToCurrent();
 		}
 	});
@@ -50,7 +51,7 @@
 
 <MainWithAsidePage class="px-1">
 	<aside class="hidden max-h-[calc(100vh-85px)] overflow-auto lg:block">
-		<CurrentPlaylistView bind:this={currentPlaylistViewEl} />
+		<CurrentPlaylistView bind:this={currentPlaylistViewEl} currentId={id} />
 	</aside>
 
 	{#if puzzleResource.current === undefined}
