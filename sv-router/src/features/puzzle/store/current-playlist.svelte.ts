@@ -25,7 +25,11 @@ class CurrentPlaylistStore {
 	public currentPuzzle = $derived(this.playlist?.puzzles[this.playlist?.currentIndex ?? 0] ?? null);
 	public hasPrev = $derived(this.playlist ? this.playlist.currentIndex > 0 : false);
 	public hasNext = $derived(
-		this.playlist ? this.playlist.currentIndex < this.playlist.puzzles.length - 1 : false
+		this.playlist
+			? this.playlist.puzzles.find((it) => it.result === undefined)
+				? true
+				: false
+			: undefined
 	);
 	public totalPuzzles = $derived(this.playlist?.puzzles.length ?? 0);
 
@@ -61,29 +65,18 @@ class CurrentPlaylistStore {
 		playlistCollection.setActive(name);
 	}
 
-	setCurrentPuzzleResult(result: boolean) {
+	setPuzzleResult(id: string, result: boolean) {
 		const playlist = this.playlist;
 		if (!playlist) throw new Error('No playlist');
-		const currentPuzzle = playlist.puzzles[playlist.currentIndex];
-		if (currentPuzzle) {
-			currentPuzzle.result = result;
-		}
+		const index = playlist.puzzles.findIndex((it) => it.puzzleId === id);
+		if (index === -1) throw new Error('Puzzle not found');
+		playlist.puzzles[index].result = result;
 	}
 
-	incrementCurrentIndex() {
+	getNextPuzzle() {
 		const playlist = this.playlist;
 		if (!playlist) throw new Error('No playlist');
-		if (playlist.currentIndex < playlist.puzzles.length - 1) {
-			playlist.currentIndex += 1;
-		}
-	}
-
-	decrementCurrentIndex() {
-		const playlist = this.playlist;
-		if (!playlist) throw new Error('No playlist');
-		if (playlist.currentIndex > 0) {
-			playlist.currentIndex -= 1;
-		}
+		return playlist.puzzles.find((it) => it.result === undefined);
 	}
 
 	goToPuzzle(index: number) {

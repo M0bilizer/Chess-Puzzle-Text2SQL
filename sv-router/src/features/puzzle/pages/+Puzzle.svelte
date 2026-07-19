@@ -38,13 +38,17 @@
 	});
 
 	const onComplete = () => {
-		currentPlaylist.setCurrentPuzzleResult(true);
+		currentPlaylist.setPuzzleResult(id, true);
 	};
 
 	const onNext = () => {
 		if (currentPlaylist) {
-			currentPlaylist.incrementCurrentIndex();
-			navigate(`/puzzle/:id`, { params: { id: currentPlaylist.currentPuzzle!.puzzleId } });
+			const result = currentPlaylist.getNextPuzzle();
+			if (!result) {
+				console.error('No next puzzle');
+				return;
+			}
+			navigate(`/puzzle/:id`, { params: { id: result.puzzleId } });
 		}
 	};
 </script>
