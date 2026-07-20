@@ -3,6 +3,7 @@ import tailwindcss from '@tailwindcss/vite';
 import { playwright } from '@vitest/browser-playwright';
 import * as path from 'node:path';
 import Icons from 'unplugin-icons/vite';
+import runtimeEnv from 'vite-plugin-runtime-env';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
@@ -11,7 +12,8 @@ export default defineConfig({
 		svelte(),
 		Icons({
 			compiler: 'svelte'
-		})
+		}),
+		runtimeEnv()
 	],
 	resolve: {
 		alias: {

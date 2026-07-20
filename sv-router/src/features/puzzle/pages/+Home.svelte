@@ -26,6 +26,9 @@
 				error = err.message;
 				return;
 			}
+			if (data.length === 0) {
+				throw new Error('No results found.');
+			}
 			currentPlaylist.init(query, data);
 			navigate('/puzzle/:id', {
 				params: {

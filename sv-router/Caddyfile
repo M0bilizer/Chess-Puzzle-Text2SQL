@@ -1,0 +1,30 @@
+{
+    # this disable caddy reload
+    admin off
+    # prevent persistent since config is provided at start anyway
+    persist_config off
+    # Railway auto terminate tls
+    auto_https off
+
+    log {
+        format json
+    }
+
+    # Don't log the loadbalancer's ip
+    servers {
+        trusted_proxies static private_ranges 100.0.0.0/8
+    }
+}
+
+:80 {
+    # SPA
+    root * /app/dist
+    encode gzip
+    file_server
+    try_files {path} /index.html
+
+    # Health check
+    handle /health {
+        respond "OK" 200
+    }
+}
