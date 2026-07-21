@@ -17,14 +17,20 @@
 }
 
 :80 {
-    # SPA
-    root * /app/dist
-    encode gzip
-    file_server
-    try_files {path} /index.html
+    # reroute api routes through railway internal network. btw this has to be first
+    handle /api/* {
+        reverse_proxy {$BACKEND_URL}
+    }
 
-    # Health check
     handle /health {
         respond "OK" 200
+    }
+
+    # For anything else, serve index.html
+    handle {
+        root * /app/dist
+        encode gzip
+        file_server
+        try_files {path} /index.html
     }
 }
