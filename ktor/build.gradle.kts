@@ -1,16 +1,24 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.ktor)
     alias(libs.plugins.kotlin.plugin.serialization)
     id("com.ncorti.ktfmt.gradle") version "0.26.0"
-    id("io.kotest") version "6.1.11"
+    id("io.kotest") version "6.2.2"
+    id("com.github.ben-manes.versions") version "0.54.0"
 }
 
 group = "com.chesspuzzletext2sql"
 
 version = "0.0.1"
 
-kotlin { compilerOptions { freeCompilerArgs.add("-Xcontext-parameters") } }
+kotlin {
+    compilerOptions {
+        freeCompilerArgs.add("-Xcontext-parameters")
+        jvmTarget.set(JvmTarget.JVM_25)
+    }
+}
 
 application {
     mainClass = "com.chesspuzzletext2sql.ApplicationKt"
@@ -44,11 +52,11 @@ dependencies {
     implementation(libs.ktor.client.cio)
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.logback.classic)
-    testImplementation("io.kotest:kotest-framework-engine:6.1.11")
-    testImplementation("io.kotest:kotest-property:6.1.11")
+    testImplementation("io.kotest:kotest-framework-engine:6.2.2")
+    testImplementation("io.kotest:kotest-property:6.2.2")
     testImplementation("io.strikt:strikt-core:0.35.1")
     testImplementation("io.mockk:mockk:1.14.11")
-    implementation("org.postgresql:postgresql:42.7.3")
+    implementation("org.postgresql:postgresql:42.7.13")
     implementation("io.github.cdimascio:dotenv-kotlin:6.5.1")
     implementation("com.github.jsqlparser:jsqlparser:5.3")
     implementation("com.michael-bull.kotlin-result:kotlin-result:2.3.1")

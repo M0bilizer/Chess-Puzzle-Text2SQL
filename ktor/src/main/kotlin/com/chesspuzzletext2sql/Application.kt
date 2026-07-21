@@ -13,7 +13,7 @@ import io.ktor.server.engine.embeddedServer
 import kotlin.system.exitProcess
 
 fun main() {
-    val dotenv = dotenv()
+    val dotenv = dotenv { ignoreIfMissing = true }
     val appConfig =
         ApplicationConfigLoader.load(dotenv).getOrElse { errors ->
             System.err.println("Failed to load application configuration:")

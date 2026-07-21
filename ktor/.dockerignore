@@ -1,0 +1,11 @@
+.idea/
+.gradle/
+build/
+.kotlin/
+
+
+.git/
+.gitignore
+
+.env-sample
+README.md

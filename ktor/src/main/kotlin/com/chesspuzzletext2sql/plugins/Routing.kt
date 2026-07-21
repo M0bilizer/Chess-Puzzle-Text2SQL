@@ -5,8 +5,9 @@ import com.chesspuzzletext2sql.shared.data.repositories.ModelRepository
 import com.chesspuzzletext2sql.shared.data.repositories.PuzzleRepository
 import com.chesspuzzletext2sql.shared.data.repositories.TemplateRepository
 import io.ktor.client.HttpClient
+import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
-import io.ktor.server.response.respondText
+import io.ktor.server.response.respond
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 import org.koin.ktor.ext.inject
@@ -18,7 +19,7 @@ fun Application.configureRouting() {
     val client by inject<HttpClient>()
 
     routing {
-        get("/hello") { call.respondText("Hello World from Ktor") }
+        get("/health") { call.respond(HttpStatusCode.OK) }
 
         puzzles(templateRepository, modelRepository, puzzleRepository, client)
     }
