@@ -14,11 +14,13 @@ export function searchPuzzle(search: string): AsyncResult<Puzzle[], IOError> {
 			const data = await api
 				.get<Puzzle[]>(`/api/puzzles?search=${encodeURIComponent(search)}`)
 				.json();
-			set(search, data, searchDb);
-			setMany(
-				data.map((it) => [it.puzzleId, it]),
-				puzzleDb
-			);
+			if (data.length > 0) {
+				set(search, data, searchDb);
+				setMany(
+					data.map((it) => [it.puzzleId, it]),
+					puzzleDb
+				);
+			}
 			return Result.ok(data);
 		}
 	});

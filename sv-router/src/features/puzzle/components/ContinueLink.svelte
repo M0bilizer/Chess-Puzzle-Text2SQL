@@ -9,11 +9,11 @@
 		class?: string;
 		playlist: Playlist;
 	};
-	const { class: className, playlist }: Props = $props();
+	const { class: className, playlist = $bindable() }: Props = $props();
 
 	const name = $derived(playlist.name);
-	const id = $derived(playlist.puzzles[playlist.currentIndex]!.puzzleId);
-	const current = $derived(playlist.currentIndex);
+	const id = $derived(playlist.puzzles.find((it) => it.result === undefined)!.puzzleId);
+	const current = $derived(playlist.puzzles.filter((it) => it.result !== undefined).length);
 	const total = $derived(playlist.puzzles.length);
 
 	const onClick = (playlist: Playlist) => {

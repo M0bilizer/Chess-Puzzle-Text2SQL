@@ -4,7 +4,9 @@
 	import SimplePage from '@/common/components/SimplePage.svelte';
 	import SearchBanner from '@/features/puzzle/components/SearchBanner.svelte';
 	import SearchForm from '@/features/puzzle/components/SearchForm.svelte';
+	import { searchDb } from '@/main';
 	import { navigate } from '@/router';
+	import { del } from 'idb-keyval';
 
 	import { searchPuzzle } from '../api/puzzle.api';
 	import ContinueLink from '../components/ContinueLink.svelte';
@@ -36,6 +38,7 @@
 				}
 			});
 		} catch (e: Error | unknown) {
+			await del(query, searchDb);
 			error = e instanceof Error ? e.message : 'unknown error';
 		} finally {
 			loading = false;
