@@ -20,6 +20,6 @@ export const { p, navigate, route } = createRouter(
 		'*': NotFound
 	},
 	{
-		base: import.meta.env.BASE_URL || ''
+		base: import.meta.env.BASE_PATH || ''
 	}
 );
