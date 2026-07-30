@@ -12,9 +12,14 @@ export const PATHS = {
 };
 
 // don't export { p }, use Paths instead
-export const { p, navigate, route } = createRouter({
-	...puzzleRoutes,
-	...aboutRoutes,
-	...settingsRoutes,
-	'*': NotFound
-});
+export const { p, navigate, route } = createRouter(
+	{
+		...puzzleRoutes,
+		...aboutRoutes,
+		...settingsRoutes,
+		'*': NotFound
+	},
+	{
+		base: import.meta.env.BASE_URL || ''
+	}
+);
