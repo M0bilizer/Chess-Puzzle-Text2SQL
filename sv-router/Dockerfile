@@ -1,5 +1,10 @@
 FROM oven/bun:1.3.14-alpine AS build
 
+# Accept build argument
+ARG VITE_BASE_PATH
+# Set as environment variable for the build
+ENV VITE_BASE_PATH=$VITE_BASE_PATH
+
 WORKDIR /app
 COPY package*.json ./
 RUN bun ci
