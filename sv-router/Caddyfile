@@ -26,6 +26,19 @@
         respond "OK" 200
     }
 
+
+    # Use environment variable for the base path
+    handle /{$VITE_BASE_PATH}/* {
+        root * /app/dist
+        encode gzip
+
+        # Strip the base path prefix using the environment variable
+        uri strip_prefix /{$VITE_BASE_PATH}
+
+        file_server
+        try_files {path} /index.html
+    }
+
     # For anything else, serve index.html
     handle {
         root * /app/dist
