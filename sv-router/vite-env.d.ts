@@ -5,7 +5,7 @@ interface ImportMetaEnv {
 	// backend api
 	readonly VITE_API_URL: string;
 	// if this is hosted at rakichazcaballero/chess-puzzle-textsql, set this as "chess-puzzle-text2sql"
-	readonly BASE_PATH?: string;
+	readonly VITE_BASE_PATH?: string;
 }
 
 interface ImportMeta {
