@@ -20,7 +20,7 @@ export default defineConfig({
 			'@': path.resolve(__dirname, './src')
 		}
 	},
-	base: import.meta.env.VITE_BASE_PATH ? `/${import.meta.env.VITE_BASE_PATH}/` : '/',
+	base: './',
 	test: {
 		expect: { requireAssertions: true },
 		projects: [
