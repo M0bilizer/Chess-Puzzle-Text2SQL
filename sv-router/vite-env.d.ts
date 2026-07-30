@@ -6,7 +6,7 @@ interface ImportMetaEnv {
 	readonly VITE_API_URL: string;
 	// if this is hosted at rakichazcaballero/chess-puzzle-textsql, set this as "chess-puzzle-text2sql"
 	// used in the router.ts and vite.config.ts
-	readonly VITE_BASE_PATH?: string;
+	readonly VITE_BASE_PATH: string | undefined;
 }
 
 interface ImportMeta {

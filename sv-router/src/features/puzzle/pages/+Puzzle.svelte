@@ -68,7 +68,7 @@
 			bind:this={content}
 			{puzzle}
 			{game}
-			hasNext={currentPlaylist.hasNext}
+			hasNext={currentPlaylist.hasNext || false}
 			{onComplete}
 			{onNext}
 		/>

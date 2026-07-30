@@ -3,11 +3,6 @@ import Puzzle from '@/features/puzzle/pages/+Puzzle.svelte';
 
 import Home from './pages/+Home.svelte';
 
-export const PUZZLE_ROUTES = {
-	HOME: '/',
-	PUZZLE: (puzzleId: string) => `/puzzle/${puzzleId}`
-};
-
 export const puzzleRoutes = {
 	'/': {
 		'/': Home

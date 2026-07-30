@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Preferences } from '@/features/settings/preferences-state';
-	import { SETTINGS_PATHS } from '@/features/settings/route';
+	import { p } from '@/router';
 	import { Popover, Portal, Switch } from '@skeletonlabs/skeleton-svelte';
 	import TablerArrowUpRight from '~icons/tabler/arrow-up-right';
 	import TablerMenu2 from '~icons/tabler/menu-2';
@@ -40,7 +40,7 @@
 					<Switch.HiddenInput />
 				</Switch>
 				<hr class="hr border-surface-800-200" />
-				<a href={SETTINGS_PATHS.SETTINGS} class="btn items-center gap-2 self-start hover:underline">
+				<a href={p('/settings')} class="btn items-center gap-2 self-start hover:underline">
 					Other settings
 					<TablerArrowUpRight class="size-icon" />
 				</a>
