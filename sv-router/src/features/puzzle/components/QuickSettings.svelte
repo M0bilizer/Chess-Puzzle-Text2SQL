@@ -26,17 +26,17 @@
 					<Switch.Control class="data-[state=unchecked]:bg-surface-300-700">
 						<Switch.Thumb />
 					</Switch.Control>
-					<Switch.Label>Switch Orientation</Switch.Label>
+					<Switch.Label>Switch orientation</Switch.Label>
 					<Switch.HiddenInput />
 				</Switch>
 				<Switch
-					checked={preferences.muted}
+					checked={!preferences.muted}
 					onCheckedChange={() => (preferences.muted = !preferences.muted)}
 				>
 					<Switch.Control class="data-[state=unchecked]:bg-surface-300-700">
 						<Switch.Thumb />
 					</Switch.Control>
-					<Switch.Label>Mute sound</Switch.Label>
+					<Switch.Label>Enable sound</Switch.Label>
 					<Switch.HiddenInput />
 				</Switch>
 				<hr class="hr border-surface-800-200" />
