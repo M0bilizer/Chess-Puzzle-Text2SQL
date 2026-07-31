@@ -17,7 +17,7 @@
 		isOpen = false;
 	}
 
-	function handleBackdropClick(e: MouseEvent) {
+	function handleBackdropClick(e: MouseEvent | KeyboardEvent) {
 		if (e.target === e.currentTarget) {
 			onCancel?.();
 			isOpen = false;
@@ -57,6 +57,7 @@
 					{@const currentSquare = `${file}${rank}`}
 
 					<div
+						aria-hidden="true"
 						class="relative aspect-square"
 						data-square={currentSquare}
 						onclick={handleBackdropClick}
@@ -68,15 +69,17 @@
 								<button
 									class="absolute inset-0 z-20 flex preset-filled-surface-100-900 hover:brightness-125"
 									onclick={() => selectPiece(piece.role)}
-									onkeydown={(e) => {
+									onkeydown={(e: KeyboardEvent) => {
 										if (e.key === 'Escape') handleBackdropClick(e);
 									}}
 									title={piece.label}
 								>
 									<piece
+										role="button"
+										tabindex={0}
 										class={`${color} ${piece.role}`}
 										onclick={() => selectPiece(piece.role)}
-										onkeydown={(e) => {
+										onkeydown={(e: KeyboardEvent) => {
 											if (e.key === 'Escape') handleBackdropClick(e);
 										}}
 										title={piece.label}

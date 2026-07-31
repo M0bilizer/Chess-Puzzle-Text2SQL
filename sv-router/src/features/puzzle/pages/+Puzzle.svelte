@@ -13,8 +13,7 @@
 	let currentPlaylistViewEl: CurrentPlaylistView | undefined = $state();
 	let content: PuzzleContent | undefined = $state();
 
-	// Using resource from runed library
-	let id = $derived(route.getParams('/puzzle/:id').id);
+	let id = $derived(route.params.id as string);
 	const puzzleResource = resource(
 		() => id,
 		async (id) => {

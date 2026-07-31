@@ -12,7 +12,7 @@
 	};
 	let { currentId }: Props = $props();
 
-	let listElement: HTMLUListElement | undefined;
+	let listElement: HTMLUListElement | undefined = $state();
 	let itemElements = new SvelteMap<string, HTMLAnchorElement>();
 
 	export function scrollToCurrent() {
