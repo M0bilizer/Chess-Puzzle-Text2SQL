@@ -3,9 +3,8 @@ import tailwindcss from '@tailwindcss/vite';
 import { playwright } from '@vitest/browser-playwright';
 import * as path from 'node:path';
 import Icons from 'unplugin-icons/vite';
-import { loadEnv } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 import runtimeEnv from 'vite-plugin-runtime-env';
-import { defineConfig } from 'vitest/config';
 
 export default defineConfig(({ mode }) => {
 	const env = loadEnv(mode, process.cwd(), '');
@@ -20,7 +19,7 @@ export default defineConfig(({ mode }) => {
 		],
 		resolve: {
 			alias: {
-				'@': path.resolve(__dirname, './src')
+				'@': path.resolve(import.meta.dirname, './src')
 			}
 		},
 		base: env.VITE_BASE_PATH ? `/${env.VITE_BASE_PATH}/` : '/',

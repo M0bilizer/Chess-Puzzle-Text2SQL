@@ -4,13 +4,13 @@
 	import { resource } from 'runed';
 
 	import { getPuzzle } from '../api/puzzle.api';
-	import CurrentPlaylistView from '../components/CurrentPlaylistView.svelte';
-	import { currentPlaylist } from '../store/current-playlist.svelte';
+	import CurrentCollectionView from '../components/CurrentCollectionView.svelte';
+	import { currentCollection } from '../store/current-collection.svelte';
 	import { PuzzleGame } from '../type.svelte';
 	import PuzzleContent from './+PuzzleContent.svelte';
 	import PuzzleSkeleton from './+PuzzleSkeleton.svelte';
 
-	let currentPlaylistViewEl: CurrentPlaylistView | undefined = $state();
+	let currentCollectionViewEl: CurrentCollectionView | undefined = $state();
 	let content: PuzzleContent | undefined = $state();
 
 	let id = $derived(route.params.id as string);
@@ -26,7 +26,7 @@
 
 	$effect(() => {
 		if (id) {
-			currentPlaylistViewEl?.scrollToCurrent();
+			currentCollectionViewEl?.scrollToCurrent();
 		}
 	});
 
@@ -37,12 +37,12 @@
 	});
 
 	const onComplete = () => {
-		currentPlaylist.setPuzzleResult(id, true);
+		currentCollection.setPuzzleResult(id, true);
 	};
 
 	const onNext = () => {
-		if (currentPlaylist) {
-			const result = currentPlaylist.getNextPuzzle();
+		if (currentCollection) {
+			const result = currentCollection.getFirstUnsolved();
 			if (!result) {
 				console.error('No next puzzle');
 				return;
@@ -52,9 +52,9 @@
 	};
 </script>
 
-<MainWithAsidePage class="px-1">
+<MainWithAsidePage>
 	<aside class="hidden max-h-[calc(100vh-85px)] overflow-auto lg:block">
-		<CurrentPlaylistView bind:this={currentPlaylistViewEl} currentId={id} />
+		<CurrentCollectionView bind:this={currentCollectionViewEl} currentId={id} />
 	</aside>
 
 	{#if puzzleResource.current === undefined}
@@ -67,7 +67,7 @@
 			bind:this={content}
 			{puzzle}
 			{game}
-			hasNext={currentPlaylist.hasNext || false}
+			hasNext={currentCollection.next(id) !== undefined}
 			{onComplete}
 			{onNext}
 		/>

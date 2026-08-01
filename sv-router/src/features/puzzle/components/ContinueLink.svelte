@@ -2,13 +2,14 @@
 	import { navigate } from '@/router';
 	import ArrowRightIcon from '~icons/tabler/arrow-right';
 
-	import type { Playlist } from '../store/current-playlist.svelte';
-	import { playlistCollection } from '../store/playlist-collection.svelte';
+	import { collections } from '../store/collections.svelte';
+	import type { Collection } from '../store/current-collection.svelte';
 
 	type Props = {
 		class?: string;
-		playlist: Playlist;
+		playlist: Collection;
 	};
+
 	const { class: className, playlist = $bindable() }: Props = $props();
 
 	const name = $derived(playlist.name);
@@ -16,8 +17,8 @@
 	const current = $derived(playlist.puzzles.filter((it) => it.result !== undefined).length);
 	const total = $derived(playlist.puzzles.length);
 
-	const onClick = (playlist: Playlist) => {
-		playlistCollection.setActive(playlist.name);
+	const onClick = (playlist: Collection) => {
+		collections.setActive(playlist.name);
 		navigate('/puzzle/:id', { params: { id: id } });
 	};
 </script>

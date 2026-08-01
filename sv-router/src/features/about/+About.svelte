@@ -1,5 +1,6 @@
 <script lang="ts">
 	import ContentPage from '@/common/components/ContentPage.svelte';
+	import TablerArrowUpRight from '~icons/tabler/arrow-up-right';
 </script>
 
 <ContentPage class="space-y-6">
@@ -21,11 +22,15 @@
 	<p>
 		Check out the development journey:
 		<a class="anchor" href="https://github.com/M0bilizer/Chess-Puzzle-Text2SQL"
-			>https://github.com/M0bilizer/Chess-Puzzle-Text2SQL</a
-		>
+			>https://github.com/M0bilizer/Chess-Puzzle-Text2SQL
+			<TablerArrowUpRight class="size-icon inline align-baseline" />
+		</a>
 	</p>
 
 	<p class="text-right">
-		— <a class="anchor" href="https://github.com/M0bilizer">M0bilizer</a>
+		— <a class="anchor" href="https://github.com/M0bilizer"
+			>M0bilizer
+			<TablerArrowUpRight class="size-icon inline align-baseline" />
+		</a>
 	</p>
 </ContentPage>

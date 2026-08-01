@@ -11,8 +11,8 @@
 	import { searchPuzzle } from '../api/puzzle.api';
 	import ContinueLink from '../components/ContinueLink.svelte';
 	import SearchTagline from '../components/SearchTagline.svelte';
-	import { currentPlaylist } from '../store/current-playlist.svelte';
-	import { playlistCollection } from '../store/playlist-collection.svelte';
+	import { collections } from '../store/collections.svelte';
+	import { currentCollection } from '../store/current-collection.svelte';
 
 	let query = $state('');
 	let loading = $state(false);
@@ -31,7 +31,7 @@
 			if (data.length === 0) {
 				throw new Error('No results found.');
 			}
-			currentPlaylist.init(query, data);
+			currentCollection.init(query, data);
 			navigate('/puzzle/:id', {
 				params: {
 					id: data![0].puzzleId
@@ -56,7 +56,7 @@
 		<SearchBanner class="py-2" />
 		<SearchForm bind:query onSubmit={() => handleSearch(query)} bind:loading />
 		<div class="flex flex-wrap gap-8 px-6 py-2">
-			{#each Object.values(playlistCollection.all) as playlist (playlist.name)}
+			{#each Object.values(collections.all) as playlist (playlist.name)}
 				<ContinueLink {playlist} />
 			{/each}
 		</div>

@@ -2,7 +2,6 @@
 	import type { Preferences } from '@/features/settings/preferences-state';
 	import { p } from '@/router';
 	import { Popover, Portal, Switch } from '@skeletonlabs/skeleton-svelte';
-	import TablerArrowUpRight from '~icons/tabler/arrow-up-right';
 	import TablerMenu2 from '~icons/tabler/menu-2';
 
 	type Props = {
@@ -42,7 +41,6 @@
 				<hr class="hr border-surface-800-200" />
 				<a href={p('/settings')} class="btn items-center gap-2 self-start hover:underline">
 					Other settings
-					<TablerArrowUpRight class="size-icon" />
 				</a>
 				<Popover.Arrow
 					class="[--arrow-background:var(--color-surface-200-800)] [--arrow-size:--spacing(2)]"
