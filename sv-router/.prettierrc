@@ -19,5 +19,7 @@
 				"parser": "svelte"
 			}
 		}
-	]
+	],
+	"svelteAllowShorthand": true,
+	"svelteIndentScriptAndStyle": true
 }
