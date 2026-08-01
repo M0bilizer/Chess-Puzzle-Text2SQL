@@ -14,11 +14,19 @@
 	type Props = {
 		puzzle: Puzzle;
 		game: PuzzleGame;
+		openDescription: boolean;
 		hasNext: boolean;
 		onComplete: () => void;
 		onNext: () => void;
 	};
-	let { puzzle, game, hasNext, onComplete, onNext }: Props = $props();
+	let {
+		puzzle,
+		game,
+		openDescription = $bindable(),
+		hasNext,
+		onComplete,
+		onNext
+	}: Props = $props();
 
 	let chessboard = $state<Chessboard | null>(null);
 	let isComplete = $derived(game.latestIndex >= game.getTotalMoves());
@@ -142,7 +150,7 @@
 		bind:settings={preferencesState.current}
 		{interactive}
 	/>
-	<ChessDescription {puzzle} class="hidden md:block" />
+	<ChessDescription open={openDescription} {puzzle} class="hidden md:block" />
 </section>
 <aside>
 	<MoveTable

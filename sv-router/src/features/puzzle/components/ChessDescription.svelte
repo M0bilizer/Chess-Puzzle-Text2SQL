@@ -11,14 +11,22 @@
 	import ThemesBadges from './ThemesBadges.svelte';
 
 	type Props = {
+		open: boolean;
 		puzzle: Puzzle;
 		class?: string;
 	};
-	let { puzzle, class: className }: Props = $props();
+	let { open = $bindable(), puzzle, class: className }: Props = $props();
+
+	let value = open ? ['1'] : undefined;
 </script>
 
-<Accordion collapsible class={className}>
-	<Accordion.Item value={puzzle.puzzleId}>
+<Accordion
+	collapsible
+	class={className}
+	{value}
+	onValueChange={(value) => (open = value !== undefined)}
+>
+	<Accordion.Item value="1">
 		<h3>
 			<Accordion.ItemTrigger
 				class="flex items-center justify-between preset-filled-surface-100-900 p-4 hover:preset-filled-surface-200-800"

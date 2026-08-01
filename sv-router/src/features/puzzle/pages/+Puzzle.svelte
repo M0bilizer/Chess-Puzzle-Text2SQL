@@ -12,6 +12,7 @@
 
 	let currentCollectionViewEl: CurrentCollectionView | undefined = $state();
 	let content: PuzzleContent | undefined = $state();
+	let openDescription = $state(false);
 
 	let id = $derived(route.params.id as string);
 	const puzzleResource = resource(
@@ -67,6 +68,7 @@
 			bind:this={content}
 			{puzzle}
 			{game}
+			bind:openDescription
 			hasNext={currentCollection.next(id) !== undefined}
 			{onComplete}
 			{onNext}

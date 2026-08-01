@@ -18,13 +18,15 @@
 
 	export function scrollToCurrent() {
 		if (!listElement || !currentCollection.isActive) return;
-
 		const currentItem = itemElements.get(currentId);
 		if (!currentItem) return;
 
-		currentItem.scrollIntoView({
-			behavior: 'smooth',
-			block: 'center'
+		const containerRect = listElement.getBoundingClientRect();
+		const itemRect = currentItem.getBoundingClientRect();
+
+		listElement.scrollTo({
+			top: listElement.scrollTop + (itemRect.top - containerRect.top),
+			behavior: 'smooth'
 		});
 	}
 
