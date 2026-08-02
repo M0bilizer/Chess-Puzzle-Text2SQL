@@ -1,6 +1,5 @@
 <script lang="ts">
 	import ErrorAlert from '@/common/components/ErrorAlert.svelte';
-	import HomeHeader from '@/common/components/HomeHeader.svelte';
 	import SimplePage from '@/common/components/SimplePage.svelte';
 	import SearchBanner from '@/features/puzzle/components/SearchBanner.svelte';
 	import SearchForm from '@/features/puzzle/components/SearchForm.svelte';
@@ -50,7 +49,6 @@
 	}
 </script>
 
-<HomeHeader />
 <SimplePage class="px-4">
 	<section class="mx-auto pt-32 lg:w-[900px]">
 		<SearchBanner class="py-2" />

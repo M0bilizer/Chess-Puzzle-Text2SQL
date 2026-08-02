@@ -5,7 +5,8 @@ import Home from './pages/+Home.svelte';
 
 export const puzzleRoutes = {
 	'/': {
-		'/': Home
+		'/': Home,
+		layout: PuzzleLayout
 	},
 	'/puzzle': {
 		'/:id': Puzzle,
