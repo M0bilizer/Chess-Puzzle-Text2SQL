@@ -71,8 +71,8 @@
 				{/if}
 			</span>
 			<div class="instruction">
-				<strong class="text-xl">Your turn</strong>
-				<em class="text-sm">It's your turn!</em>
+				<strong class="text-xl">You&rsquo;re {playerColor === 'w' ? 'white' : 'black'}</strong>
+				<em class="text-sm">It&rsquo;s your turn!</em>
 			</div>
 		</div>
 	{/if}
