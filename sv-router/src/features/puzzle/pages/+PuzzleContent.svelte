@@ -65,7 +65,7 @@
 		if (!isComplete) {
 			await new Promise((resolve) => setTimeout(resolve, settings.computerMoveDelay));
 			const computerMove = game.getCorrectMoveAt(game.currentIndex);
-			game.makeMove(game.currentIndex, computerMove);
+			game.makeMove(game.currentIndex, computerMove, true);
 			chessboard.makeMove(computerMove.from, computerMove.to);
 			if (settings.waitForAnimation) {
 				await chessboard.waitForAnimations();
@@ -83,7 +83,7 @@
 		}
 		// make the first computer move
 		const computerMove = game.getCorrectMoveAt(game.currentIndex);
-		game.makeMove(game.currentIndex, computerMove);
+		game.makeMove(game.currentIndex, computerMove, true);
 
 		// don't use programmtic move since sound might crash
 		fen = game.getFenAt(game.currentIndex)!;

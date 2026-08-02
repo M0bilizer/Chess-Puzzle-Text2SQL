@@ -123,7 +123,7 @@ export class PuzzleGame {
 		return this._movesPlayed;
 	}
 
-	makeMove(index: number, move: Move): boolean {
+	makeMove(index: number, move: Move, isComputer: boolean = false): boolean {
 		const expectedMove = this.engine.getSolutionMoveAt(index);
 		if (!expectedMove) {
 			return false;
@@ -133,7 +133,7 @@ export class PuzzleGame {
 			this.movePlayed = {
 				index: this.currentIndex,
 				move: move,
-				isComputer: false,
+				isComputer: isComputer,
 				isCorrect: false
 			};
 			this.currentIndex++;
@@ -142,7 +142,7 @@ export class PuzzleGame {
 		this.movePlayed = {
 			index: this.currentIndex,
 			move: move,
-			isComputer: false,
+			isComputer: isComputer,
 			isCorrect: true
 		};
 		this.currentIndex++;
