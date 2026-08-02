@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { p } from '@/router';
+	import SvelteVirtualList from '@humanspeak/svelte-virtual-list';
 	import { Progress } from '@skeletonlabs/skeleton-svelte';
 	import { Chessground } from 'svelte5-chessground';
-	import { SvelteMap } from 'svelte/reactivity';
 	import TablerCheck from '~icons/tabler/check';
 	import TablerPlay from '~icons/tabler/play';
 
@@ -13,27 +13,13 @@
 	};
 	let { currentId }: Props = $props();
 
-	let listElement: HTMLUListElement | undefined = $state();
-	let itemElements = new SvelteMap<string, HTMLAnchorElement>();
-
-	export function scrollToCurrent() {
-		if (!listElement || !currentCollection.isActive) return;
-		const currentItem = itemElements.get(currentId);
-		if (!currentItem) return;
-
-		const containerRect = listElement.getBoundingClientRect();
-		const itemRect = currentItem.getBoundingClientRect();
-
-		listElement.scrollTo({
-			top: listElement.scrollTop + (itemRect.top - containerRect.top),
-			behavior: 'smooth'
-		});
-	}
-
-	function setItemRef(el: HTMLAnchorElement, id: string) {
-		if (el) {
-			itemElements.set(id, el);
-		}
+	let listRef: SvelteVirtualList | undefined = $state();
+	export async function scrollToCurrent() {
+		// put an wait so onMount can work properly
+		await new Promise((resolve) => setTimeout(resolve, 1));
+		const index = currentCollection.puzzles.findIndex((p) => p.puzzleId === currentId);
+		if (index === -1) return;
+		listRef?.scroll({ index: index, smoothScroll: true, align: 'top' });
 	}
 
 	let solved = $derived(currentCollection.puzzles.filter((p) => p.result).length);
@@ -49,13 +35,16 @@
 				{currentCollection.name}
 			</h2>
 		</header>
-		<ul bind:this={listElement} class="flex flex-1 flex-col overflow-y-auto">
-			{#each currentCollection.puzzles as puzzle, index (puzzle.puzzleId)}
+		<SvelteVirtualList
+			items={currentCollection.puzzles}
+			bind:this={listRef as SvelteVirtualList}
+			containerClass="relative overflow-hidden w-[244px] h-full"
+		>
+			{#snippet renderItem(puzzle, index)}
 				{@const result = puzzle.result}
 				{@const isCurrent = puzzle.puzzleId == currentId}
 				<a
 					href={p('/puzzle/:id', { params: { id: puzzle.puzzleId } })}
-					use:setItemRef={puzzle.puzzleId}
 					data-scroll-to-top="false"
 					class={[
 						'flex cursor-pointer flex-row items-center rounded-none px-0 py-1 group hover:bg-primary-50-950',
@@ -63,7 +52,7 @@
 						{ 'bg-primary-50-950/75': isCurrent }
 					]}
 				>
-					<div class="min-w-10 grid grid-rows-3 items-start h-full justify-items-center">
+					<div class="min-w-10 grid grid-rows-3 grow items-start justify-items-center">
 						<span
 							class="text-sm"
 							class:line-through={result === true}
@@ -87,8 +76,8 @@
 						<Chessground fen={puzzle.fen} orientation={puzzle.orientation} viewOnly={true} />
 					</div>
 				</a>
-			{/each}
-		</ul>
+			{/snippet}
+		</SvelteVirtualList>
 		<footer class="px-2 py-1">
 			<Progress value={solved} class="grid grid-cols-[auto_1fr] items-center gap-4">
 				<Progress.Label>{solved}/{currentCollection.totalPuzzles} Completed</Progress.Label>

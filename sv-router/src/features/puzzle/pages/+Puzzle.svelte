@@ -1,7 +1,7 @@
 <script lang="ts">
 	import MainWithAsidePage from '@/common/components/MainWithAsidePage.svelte';
 	import { navigate, route } from '@/router';
-	import { resource } from 'runed';
+	import { resource, watch } from 'runed';
 
 	import { getPuzzle } from '../api/puzzle.api';
 	import CurrentCollectionView from '../components/CurrentCollectionView.svelte';
@@ -14,7 +14,7 @@
 	let content: PuzzleContent | undefined = $state();
 	let openDescription = $state(false);
 
-	let id = $derived(route.params.id as string);
+	let { id } = $derived(route.getParams('/puzzle/:id'));
 	const puzzleResource = resource(
 		() => id,
 		async (id) => {
@@ -25,11 +25,14 @@
 
 	let game = $derived(puzzleResource.current ? new PuzzleGame(puzzleResource.current) : null);
 
-	$effect(() => {
-		if (id) {
-			currentCollectionViewEl?.scrollToCurrent();
+	watch(
+		() => id,
+		(prevId, newId) => {
+			if (prevId !== newId) {
+				currentCollectionViewEl?.scrollToCurrent();
+			}
 		}
-	});
+	);
 
 	$effect(() => {
 		if (game) {
@@ -54,7 +57,7 @@
 </script>
 
 <MainWithAsidePage>
-	<aside class="hidden max-h-[calc(100vh-85px)] overflow-auto lg:block">
+	<aside class="hidden lg:block">
 		<CurrentCollectionView bind:this={currentCollectionViewEl} currentId={id} />
 	</aside>
 
