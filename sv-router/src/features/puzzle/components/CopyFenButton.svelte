@@ -5,18 +5,19 @@
 
 	type Props = {
 		fen: string;
+		class?: string;
 	};
-	let { fen }: Props = $props();
+	let { fen, class: className }: Props = $props();
 </script>
 
 <Clipboard value={fen}>
 	{#snippet children({ copied, copy })}
-		<button onclick={copy} class="btn gap-2 active:scale-95">
+		<button onclick={copy} class={`btn gap-2 active:scale-95 ${className}`}>
 			{#if copied}
-				<TablerCheck class="size-icon" />
+				<TablerCheck />
 				Fen copied!
 			{:else}
-				<TablerClipboard class="size-icon" />
+				<TablerClipboard />
 				Copy FEN
 			{/if}
 		</button>

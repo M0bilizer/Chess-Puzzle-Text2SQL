@@ -28,17 +28,14 @@
 </script>
 
 <section class="btn-group w-full justify-around">
-	<button class="btn-icon" onclick={onReset} disabled={!canGoBack}
-		><TablerChevronLeftPipe class="size-icon-big" /></button
+	<button class="btn-icon" onclick={onReset} disabled={!canGoBack}><TablerChevronLeftPipe /></button
 	>
-	<button class="btn-icon" onclick={onBack} disabled={!canGoBack}
-		><TablerChevronLeft class="size-icon-big" /></button
-	>
+	<button class="btn-icon" onclick={onBack} disabled={!canGoBack}><TablerChevronLeft /></button>
 	<button class="btn-icon" onclick={onForward} disabled={!canGoForward}
-		><TablerChevronRight class="size-icon-big" /></button
+		><TablerChevronRight /></button
 	>
 	<button class="btn-icon" onclick={onEnd} disabled={!canGoForward}
-		><TablerChevronRightPipe class="size-icon-big" /></button
+		><TablerChevronRightPipe /></button
 	>
 	<QuickSettings bind:preferences />
 </section>

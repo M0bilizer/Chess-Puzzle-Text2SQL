@@ -5,6 +5,7 @@
 	import ChessDescription from '../components/ChessDescription.svelte';
 	import Chessboard from '../components/Chessboard.svelte';
 	import JumpRow from '../components/JumpRow.svelte';
+	import MobileChessDescription from '../components/MobileChessDescription.svelte';
 	import MobileCurrentCollectionView from '../components/MobileCurrentCollectionView.svelte';
 	import MoveFeedback from '../components/MoveFeedback.svelte';
 	import MoveTable from '../components/MoveTable.svelte';
@@ -179,5 +180,6 @@
 		canGoForward={canGoForward || false}
 		bind:preferences={preferencesState.current}
 	/>
+	<MobileChessDescription open={openDescription} {puzzle} class="block md:hidden" />
 	<MobileCurrentCollectionView currentId={puzzle.puzzleId} class="block md:hidden" />
 </aside>

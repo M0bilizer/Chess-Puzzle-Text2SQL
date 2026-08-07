@@ -7,8 +7,9 @@
 		url?: string;
 		title?: string;
 		text?: string;
+		class?: string;
 	};
-	let { url = window.location.href, title, text }: Props = $props();
+	let { url = window.location.href, title, text, class: className }: Props = $props();
 
 	async function handleShare() {
 		if (navigator.share) {
@@ -23,20 +24,20 @@
 
 {#if navigator.canShare && navigator.canShare({ title, text, url })}
 	<!-- Use native share on mobile -->
-	<button onclick={handleShare} class="btn gap-2 active:scale-95">
-		<TablerShare class="size-icon" />
+	<button onclick={handleShare} class={`btn gap-2 active:scale-95 ${className}`}>
+		<TablerShare />
 		Share
 	</button>
 {:else}
 	<!-- Fallback to clipboard on desktop -->
 	<Clipboard value={url}>
 		{#snippet children({ copied, copy })}
-			<button onclick={copy} class="btn gap-2 active:scale-95">
+			<button onclick={copy} class={`btn gap-2 active:scale-95 ${className}`}>
 				{#if copied}
-					<TablerCheck class="size-icon" />
+					<TablerCheck />
 					Link copied!
 				{:else}
-					<TablerShare class="size-icon" />
+					<TablerShare />
 					Share
 				{/if}
 			</button>

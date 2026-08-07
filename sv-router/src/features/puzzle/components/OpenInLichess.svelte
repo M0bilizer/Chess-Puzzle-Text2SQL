@@ -3,11 +3,16 @@
 
 	type Props = {
 		gameUrl: string;
+		class?: string;
 	};
-	const { gameUrl }: Props = $props();
+	const { gameUrl, class: className }: Props = $props();
 </script>
 
-<a href={gameUrl} target="_blank" class="btn flex flex-row items-center gap-2 hover:underline">
-	<span>Open in lichess</span>
-	<TablerExternalLink class="size-icon" />
+<a
+	href={gameUrl}
+	target="_blank"
+	class={`btn anchor gap-2 hover:underline [&.btn-xs]:text-xs ${className}`}
+>
+	Open in lichess
+	<TablerExternalLink />
 </a>

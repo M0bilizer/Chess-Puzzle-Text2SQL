@@ -23,14 +23,14 @@
 		Check out the development journey:
 		<a class="anchor" href="https://github.com/M0bilizer/Chess-Puzzle-Text2SQL"
 			>https://github.com/M0bilizer/Chess-Puzzle-Text2SQL
-			<TablerArrowUpRight class="size-icon inline align-baseline" />
+			<TablerArrowUpRight class="inline align-baseline" />
 		</a>
 	</p>
 
 	<p class="text-right">
 		— <a class="anchor" href="https://github.com/M0bilizer"
 			>M0bilizer
-			<TablerArrowUpRight class="size-icon inline align-baseline" />
+			<TablerArrowUpRight class="inline align-baseline" />
 		</a>
 	</p>
 </ContentPage>
