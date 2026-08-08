@@ -10,8 +10,9 @@
 
 	type Props = {
 		currentId: string;
+		class?: string;
 	};
-	let { currentId }: Props = $props();
+	let { currentId, class: className }: Props = $props();
 
 	let listRef: SvelteVirtualList | undefined = $state();
 	export async function scrollToCurrent() {
@@ -27,7 +28,10 @@
 
 {#if currentCollection.isActive}
 	<section
-		class="flex h-full w-full max-w-md flex-col space-y-2 divide-y divide-surface-200-800 card preset-filled-surface-100-900 py-2"
+		class={[
+			'flex h-full w-full max-w-md flex-col space-y-2 divide-y divide-surface-200-800 card preset-filled-surface-100-900 py-2',
+			className
+		]}
 	>
 		<header class="flex flex-col shrink-0 px-2 pb-1">
 			<span class="text-surface-400-600 text-xs">Current collection:</span>

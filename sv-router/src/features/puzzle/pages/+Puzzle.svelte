@@ -5,12 +5,15 @@
 
 	import { getPuzzle } from '../api/puzzle.api';
 	import CurrentCollectionView from '../components/CurrentCollectionView.svelte';
+	import MobileChessDescription from '../components/MobileChessDescription.svelte';
+	import MobileCurrentCollectionView from '../components/MobileCurrentCollectionView.svelte';
 	import { currentCollection } from '../store/current-collection.svelte';
 	import { PuzzleGame } from '../type.svelte';
 	import PuzzleContent from './+PuzzleContent.svelte';
 	import PuzzleSkeleton from './+PuzzleSkeleton.svelte';
 
 	let currentCollectionViewEl: CurrentCollectionView | undefined = $state();
+	let mobileCollectionViewEl: MobileCurrentCollectionView | undefined = $state();
 	let content: PuzzleContent | undefined = $state();
 	let openDescription = $state(false);
 
@@ -23,12 +26,14 @@
 		}
 	);
 
+	let puzzle = $derived(puzzleResource.current);
 	let game = $derived(puzzleResource.current ? new PuzzleGame(puzzleResource.current) : null);
 
 	watch(
 		() => id,
 		(prevId, newId) => {
 			if (prevId !== newId) {
+				mobileCollectionViewEl?.scrollToCurrent();
 				currentCollectionViewEl?.scrollToCurrent();
 			}
 		}
@@ -57,16 +62,27 @@
 </script>
 
 <MainWithAsidePage>
-	<aside class="hidden lg:block">
-		<CurrentCollectionView bind:this={currentCollectionViewEl} currentId={id} />
+	<aside class="order-last md:order-first space-y-1">
+		<CurrentCollectionView
+			bind:this={currentCollectionViewEl}
+			currentId={id}
+			class="hidden md:flex"
+		/>
+		{#if puzzle !== undefined}
+			<MobileChessDescription bind:open={openDescription} {puzzle} class="block md:hidden" />
+		{/if}
+		<MobileCurrentCollectionView
+			bind:this={mobileCollectionViewEl}
+			currentId={id}
+			class="block md:hidden"
+		/>
 	</aside>
 
-	{#if puzzleResource.current === undefined}
+	{#if puzzle === undefined}
 		<PuzzleSkeleton />
 	{:else if puzzleResource.error}
 		<div>Error loading puzzle: {puzzleResource.error.message}</div>
 	{:else if puzzleResource.current && game}
-		{@const puzzle = puzzleResource.current}
 		<PuzzleContent
 			bind:this={content}
 			{puzzle}

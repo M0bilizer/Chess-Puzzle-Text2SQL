@@ -50,7 +50,7 @@
 </script>
 
 <SimplePage class="px-4">
-	<section class="mx-auto pt-32 lg:w-[900px]">
+	<section class="mx-auto pt-32 md:w-[900px]">
 		<SearchBanner class="py-2" />
 		<SearchForm bind:query onSubmit={() => handleSearch(query)} bind:loading />
 		<div class="flex flex-wrap gap-8 px-6 py-2">

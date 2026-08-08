@@ -28,7 +28,7 @@
 >
 	<Accordion.Item
 		value="1"
-		class="preset-filled-surface-100-900 hover:preset-filled-surface-200-800 m-2 rounded-lg"
+		class="preset-filled-surface-100-900 hover:preset-filled-surface-200-800 rounded-lg"
 	>
 		<h3>
 			<Accordion.ItemTrigger class="flex items-center justify-between p-4">
