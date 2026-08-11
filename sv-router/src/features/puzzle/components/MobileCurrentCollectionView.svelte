@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { p } from '@/router';
+	import SvelteVirtualList from '@humanspeak/svelte-virtual-list';
 	import { Progress } from '@skeletonlabs/skeleton-svelte';
 	import { Chessground } from 'svelte5-chessground';
-	import { VirtualList } from 'svelte-virtuallists';
 	import TablerCheck from '~icons/tabler/check';
 	import TablerPlay from '~icons/tabler/play';
 
@@ -15,15 +15,15 @@
 
 	let { class: className, currentId }: Props = $props();
 
+	let listRef: SvelteVirtualList | undefined = $state();
 	let solved = $derived(currentCollection.puzzles.filter((p) => p.result).length);
-	let targetIndex = $state(0);
 
 	export async function scrollToCurrent() {
 		// put an wait so onMount can work properly
 		await new Promise((resolve) => setTimeout(resolve, 1));
 		const index = currentCollection.puzzles.findIndex((p) => p.puzzleId === currentId);
 		if (index === -1) return;
-		targetIndex = index;
+		listRef?.scroll({ index, smoothScroll: true, align: 'center' });
 	}
 </script>
 
@@ -33,15 +33,13 @@
 		<h2 class="preset-typo-subtitle inline">{currentCollection.name}</h2>
 	</header>
 	<hr class="hr my-2" />
-	<VirtualList
-		isHorizontal={true}
+	<SvelteVirtualList
+		bind:this={listRef as SvelteVirtualList}
+		orientation="horizontal"
 		items={currentCollection.puzzles}
-		scrollToIndex={targetIndex}
-		scrollToAlignment={'center' as unknown as undefined}
-		scrollToBehaviour={'smooth' as unknown as undefined}
-		class="overflow-hidden"
+		containerClass="relative overflow-hidden w-full h-[275px]"
 	>
-		{#snippet vl_slot({ index, item: puzzle })}
+		{#snippet renderItem(puzzle, index)}
 			{@const result = puzzle.result}
 			{@const isCurrent = puzzle.puzzleId == currentId}
 			<a
@@ -77,7 +75,7 @@
 				</div>
 			</a>
 		{/snippet}
-	</VirtualList>
+	</SvelteVirtualList>
 	<hr class="hr my-2" />
 	<Progress value={solved} class="grid grid-cols-[auto_auto_1fr_auto] items-center gap-4 px-2">
 		<div>{solved}/{currentCollection.totalPuzzles} Completed</div>
