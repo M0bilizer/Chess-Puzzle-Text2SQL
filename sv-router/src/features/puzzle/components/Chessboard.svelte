@@ -14,6 +14,7 @@
 		fen: string;
 		settings: Preferences;
 		orientation?: 'white' | 'black';
+		lastMove?: [Key, Key];
 		onMove?: (move: Move) => Promise<void>;
 		interactive?: boolean;
 	};
@@ -22,6 +23,7 @@
 		fen = $bindable(),
 		settings = $bindable(),
 		orientation = 'white',
+		lastMove = $bindable(),
 		onMove,
 		interactive = $bindable(true)
 	}: Props = $props();
@@ -60,6 +62,7 @@
 				color: color,
 				dests: toDests(chess)
 			},
+			lastMove: lastMove,
 			animation: {
 				enabled: true,
 				duration: settings.animationSpeed
@@ -136,6 +139,7 @@
 		const move = chess.move({ from: orig, to: dest, promotion });
 		if (move) {
 			fen = chess.fen();
+			lastMove = [orig, dest];
 			refreshBoard();
 			if (!settings.muted) playSound(!!move.captured);
 			await onMove?.(move);
@@ -166,6 +170,7 @@
 
 		// Update UI with animation
 		fen = chess.fen();
+		lastMove = [move.from, move.to];
 		refreshBoard();
 		if (!settings.muted) playSound(!!move.captured);
 	}
