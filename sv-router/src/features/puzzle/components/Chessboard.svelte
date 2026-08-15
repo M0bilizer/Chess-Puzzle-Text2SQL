@@ -14,7 +14,6 @@
 		fen: string;
 		settings: Preferences;
 		orientation?: 'white' | 'black';
-		lastMove?: [Key, Key];
 		onMove?: (move: Move) => Promise<void>;
 		interactive?: boolean;
 	};
@@ -23,7 +22,6 @@
 		fen = $bindable(),
 		settings = $bindable(),
 		orientation = 'white',
-		lastMove = $bindable(),
 		onMove,
 		interactive = $bindable(true)
 	}: Props = $props();
@@ -31,6 +29,7 @@
 	let cgApi: Api | undefined = $state();
 	// Internal chess instance for move validation and dests calculation
 	let chess = new Chess(fen);
+	let lastMove = $state<[Key, Key] | undefined>(undefined);
 	let showPromotion = $state(false);
 	let promotionSquare = $state<string | null>(null);
 	let resolvePromotion: ((piece: string | null) => void) | null = null;
@@ -49,6 +48,7 @@
 		return dests as Map<Square, Square[]>;
 	}
 
+	// sync the internal state with the cgApi (in other word, the UI)
 	function refreshBoard() {
 		if (!cgApi) return;
 
@@ -121,6 +121,7 @@
 		cgApi?.cancelMove();
 	}
 
+	// This is a event handler
 	async function handleMove(orig: Key, dest: Key) {
 		let promotion: string | undefined = undefined;
 		if (isPawnPromotion(orig, dest)) {
@@ -149,10 +150,10 @@
 
 	onMount(() => {
 		refreshBoard();
+		// these are settings that shouldn't be modified
 		cgApi?.set({
 			movable: {
 				free: false,
-				dests: toDests(chess),
 				events: {
 					after: handleMove
 				}
@@ -164,6 +165,7 @@
 		return containerElement;
 	}
 
+	// Validate then make move. For puzzle gameplay.
 	export function makeMove(from: string, to: string, promotion?: string) {
 		const move = chess.move({ from, to, promotion });
 		if (!move) return false;
@@ -175,12 +177,17 @@
 		if (!settings.muted) playSound(!!move.captured);
 	}
 
-	export async function undo() {
-		const previousMove = chess.undo();
-		if (!previousMove) return false;
-
-		fen = chess.fen();
-		if (!settings.muted) playSound(false);
+	// Directly load a position without validation. For resets, history jumps, changing puzzles.
+	export function setBoard(state: {
+		fen: string;
+		lastMove: [Key, Key] | undefined;
+		sound: { play: false } | { play: true; capture: boolean };
+	}) {
+		const { fen: fenFromState, lastMove: lastMoveFromState, sound: soundFromState } = state;
+		fen = fenFromState;
+		chess.load(fen);
+		lastMove = lastMoveFromState;
+		if (soundFromState.play === true && !settings.muted) playSound(soundFromState.capture);
 		refreshBoard();
 	}
 

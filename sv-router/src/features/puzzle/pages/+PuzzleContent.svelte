@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { preferencesState } from '@/features/settings/preferences-state';
 	import type { Move } from 'chess.js';
-	import type { Key } from 'svelte5-chessground';
 	import { Result } from 'typescript-result';
 
 	import ChessDescription from '../components/ChessDescription.svelte';
@@ -32,7 +31,6 @@
 	let chessboard = $state<Chessboard | null>(null);
 	let isComplete = $derived(game.latestIndex >= game.getTotalMoves());
 	let settings = preferencesState.current;
-	let lastMove = $state<[Key, Key] | undefined>(undefined);
 
 	let movesPlayed = $derived(game.movesPlayed);
 
@@ -53,12 +51,14 @@
 				await chessboard.waitForAnimations();
 				await new Promise((resolve) => setTimeout(resolve, 33));
 			}
-			// TODO: fix this logic, should make dedicated function chessboard.setBoard()
 			const prevMove = Result.wrap((idx) => game.getCorrectMoveAt(idx))(
 				game.currentIndex - 2
 			).getOrElse(() => undefined);
-			lastMove = prevMove ? [prevMove.from, prevMove.to] : undefined;
-			chessboard.undo();
+			chessboard.setBoard({
+				fen: game.fenAt(game.currentIndex - 1),
+				lastMove: prevMove ? [prevMove.from, prevMove.to] : undefined,
+				sound: { play: false }
+			});
 			game.currentIndex--;
 			if (settings.waitForAnimation) {
 				await chessboard.waitForAnimations();
@@ -92,10 +92,11 @@
 		const computerMove = game.getCorrectMoveAt(game.currentIndex);
 		game.makeMove(game.currentIndex, computerMove, true);
 
-		// don't use programmtic move since sound might crash
-		// TODO make chessboard.setBoard()
-		fen = game.getFenAt(game.currentIndex)!;
-		lastMove = [computerMove.from, computerMove.to];
+		chessboard?.setBoard({
+			fen: game.getFenAt(game.currentIndex),
+			lastMove: [computerMove.from, computerMove.to],
+			sound: { play: true, capture: computerMove.captured !== undefined }
+		});
 	}
 
 	const onHint = () => {
@@ -112,12 +113,14 @@
 
 	const onJumpToIndex = (index: number) => {
 		game.currentIndex = index;
-		// TODO: fix this logic, should make dedicated function chessboard.setBoard()
-		fen = game.getFenAt(index)!;
 		const prevMove = Result.wrap((idx) => game.getCorrectMoveAt(idx))(index - 1).getOrElse(
 			() => undefined
 		);
-		lastMove = prevMove ? [prevMove.from, prevMove.to] : undefined;
+		chessboard?.setBoard({
+			fen: game.getFenAt(index),
+			lastMove: prevMove ? [prevMove.from, prevMove.to] : undefined,
+			sound: { play: false }
+		});
 	};
 
 	const interactive = $derived(game.currentIndex === game.latestIndex);
@@ -125,19 +128,23 @@
 	const canGoForward = $derived(game.currentIndex < game.latestIndex);
 	const onReset = () => {
 		game.currentIndex = 0;
-		// TODO make chessboard.setBoard()
-		fen = game.getFenAt(0)!;
-		lastMove = undefined;
+		chessboard?.setBoard({
+			fen: game.getFenAt(0),
+			lastMove: undefined,
+			sound: { play: false }
+		});
 	};
 	const onBack = () => {
 		if (canGoBack) {
 			game.currentIndex--;
-			// TODO make chessboard.setBoard()
-			fen = game.getFenAt(game.currentIndex)!;
 			const prevMove = Result.wrap((idx) => game.getCorrectMoveAt(idx))(
 				game.currentIndex - 1
 			).getOrElse(() => undefined);
-			lastMove = prevMove ? [prevMove.from, prevMove.to] : undefined;
+			chessboard?.setBoard({
+				fen: game.getFenAt(game.currentIndex),
+				lastMove: prevMove ? [prevMove.from, prevMove.to] : undefined,
+				sound: { play: false }
+			});
 		}
 	};
 	const onForward = () => {
@@ -145,22 +152,26 @@
 			const move = game.getCorrectMoveAt(game.currentIndex);
 			if (!settings.muted) playSound(move.captured !== undefined);
 			game.currentIndex++;
-			// TODO make chessboard.setBoard()
-			fen = game.getFenAt(game.currentIndex)!;
 			const prevMove = Result.wrap((idx) => game.getCorrectMoveAt(idx))(
 				game.currentIndex - 1
 			).getOrElse(() => undefined);
-			lastMove = prevMove ? [prevMove.from, prevMove.to] : undefined;
+			chessboard?.setBoard({
+				fen: game.getFenAt(game.currentIndex),
+				lastMove: prevMove ? [prevMove.from, prevMove.to] : undefined,
+				sound: { play: true, capture: move.captured !== undefined }
+			});
 		}
 	};
 	const onEnd = () => {
 		game.currentIndex = game.latestIndex;
-		// TODO: fix this logic, should make dedicated function chessboard.setBoard()
-		fen = game.getFenAt(game.currentIndex);
 		const prevMove = Result.wrap((idx) => game.getCorrectMoveAt(idx))(
 			game.currentIndex - 1
 		).getOrElse(() => undefined);
-		lastMove = prevMove ? [prevMove.from, prevMove.to] : undefined;
+		chessboard?.setBoard({
+			fen: game.getFenAt(game.currentIndex),
+			lastMove: prevMove ? [prevMove.from, prevMove.to] : undefined,
+			sound: { play: false }
+		});
 	};
 
 	let playerMoveResult = $derived.by(() => {
@@ -178,7 +189,6 @@
 		bind:fen
 		{onMove}
 		{orientation}
-		bind:lastMove
 		bind:settings={preferencesState.current}
 		{interactive}
 	/>

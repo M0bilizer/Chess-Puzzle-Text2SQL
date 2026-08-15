@@ -7,6 +7,7 @@ type Collections = {
 	active: string | null;
 };
 
+// make this code more functional to make it cleaner
 class CollectionsStore {
 	private state = new PersistedState<Collections>('collections', {
 		collections: {} as Record<string, Collection>,

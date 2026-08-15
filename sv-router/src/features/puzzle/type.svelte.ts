@@ -39,6 +39,7 @@ export class PuzzleEngine {
 	}
 }
 
+// TODO make this more functional so code is cleaner
 export class PuzzleGame {
 	private engine: PuzzleEngine;
 	private fens: string[];

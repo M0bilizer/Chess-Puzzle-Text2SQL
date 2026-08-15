@@ -8,6 +8,7 @@ export type Collection = {
 	currentIndex: number;
 };
 
+// TODO make this code more functional to make it cleaner
 class CurrentCollectionStore {
 	private getCollection: () => Collection | null;
 	public constructor(getFn: () => Collection | null) {
