@@ -137,7 +137,10 @@
 						move={row.white?.move}
 						isActive={currentIndex === row.white?.index}
 						isLatest={latestIndex === row.white?.index}
-						onClick={() => row.white?.index !== undefined && onJumpToIndex?.(row.white.index)}
+						onClick={() =>
+							row.white?.index !== undefined &&
+							row.white?.feedback !== 'wrong' &&
+							onJumpToIndex?.(row.white.index)}
 						feedback={row.white?.feedback as 'correct' | 'wrong'}
 						disabled={row.white === null}
 					/>
@@ -145,7 +148,10 @@
 						move={row?.black?.move}
 						isActive={currentIndex === row.black?.index}
 						isLatest={latestIndex === row.black?.index}
-						onClick={() => row.black?.index !== undefined && onJumpToIndex?.(row.black.index)}
+						onClick={() =>
+							row.black?.index !== undefined &&
+							row.black?.feedback !== 'wrong' &&
+							onJumpToIndex?.(row.black.index)}
 						feedback={row.black?.feedback as 'correct' | 'wrong'}
 						disabled={row.black === null}
 					/>
