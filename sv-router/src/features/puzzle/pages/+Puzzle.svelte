@@ -1,21 +1,29 @@
 <script lang="ts">
-	import MainWithAsidePage from '@/common/components/MainWithAsidePage.svelte';
+	import SimplePage from '@/common/components/SimplePage.svelte';
+	import { preferencesState } from '@/features/settings/preferences-state';
 	import { navigate, route } from '@/router';
+	import type { Move } from 'chess.js';
 	import { resource, watch } from 'runed';
+	import { Result } from 'typescript-result';
 
 	import { getPuzzle } from '../api/puzzle.api';
+	import ChessDescription from '../components/ChessDescription.svelte';
+	import Chessboard from '../components/Chessboard.svelte';
 	import CurrentCollectionView from '../components/CurrentCollectionView.svelte';
+	import JumpRow from '../components/JumpRow.svelte';
 	import MobileChessDescription from '../components/MobileChessDescription.svelte';
 	import MobileCurrentCollectionView from '../components/MobileCurrentCollectionView.svelte';
+	import MoveFeedback from '../components/MoveFeedback.svelte';
+	import MoveTable from '../components/MoveTable.svelte';
 	import { currentCollection } from '../store/current-collection.svelte';
 	import { PuzzleGame } from '../type.svelte';
-	import PuzzleContent from './+PuzzleContent.svelte';
-	import PuzzleSkeleton from './+PuzzleSkeleton.svelte';
+	import { playSound } from '../utils';
 
 	let currentCollectionViewEl: CurrentCollectionView | undefined = $state();
 	let mobileCollectionViewEl: MobileCurrentCollectionView | undefined = $state();
-	let content: PuzzleContent | undefined = $state();
 	let openDescription = $state(false);
+
+	let chessboard = $state<Chessboard | null>(null);
 
 	let { id } = $derived(route.getParams('/puzzle/:id'));
 	const puzzleResource = resource(
@@ -41,8 +49,168 @@
 
 	$effect(() => {
 		if (game) {
-			new Promise((resolve) => setTimeout(resolve, 100)).then(() => content?.startGame());
+			new Promise((resolve) => setTimeout(resolve, 100)).then(() => {
+				if (game) startGame();
+			});
 		}
+	});
+
+	let isComplete = $derived(game ? game.latestIndex >= game.getTotalMoves() : false);
+	let settings = preferencesState.current;
+	let movesPlayed = $derived(game?.movesPlayed ?? { log: [] });
+
+	let fen = $derived(game?.getFenAt(0) ?? '');
+	let orientation = $derived.by(() => {
+		if (!game) return 'white' as const;
+		const playerColor = game.getPlayerColor() === 'w' ? 'white' : 'black';
+		const flip = preferencesState.current.flipOrientation;
+		return flip ? (playerColor === 'white' ? 'black' : 'white') : playerColor;
+	}) as 'white' | 'black';
+
+	async function onMove(move: Move) {
+		if (!chessboard || !game) return;
+		const isCorrect = game.makeMove(game.currentIndex, move);
+
+		if (!isCorrect) {
+			if (settings.waitForAnimation) {
+				await chessboard.waitForAnimations();
+				await new Promise((resolve) => setTimeout(resolve, 33));
+			}
+			const prevMove = Result.wrap((idx) => game.getCorrectMoveAt(idx))(
+				game.currentIndex - 2
+			).getOrElse(() => undefined);
+			chessboard.setBoard({
+				fen: game.fenAt(game.currentIndex - 1),
+				lastMove: prevMove ? [prevMove.from, prevMove.to] : undefined,
+				sound: { play: false }
+			});
+			game.currentIndex--;
+			if (settings.waitForAnimation) {
+				await chessboard.waitForAnimations();
+			}
+			return;
+		}
+		if (settings.waitForAnimation) {
+			await chessboard.waitForAnimations();
+		}
+		if (!isComplete) {
+			await new Promise((resolve) => setTimeout(resolve, settings.computerMoveDelay));
+			const computerMove = game.getCorrectMoveAt(game.currentIndex);
+			game.makeMove(game.currentIndex, computerMove, true);
+			chessboard.makeMove(computerMove.from, computerMove.to);
+			if (settings.waitForAnimation) {
+				await chessboard.waitForAnimations();
+			}
+			return;
+		} else {
+			onComplete();
+		}
+	}
+
+	async function startGame() {
+		if (!game || !chessboard) return;
+		if (settings.waitForAnimation) {
+			await chessboard?.waitForAnimations();
+			await new Promise((resolve) => setTimeout(resolve, 33));
+		}
+		const computerMove = game.getCorrectMoveAt(game.currentIndex);
+		game.makeMove(game.currentIndex, computerMove, true);
+
+		chessboard?.setBoard({
+			fen: game.getFenAt(game.currentIndex),
+			lastMove: [computerMove.from, computerMove.to],
+			sound: { play: true, capture: computerMove.captured !== undefined }
+		});
+	}
+
+	const onHint = () => {
+		if (!game || !chessboard) return;
+		const move = game.getCorrectMoveAt(game.currentIndex);
+		chessboard?.selectSquare(move.from);
+	};
+
+	const onSolution = async () => {
+		if (!game || !chessboard) return;
+		const move = game.getCorrectMoveAt(game.currentIndex);
+		chessboard?.makeMove(move.from, move.to);
+		if (settings.waitForAnimation) await chessboard?.waitForAnimations();
+		onMove(move);
+	};
+
+	const onJumpToIndex = (index: number) => {
+		if (!game || !chessboard) return;
+		game.currentIndex = index;
+		const prevMove = Result.wrap((idx) => game.getCorrectMoveAt(idx))(index - 1).getOrElse(
+			() => undefined
+		);
+		chessboard?.setBoard({
+			fen: game.getFenAt(index),
+			lastMove: prevMove ? [prevMove.from, prevMove.to] : undefined,
+			sound: { play: false }
+		});
+	};
+
+	const interactive = $derived(game?.currentIndex === game?.latestIndex);
+	const canGoBack = $derived((game?.currentIndex ?? 0) > 0);
+	const canGoForward = $derived((game?.currentIndex ?? 0) < (game?.latestIndex ?? 0));
+
+	const onReset = () => {
+		if (!game || !chessboard) return;
+		game.currentIndex = 0;
+		chessboard?.setBoard({
+			fen: game.getFenAt(0),
+			lastMove: undefined,
+			sound: { play: false }
+		});
+	};
+
+	const onBack = () => {
+		if (!game || !chessboard || !canGoBack) return;
+		game.currentIndex--;
+		const prevMove = Result.wrap((idx) => game.getCorrectMoveAt(idx))(
+			game.currentIndex - 1
+		).getOrElse(() => undefined);
+		chessboard?.setBoard({
+			fen: game.getFenAt(game.currentIndex),
+			lastMove: prevMove ? [prevMove.from, prevMove.to] : undefined,
+			sound: { play: false }
+		});
+	};
+
+	const onForward = () => {
+		if (!game || !chessboard || !canGoForward) return;
+		const move = game.getCorrectMoveAt(game.currentIndex);
+		if (!settings.muted) playSound(move.captured !== undefined);
+		game.currentIndex++;
+		const prevMove = Result.wrap((idx) => game.getCorrectMoveAt(idx))(
+			game.currentIndex - 1
+		).getOrElse(() => undefined);
+		chessboard?.setBoard({
+			fen: game.getFenAt(game.currentIndex),
+			lastMove: prevMove ? [prevMove.from, prevMove.to] : undefined,
+			sound: { play: true, capture: move.captured !== undefined }
+		});
+	};
+
+	const onEnd = () => {
+		if (!game || !chessboard) return;
+		game.currentIndex = game.latestIndex;
+		const prevMove = Result.wrap((idx) => game.getCorrectMoveAt(idx))(
+			game.currentIndex - 1
+		).getOrElse(() => undefined);
+		chessboard?.setBoard({
+			fen: game.getFenAt(game.currentIndex),
+			lastMove: prevMove ? [prevMove.from, prevMove.to] : undefined,
+			sound: { play: false }
+		});
+	};
+
+	let playerMoveResult = $derived.by(() => {
+		const lastPlayerMove = movesPlayed.log
+			.map((it) => it.snapshot)
+			.findLast((it) => !it?.isComputer);
+		if (!lastPlayerMove) return undefined;
+		return (lastPlayerMove.isCorrect ? 'correct' : 'wrong') as 'correct' | 'wrong';
 	});
 
 	const onComplete = () => {
@@ -59,38 +227,83 @@
 			navigate(`/puzzle/:id`, { params: { id: result.puzzleId } });
 		}
 	};
+
+	const hasNext = $derived(currentCollection.next(id) !== undefined);
 </script>
 
-<MainWithAsidePage>
-	<aside class="order-last md:order-first space-y-1">
-		<CurrentCollectionView
-			bind:this={currentCollectionViewEl}
-			currentId={id}
-			class="hidden md:flex"
-		/>
-		{#if puzzle !== undefined}
-			<MobileChessDescription bind:open={openDescription} {puzzle} class="block md:hidden" />
-		{/if}
-		<MobileCurrentCollectionView
-			bind:this={mobileCollectionViewEl}
-			currentId={id}
-			class="block md:hidden"
-		/>
-	</aside>
+<SimplePage class="flex gap-8 px-8 auto-rows-auto max-w-[1400px] items-start mx-auto">
+	<!-- Left aside + Content -->
+	<div class="w-full grid grid-cols-[auto_1fr] gap-x-8 gap-y-4">
+		<!-- First row  -->
+		<aside class="space-y-1 shrink-0 max-h-[700px]">
+			<CurrentCollectionView
+				bind:this={currentCollectionViewEl}
+				currentId={id}
+				class="hidden md:flex"
+			/>
+			{#if puzzle !== undefined}
+				<MobileChessDescription bind:open={openDescription} {puzzle} class="block md:hidden" />
+			{/if}
+			<MobileCurrentCollectionView
+				bind:this={mobileCollectionViewEl}
+				currentId={id}
+				class="block md:hidden"
+			/>
+		</aside>
 
-	{#if puzzle === undefined}
-		<PuzzleSkeleton />
-	{:else if puzzleResource.error}
-		<div>Error loading puzzle: {puzzleResource.error.message}</div>
-	{:else if puzzleResource.current && game}
-		<PuzzleContent
-			bind:this={content}
-			{puzzle}
-			{game}
-			bind:openDescription
-			hasNext={currentCollection.next(id) !== undefined}
-			{onComplete}
-			{onNext}
-		/>
-	{/if}
-</MainWithAsidePage>
+		<section class="aspect-square max-h-[700px]">
+			{#if puzzleResource.error}
+				<div>Error loading puzzle: {puzzleResource.error.message}</div>
+			{:else if puzzleResource.current && game}
+				<Chessboard
+					bind:this={chessboard}
+					bind:fen
+					{onMove}
+					{orientation}
+					bind:settings={preferencesState.current}
+					{interactive}
+				/>
+			{/if}
+		</section>
+
+		<!-- Second row -->
+		<aside></aside>
+		{#if puzzleResource.current && game && puzzle !== undefined}
+			<div>
+				<ChessDescription open={openDescription} {puzzle} class="hidden md:block" />
+			</div>
+		{/if}
+	</div>
+
+	<!-- Right Aside (moved to bottom or side as needed) -->
+	<aside class="w-[330px] shrink-0">
+		{#if puzzleResource.current && game !== null}
+			<MoveTable
+				bind:currentIndex={game.currentIndex}
+				bind:latestIndex={game.latestIndex}
+				movesPlayed={movesPlayed.log.map((it) => it.snapshot)}
+				playerColor={game.getPlayerColor()}
+				{onJumpToIndex}
+				class="hidden md:block"
+			/>
+			<MoveFeedback
+				playerColor={game.getPlayerColor()}
+				{isComplete}
+				moveResult={playerMoveResult}
+				{onHint}
+				{onSolution}
+				{hasNext}
+				{onNext}
+			/>
+			<JumpRow
+				{onReset}
+				{onBack}
+				{onForward}
+				{onEnd}
+				canGoBack={canGoBack || false}
+				canGoForward={canGoForward || false}
+				bind:preferences={preferencesState.current}
+			/>
+		{/if}
+	</aside>
+</SimplePage>
