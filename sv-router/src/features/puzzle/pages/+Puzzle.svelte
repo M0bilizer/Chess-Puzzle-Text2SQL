@@ -232,12 +232,12 @@
 </script>
 
 <SimplePage
-	class="flex flex-col sm:flex-row sm:gap-8 sm:px-8 auto-rows-auto max-w-[1400px] items-start mx-auto"
+	class="flex flex-col md:flex-row md:gap-8 md:px-8 auto-rows-auto max-w-[1400px] items-start mx-auto"
 >
 	<!-- Left aside + Content -->
-	<div class="w-full grid grid-cols-[auto] sm:grid-cols-[auto_1fr] gap-x-8 gap-y-4">
+	<div class="w-full grid grid-cols-[auto] md:grid-cols-[auto_1fr] md:gap-x-8 md:gap-y-4">
 		<!-- First row  -->
-		<aside class="space-y-1 shrink-0 max-h-[700px]">
+		<aside class="space-y-1 shrink-0 max-h-[700px] hidden md:flex">
 			<CurrentCollectionView
 				bind:this={currentCollectionViewEl}
 				currentId={id}
@@ -261,16 +261,16 @@
 		</section>
 
 		<!-- Second row -->
-		<aside></aside>
-		{#if puzzleResource.current && game && puzzle !== undefined}
-			<div>
+		<aside class="hidden md:flex"></aside>
+		<section class="hidden md:flex">
+			{#if puzzleResource.current && game && puzzle !== undefined}
 				<ChessDescription open={openDescription} {puzzle} class="hidden md:block" />
-			</div>
-		{/if}
+			{/if}
+		</section>
 	</div>
 
 	<!-- Right Aside (moved to bottom or side as needed) -->
-	<aside class="w-full sm:w-[330px] shrink-0">
+	<aside class="w-full md:w-[330px] shrink-0">
 		{#if puzzleResource.current && game !== null}
 			<MoveTable
 				bind:currentIndex={game.currentIndex}
@@ -300,7 +300,7 @@
 			/>
 		{/if}
 	</aside>
-	<aside class="flex flex-col gap-y-4 sm:hidden w-full">
+	<aside class="flex flex-col gap-y-4 md:hidden w-full">
 		{#if puzzleResource.current && game && puzzle !== undefined}
 			<MobileChessDescription bind:open={openDescription} {puzzle} class="block md:hidden" />
 
