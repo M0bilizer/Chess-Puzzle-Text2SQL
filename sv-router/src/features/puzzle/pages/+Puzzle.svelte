@@ -231,23 +231,17 @@
 	const hasNext = $derived(currentCollection.next(id) !== undefined);
 </script>
 
-<SimplePage class="flex gap-8 px-8 auto-rows-auto max-w-[1400px] items-start mx-auto">
+<SimplePage
+	class="flex flex-col sm:flex-row sm:gap-8 sm:px-8 auto-rows-auto max-w-[1400px] items-start mx-auto"
+>
 	<!-- Left aside + Content -->
-	<div class="w-full grid grid-cols-[auto_1fr] gap-x-8 gap-y-4">
+	<div class="w-full grid grid-cols-[auto] sm:grid-cols-[auto_1fr] gap-x-8 gap-y-4">
 		<!-- First row  -->
 		<aside class="space-y-1 shrink-0 max-h-[700px]">
 			<CurrentCollectionView
 				bind:this={currentCollectionViewEl}
 				currentId={id}
 				class="hidden md:flex"
-			/>
-			{#if puzzle !== undefined}
-				<MobileChessDescription bind:open={openDescription} {puzzle} class="block md:hidden" />
-			{/if}
-			<MobileCurrentCollectionView
-				bind:this={mobileCollectionViewEl}
-				currentId={id}
-				class="block md:hidden"
 			/>
 		</aside>
 
@@ -276,7 +270,7 @@
 	</div>
 
 	<!-- Right Aside (moved to bottom or side as needed) -->
-	<aside class="w-[330px] shrink-0">
+	<aside class="w-full sm:w-[330px] shrink-0">
 		{#if puzzleResource.current && game !== null}
 			<MoveTable
 				bind:currentIndex={game.currentIndex}
@@ -303,6 +297,17 @@
 				canGoBack={canGoBack || false}
 				canGoForward={canGoForward || false}
 				bind:preferences={preferencesState.current}
+			/>
+		{/if}
+	</aside>
+	<aside class="flex flex-col gap-y-4 sm:hidden w-full">
+		{#if puzzleResource.current && game && puzzle !== undefined}
+			<MobileChessDescription bind:open={openDescription} {puzzle} class="block md:hidden" />
+
+			<MobileCurrentCollectionView
+				bind:this={mobileCollectionViewEl}
+				currentId={id}
+				class="block md:hidden"
 			/>
 		{/if}
 	</aside>
