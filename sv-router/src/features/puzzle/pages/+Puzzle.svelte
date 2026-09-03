@@ -4,6 +4,7 @@
 	import { navigate, route } from '@/router';
 	import type { Move } from 'chess.js';
 	import { resource, watch } from 'runed';
+	import { Chessground } from 'svelte5-chessground';
 	import { Result } from 'typescript-result';
 
 	import { getPuzzle } from '../api/puzzle.api';
@@ -231,47 +232,43 @@
 	const hasNext = $derived(currentCollection.next(id) !== undefined);
 </script>
 
+<!-- auto-rows-auto so grid cell's size is based on element. Important for the chessboard
+     content-start so grid cell elements start at the top. -->
 <SimplePage
-	class="flex flex-col md:flex-row md:gap-8 md:px-8 auto-rows-auto max-w-[1400px] items-start mx-auto"
+	class=" md:space-y-0 grid grid-cols-1 md:grid-cols-[auto_1fr_330px]  space-y-2 auto-rows-auto content-start md:gap-x-8 md:gap-y-4 md:px-8 max-w-[1400px] mx-auto"
 >
-	<!-- Left aside + Content -->
-	<div class="w-full grid grid-cols-[auto] md:grid-cols-[auto_1fr] md:gap-x-8 md:gap-y-4">
-		<!-- First row  -->
-		<aside class="space-y-1 shrink-0 max-h-[700px] hidden md:flex">
-			<CurrentCollectionView
-				bind:this={currentCollectionViewEl}
-				currentId={id}
-				class="hidden md:flex"
+	<!-- First row  -->
+	<aside class="space-y-1 shrink-0 max-h-[700px] hidden md:flex">
+		<CurrentCollectionView
+			bind:this={currentCollectionViewEl}
+			currentId={id}
+			class="hidden md:flex"
+		/>
+	</aside>
+
+	<section class="aspect-square md:max-h-[700px]">
+		{#if puzzleResource.error}
+			<div class="rounded-lg border-2 border-dotted border-error-100-900 aspect-square"></div>
+		{:else if puzzleResource.loading}
+			<Chessground fen="8/8/8/8/8/8/8/8" class="animate-pulse" />
+		{:else if puzzleResource.current && game}
+			<Chessboard
+				bind:this={chessboard}
+				bind:fen
+				{onMove}
+				{orientation}
+				bind:settings={preferencesState.current}
+				{interactive}
 			/>
-		</aside>
+		{/if}
+	</section>
 
-		<section class="aspect-square max-h-[700px]">
-			{#if puzzleResource.error}
-				<div>Error loading puzzle: {puzzleResource.error.message}</div>
-			{:else if puzzleResource.current && game}
-				<Chessboard
-					bind:this={chessboard}
-					bind:fen
-					{onMove}
-					{orientation}
-					bind:settings={preferencesState.current}
-					{interactive}
-				/>
-			{/if}
-		</section>
+	<aside class="hidden md:block flex-col w-full max-h-[700px]">
+		{#if puzzleResource.error}
 
-		<!-- Second row -->
-		<aside class="hidden md:flex"></aside>
-		<section class="hidden md:flex">
-			{#if puzzleResource.current && game && puzzle !== undefined}
-				<ChessDescription open={openDescription} {puzzle} class="hidden md:block" />
-			{/if}
-		</section>
-	</div>
-
-	<!-- Right Aside (moved to bottom or side as needed) -->
-	<aside class="w-full md:w-[330px] shrink-0">
-		{#if puzzleResource.current && game !== null}
+		{:else if puzzleResource.loading}
+			<div class="placeholder h-full"></div>
+		{:else if puzzleResource.current && game !== null}
 			<MoveTable
 				bind:currentIndex={game.currentIndex}
 				bind:latestIndex={game.latestIndex}
@@ -300,6 +297,18 @@
 			/>
 		{/if}
 	</aside>
+	<!-- Second row -->
+	<aside class="hidden md:flex"></aside>
+	<section class="hidden md:flex">
+		{#if puzzleResource.error}
+
+		{:else if puzzleResource.loading}
+			<div class="flex-1 placeholder h-[77px]"></div>
+		{:else if puzzleResource.current && game && puzzle !== undefined}
+			<ChessDescription open={openDescription} {puzzle} class="hidden md:block" />
+		{/if}
+	</section>
+
 	<aside class="flex flex-col gap-y-4 md:hidden w-full">
 		{#if puzzleResource.current && game && puzzle !== undefined}
 			<MobileChessDescription bind:open={openDescription} {puzzle} class="block md:hidden" />

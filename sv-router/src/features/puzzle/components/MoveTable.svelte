@@ -111,69 +111,58 @@
 	});
 </script>
 
-<section class="table-wrap rounded-t-lg {className}">
-	<table class="table w-full table-fixed">
-		<colgroup>
-			<col class="w-16" />
-			<col class="w-1/2" />
-			<col class="w-1/2" />
-		</colgroup>
-		<thead class="bg-surface-100-900">
-			<tr class="[&>th]:text-surface-400-600">
-				<th>Move</th>
-				<th
-					>White {#if playerColor === 'w'}(you){/if}</th
-				>
-				<th
-					>Black {#if playerColor === 'b'}(you){/if}</th
-				>
-			</tr>
-		</thead>
-		<tbody class="[&>tr]:border-transparent!">
-			{#each moveRows as row, index (index)}
-				<tr>
-					<th class="border-e bg-surface-100-900">{index}</th>
-					<MoveCell
-						move={row.white?.move}
-						isActive={currentIndex === row.white?.index}
-						isLatest={latestIndex === row.white?.index}
-						onClick={() =>
-							row.white?.index !== undefined &&
-							row.white?.feedback !== 'wrong' &&
-							onJumpToIndex?.(row.white.index)}
-						feedback={row.white?.feedback as 'correct' | 'wrong'}
-						disabled={row.white === null}
-					/>
-					<MoveCell
-						move={row?.black?.move}
-						isActive={currentIndex === row.black?.index}
-						isLatest={latestIndex === row.black?.index}
-						onClick={() =>
-							row.black?.index !== undefined &&
-							row.black?.feedback !== 'wrong' &&
-							onJumpToIndex?.(row.black.index)}
-						feedback={row.black?.feedback as 'correct' | 'wrong'}
-						disabled={row.black === null}
-					/>
-				</tr>
-				{#if row.attempts && row.attempts.length > 0}
-					<tr class="bg-surface-100-900">
-						<td colspan="3" class="text-xs">
-							{row.attempts
-								.map((it) => `${index}. ${playerColor === 'b' ? '...' : ''}${it.san}`)
-								.join(', ')}
-						</td>
-					</tr>
-				{/if}
-			{/each}
+<section class={[className, 'divide-y-1 divide-surface-200-800']}>
+	<header class="move-row *:text-sm *:bg-surface-100-900 *:text-surface-400-600">
+		<div class="rounded-tl-lg">Move</div>
+		<div>
+			White {#if playerColor === 'w'}(you){/if}
+		</div>
+		<div class="rounded-tr-lg">
+			Black {#if playerColor === 'b'}(you){/if}
+		</div>
+	</header>
+	<ol class="h-full">
+		{#each moveRows as row, index (index)}
+			<li class="move-row">
+				<span class="border-e bg-surface-100-900">{index}</span>
+				<MoveCell
+					move={row.white?.move}
+					isActive={currentIndex === row.white?.index}
+					isLatest={latestIndex === row.white?.index}
+					onClick={() =>
+						row.white?.index !== undefined &&
+						row.white?.feedback !== 'wrong' &&
+						onJumpToIndex?.(row.white.index)}
+					feedback={row.white?.feedback as 'correct' | 'wrong'}
+					disabled={row.white === null}
+				/>
+				<MoveCell
+					move={row?.black?.move}
+					isActive={currentIndex === row.black?.index}
+					isLatest={latestIndex === row.black?.index}
+					onClick={() =>
+						row.black?.index !== undefined &&
+						row.black?.feedback !== 'wrong' &&
+						onJumpToIndex?.(row.black.index)}
+					feedback={row.black?.feedback as 'correct' | 'wrong'}
+					disabled={row.black === null}
+				/>
+			</li>
+		{/each}
 
-			{#if moveRows.length === 0}
-				<tr>
-					<th class="border-e bg-surface-100-900">1</th>
-					<MoveCell move={null} disabled={true} />
-					<MoveCell move={null} disabled={true} />
-				</tr>
-			{/if}
-		</tbody>
-	</table>
+		{#if moveRows.length === 0}
+			<li class="move-row">
+				<span class="border-e bg-surface-100-900">1</span>
+				<MoveCell move={null} disabled={true} />
+				<MoveCell move={null} disabled={true} />
+			</li>
+		{/if}
+	</ol>
 </section>
+
+<style lang="scss">
+	@reference "@/app.css";
+	.move-row {
+		@apply grid grid-cols-[64px_132px_132px] content-start *:p-2;
+	}
+</style>
