@@ -11,13 +11,12 @@
 <AppBar class="mb-2 h-[77px] block md:hidden content-center">
 	<AppBar.Toolbar class="grid-cols-[auto_1fr_auto] place-items-stretch *:flex *:items-center">
 		<AppBar.Lead>
-			<a href={p('/')} class="btn-icon btn-icon-lg hover:preset-tonal" data-preload>
+			<a href={p('/')} class="flex flex-row gap-2 items-center" data-preload>
 				<TablerHome class="text-surface-700-300" />
+				<p class="preset-typo-subtitle">Search Puzzle</p>
 			</a>
 		</AppBar.Lead>
-		<AppBar.Headline>
-			<p class="preset-typo-subtitle">Search Puzzle</p>
-		</AppBar.Headline>
+		<AppBar.Headline></AppBar.Headline>
 		<AppBar.Trail>
 			<LightSwitch />
 			<span class="vr h-8"></span>

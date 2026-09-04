@@ -35,7 +35,7 @@
 	};
 </script>
 
-<td
+<span
 	class={['relative', { 'bg-primary-50-950/75': isActive }]}
 	class:border-secondary-50-950={isLatest}
 	class:border-2={isLatest}
@@ -75,4 +75,4 @@
 			<span></span>
 		{/if}
 	</div>
-</td>
+</span>
