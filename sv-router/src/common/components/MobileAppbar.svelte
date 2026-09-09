@@ -1,19 +1,19 @@
 <script lang="ts">
+	import Chessica from '@/assets/Chessica.svelte';
 	import LightSwitch from '@/common/components/LightSwitch.svelte';
 	import { p } from '@/router';
 	import { AppBar, Dialog, Portal } from '@skeletonlabs/skeleton-svelte';
 	import { isActiveLink } from 'sv-router';
-	import TablerHome from '~icons/tabler/home';
 	import TablerMenu2 from '~icons/tabler/menu-2';
 	import TablerX from '~icons/tabler/x';
 </script>
 
-<AppBar class="mb-2 h-[77px] block md:hidden content-center">
+<AppBar class="mb-2 h-[57px] block md:hidden content-center p-2">
 	<AppBar.Toolbar class="grid-cols-[auto_1fr_auto] place-items-stretch *:flex *:items-center">
 		<AppBar.Lead>
-			<a href={p('/')} class="flex flex-row gap-2 items-center" data-preload>
-				<TablerHome class="text-surface-700-300" />
-				<p class="preset-typo-subtitle">Search Puzzle</p>
+			<a href={p('/')} class="flex flex-row items-center" data-preload>
+				<Chessica size={36} color="var(--color-surface-700-300)" />
+				<span class="preset-typo-subtitle inline">AskChessica</span>
 			</a>
 		</AppBar.Lead>
 		<AppBar.Headline></AppBar.Headline>

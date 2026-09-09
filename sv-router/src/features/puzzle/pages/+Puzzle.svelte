@@ -23,6 +23,7 @@
 	let currentCollectionViewEl: CurrentCollectionView | undefined = $state();
 	let mobileCollectionViewEl: MobileCurrentCollectionView | undefined = $state();
 	let openDescription = $state(false);
+	let openMobileCollectionView = $state(false);
 
 	let chessboard = $state<Chessboard | null>(null);
 
@@ -235,14 +236,22 @@
 <!-- auto-rows-auto so grid cell's size is based on element. Important for the chessboard
      content-start so grid cell elements start at the top. -->
 <SimplePage
-	class=" md:space-y-0 grid grid-cols-1 md:grid-cols-[auto_1fr_330px]  space-y-2 auto-rows-auto content-start md:gap-x-8 md:gap-y-4 md:px-8 max-w-[1400px] mx-auto"
+	class=" md:space-y-0 grid grid-cols-1 md:grid-cols-[1fr_330px] lg:grid-cols-[auto_1fr_330px] auto-rows-auto content-start md:gap-x-8 md:gap-y-4 md:px-8 max-w-[1400px] mx-auto"
 >
 	<!-- First row  -->
-	<aside class="space-y-1 shrink-0 max-h-[700px] hidden md:flex">
+	<aside class="space-y-1 shrink-0 max-h-[700px] hidden lg:flex">
 		<CurrentCollectionView
 			bind:this={currentCollectionViewEl}
 			currentId={id}
 			class="hidden md:flex"
+		/>
+	</aside>
+	<aside class="lg:hidden w-full md:col-span-2 lg:col-span-1">
+		<MobileCurrentCollectionView
+			bind:this={mobileCollectionViewEl}
+			currentId={id}
+			open={openMobileCollectionView}
+			class="block lg:hidden"
 		/>
 	</aside>
 
@@ -265,7 +274,7 @@
 
 	<aside class="hidden md:block flex-col w-full max-h-[700px]">
 		{#if puzzleResource.error}
-
+			<div class="flex flex-1 rounded-lg border-2 border-dotted border-error-100-900"></div>
 		{:else if puzzleResource.loading}
 			<div class="placeholder h-full"></div>
 		{:else if puzzleResource.current && game !== null}
@@ -297,11 +306,12 @@
 			/>
 		{/if}
 	</aside>
+
 	<!-- Second row -->
-	<aside class="hidden md:flex"></aside>
+	<aside class="hidden lg:flex"></aside>
 	<section class="hidden md:flex">
 		{#if puzzleResource.error}
-
+			<div class="flex flex-1 rounded-lg border-2 border-dotted border-error-100-900"></div>
 		{:else if puzzleResource.loading}
 			<div class="flex-1 placeholder h-[77px]"></div>
 		{:else if puzzleResource.current && game && puzzle !== undefined}
@@ -309,15 +319,29 @@
 		{/if}
 	</section>
 
-	<aside class="flex flex-col gap-y-4 md:hidden w-full">
+	<aside class="flex flex-col gap-y-2 md:hidden w-full">
 		{#if puzzleResource.current && game && puzzle !== undefined}
+			<div>
+				<JumpRow
+					{onReset}
+					{onBack}
+					{onForward}
+					{onEnd}
+					canGoBack={canGoBack || false}
+					canGoForward={canGoForward || false}
+					bind:preferences={preferencesState.current}
+				/>
+				<MoveFeedback
+					playerColor={game.getPlayerColor()}
+					{isComplete}
+					moveResult={playerMoveResult}
+					{onHint}
+					{onSolution}
+					{hasNext}
+					{onNext}
+				/>
+			</div>
 			<MobileChessDescription bind:open={openDescription} {puzzle} class="block md:hidden" />
-
-			<MobileCurrentCollectionView
-				bind:this={mobileCollectionViewEl}
-				currentId={id}
-				class="block md:hidden"
-			/>
 		{/if}
 	</aside>
 </SimplePage>
