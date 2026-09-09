@@ -1,7 +1,4 @@
 <script lang="ts">
-	import HeaderIcon from '@/common/components/HeaderIcon.svelte';
-	import TablerChessKnight from '~icons/tabler/chess-knight';
-
 	type Props = {
 		class?: string;
 	};
@@ -10,12 +7,10 @@
 
 <header class={`my-6 flex flex-col space-y-4 ${className}`}>
 	<div class="flex justify-center gap-4 md:justify-start">
-		<HeaderIcon icon={TablerChessKnight} />
-		<h1 class="text-center h1">Search Puzzles</h1>
+		<h1 class="text-center h1">Search for Chess Puzzle</h1>
 	</div>
 	<p>
-		A chess puzzle tool that allows you to search with natural language. The search results become a
-		collection which is a list of puzzles you can play through, track, and come back to. Kinda like
-		a Spotify or Youtube playlist but for chess puzzles.
+		The search results become a collection which is a list of puzzles you can play through, track,
+		and come back to. Kinda like a Spotify or Youtube playlist but for chess puzzles.
 	</p>
 </header>
