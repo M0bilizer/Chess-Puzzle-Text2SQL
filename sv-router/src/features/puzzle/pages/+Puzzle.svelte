@@ -128,7 +128,7 @@
 	const onHint = () => {
 		if (!game || !chessboard) return;
 		const move = game.getCorrectMoveAt(game.currentIndex);
-		chessboard?.selectSquare(move.from);
+		chessboard?.toggleSquare(move.from);
 	};
 
 	const onSolution = async () => {

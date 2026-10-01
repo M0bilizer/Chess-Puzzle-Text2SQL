@@ -29,7 +29,12 @@
 	let cgApi: Api | undefined = $state();
 	// Internal chess instance for move validation and dests calculation
 	let chess = new Chess(fen);
+	// we're manipulating lastMove in setBoard which is pretty much how my own api work
 	let lastMove = $state<[Key, Key] | undefined>(undefined);
+	// cgApi has selectedSquare but for some reason, the getters isn't working
+	// Used for the toggleSquare method
+	let selectedSquare = $state<Key | null>(null);
+	// For Promotion Dialog
 	let showPromotion = $state(false);
 	let promotionSquare = $state<string | null>(null);
 	let resolvePromotion: ((piece: string | null) => void) | null = null;
@@ -217,8 +222,14 @@
 		});
 	}
 
-	export function selectSquare(key: Key | null) {
-		cgApi?.selectSquare(key);
+	export function toggleSquare(key: Key) {
+		if (selectedSquare === key) {
+			cgApi?.selectSquare(null);
+			selectedSquare = null;
+		} else {
+			cgApi?.selectSquare(key);
+			selectedSquare = key;
+		}
 	}
 </script>
 
