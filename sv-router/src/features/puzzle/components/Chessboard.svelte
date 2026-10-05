@@ -233,7 +233,7 @@
 	}
 </script>
 
-<div bind:this={containerElement} class="relative">
+<div id="board" bind:this={containerElement} class="relative">
 	<Chessground bind:api={cgApi} />
 
 	<PromotionDialog
@@ -244,3 +244,41 @@
 		onCancel={handlePromotionCancel}
 	/>
 </div>
+
+<style>
+	/* Make the coordinate bigger */
+	#board :global(.ranks),
+	#board :global(.files) {
+		font-size: 16px;
+		font-weight: 600;
+	}
+
+	/* ranks is the vertical 1–8 coordinate. It should be on the right-hand side of the board */
+	#board :global(.ranks) {
+		top: auto;
+		left: auto;
+		bottom: 0;
+		right: 0;
+	}
+
+	/* this targets the individual coordinate elements */
+	#board :global(.ranks) :global(coord) {
+		/* for some reason, there's a transform */
+		transform: none;
+	}
+
+	/* files is the horizontal a–h coordinate. It should be at the bottom of the board */
+	#board :global(.files) {
+		left: auto;
+		right: 0;
+		top: auto;
+		bottom: 0;
+	}
+
+	/* this targets the individual coordinate elements. By default, it's text-align centered */
+	/* Text exceeds the element's bounds, so nudge it upward to prevent overflow. */
+	#board :global(.files) :global(coord) {
+		text-align: left;
+		transform: translate(2px, -5px);
+	}
+</style>
