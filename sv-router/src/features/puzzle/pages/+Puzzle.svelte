@@ -43,7 +43,6 @@
 		(newPuzzle) => {
 			if (newPuzzle != null) {
 				game = new PuzzleGame(newPuzzle);
-
 				new Promise((resolve) => setTimeout(resolve, 100)).then(() => {
 					if (game) startGame();
 				});
