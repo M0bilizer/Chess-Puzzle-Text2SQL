@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Move } from 'chess.js';
 	import { SvelteMap } from 'svelte/reactivity';
+	import TablerX from '~icons/tabler/x';
 
 	import MoveCell from './MoveCell.svelte';
 
@@ -148,6 +149,18 @@
 					disabled={row.black === null}
 				/>
 			</li>
+
+			{#if row.attempts && row.attempts.length > 0}
+				<div
+					class="flex flex-wrap items-center gap-1 bg-surface-100-900 text-xs p-1 border-y border-surface-200-800"
+				>
+					{row.attempts
+						.map((it) => `${index}. ${playerColor === 'b' ? '...' : ''}${it.san}`)
+						.join(', ')}
+
+					<TablerX />
+				</div>
+			{/if}
 		{/each}
 
 		{#if moveRows.length === 0}

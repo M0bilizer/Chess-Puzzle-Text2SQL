@@ -37,7 +37,18 @@
 	);
 
 	let puzzle = $derived(puzzleResource.current);
-	let game = $derived(puzzleResource.current ? new PuzzleGame(puzzleResource.current) : null);
+	let game = $derived<PuzzleGame | null>(null);
+	watch(
+		() => puzzle,
+		(newPuzzle) => {
+			if (newPuzzle != null) {
+				game = new PuzzleGame(newPuzzle);
+				new Promise((resolve) => setTimeout(resolve, 100)).then(() => {
+					if (game) startGame();
+				});
+			}
+		}
+	);
 
 	watch(
 		() => id,
@@ -48,14 +59,6 @@
 			}
 		}
 	);
-
-	$effect(() => {
-		if (game) {
-			new Promise((resolve) => setTimeout(resolve, 100)).then(() => {
-				if (game) startGame();
-			});
-		}
-	});
 
 	let isComplete = $derived(game ? game.latestIndex >= game.getTotalMoves() : false);
 	let settings = preferencesState.current;
