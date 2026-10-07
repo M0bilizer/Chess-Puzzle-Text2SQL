@@ -21,6 +21,7 @@
 				<Switch
 					checked={preferences.flipOrientation}
 					onCheckedChange={() => (preferences.flipOrientation = !preferences.flipOrientation)}
+					class="cursor-pointer"
 				>
 					<Switch.Control class="data-[state=unchecked]:bg-surface-300-700">
 						<Switch.Thumb />
@@ -31,6 +32,7 @@
 				<Switch
 					checked={!preferences.muted}
 					onCheckedChange={() => (preferences.muted = !preferences.muted)}
+					class="cursor-pointer"
 				>
 					<Switch.Control class="data-[state=unchecked]:bg-surface-300-700">
 						<Switch.Thumb />

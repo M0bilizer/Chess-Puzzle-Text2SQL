@@ -29,8 +29,14 @@
 		aria-labelledby={name}
 	>
 		{#each options as option (option)}
-			<label class="flex items-center gap-1">
-				<input type="radio" class="radio" {name} value={option.value} bind:group={value} />
+			<label class="flex items-center gap-1 cursor-pointer">
+				<input
+					type="radio"
+					class="radio cursor-pointer"
+					{name}
+					value={option.value}
+					bind:group={value}
+				/>
 				<span>{option.label}</span>
 			</label>
 		{/each}

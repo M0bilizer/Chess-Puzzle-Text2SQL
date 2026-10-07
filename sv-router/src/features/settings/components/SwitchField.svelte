@@ -24,7 +24,7 @@
 	</div>
 
 	<!-- Right column -->
-	<Switch checked={value} onCheckedChange={() => (value = !value)}>
+	<Switch checked={value} onCheckedChange={() => (value = !value)} class="cursor-pointer">
 		<Switch.Control id={name}>
 			<Switch.Thumb />
 		</Switch.Control>
