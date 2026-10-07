@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { Accordion } from '@skeletonlabs/skeleton-svelte';
-	import TablerChevronDown from '~icons/tabler/chevron-down';
-	import TablerChevronUp from '~icons/tabler/chevron-up';
+	import TablerCaretUpDown from '~icons/tabler/caret-up-down';
+	import TablerCaretUpDownFilled from '~icons/tabler/caret-up-down-filled';
+	import TablerTextCaption from '~icons/tabler/text-caption';
 
 	import type { Puzzle } from '../type.svelte';
 	import CopyFenButton from './CopyFenButton.svelte';
@@ -26,20 +27,24 @@
 	{value}
 	onValueChange={(value) => (open = value !== undefined)}
 >
-	<Accordion.Item
-		value="1"
-		class="preset-filled-surface-100-900 hover:preset-filled-surface-200-800 rounded-lg"
-	>
+	<Accordion.Item value="1">
 		<h3>
-			<Accordion.ItemTrigger class="flex items-center justify-between p-4">
-				<h2 class="h2">#{puzzle.puzzleId}</h2>
+			<Accordion.ItemTrigger
+				class="flex items-center justify-between p-1 data-[state=open]:preset-filled-surface-100-900 hover:preset-filled-surface-200-800 data-[state=open]:hover:preset-filled-surface-200-800"
+			>
+				<div class="flex items-center gap-1">
+					<TablerTextCaption />
+					<span>Puzzle Information</span>
+				</div>
 				<Accordion.ItemIndicator class="group">
-					<TablerChevronUp class="hidden group-data-[state=open]:block" />
-					<TablerChevronDown class="block group-data-[state=open]:hidden" />
+					<TablerCaretUpDownFilled class="hidden size-elem-xl group-data-[state=open]:block" />
+					<TablerCaretUpDown class="block size-elem-xl group-data-[state=open]:hidden" />
 				</Accordion.ItemIndicator></Accordion.ItemTrigger
 			>
 		</h3>
-		<Accordion.ItemContent class="mb-2 gap-4 divide-y divide-surface-200-800 px-4 pb-4">
+		<Accordion.ItemContent
+			class="mb-2 gap-4 divide-y divide-surface-200-800 preset-filled-surface-100-900 rounded-lg p-2"
+		>
 			<section class="space-x-2">
 				<small class="opacity-50">
 					Rating: {puzzle.rating}
@@ -57,9 +62,9 @@
 				<ThemesBadges themes={puzzle.themes} />
 			</dl>
 			<nav class="flex items-center gap-4 p-2">
-				<CopyFenButton fen={puzzle.fen} class="btn-xs" />
-				<OpenInLichess gameUrl={puzzle.gameUrl} class="btn-xs" />
-				<ShareButton class="btn-xs" />
+				<CopyFenButton fen={puzzle.fen} />
+				<OpenInLichess gameUrl={puzzle.gameUrl} />
+				<ShareButton />
 			</nav>
 		</Accordion.ItemContent>
 	</Accordion.Item>

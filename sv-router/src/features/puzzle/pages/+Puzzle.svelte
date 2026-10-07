@@ -8,14 +8,14 @@
 	import { Result } from 'typescript-result';
 
 	import { getPuzzle } from '../api/puzzle.api';
-	import ChessDescription from '../components/ChessDescription.svelte';
 	import Chessboard from '../components/Chessboard.svelte';
 	import CurrentCollectionView from '../components/CurrentCollectionView.svelte';
 	import JumpRow from '../components/JumpRow.svelte';
-	import MobileChessDescription from '../components/MobileChessDescription.svelte';
 	import MobileCurrentCollectionView from '../components/MobileCurrentCollectionView.svelte';
+	import MobilePuzzleDescription from '../components/MobilePuzzleDescription.svelte';
 	import MoveFeedback from '../components/MoveFeedback.svelte';
 	import MoveTable from '../components/MoveTable.svelte';
+	import PuzzleDescription from '../components/PuzzleDescription.svelte';
 	import { currentCollection } from '../store/current-collection.svelte';
 	import { PuzzleGame } from '../type.svelte';
 	import { playSound } from '../utils';
@@ -239,7 +239,7 @@
 <!-- auto-rows-auto so grid cell's size is based on element. Important for the chessboard
      content-start so grid cell elements start at the top. -->
 <SimplePage
-	class=" md:space-y-0 grid grid-cols-1 md:grid-cols-[1fr_330px] lg:grid-cols-[auto_1fr_330px] auto-rows-auto content-start md:gap-x-8 md:gap-y-4 md:px-8 max-w-[1400px] mx-auto"
+	class=" md:space-y-0 grid grid-cols-1 md:grid-cols-[1fr_330px] lg:grid-cols-[auto_1fr_330px] auto-rows-auto content-start md:gap-x-8 md:gap-y-2 md:px-8 max-w-[1400px] mx-auto"
 >
 	<!-- First row  -->
 	<aside class="space-y-1 shrink-0 max-h-[700px] hidden lg:flex">
@@ -318,33 +318,31 @@
 		{:else if puzzleResource.loading}
 			<div class="flex-1 placeholder h-[77px]"></div>
 		{:else if puzzleResource.current && game && puzzle !== undefined}
-			<ChessDescription open={openDescription} {puzzle} class="hidden md:block" />
+			<PuzzleDescription open={openDescription} {puzzle} class="hidden md:block" />
 		{/if}
 	</section>
 
 	<aside class="flex flex-col gap-y-2 md:hidden w-full">
 		{#if puzzleResource.current && game && puzzle !== undefined}
-			<div>
-				<JumpRow
-					{onReset}
-					{onBack}
-					{onForward}
-					{onEnd}
-					canGoBack={canGoBack || false}
-					canGoForward={canGoForward || false}
-					bind:preferences={preferencesState.current}
-				/>
-				<MoveFeedback
-					playerColor={game.getPlayerColor()}
-					{isComplete}
-					moveResult={playerMoveResult}
-					{onHint}
-					{onSolution}
-					{hasNext}
-					{onNext}
-				/>
-			</div>
-			<MobileChessDescription bind:open={openDescription} {puzzle} class="block md:hidden" />
+			<JumpRow
+				{onReset}
+				{onBack}
+				{onForward}
+				{onEnd}
+				canGoBack={canGoBack || false}
+				canGoForward={canGoForward || false}
+				bind:preferences={preferencesState.current}
+			/>
+			<MoveFeedback
+				playerColor={game.getPlayerColor()}
+				{isComplete}
+				moveResult={playerMoveResult}
+				{onHint}
+				{onSolution}
+				{hasNext}
+				{onNext}
+			/>
+			<MobilePuzzleDescription bind:open={openDescription} {puzzle} class="block mb-1 md:hidden" />
 		{/if}
 	</aside>
 </SimplePage>
