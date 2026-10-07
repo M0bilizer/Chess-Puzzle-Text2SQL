@@ -15,7 +15,7 @@
 	};
 </script>
 
-<Switch {name} checked={theme.isDarkMode} {onCheckedChange} class="btn">
+<Switch {name} checked={theme.isDarkMode} {onCheckedChange} class="btn cursor-pointer">
 	<Switch.Control {id}>
 		<Switch.Thumb>
 			<Switch.Context>

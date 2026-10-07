@@ -37,6 +37,14 @@ body {
 @import '@skeletonlabs/skeleton-svelte';
 @import '@skeletonlabs/skeleton/themes/pine';
 
+/* Make buttons and other interactive elements use the pointer cursor */
+@layer base {
+	button:not(:disabled),
+	[role='button']:not(:disabled) {
+		cursor: pointer;
+	}
+}
+
 .preset-typo-display-4,
 .preset-typo-display-3,
 .preset-typo-display-2,
